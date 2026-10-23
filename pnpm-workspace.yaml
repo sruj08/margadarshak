@@ -1,0 +1,55 @@
+# pnpm workspaces for Margdarshak (TypeScript side of the monorepo).
+# Python services (services/api, services/workflows) are managed by uv, not pnpm.
+packages:
+  - "apps/*"                    # @margdarshak/web (citizen PWA), @margdarshak/console
+  - "packages/*"                # @margdarshak/ui, game-core, rules, api-client
+  - "services/score-verifier"   # Node replay service importing @margdarshak/game-core
+  - "tests/e2e"                 # @margdarshak/e2e (Playwright + axe)
+
+# Shared exact versions for packages used by several workspaces (pnpm catalogs).
+# Workspaces reference them as "catalog:" so upgrades happen in one place.
+catalog:
+  next: 16.4.3
+  react: 19.3.1
+  react-dom: 19.3.1
+  "@types/react": 19.3.0
+  typescript: 6.0.3
+  zod: 4.6.7
+  "@heroui/react": 3.2.6
+  "@heroui/styles": 3.2.6
+  tailwindcss: 4.3.3
+  "@tailwindcss/postcss": 4.3.3
+  tailwind-variants: 3.3.1
+  next-intl: 4.14.9
+  "@tanstack/react-query": 5.104.5
+  "@tanstack/react-query-persist-client": 5.104.5
+  "@tanstack/query-async-storage-persister": 5.104.5
+  "@tanstack/react-query-devtools": 5.104.5
+  zustand: 5.0.16
+  motion: 14.6.0
+  "@serwist/turbopack": 9.5.13
+  "@serwist/next": 9.5.13
+  "@serwist/window": 9.5.13
+  serwist: 9.5.13
+  phaser: 4.2.1
+  "@mediapipe/tasks-vision": 1.1.1
+  "@rive-app/react-canvas-lite": 4.37.1
+  "@lottiefiles/dotlottie-react": 0.20.0
+  ts-fsrs: 5.4.2
+  idb: 8.0.4
+  lucide-react: 1.61.0
+  openapi-fetch: 0.17.0
+  openapi-typescript: 7.13.0
+  web-vitals: 6.2.3
+  "@sentry/nextjs": 11.9.0
+  "@playwright/test": 1.64.1
+  "@axe-core/playwright": 4.14.0
+  "@testing-library/react": 16.3.3
+  fast-check: 4.10.2
+  msw: 3.0.3
+  eslint: 10.13.0
+  eslint-config-next: 16.4.3
+  "@next/bundle-analyzer": 16.4.3
+
+# Supply-chain hygiene (Phase 3+): enable `minimumReleaseAge: 4320` (3 days) once the pins above are
+# older than that; several pins were published in the week of 2026-10-23, so it stays off for the build.

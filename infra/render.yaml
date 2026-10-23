@@ -1,0 +1,300 @@
+# Margdarshak: Render Blueprint (hackathon build, Phase 1-2)
+# ---------------------------------------------------------------------------
+# Spec: https://render.com/docs/blueprint-spec (fetched 2026-10-23).
+# Workflow services in Blueprints: supported since 16 Sep 2026 (https://render.com/changelog).
+#
+# Facts this file relies on (from the spec page, 2026-10-23):
+#   - service types: web | pserv | worker | cron | keyvalue | workflow
+#   - region values: oregon | ohio | virginia | frankfurt | singapore (no India region)
+#   - workflow services: runtime node|python only; `region` REQUIRED; `plan`, `previews`,
+#     `preDeployCommand` and Docker fields NOT supported (compute plan is set per task in code).
+#   - new compute plan IDs (renamed 26 Aug 2026, "no changes to pricing"):
+#       starter -> 0.5c-512mb, standard -> 1c-2g, pro -> 2c-4g (https://render.com/docs/compute-plans-update)
+#   - Postgres plan IDs: free, 0.1c-256mb (default), 0.5c-1g, 1c-2g ...
+#   - Key Value plan IDs: free, 256mb (default), 1g, 3g; ipAllowList REQUIRED.
+#   - autoDeployTrigger: commit | checksPass | off (replaces deprecated autoDeploy)
+#   - fromService property `slug` exists for workflows; `hostport` for private services.
+#
+# [unverified, owner: Ops lead, 2026-10-24 H0] The spec page did not document a start-command
+# field for workflow services. We use `startCommand` (the dashboard calls it "Start command",
+# see research/B-sponsors.md §1 "Deploy"). If `render blueprint validate` rejects it, create the
+# workflow service with `render workflows create ... --run-command "python main.py"` and delete
+# the block below.
+#
+# DATA: the hackathon deployment holds SYNTHETIC data only. Render has no India region, so we
+# use Singapore (closest; D-17, war-room G4). Production for a state runs on MeghRaj/NIC or a
+# MeitY-empanelled CSP in India: see docs/05-ops/INFRASTRUCTURE.md §4.
+#
+# Deploys are driven by .github/workflows/deploy.yml (autoDeployTrigger: off) so that a deploy
+# only happens after ci.yml + evals gate pass, and so we can smoke-test and warm the services.
+# ---------------------------------------------------------------------------
+
+previews:
+  generation: off            # Workflows are not supported in preview environments (B-sponsors §1)
+
+envVarGroups:
+  - name: margdarshak-shared
+    envVars:
+      - key: APP_ENV
+        value: hackathon-prod
+      - key: TENANT_DEFAULT
+        value: jk                      # Jammu & Kashmir demo tenant (E-31)
+      - key: TZ
+        value: UTC                     # store UTC, render Asia/Kolkata in the UI
+      - key: LOG_LEVEL
+        value: info
+      - key: LOG_FORMAT
+        value: json
+      - key: PII_REDACTION
+        value: "strict"
+      - key: OTEL_SERVICE_NAMESPACE
+        value: margdarshak
+      - key: OTEL_TRACES_SAMPLER
+        value: parentbased_traceidratio
+      - key: OTEL_TRACES_SAMPLER_ARG
+        value: "0.2"
+      - key: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: http/protobuf
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        sync: false                     # e.g. Grafana Cloud OTLP gateway; prompted at Blueprint creation
+      - key: OTEL_EXPORTER_OTLP_HEADERS
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: SENTRY_ENVIRONMENT
+        value: hackathon-prod
+      - key: FEATURE_FLAGS_SOURCE
+        value: db                       # flags table, per tenant (DEPLOYMENT.md §5)
+      - key: DATA_CLASS
+        value: synthetic-only           # banner + guard: refuses real Aadhaar-like input (EC-20)
+
+services:
+  # -------------------------------------------------------------------------
+  # 1. Citizen PWA (Next.js 16, standalone output)
+  # -------------------------------------------------------------------------
+  - type: web
+    name: margdarshak-web
+    runtime: docker
+    region: singapore
+    plan: 0.5c-512mb                   # legacy "starter"; never `free` (15-min sleep, ~1 min cold start)
+    dockerfilePath: ./infra/docker/web.Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    numInstances: 1
+    autoDeployTrigger: off
+    buildFilter:
+      paths:
+        - apps/web/**
+        - packages/**
+        - infra/docker/web.Dockerfile
+        - pnpm-lock.yaml
+    envVars:
+      - fromGroup: margdarshak-shared
+      - key: PORT
+        value: "3000"
+      - key: OTEL_SERVICE_NAME
+        value: margdarshak-web
+      - key: NEXT_PUBLIC_API_BASE_URL
+        sync: false                     # public URL of margdarshak-api (custom domain later)
+      - key: NEXT_PUBLIC_SITE_DISCLAIMER
+        value: "Independent prototype by team Chanakya. Not affiliated with MoRTH, NIC or any State Transport Department. Uses simulated government data."
+      - key: API_INTERNAL_HOSTPORT
+        fromService:
+          name: margdarshak-api
+          type: web
+          property: hostport            # server-side fetches stay on Render's private network
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+
+  # -------------------------------------------------------------------------
+  # 2. API (Python 3.12, FastAPI, ADK agents, adapters) - the one backend (D-17)
+  # -------------------------------------------------------------------------
+  - type: web
+    name: margdarshak-api
+    runtime: docker
+    region: singapore
+    plan: 1c-2g                        # legacy "standard": ADK + Pydantic + SQLAlchemy need >512 MB
+    dockerfilePath: ./infra/docker/api.Dockerfile
+    dockerContext: .
+    healthCheckPath: /v1/health         # API-64
+    preDeployCommand: alembic -c alembic.ini upgrade head   # image WORKDIR is /app/services/api
+    numInstances: 1
+    autoDeployTrigger: off
+    buildFilter:
+      paths:
+        - services/api/**
+        - rulepacks/**
+        - ai/prompts/**
+        - infra/docker/api.Dockerfile
+    envVars:
+      - fromGroup: margdarshak-shared
+      - key: PORT
+        value: "8000"
+      - key: OTEL_SERVICE_NAME
+        value: margdarshak-api
+      - key: DATABASE_URL
+        fromDatabase:
+          name: margdarshak-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: margdarshak-kv
+          type: keyvalue
+          property: connectionString
+      - key: SCORE_VERIFIER_HOSTPORT
+        fromService:
+          name: margdarshak-score-verifier
+          type: pserv
+          property: hostport
+      - key: WORKFLOW_SLUG
+        fromService:
+          name: margdarshak-workflows
+          type: workflow
+          property: slug                # task slug = {WORKFLOW_SLUG}/{task_name}
+      - key: JOB_RUNNER
+        value: render_workflows         # JobRunner port; production = temporal (INFRASTRUCTURE.md §4.5)
+      - key: RENDER_API_KEY
+        sync: false                     # used by render_sdk RenderAsync to start task runs
+      - key: GEMINI_API_KEY
+        sync: false                     # PAID tier only (D-13, war-room G8)
+      - key: GEMINI_MODEL_DEBRIEF
+        value: gemini-3.1-flash-lite    # M-02/M-03/M-04 (04 §1.7); re-pin at H0
+      - key: GEMINI_MODEL_VISION
+        value: gemini-3.8-flash         # M-05/M-06/M-07
+      - key: GEMINI_MODEL_LIVE
+        value: gemini-3.8-live          # M-01; fallback below
+      - key: GEMINI_MODEL_LIVE_FALLBACK
+        value: gemini-2.5-flash-native-audio-preview-12-2025
+      - key: AI_DEBRIEF_TIMEOUT_MS
+        value: "6000"                   # > 6 s -> template fallback (08 §5.6)
+      - key: AI_CIRCUIT_BREAKER_FALLBACK_RATE
+        value: "0.20"                   # fallback > 20 % over 5 min opens the breaker
+      - key: SARVAM_API_KEY
+        sync: false                     # M-08 Dogri ASR (disclosed processor)
+      - key: N8N_BASE_URL
+        sync: false
+      - key: N8N_HMAC_SECRET
+        sync: false                     # shared with n8n Variables `MD_HMAC_SECRET`
+      - key: N8N_RESUME_AUTH_TOKEN
+        sync: false                     # header token our pages send when resuming n8n Wait nodes
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_CLIPS
+        value: margdarshak-clips-public  # blurred, published clips only
+      - key: R2_BUCKET_INGEST
+        value: margdarshak-clips-ingest  # raw uploads; lifecycle delete after 14 days
+      - key: CONTACT_ENCRYPTION_KEY
+        sync: false                     # E-14 field-level encryption (32-byte base64)
+      - key: SESSION_SIGNING_KEY
+        generateValue: true
+      - key: ADAPTER_SARATHI
+        value: mock                     # mock | deeplink | real (F-56)
+      - key: ADAPTER_DIGILOCKER
+        value: mock
+      - key: ADAPTER_PAYMENT
+        value: mock
+      - key: ADAPTER_BHASHINI
+        value: mock
+      - key: ADAPTER_NOTIFICATION
+        value: n8n                      # n8n edge; SMS stays off until TRAI DLT (D-16)
+      - key: ADAPTER_SLOT
+        value: mock
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  # -------------------------------------------------------------------------
+  # 3. Score verifier (Node 22, runs @margdarshak/game-core replays) - private only
+  # -------------------------------------------------------------------------
+  - type: pserv
+    name: margdarshak-score-verifier
+    runtime: docker
+    region: singapore
+    plan: 0.5c-512mb
+    dockerfilePath: ./infra/docker/score-verifier.Dockerfile
+    dockerContext: .
+    numInstances: 1
+    autoDeployTrigger: off
+    buildFilter:
+      paths:
+        - services/score-verifier/**
+        - packages/game-core/**
+        - infra/docker/score-verifier.Dockerfile
+        - pnpm-lock.yaml
+    envVars:
+      - fromGroup: margdarshak-shared
+      - key: PORT
+        value: "8081"
+      - key: OTEL_SERVICE_NAME
+        value: margdarshak-score-verifier
+      - key: VERIFIER_SHARED_SECRET
+        generateValue: true             # copy to the API's env after first sync (fromService cannot read secrets)
+
+  # -------------------------------------------------------------------------
+  # 4. Render Workflows (Python SDK `render>=1.0.1`) - durable jobs (D-15)
+  #    Tasks: clip_ingest (headline), clip_finalize, case_clock_sweep,
+  #           debrief_fanout, field_stats_nightly, rulepack_reevaluate
+  # -------------------------------------------------------------------------
+  - type: workflow
+    name: margdarshak-workflows
+    runtime: python
+    region: singapore                  # REQUIRED for workflows
+    rootDir: services/workflows
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: python main.py        # main.py calls app.start(); see [unverified] note in the header
+    envVars:
+      - fromGroup: margdarshak-shared
+      - key: OTEL_SERVICE_NAME
+        value: margdarshak-workflows
+      - key: DATABASE_URL
+        fromDatabase:
+          name: margdarshak-db
+          property: connectionString
+      - key: API_INTERNAL_HOSTPORT
+        fromService:
+          name: margdarshak-api
+          type: web
+          property: hostport
+      - key: SCORE_VERIFIER_HOSTPORT
+        fromService:
+          name: margdarshak-score-verifier
+          type: pserv
+          property: hostport
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL_VISION
+        value: gemini-3.8-flash
+      - key: N8N_BASE_URL
+        sync: false
+      - key: N8N_HMAC_SECRET
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: FAULT_INJECTION_CLIP_BLUR
+        value: "off"                    # "once" makes blur fail on 1st attempt: visible retry for the demo (D-15)
+
+  # -------------------------------------------------------------------------
+  # 5. Key Value (rate limits, anonymous sessions, idempotency keys, circuit breaker)
+  # -------------------------------------------------------------------------
+  - type: keyvalue
+    name: margdarshak-kv
+    region: singapore
+    plan: 256mb
+    maxmemoryPolicy: volatile-lru      # only keys with TTL are evicted; idempotency keys carry TTLs
+    ipAllowList: []                    # empty list = private network only, no external access
+
+databases:
+  - name: margdarshak-db
+    region: singapore
+    plan: 0.1c-256mb                   # legacy "basic-256mb"; synthetic data; upgrade if load test needs it
+    postgresMajorVersion: "16"         # PROJECT_BRIEF §8: PostgreSQL 16
+    databaseName: margdarshak
+    user: margdarshak
+    ipAllowList: []                    # private network only

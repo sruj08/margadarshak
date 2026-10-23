@@ -1,0 +1,174 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.2/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/dist",
+      "!**/coverage",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!**/public/sw.js",
+      "!**/public/mediapipe",
+      "!packages/api-client/src/generated",
+      "!packages/rules/src/generated",
+      "!services/api",
+      "!services/workflows",
+      "!n8n/workflows",
+      "!**/*.min.js"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all",
+      "arrowParentheses": "always",
+      "bracketSpacing": true
+    }
+  },
+  "json": {
+    "formatter": { "enabled": true },
+    "parser": { "allowComments": false, "allowTrailingCommas": false }
+  },
+  "css": {
+    "formatter": { "enabled": false },
+    "linter": { "enabled": false }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": { "organizeImports": "on" }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "a11y": {
+        "preset": "recommended",
+        "noAutofocus": "error",
+        "useAltText": "error",
+        "useButtonType": "error",
+        "useKeyWithClickEvents": "error",
+        "noSvgWithoutTitle": "warn"
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noConsole": { "level": "error", "options": { "allow": ["warn", "error"] } },
+        "noDebugger": "error",
+        "noArrayIndexKey": "warn"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "error",
+        "noGlobalEval": "error"
+      },
+      "style": {
+        "noDefaultExport": "error",
+        "noNonNullAssertion": "error",
+        "useImportType": "error",
+        "useExportType": "error",
+        "useConst": "error",
+        "useTemplate": "error",
+        "noParameterAssign": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "framer-motion": "Use the `motion` package (Motion for React).",
+              "@heroui/system": "HeroUI v2 package. Use @heroui/react + @heroui/styles (v3).",
+              "@heroui/theme": "HeroUI v2 package. Theme via CSS variables in @margdarshak/ui (v3).",
+              "lodash": "Not needed; keep bundles small (Lite < 300 KB).",
+              "moment": "Use Intl / next-intl formatters.",
+              "axios": "Use @margdarshak/api-client (openapi-fetch)."
+            }
+          }
+        }
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": { "maxAllowedComplexity": 20 }
+        },
+        "noForEach": "off"
+      },
+      "performance": {
+        "noBarrelFile": "warn",
+        "noReExportAll": "error",
+        "noAccumulatingSpread": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "apps/*/src/app/**/page.tsx",
+        "apps/*/src/app/**/layout.tsx",
+        "apps/*/src/app/**/loading.tsx",
+        "apps/*/src/app/**/error.tsx",
+        "apps/*/src/app/**/not-found.tsx",
+        "apps/*/src/app/**/route.ts",
+        "apps/*/src/app/**/manifest.ts",
+        "apps/*/src/app/sw.ts",
+        "apps/*/middleware.ts",
+        "**/next.config.ts",
+        "**/postcss.config.mjs",
+        "**/playwright.config.ts",
+        "**/vitest.config.ts",
+        "**/*.config.{js,cjs,mjs,ts}",
+        "tests/load/**"
+      ],
+      "linter": { "rules": { "style": { "noDefaultExport": "off" } } }
+    },
+    {
+      "includes": ["packages/game-core/src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "react": "game-core is pure TS: no React.",
+                  "phaser": "game-core is pure TS: rendering lives in apps/web.",
+                  "node:fs": "game-core must run in the browser and in the score verifier."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "tests/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noConsole": "off" },
+          "style": { "noNonNullAssertion": "off" }
+        }
+      }
+    }
+  ]
+}

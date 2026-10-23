@@ -1,0 +1,124 @@
+# Margdarshak local / CI / single-VM stack (Docker Compose v2)
+#   docker compose -f infra/docker/compose.yaml up --build -d
+# Used by: local dev (ENVIRONMENT_SETUP.md), the e2e + axe job in ci.yml, and as the
+# reference for a single-VM NIC install (INFRASTRUCTURE.md §4.7). All adapters = mock,
+# AI_MODE=template (no Gemini key needed), JOB_RUNNER=inline (no Render Workflows locally;
+# use `render workflows dev` when you need real task runs, see DEPLOYMENT.md §2.3).
+name: margdarshak
+
+x-common-env: &common-env
+  APP_ENV: ${APP_ENV:-dev}
+  TZ: UTC
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+  LOG_FORMAT: json
+  PII_REDACTION: strict
+  OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
+  DATA_CLASS: synthetic-only
+
+services:
+  db:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_DB: margdarshak
+      POSTGRES_USER: margdarshak
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-margdarshak-local-only}
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U margdarshak -d margdarshak"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  kv:
+    image: valkey/valkey:8-bookworm
+    command: ["valkey-server", "--maxmemory", "128mb", "--maxmemory-policy", "volatile-lru"]
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  objectstore:
+    # S3-compatible stand-in for Cloudflare R2 (hackathon) / India object store (production)
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-margdarshak}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-margdarshak-local-only}
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [objdata:/data]
+
+  migrate:
+    build:
+      context: ../..
+      dockerfile: infra/docker/api.Dockerfile
+    command: ["alembic", "-c", "alembic.ini", "upgrade", "head"]
+    environment:
+      <<: *common-env
+      DATABASE_URL: postgresql+psycopg://margdarshak:${POSTGRES_PASSWORD:-margdarshak-local-only}@db:5432/margdarshak
+    depends_on:
+      db: { condition: service_healthy }
+    restart: "no"
+
+  score-verifier:
+    build:
+      context: ../..
+      dockerfile: infra/docker/score-verifier.Dockerfile
+    environment:
+      <<: *common-env
+      PORT: "8081"
+      VERIFIER_SHARED_SECRET: ${VERIFIER_SHARED_SECRET:-local-verifier-secret}
+    expose: ["8081"]
+
+  api:
+    build:
+      context: ../..
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      <<: *common-env
+      PORT: "8000"
+      DATABASE_URL: postgresql+psycopg://margdarshak:${POSTGRES_PASSWORD:-margdarshak-local-only}@db:5432/margdarshak
+      REDIS_URL: redis://kv:6379/0
+      SCORE_VERIFIER_HOSTPORT: score-verifier:8081
+      VERIFIER_SHARED_SECRET: ${VERIFIER_SHARED_SECRET:-local-verifier-secret}
+      JOB_RUNNER: inline
+      AI_MODE: ${AI_MODE:-template}
+      S3_ENDPOINT_URL: http://objectstore:9000
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-margdarshak}
+      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-margdarshak-local-only}
+      ADAPTER_SARATHI: mock
+      ADAPTER_DIGILOCKER: mock
+      ADAPTER_PAYMENT: mock
+      ADAPTER_BHASHINI: mock
+      ADAPTER_NOTIFICATION: console
+      ADAPTER_SLOT: mock
+      N8N_HMAC_SECRET: ${N8N_HMAC_SECRET:-local-n8n-secret}
+      CONTACT_ENCRYPTION_KEY: ${CONTACT_ENCRYPTION_KEY:-bG9jYWwtb25seS1rZXktMzItYnl0ZXMtLS0tLS0tLS0=}
+      SESSION_SIGNING_KEY: ${SESSION_SIGNING_KEY:-local-session-signing-key}
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+    ports: ["8000:8000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      kv: { condition: service_healthy }
+      score-verifier: { condition: service_started }
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+        NEXT_PUBLIC_SITE_DISCLAIMER: "Independent prototype by team Chanakya. Not affiliated with MoRTH, NIC or any State Transport Department. Uses simulated government data."
+    environment:
+      <<: *common-env
+      PORT: "3000"
+      API_INTERNAL_HOSTPORT: api:8000
+    ports: ["3000:3000"]
+    depends_on:
+      api: { condition: service_started }
+
+volumes:
+  pgdata: {}
+  objdata: {}

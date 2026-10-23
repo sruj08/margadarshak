@@ -1,0 +1,745 @@
+{
+  "name": "W08 · Nazar clip review queue (two raters, our page resumes the Wait node)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "md/clip-ready",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c8a00008-0000-4000-8000-000000000001",
+      "name": "Clip ready for review (from Workflows)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "0f6b1c3a-8a7e-4d6f-9b2e-c8a000080001",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "MD inbound webhook token"
+        }
+      },
+      "notes": "Called by the Render Workflows task `clip_ingest` after transcode → blur faces/plates → proposeWindows (Gemini, offline, M-06). Signed envelope (no raw-body handling needed in n8n): body = { ts, payload: '<JSON string>', sig: 'sha256=<hex HMAC of ts.payload>' }. payload = { clip_id, proposed_windows_count, blur_audit_url }."
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.body.ts }}.{{ $json.body.payload }}",
+        "dataPropertyName": "expected_signature",
+        "secret": "={{ $vars.MD_HMAC_SECRET }}",
+        "encoding": "hex"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000002",
+      "name": "Compute expected HMAC",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-sig",
+              "leftValue": "={{ 'sha256=' + $json.expected_signature === $json.body.sig && Math.abs(Date.now()/1000 - Number($json.body.ts)) < 300 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c8a00008-0000-4000-8000-000000000003",
+      "name": "Signature valid + fresh?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { accepted: true, execution_id: $execution.id } }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000004",
+      "name": "202 Accepted",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { accepted: false, reason: 'bad_signature' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000005",
+      "name": "401 Bad signature",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/review-tasks",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ stage: 'rater_1', resume_url: $execution.resumeUrl, n8n_execution_id: $execution.id, due_in_hours: 48 }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000006",
+      "name": "API-55 create rater-1 task (with resume URL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        220
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Backend stores resume_url on the E-21 ClipRating task (never shown to the browser). The curator page /admin/clips/{id} lets rater 1 scrub frames, set hazard onset/offset windows and confirm the blur audit. On save, the BACKEND POSTs { stage, rater_id, decision, windows_hash } to resume_url with the resume header token."
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
+        "text": "=🎬 Clip {{ $('Parse payload').item.json.clip_id }} is ready for rater 1. {{ $('Parse payload').item.json.proposed_windows_count }} AI-proposed windows (proposals only). Open: {{ $vars.MD_CONSOLE_BASE }}/admin/clips/{{ $('Parse payload').item.json.clip_id }}",
+        "additionalFields": {
+          "disable_notification": false
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000007",
+      "name": "Notify curators (rater 1)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        220
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak curators bot"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Notification only. The approval itself is NOT a Telegram send-and-wait (reports of non-resuming send-and-wait on Telegram/Gmail: n8n issue #13331). Approval = our page → backend → Wait-node resume webhook."
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "authentication": "headerAuth",
+        "limitWaitTime": true,
+        "limitType": "afterTimeInterval",
+        "resumeAmount": 48,
+        "resumeUnit": "hours",
+        "options": {}
+      },
+      "id": "c8a00008-0000-4000-8000-000000000008",
+      "name": "Wait for rater 1 (≤ 48 h)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        220
+      ],
+      "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a000080008",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "MD resume token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body?.decision }}",
+                    "rightValue": "windows_set",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "windows_set"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body?.decision }}",
+                    "rightValue": "reject",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "reject"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "timeout"
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000009",
+      "name": "Rater 1 decision",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1540,
+        220
+      ],
+      "notes": "Timeout = the Wait node resumed by its time limit with no body."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/review-tasks",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ stage: 'rater_2', resume_url: $execution.resumeUrl, n8n_execution_id: $execution.id, exclude_rater_id: $json.body.rater_id, blind_to_rater_1: true, due_in_hours: 48 }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-00000000000a",
+      "name": "API-55 create rater-2 task (blind)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Rater 2 must be a different person and does not see rater 1's windows (independent ratings → honest agreement score, D-22)."
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
+        "text": "=🎬 Clip {{ $('Parse payload').item.json.clip_id }} needs a second, independent rater. Open: {{ $vars.MD_CONSOLE_BASE }}/admin/clips/{{ $('Parse payload').item.json.clip_id }}?stage=rater_2",
+        "additionalFields": {}
+      },
+      "id": "c8a00008-0000-4000-8000-00000000000b",
+      "name": "Notify curators (rater 2)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1980,
+        120
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak curators bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "authentication": "headerAuth",
+        "limitWaitTime": true,
+        "limitType": "afterTimeInterval",
+        "resumeAmount": 48,
+        "resumeUnit": "hours",
+        "options": {}
+      },
+      "id": "c8a00008-0000-4000-8000-00000000000c",
+      "name": "Wait for rater 2 (≤ 48 h)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2200,
+        120
+      ],
+      "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a00008000c",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "MD resume token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-r2",
+              "leftValue": "={{ $json.body?.decision }}",
+              "rightValue": "windows_set",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c8a00008-0000-4000-8000-00000000000d",
+      "name": "Rater 2 set windows?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2420,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/finalize",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "=clip-finalize:{{ $('Parse payload').item.json.clip_id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ n8n_execution_id: $execution.id }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-00000000000e",
+      "name": "API-55 finalize → Workflows clip_finalize",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        40
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Backend starts the Render Workflows task `clip_finalize`: computeAgreement (Cohen's κ / onset Δ in code) → if agreement ≥ threshold: publish to R2 public bucket + manifest + CDN warm; else back to adjudication. AI never auto-publishes."
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
+        "text": "=✅ Clip {{ $('Parse payload').item.json.clip_id }}: both raters done. Agreement + publish running as a Workflows run ({{ $json.task_run_id }}).",
+        "additionalFields": {}
+      },
+      "id": "c8a00008-0000-4000-8000-00000000000f",
+      "name": "Notify: finalizing",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2860,
+        40
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak curators bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: $json.body?.decision === 'reject' ? 'rejected' : 'review_timeout', stage: $json.body?.stage ?? 'unknown', n8n_execution_id: $execution.id }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000010",
+      "name": "API-55 mark rejected / timed out",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Rejected clips are deleted from the ingest bucket by its lifecycle rule; timeouts go back to the queue and count toward R-06 (too few usable clips)."
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
+        "text": "=⚠️ Clip {{ $('Parse payload').item.json.clip_id }} stopped at {{ $json.stage ?? 'review' }} ({{ $json.status }}). If usable clips < 12 by Fri 12:00 the Ruko backup trigger applies (grand-council §5).",
+        "additionalFields": {}
+      },
+      "id": "c8a00008-0000-4000-8000-000000000011",
+      "name": "Notify: stopped",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2200,
+        400
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak curators bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse the signed payload only after the signature check passed.\nconst p = JSON.parse($('Clip ready for review (from Workflows)').item.json.body.payload);\nif (!/^clip_[a-z0-9]{8,40}$/.test(p.clip_id)) throw new Error('bad clip_id');\nreturn { json: { clip_id: p.clip_id, proposed_windows_count: Number(p.proposed_windows_count) || 0, blur_audit_url: p.blur_audit_url } };"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000012",
+      "name": "Parse payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Clip ready for review (from Workflows)": {
+      "main": [
+        [
+          {
+            "node": "Compute expected HMAC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute expected HMAC": {
+      "main": [
+        [
+          {
+            "node": "Signature valid + fresh?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signature valid + fresh?": {
+      "main": [
+        [
+          {
+            "node": "202 Accepted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "401 Bad signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "202 Accepted": {
+      "main": [
+        [
+          {
+            "node": "Parse payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API-55 create rater-1 task (with resume URL)": {
+      "main": [
+        [
+          {
+            "node": "Notify curators (rater 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify curators (rater 1)": {
+      "main": [
+        [
+          {
+            "node": "Wait for rater 1 (≤ 48 h)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for rater 1 (≤ 48 h)": {
+      "main": [
+        [
+          {
+            "node": "Rater 1 decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rater 1 decision": {
+      "main": [
+        [
+          {
+            "node": "API-55 create rater-2 task (blind)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "API-55 mark rejected / timed out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "API-55 mark rejected / timed out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API-55 create rater-2 task (blind)": {
+      "main": [
+        [
+          {
+            "node": "Notify curators (rater 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify curators (rater 2)": {
+      "main": [
+        [
+          {
+            "node": "Wait for rater 2 (≤ 48 h)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for rater 2 (≤ 48 h)": {
+      "main": [
+        [
+          {
+            "node": "Rater 2 set windows?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rater 2 set windows?": {
+      "main": [
+        [
+          {
+            "node": "API-55 finalize → Workflows clip_finalize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "API-55 mark rejected / timed out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API-55 finalize → Workflows clip_finalize": {
+      "main": [
+        [
+          {
+            "node": "Notify: finalizing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API-55 mark rejected / timed out": {
+      "main": [
+        [
+          {
+            "node": "Notify: stopped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse payload": {
+      "main": [
+        [
+          {
+            "node": "API-55 create rater-1 task (with resume URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "executionTimeout": -1,
+    "errorWorkflow": "REPLACE_WITH_W12_WORKFLOW_ID",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "margdarshak"
+    },
+    {
+      "name": "F-23 Nazar clip pipeline"
+    },
+    {
+      "name": "human-in-the-loop"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "margdarshak": {
+      "workflow_id": "W08",
+      "owner": "Nazar content lead",
+      "doc": "docs/05-ops/N8N_WORKFLOWS.md#w08",
+      "business_logic": "none (agreement maths + publish run in the Render Workflows task clip_finalize)",
+      "executions_per_month": "1 per clip (≈ 40–120 during the build)",
+      "required_variables": [
+        "MD_API_BASE",
+        "MD_HMAC_SECRET",
+        "MD_N8N_READ_TOKEN",
+        "MD_CURATOR_TELEGRAM_CHAT",
+        "MD_CONSOLE_BASE"
+      ]
+    }
+  },
+  "active": false,
+  "versionId": "00000000-0000-4000-8000-00000000a108"
+}

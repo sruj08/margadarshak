@@ -1,0 +1,226 @@
+# Margdarshak security scans (secure SDLC; OWASP ASVS L2 evidence for the STQC/CERT-In pre-audit pack)
+#   secrets:      gitleaks (full history on schedule, diff on PR)
+#   deps:         pip-audit (api + workflows), pnpm audit (prod deps), GitHub dependency review
+#   SAST:         CodeQL (javascript-typescript, python, actions)
+#   containers:   Trivy image scan (api, web, score-verifier) + SBOM (CycloneDX via Trivy)
+#   IaC/config:   Trivy config (Dockerfiles, render.yaml, Helm chart, compose)
+#   DAST:         OWASP ZAP baseline against staging (schedule / manual only)
+# Findings are uploaded as SARIF to GitHub code scanning. HIGH/CRITICAL fail the job.
+name: security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 21 * * 0"     # Mon 02:30 IST weekly full scan (history + DAST)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "10.18.0"
+  PYTHON_VERSION: "3.12"
+  UV_VERSION: "0.8.17"
+  TRIVY_VERSION: "v0.67.2"
+
+jobs:
+  gitleaks:
+    name: secrets (gitleaks)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # full history so a secret committed and removed is still caught
+      - name: gitleaks (CLI, avoids the org-licence requirement of gitleaks-action for orgs)
+        run: |
+          docker run --rm -v "$PWD:/repo" -w /repo zricethezav/gitleaks:v8.28.0 \
+            git --redact --no-banner --exit-code 1 \
+            --report-format sarif --report-path /repo/gitleaks.sarif \
+            ${{ github.event_name == 'pull_request' && format('--log-opts={0}..{1}', github.event.pull_request.base.sha, github.sha) || '' }}
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: gitleaks.sarif
+          category: gitleaks
+
+  pip-audit:
+    name: python deps (pip-audit)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [services/api, services/workflows]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Export locked requirements
+        working-directory: ${{ matrix.project }}
+        run: uv export --frozen --no-dev --no-emit-project --format requirements-txt -o /tmp/req.txt
+      - name: pip-audit (OSV + PyPI advisories)
+        run: uvx pip-audit==2.9.0 -r /tmp/req.txt --strict --vulnerability-service osv --desc on --progress-spinner off
+
+  pnpm-audit:
+    name: node deps (pnpm audit)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: pnpm audit (production deps, high and above fail)
+        run: pnpm audit --prod --audit-level high
+      - name: Licence allowlist (Apache-2.0 compatible; no AGPL/SSPL in shipped deps)
+        run: pnpm dlx license-checker-rseidelsohn@4.4.2 --production --excludePrivatePackages --failOn "AGPL-3.0;AGPL-3.0-only;AGPL-3.0-or-later;SSPL-1.0;BUSL-1.1"
+
+  dependency-review:
+    name: dependency review (PR)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          deny-licenses: AGPL-3.0, SSPL-1.0, BUSL-1.1
+          comment-summary-in-pr: on-failure
+
+  codeql:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, python, actions]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  trivy-config:
+    name: IaC + config (trivy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@0.33.1
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          scan-type: config
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          format: sarif
+          output: trivy-config.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-config.sarif
+          category: trivy-config
+
+  trivy-image:
+    name: image scan + SBOM (${{ matrix.image }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, web, score-verifier]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/docker/${{ matrix.image }}.Dockerfile
+          push: false
+          load: true
+          tags: margdarshak-${{ matrix.image }}:scan
+          cache-from: type=gha,scope=${{ matrix.image }}
+      - name: Trivy image (OS + language packages)
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          image-ref: margdarshak-${{ matrix.image }}:scan
+          vuln-type: os,library
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          format: sarif
+          output: trivy-${{ matrix.image }}.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-${{ matrix.image }}.sarif
+          category: trivy-image-${{ matrix.image }}
+      - name: SBOM (CycloneDX) for the pre-audit pack
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          image-ref: margdarshak-${{ matrix.image }}:scan
+          format: cyclonedx
+          output: sbom-${{ matrix.image }}.cdx.json
+          exit-code: "0"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.image }}
+          path: sbom-${{ matrix.image }}.cdx.json
+          retention-days: 90
+
+  zap-baseline:
+    name: DAST (OWASP ZAP baseline, staging)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: ZAP baseline against staging web + API (passive scan only, synthetic data)
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: ${{ vars.STAGING_WEB_URL }}
+          rules_file_name: .zap/rules.tsv
+          cmd_options: "-a -j"
+          allow_issue_writing: true
+          issue_title: "ZAP baseline findings (staging)"
+          fail_action: false   # report-only; triaged weekly into SECURITY_ARCHITECTURE.md

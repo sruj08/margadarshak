@@ -1,0 +1,4428 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: Margdarshak Core API
+  version: 1.0.0-draft.1
+  summary: Citizen front end and open adapter specification for the Indian driving-licence journey.
+  description: |
+    Contract for the Margdarshak core (FastAPI). Every endpoint carries its API-xx ID from
+    `docs/00-overview/PROJECT_BRIEF.md` in `x-api-id`. Endpoints marked `x-proposed: true` are
+    additions proposed by the engineering bible (auth, helper links, identity, payment hand-off,
+    DigiLocker) and are listed as inconsistencies for the PROJECT_BRIEF owner to ratify.
+
+    Independent prototype by team Chanakya. Not affiliated with MoRTH, NIC or any State
+    Transport Department. Uses simulated government data. Margdarshak never collects an Aadhaar
+    number, OTP, biometrics or government fees.
+
+    Conventions (see docs/03-engineering/API_SPEC.md):
+    * Errors use RFC 9457 `application/problem+json`.
+    * Writes accept an `Idempotency-Key` header (UUIDv7 recommended); replays within 24 h return the stored response.
+    * Lists use opaque cursor pagination (`cursor`, `limit`, `next_cursor`).
+    * Rate limits are announced with `RateLimit-Policy` and `RateLimit` headers; 429 carries `Retry-After`.
+    * All timestamps are RFC 3339 in UTC; all dates are ISO 8601 calendar dates in Asia/Kolkata.
+    * Money is integer **paise** (`amount_paise`, e.g. 70000 = Rs 700), always computed from the tenant rule pack (`fees.json`, unit paise); no literals.
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+  contact:
+    name: Team Chanakya (Nestiq Private Limited)
+servers:
+  - url: https://api.margdarshak.example
+    description: Placeholder host. The hackathon host is the Render Singapore URL in README (domain not yet chosen; owner Platform lead, due H+6).
+  - url: http://localhost:8000
+    description: Local development (docker compose)
+tags:
+  - name: plan
+    description: API-01..05 and API-23 Licence plan, rule look-ups and tenant config (no login)
+  - name: auth
+    description: API-06..09 and API-58 Device sessions, accounts, helper links (proposed)
+  - name: cases
+    description: API-10..19 Case lifecycle, autosave, timeline, hand-off
+  - name: documents
+    description: API-20..22 On-device checks and DigiLocker pull
+  - name: offices
+    description: API-25..29 Offices, slots, slot watches, RTO Live Intel
+  - name: learn
+    description: API-30..33 Learn hub, FSRS, readiness
+  - name: games
+    description: API-34..39 and API-57 Game sessions, server replay, debrief, Nazar clips, achievements, squads, share cards
+  - name: ai
+    description: API-40..43 Voice guide, tutor, screen decoder, scam checker
+  - name: records
+    description: API-44..49 Declarations, letters, Practice Record and sign-off requests
+  - name: ecosystem
+    description: API-50..56 Schools, state console, rule-pack studio, clip admin, moderation
+  - name: privacy
+    description: API-59..63 Profile, consents, export, deletion, analytics
+  - name: platform
+    description: API-24, API-64..69, API-72, API-73 Health and internal machine endpoints (internal scope, n8n bearer + HMAC; n8n never queries Postgres directly)
+  - name: field-study
+    description: API-70..71 Field-study lab and public counters
+
+security:
+  - deviceSession: []
+
+paths:
+  /v1/health:
+    get:
+      x-api-id: API-64
+      tags: [platform]
+      operationId: getHealth
+      summary: Liveness and dependency readiness
+      security: []
+      parameters:
+        - name: deep
+          in: query
+          required: false
+          schema: { type: boolean, default: false }
+          description: When true, checks Postgres, Key Value, score verifier and adapter health (internal callers only; rate limited).
+      responses:
+        '200':
+          description: Healthy or degraded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+              example:
+                status: degraded
+                version: 1.0.0+sha.3f2a9c1
+                time: '2026-10-24T03:30:00Z'
+                checks:
+                  postgres: { status: ok, latency_ms: 4 }
+                  key_value: { status: ok, latency_ms: 2 }
+                  score_verifier: { status: ok, latency_ms: 11 }
+                  gemini: { status: degraded, detail: 'fallback rate 22% over 5 min; template debriefs in use' }
+                adapters:
+                  sarathi: { implementation: deeplink, status: ok }
+                  digilocker: { implementation: mock, status: ok }
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /v1/plans:
+    post:
+      x-api-id: API-01
+      tags: [plan]
+      operationId: createPlan
+      summary: Compute a licence plan in 3 taps (no login, no PII stored)
+      description: |
+        Pure rules-engine evaluation against the tenant's published rule pack. No AI. The request
+        is not persisted beyond a 7-day plan snapshot keyed by `plan_id` (used by API-04 and
+        API-10). DOB is reduced to an age band plus key birthdays before storage.
+      security:
+        - {}
+        - deviceSession: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/AcceptLanguage'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PlanRequest' }
+            example:
+              state: JK
+              dob: '2007-03-14'
+              dob_precision: day
+              vehicles: [motorcycle, car]
+              aadhaar_address_matches_residence: true
+              already_holds_ll: false
+              language: hi
+      responses:
+        '201':
+          description: Plan computed
+          headers:
+            Location: { $ref: '#/components/headers/Location' }
+            RateLimit: { $ref: '#/components/headers/RateLimit' }
+            RateLimit-Policy: { $ref: '#/components/headers/RateLimitPolicy' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Plan' }
+              example:
+                plan_id: pln_01JB8Z6X3V9Q2K7M4N5P6R7S8T
+                state: JK
+                rule_pack: { pack_id: JK, version: 2026.10.0, base_version: IN-base@2026.10.0 }
+                age_band: '18_19'
+                eligible_classes:
+                  - class_code: MCWG
+                    eligible: true
+                    content_depth: deep
+                    rule_id: ELIG-MCWG-AGE
+                  - class_code: LMV-NT
+                    eligible: true
+                    content_depth: deep
+                    rule_id: ELIG-LMV-NT-AGE
+                recommended_bundle:
+                  classes: [MCWG, LMV-NT]
+                  saving_note_key: plan.bundle.saves_second_wait_if_sequential
+                  rule_id: LL-MULTICLASS
+                steps:
+                  - { step_id: ll_apply, stage: S2, title_key: step.ll_apply, rto_visits: 0 }
+                  - { step_id: ll_test, stage: S3, title_key: step.ll_test_online_or_csc, rto_visits: 0 }
+                  - { step_id: bridge, stage: S4, title_key: step.bridge_30_days, rto_visits: 0 }
+                  - { step_id: dl_test, stage: S6, title_key: step.dl_test_at_rto, rto_visits: 1 }
+                max_rto_visits: 1
+                earliest_dates:
+                  ll_issue: '2026-10-24'
+                  dl_test_unlock: '2026-11-23'
+                  earliest_licence: '2026-11-23'
+                fees:
+                  quote_id: fq_01JB8Z6X4A
+                  currency: INR
+                  lines:
+                    - { line_id: ll_issue, label_key: fee.ll_issue_per_class, class_code: MCWG, quantity: 1, amount_paise: 15000, rule_id: FEE-LL-ISSUE }
+                    - { line_id: ll_issue, label_key: fee.ll_issue_per_class, class_code: LMV-NT, quantity: 1, amount_paise: 15000, rule_id: FEE-LL-ISSUE }
+                    - { line_id: ll_test, label_key: fee.ll_test, quantity: 1, amount_paise: 5000, rule_id: FEE-LL-TEST }
+                    - { line_id: dl_test, label_key: fee.dl_test_per_class, class_code: MCWG, quantity: 1, amount_paise: 30000, rule_id: FEE-DL-TEST }
+                    - { line_id: dl_test, label_key: fee.dl_test_per_class, class_code: LMV-NT, quantity: 1, amount_paise: 30000, rule_id: FEE-DL-TEST }
+                    - { line_id: dl_issue, label_key: fee.dl_issue, quantity: 1, amount_paise: 20000, rule_id: FEE-DL-ISSUE }
+                    - { line_id: smart_card, label_key: fee.smart_card, quantity: 1, amount_paise: 20000, rule_id: FEE-SMART-CARD }
+                  subtotal_govt_fee_paise: 115000
+                  total_paise: 135000
+                  excludes: [state_service_charge, postage]
+                  provenance:
+                    source_title: CMVR 1989 r.32 (fee table as reproduced by HP Transport)
+                    source_url: https://himachal.gov.in
+                    verified_on: '2026-10-22'
+                    confidence: medium
+                    verified: true
+                documents:
+                  - { doc_id: proof_of_age, required: true, why_key: doc.why.age, rule_id: DOC-AGE }
+                  - { doc_id: proof_of_address, required: true, why_key: doc.why.address, rule_id: DOC-ADDR }
+                  - { doc_id: form_1, required: true, why_key: doc.why.form1, rule_id: DOC-FORM1 }
+                blockers: []
+                disclaimers: [not_affiliated, verify_at_rto_for_transport]
+                expires_at: '2026-10-31T03:30:00Z'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /v1/plans/{planId}/whatsapp:
+    post:
+      x-api-id: API-04
+      tags: [plan]
+      operationId: sendPlanToWhatsApp
+      summary: Send the plan card to WhatsApp (opt-in, template message via n8n)
+      description: |
+        Creates a `whatsapp_updates` consent artefact if none exists, stores the phone number
+        encrypted (E-14) and enqueues an approved template message through NotificationPort.
+        In the hackathon the Meta test number reaches only allow-listed recipients.
+      parameters:
+        - $ref: '#/components/parameters/PlanId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WhatsAppSendRequest' }
+            example:
+              phone_e164: '+919876543210'
+              consent: { purpose: whatsapp_updates, notice_version: notice-2026.10.23-hi, granted: true }
+              language: hi
+      responses:
+        '202':
+          description: Message queued
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NotificationAccepted' }
+              example: { notification_id: ntf_01JB8Z7C, status: queued, channel: whatsapp, template_id: plan_card_v1 }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /v1/rules/{state}/classes:
+    get:
+      x-api-id: API-02
+      tags: [plan]
+      operationId: listClasses
+      summary: Vehicle classes, eligibility rules and content depth for a state
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/State'
+        - name: version
+          in: query
+          required: false
+          schema: { type: string }
+          description: Rule-pack version; defaults to the latest published.
+      responses:
+        '200':
+          description: Class catalogue
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ClassCatalogue' }
+              example:
+                state: JK
+                rule_pack: { pack_id: JK, version: 2026.10.0, base_version: IN-base@2026.10.0 }
+                classes:
+                  - class_code: MC50CC
+                    label_key: class.mc50cc
+                    min_age_years: 16
+                    guardian_consent_required: true
+                    medical_form_1a: over_40
+                    transport: false
+                    content_depth: thin
+                    rule_id: ELIG-MC50CC-AGE
+                    provenance: { source_title: MV Act 1988 s.4(2); Delhi Transport class page, source_url: https://transport.delhi.gov.in, verified_on: '2026-10-22', confidence: medium, verified: true }
+                  - class_code: LMV-TR
+                    label_key: class.lmv_tr
+                    min_age_years: 20
+                    guardian_consent_required: false
+                    medical_form_1a: always
+                    transport: true
+                    content_depth: coming
+                    rule_id: ELIG-TRANSPORT-AGE
+                    flags: [verify_at_rto, lmv_prerequisite_unverified]
+                    provenance: { source_title: MV Act 1988 s.4, source_url: https://www.indiacode.nic.in, verified_on: '2026-10-22', confidence: low, verified: false }
+        '304': { description: Not modified }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/rules/{state}/fees:
+    get:
+      x-api-id: API-03
+      tags: [plan]
+      operationId: getFees
+      summary: Fee table for a state (from fees.json in the rule pack)
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/State'
+        - name: classes
+          in: query
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items: { $ref: '#/components/schemas/VehicleClassCode' }
+          description: When given, the response includes a computed quote for these classes.
+      responses:
+        '200':
+          description: Fee table and optional quote
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeeTable' }
+              example:
+                state: JK
+                rule_pack: { pack_id: JK, version: 2026.10.0, base_version: IN-base@2026.10.0 }
+                items:
+                  - { fee_id: ll_issue, per: class, amount_paise: 15000, rule_id: FEE-LL-ISSUE }
+                  - { fee_id: ll_test, per: attempt, amount_paise: 5000, rule_id: FEE-LL-TEST }
+                  - { fee_id: dl_test, per: class_attempt, amount_paise: 30000, rule_id: FEE-DL-TEST }
+                  - { fee_id: dl_issue, per: licence, amount_paise: 20000, rule_id: FEE-DL-ISSUE }
+                  - { fee_id: smart_card, per: licence, amount_paise: 20000, rule_id: FEE-SMART-CARD }
+                quote:
+                  quote_id: fq_01JB8Z9
+                  currency: INR
+                  lines:
+                    - { line_id: ll_issue, label_key: fee.ll_issue_per_class, class_code: MCWG, quantity: 1, amount_paise: 15000, rule_id: FEE-LL-ISSUE }
+                    - { line_id: ll_test, label_key: fee.ll_test, quantity: 1, amount_paise: 5000, rule_id: FEE-LL-TEST }
+                    - { line_id: dl_test, label_key: fee.dl_test_per_class, class_code: MCWG, quantity: 1, amount_paise: 30000, rule_id: FEE-DL-TEST }
+                    - { line_id: dl_issue, label_key: fee.dl_issue, quantity: 1, amount_paise: 20000, rule_id: FEE-DL-ISSUE }
+                    - { line_id: smart_card, label_key: fee.smart_card, quantity: 1, amount_paise: 20000, rule_id: FEE-SMART-CARD }
+                  subtotal_govt_fee_paise: 70000
+                  total_paise: 90000
+                  excludes: [state_service_charge, postage]
+                  provenance: { source_title: CMVR 1989 r.32, source_url: https://himachal.gov.in, verified_on: '2026-10-22', confidence: medium, verified: true }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/rules/{state}/ll-format:
+    get:
+      x-api-id: API-05
+      tags: [plan]
+      operationId: getLlFormat
+      summary: LL test format for the state (question count, pass mark, timers, where held, source and date)
+      description: Drives the LL Test Simulator (F-22). When the format is unknown the response says so and the simulator uses the documented default with a banner.
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/State'
+      responses:
+        '200':
+          description: LL format
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LlFormat' }
+              example:
+                state: JK
+                rule_id: LL-FORMAT
+                known: true
+                questions: 10
+                pass_correct: 6
+                pass_pct: 60
+                per_question_timer_s: null
+                total_timer_s: null
+                online_test_available: true
+                where: [home_online, csc, rto]
+                languages: [en, hi]
+                provenance: { source_title: 'Kashmir Life, Dec 2025, quoting the Srinagar ARTO', source_url: 'https://kashmirlife.net', verified_on: '2026-10-22', confidence: low, verified: false }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/tenants/{state}:
+    get:
+      x-api-id: API-23
+      x-proposed: true
+      tags: [plan]
+      operationId: getTenant
+      summary: Public tenant configuration (white-label theme, languages, adapter modes, feature flags)
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/State'
+      responses:
+        '200':
+          description: Tenant
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Tenant' }
+              example:
+                tenant: JK
+                display_name_key: tenant.jk
+                languages: [en, hi, doi]
+                theme: { primary: '#1F4E79', surface: '#FFFFFF', logo_url: null }
+                adapters: { sarathi: deeplink, digilocker: mock, aadhaar_offline: disabled, bhashini: mock, payment: sarathi_redirect, notification: n8n, slot: mock }
+                features: { ai_coach: true, voice_guide: true, live_intel: true, school_portal: true, sms: false }
+                rule_pack: { pack_id: JK, version: 2026.10.0, base_version: IN-base@2026.10.0 }
+                hosting_mode: independent
+                disclaimer_key: footer.not_affiliated_simulated_data
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/sessions/device:
+    post:
+      x-api-id: API-06
+      x-proposed: true
+      tags: [auth]
+      operationId: createDeviceSession
+      summary: Create an anonymous device session (no PII); web clients receive the opaque `md_sid` cookie (HttpOnly, Secure, SameSite=Lax)
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DeviceSessionRequest' }
+            example: { device_public_key: 'MCowBQYDK2VwAyEA3b1...', platform: android_web, app_version: 0.1.0, lite_mode: false }
+      responses:
+        '201':
+          description: Device session created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenPair' }
+              example: { scope: anon, subject: dev_01JB8ZA, age_band: unknown, expires_at: '2027-04-21T03:30:00Z', session_token: null }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /v1/auth/magic-link:
+    post:
+      x-api-id: API-07
+      x-proposed: true
+      tags: [auth]
+      operationId: requestMagicLink
+      summary: Email a single-use sign-in link (upgrades the device session to an account)
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MagicLinkRequest' }
+            example: { email: kabir@example.com, language: en }
+      responses:
+        '202':
+          description: Link sent if the address is deliverable (response is identical either way to prevent enumeration)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Accepted' }
+              example: { status: accepted }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /v1/auth/token:
+    post:
+      x-api-id: API-08
+      x-proposed: true
+      tags: [auth]
+      operationId: exchangeToken
+      summary: Exchange a magic-link code or Google ID token for an account session
+      security: [{}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TokenRequest' }
+            examples:
+              magic:
+                value: { grant_type: magic_link, code: ml_7Q2..., device_session: dev_01JB8ZA }
+              refresh:
+                value: { grant_type: google_id_token, id_token: eyJhbGciOiJSUzI1NiJ9... }
+      responses:
+        '200':
+          description: Session upgraded to an account (web - Set-Cookie md_sid rotated; non-browser clients get session_token). The device session's data is merged.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenPair' }
+              example: { scope: user, subject: usr_01JB8ZB, age_band: adult, expires_at: '2027-04-21T03:30:00Z', session_token: null }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /v1/auth/logout:
+    post:
+      x-api-id: API-09
+      x-proposed: true
+      tags: [auth]
+      operationId: logout
+      summary: Revoke tokens; with clear_device=true also wipes local drafts (EC-14 "clear this device")
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                clear_device: { type: boolean, default: false }
+                all_sessions: { type: boolean, default: false }
+      responses:
+        '204': { description: Logged out }
+
+  /v1/helper-links:
+    post:
+      x-api-id: API-58
+      x-proposed: true
+      tags: [auth]
+      operationId: createHelperLink
+      summary: Applicant invites a helper (family member or CSC operator) with recorded consent
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HelperLinkCreate' }
+            example:
+              case_id: cas_01JB8ZC
+              helper_kind: family
+              permissions: [case.read, case.write_answers, learn.read]
+              expires_in_days: 30
+              consent: { purpose: helper_link, notice_version: notice-2026.10.23-hi, granted: true }
+      responses:
+        '201':
+          description: Link created; share the invite code with the helper
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HelperLink' }
+              example:
+                helper_link_id: hlp_01JB8ZD
+                case_id: cas_01JB8ZC
+                helper_kind: family
+                permissions: [case.read, case.write_answers, learn.read]
+                status: pending
+                invite_code: MD-7K4Q-92
+                expires_at: '2026-11-23T00:00:00Z'
+                consent_id: cns_01JB8ZD
+        '403': { $ref: '#/components/responses/Forbidden' }
+    get:
+      x-api-id: API-58
+      x-proposed: true
+      tags: [auth]
+      operationId: listHelperLinks
+      summary: List helper links where the caller is applicant or helper
+      security:
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Links
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HelperLinkPage' }
+  /v1/helper-links/{helperLinkId}:
+    delete:
+      x-api-id: API-58
+      x-proposed: true
+      tags: [auth]
+      operationId: revokeHelperLink
+      summary: Revoke a helper link (EC-25); helper tokens stop working within 60 s
+      security:
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - name: helperLinkId
+          in: path
+          required: true
+          schema: { type: string, pattern: '^hlp_[0-9A-Z]{6,26}$' }
+      responses:
+        '204': { description: Revoked }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/cases:
+    post:
+      x-api-id: API-10
+      tags: [cases]
+      operationId: createCase
+      summary: Start a licence case from a plan (anonymous device session allowed)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CaseCreate' }
+            examples:
+              fromPlan:
+                value: { plan_id: pln_01JB8Z6X3V9Q2K7M4N5P6R7S8T, classes: [MCWG, LMV-NT], path: aadhaar_contactless }
+              midJourney:
+                summary: EC-22 user already holds an LL
+                value:
+                  plan_id: pln_01JB8Z6X3V9Q2K7M4N5P6R7S8T
+                  classes: [MCWG]
+                  path: aadhaar_contactless
+                  existing_ll: { issued_on: '2026-09-10', expires_on: '2027-03-09', classes: [MCWG], number_last4: '4471' }
+      responses:
+        '201':
+          description: Case created
+          headers:
+            Location: { $ref: '#/components/headers/Location' }
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Case' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/cases/{caseId}:
+    get:
+      x-api-id: API-11
+      tags: [cases]
+      operationId: getCase
+      summary: Get a case with its stage and single next action
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+      responses:
+        '200':
+          description: Case
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Case' }
+              example:
+                case_id: cas_01JB8ZC
+                tenant: JK
+                state: BRIDGE
+                stage: S4
+                display_stage: BRIDGE
+                alerts: []
+                path: aadhaar_contactless
+                classes:
+                  - { class_code: MCWG, status: ll_issued }
+                  - { class_code: LMV-NT, status: ll_issued }
+                answers: { residence_district: Jammu, vehicle_owned: false, preferred_office_id: off_jk02 }
+                ll: { issued_on: '2026-10-24', expires_on: '2027-04-23', classes: [MCWG, LMV-NT], number_last4: '4471', source: user_entered }
+                dl: null
+                key_dates: { dl_test_unlock: '2026-11-23', ll_expiry: '2027-04-23', turns_40_on: null }
+                next_action: { action_id: PRACTISE_NAZAR, stage: S4, title_key: next.practise_hazard, due_at: null, deep_link: /bridge/play/nazar }
+                rule_pack_version: 2026.10.0
+                version: 14
+                flags: [helper_linked]
+                server_time: '2026-11-05T04:12:00Z'
+                created_at: '2026-10-24T03:31:00Z'
+                updated_at: '2026-11-05T04:11:58Z'
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      x-api-id: API-12
+      tags: [cases]
+      operationId: autosaveCase
+      summary: Autosave answers (JSON Merge Patch, optimistic concurrency with If-Match)
+      description: |
+        Applies an RFC 7396 merge patch to `answers`. Fields on the prohibited list
+        (Aadhaar number, OTP, captcha, passwords, biometric data) are rejected with
+        `https://margdarshak.example/problems/prohibited-field` even if nested (EC-20).
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: { $ref: '#/components/schemas/CasePatch' }
+            example: { answers: { residence_district: Jammu, blood_group: B+, preferred_language_test: hi } }
+      responses:
+        '200':
+          description: Saved
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Case' }
+        '412': { $ref: '#/components/responses/PreconditionFailed' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+    delete:
+      x-api-id: API-17
+      tags: [cases]
+      operationId: deleteCase
+      summary: Delete a case (soft delete now, hard delete within 30 days; EC-26)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+      responses:
+        '204': { description: Deleted; scheduled timeline events cancelled }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/cases/{caseId}/blockers:
+    get:
+      x-api-id: API-13
+      tags: [cases]
+      operationId: getBlockers
+      summary: Evaluate the edge-case rule rows (EC-01..EC-30) against the case
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+      responses:
+        '200':
+          description: Blockers and warnings
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [case_id, rule_pack_version, blockers]
+                properties:
+                  case_id: { type: string }
+                  rule_pack_version: { type: string }
+                  blockers:
+                    type: array
+                    items: { $ref: '#/components/schemas/Blocker' }
+              example:
+                case_id: cas_01JB8ZC
+                rule_pack_version: 2026.10.0
+                blockers:
+                  - blocker_id: EC-02
+                    severity: warn
+                    title_key: blocker.aadhaar_address_mismatch
+                    fix_key: blocker.fix.non_aadhaar_path_or_update
+                    rule_id: BLK-AADHAAR-ADDR
+                    confidence: medium
+                    provenance: { source_title: TN Transport LL flow PDF, source_url: https://tnsta.gov.in, verified_on: '2026-10-22', confidence: medium, verified: true }
+                  - blocker_id: EC-04
+                    severity: info
+                    title_key: blocker.turns_40_mid_journey
+                    fix_key: blocker.fix.form_1a
+                    rule_id: DOC-FORM1A-40
+                    confidence: high
+                    due_on: '2027-01-12'
+
+  /v1/cases/{caseId}/timeline:
+    get:
+      x-api-id: API-14
+      tags: [cases]
+      operationId: getTimeline
+      summary: Timeline (facts from the event store plus scheduled milestones), server time authoritative (EC-15)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Timeline page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TimelinePage' }
+              example:
+                server_time: '2026-11-05T04:12:00Z'
+                items:
+                  - { event_id: tle_01JB8ZE, kind: fact, code: LL_ISSUED, occurred_at: '2026-10-24T09:00:00Z', status: done, source: user }
+                  - { event_id: tle_01JB8ZF, kind: milestone, code: LL_DAY_25_PREP, due_at: '2026-11-18T01:00:00Z', status: scheduled, rule_id: TL-LL-MIN-WAIT, idempotency_key: 'cas_01JB8ZC:LL_DAY_25_PREP:2026-11-18' }
+                  - { event_id: tle_01JB8ZG, kind: deadline, code: LL_EXPIRY, due_at: '2027-04-23T18:29:59Z', status: scheduled, rule_id: TL-LL-VALIDITY }
+                next_cursor: null
+
+  /v1/cases/{caseId}/events:
+    post:
+      x-api-id: API-15
+      tags: [cases]
+      operationId: recordCaseEvent
+      summary: Record a status update (appended to the case event store; recomputes stage and timeline)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CaseEventCreate' }
+            examples:
+              llIssued:
+                value: { type: ll_issued, occurred_on: '2026-10-24', payload: { classes: [MCWG, LMV-NT], number_last4: '4471' } }
+              testFailed:
+                value: { type: test_failed, occurred_on: '2026-11-25', payload: { test: dl, class_code: MCWG, reason_codes: [TT_FOOT_DOWN], office_id: off_jk02 } }
+      responses:
+        '201':
+          description: Event appended
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CaseEventResult' }
+              example:
+                event: { seq: 7, type: test_failed, occurred_on: '2026-11-25', recorded_at: '2026-11-25T10:02:11Z' }
+                case: { case_id: cas_01JB8ZC, state: TEST_FAILED, stage: S6F, version: 15 }
+                timeline_changes:
+                  scheduled: [RETEST_ELIGIBLE]
+                  cancelled: [TEST_EVE]
+                warnings: [ { blocker_id: EC-07, severity: warn, title_key: blocker.ll_expires_before_retest_window, fix_key: blocker.fix.book_within_validity, rule_id: TL-LL-VALIDITY, confidence: high } ]
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/cases/{caseId}/handoff:
+    get:
+      x-api-id: API-16
+      tags: [cases]
+      operationId: getHandoff
+      summary: Sarathi hand-off pack (Mode A copy-pack/prefill today; Mode B adapter when a state adopts)
+      description: |
+        Aadhaar eKYC, OTP, payment and submission always happen on Sarathi or the state gateway,
+        never in Margdarshak (D-07). The pack never contains an Aadhaar number. Per brief section 15 the server returns the
+        template only (field order, labels, non-personal values); name, relation name and address
+        come from the on-device vault.
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+        - name: step
+          in: query
+          required: false
+          schema: { type: string, enum: [ll_application, dl_application, slot_booking, fee_payment] }
+      responses:
+        '200':
+          description: Hand-off pack
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HandoffPack' }
+              example:
+                case_id: cas_01JB8ZC
+                step: ll_application
+                mode: A
+                adapter: deeplink
+                simulated: false
+                target_url: https://sarathi.parivahan.gov.in/
+                prohibited_note_key: handoff.never_share_otp_with_us
+                steps:
+                  - order: 1
+                    screen_hint_key: handoff.sarathi.select_state
+                    fields: [ { label_key: field.state, vault_key: null, value: Jammu and Kashmir, copyable: true } ]
+                  - order: 2
+                    screen_hint_key: handoff.sarathi.personal_details
+                    fields: [ { label_key: field.applicant_name, vault_key: vault.name, value: null, copyable: true }, { label_key: field.relation_name, vault_key: vault.relation_name, value: null, copyable: true } ]
+                  - order: 3
+                    screen_hint_key: handoff.sarathi.aadhaar_ekyc_on_sarathi
+                    fields: []
+                    note_key: handoff.ekyc_happens_on_sarathi
+                  - order: 4
+                    screen_hint_key: handoff.sarathi.class_selection
+                    fields: [ { label_key: field.classes, vault_key: null, value: 'MCWG, LMV-NT', copyable: true } ]
+                expires_at: '2026-10-24T05:31:00Z'
+
+  /v1/cases/{caseId}/identity/aadhaar-offline:
+    post:
+      x-api-id: API-18
+      x-proposed: true
+      tags: [cases]
+      operationId: verifyAadhaarOffline
+      summary: Verify an Aadhaar Secure QR or Paperless Offline e-KYC XML signature (offline only, never eKYC)
+      description: |
+        **Mock-only in Margdarshak** (F-56): real Secure QR / Paperless XML verification brings
+        OVSE duties, so in government mode the state runs it and the adapter calls the state's
+        service. Tenant flag `aadhaar_offline` is `mock` or `state_service`. In the mock the artefact is
+        processed in memory, its UIDAI signature is checked against the published UIDAI
+        certificate, and only derived booleans are kept: `signature_valid`, `age_band`,
+        `address_state_matches`, `dob_precision` and a salted hash of the reference ID.
+        The artefact, photo, name and address are discarded. No Aadhaar number is ever read,
+        accepted or stored.
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [kind, artefact, consent_id]
+              properties:
+                kind: { type: string, enum: [secure_qr, paperless_xml_zip] }
+                artefact:
+                  type: string
+                  contentMediaType: application/octet-stream
+                  description: QR payload bytes or the ZIP; max 2 MB
+                share_code:
+                  type: string
+                  description: ZIP share phrase (paperless XML only); used in memory, never stored or logged
+                  writeOnly: true
+                consent_id: { type: string }
+      responses:
+        '200':
+          description: Verification verdict (derived facts only)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AadhaarOfflineVerdict' }
+              example: { signature_valid: true, age_band: '18_19', dob_precision: year_only, address_state_matches: false, reference_hash: 'sha256:9f2c...', simulated: true, retained_fields: [signature_valid, age_band, dob_precision, address_state_matches, reference_hash] }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/cases/{caseId}/payment-intents:
+    post:
+      x-api-id: API-19
+      x-proposed: true
+      tags: [cases]
+      operationId: createPaymentIntent
+      summary: Get a redirect to the state's own gateway or Sarathi payment page (we never collect government fees)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quote_id]
+              properties:
+                quote_id: { type: string }
+                return_path: { type: string, default: /case/payment-return }
+      responses:
+        '201':
+          description: Redirect issued
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaymentIntent' }
+              example:
+                payment_intent_id: pay_01JB8ZH
+                adapter: sarathi_redirect
+                redirect_url: https://sarathi.parivahan.gov.in/
+                amount_paise: 90000
+                collected_by: state_gateway
+                status: redirected
+                pending_guidance_key: payment.pending.do_not_pay_twice
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /v1/checks/photo:
+    post:
+      x-api-id: API-20
+      tags: [documents]
+      operationId: recordPhotoCheck
+      summary: Record photo/signature check metadata (the check runs on device; no image uploaded)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PhotoCheckCreate' }
+            example: { case_id: cas_01JB8ZC, item: photo, spec_id: sarathi-photo-secondary-2026, width_px: 420, height_px: 525, bytes: 38211, format: jpeg, face_detected: true, background_ok: true, passed: true, issues: [] }
+      responses:
+        '201':
+          description: Recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DocumentCheck' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/integrations/digilocker/authorize:
+    get:
+      x-api-id: API-21
+      x-proposed: true
+      tags: [documents]
+      operationId: digilockerAuthorize
+      summary: Start DigiLocker OAuth 2.0 + PKCE consent (mock in hackathon; NeGD requester onboarding needed)
+      security:
+        - userBearer: [user]
+      parameters:
+        - name: case_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: doctypes
+          in: query
+          required: false
+          schema: { type: string, default: DRVLC }
+          description: Comma-separated DigiLocker doctypes (req_doctype). Only DRVLC is used.
+      responses:
+        '302':
+          description: Redirect to the DigiLocker consent screen (or the mock consent screen)
+          headers:
+            Location: { $ref: '#/components/headers/Location' }
+  /v1/integrations/digilocker/callback:
+    get:
+      x-api-id: API-22
+      x-proposed: true
+      tags: [documents]
+      operationId: digilockerCallback
+      summary: OAuth callback; pulls the issued DL and stores only the mirror facts (E-05)
+      security: [{}]
+      parameters:
+        - { name: code, in: query, required: true, schema: { type: string } }
+        - { name: state, in: query, required: true, schema: { type: string } }
+      responses:
+        '302':
+          description: Back to the app with result
+          headers:
+            Location: { $ref: '#/components/headers/Location' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /v1/offices:
+    get:
+      x-api-id: API-25
+      tags: [offices]
+      operationId: listOffices
+      summary: RTOs, ARTOs, accredited centres and CSCs
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/StateQuery'
+        - { name: kind, in: query, required: false, schema: { $ref: '#/components/schemas/OfficeKind' } }
+        - { name: near, in: query, required: false, schema: { type: string, pattern: '^-?\d{1,2}\.\d{1,6},-?\d{1,3}\.\d{1,6}$' }, description: 'lat,lng rounded on the client to 2 decimals (about 1 km)' }
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Offices
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OfficePage' }
+              example:
+                items:
+                  - office_id: off_jk02
+                    kind: rto
+                    code: JK02
+                    name: RTO Jammu
+                    district: Jammu
+                    location: { lat: 32.73, lng: 74.86 }
+                    tracks: [eight_track, s_track]
+                    test_mode: manual
+                    sample_data: true
+                next_cursor: null
+
+  /v1/offices/{officeId}/slots:
+    get:
+      x-api-id: API-26
+      tags: [offices]
+      operationId: listSlots
+      summary: Slot availability from SlotPort (mock or crowd-reported; never scraped)
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/OfficeId'
+        - { name: kind, in: query, required: true, schema: { type: string, enum: [ll_test, dl_test] } }
+        - { name: from, in: query, required: false, schema: { type: string, format: date } }
+        - { name: to, in: query, required: false, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Slots
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [office_id, source, items]
+                properties:
+                  office_id: { type: string }
+                  source: { type: string, enum: [mock, crowd_reported, adapter] }
+                  as_of: { type: string, format: date-time }
+                  items: { type: array, items: { $ref: '#/components/schemas/Slot' } }
+              example:
+                office_id: off_jk02
+                source: mock
+                as_of: '2026-11-18T03:00:00Z'
+                items:
+                  - { slot_id: slt_01JB8ZJ, office_id: off_jk02, kind: dl_test, date: '2026-11-24', window: '10:00-13:00', capacity_band: some, source: mock, sample_data: true }
+
+  /v1/slot-watches:
+    post:
+      x-api-id: API-27
+      tags: [offices]
+      operationId: createSlotWatch
+      summary: Notify me if an earlier slot is reported (reminder only; no booking bot)
+      security:
+        - userBearer: [user]
+        - deviceSession: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SlotWatchCreate' }
+            example: { case_id: cas_01JB8ZC, office_ids: [off_jk02, off_jk_adtc1], kind: dl_test, earliest: '2026-11-23', latest: '2027-04-16', channels: [whatsapp, web_push] }
+      responses:
+        '201':
+          description: Watch created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SlotWatch' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /v1/slot-watches/{slotWatchId}:
+    delete:
+      x-api-id: API-27
+      tags: [offices]
+      operationId: deleteSlotWatch
+      summary: Stop a slot watch
+      security:
+        - userBearer: [user]
+        - deviceSession: []
+      parameters:
+        - { name: slotWatchId, in: path, required: true, schema: { type: string } }
+      responses:
+        '204': { description: Deleted }
+
+  /v1/offices/{officeId}/reports:
+    post:
+      x-api-id: API-28
+      tags: [offices]
+      operationId: createRtoReport
+      summary: Submit a structured RTO Live Intel report (no free text, no names; moderated)
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/OfficeId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RtoReportCreate' }
+            example:
+              visited_on: '2026-11-24'
+              report_type: visit
+              slot_release_seen: { weekday: mon, time_band: '09:00-10:00' }
+              documents_asked: [ll_printout, rc, insurance, puc, aadhaar_physical]
+              track_checked: [eight_track]
+              wait_minutes_band: '60_120'
+      responses:
+        '202':
+          description: Accepted for moderation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RtoReport' }
+              example: { report_id: rpt_01JB8ZK, office_id: off_jk02, status: pending_moderation, report_type: visit, created_at: '2026-11-24T08:00:00Z' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /v1/offices/{officeId}/intel:
+    get:
+      x-api-id: API-29
+      tags: [offices]
+      operationId: getOfficeIntel
+      summary: Aggregated Live Intel (a field is shown only when k >= 5 reports in 30 days)
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/OfficeId'
+      responses:
+        '200':
+          description: Intel summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OfficeIntel' }
+              example:
+                office_id: off_jk02
+                window_days: 30
+                k_threshold: 5
+                fields:
+                  - { field: slot_release_time, value: { weekday: mon, time_band: '09:00-10:00' }, n: 7, last_reported_at: '2026-11-24T08:00:00Z', sample_data: true }
+                  - { field: documents_asked, value: [ll_printout, rc, insurance, puc], n: 9, sample_data: true }
+                suppressed_fields: [track_checked]
+                corruption_reporting:
+                  label_key: intel.report_corruption_elsewhere
+                  links: [ { name: CPGRAMS, url: https://pgportal.gov.in } ]
+
+  /v1/learn/modules:
+    get:
+      x-api-id: API-30
+      tags: [learn]
+      operationId: listModules
+      summary: LL syllabus and road-safety modules (M1..M22) with content depth per class
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/AcceptLanguage'
+        - { name: class_code, in: query, required: false, schema: { $ref: '#/components/schemas/VehicleClassCode' } }
+      responses:
+        '200':
+          description: Modules
+          headers:
+            ETag: { $ref: '#/components/headers/ETag' }
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [content_version, modules]
+                properties:
+                  content_version: { type: string }
+                  modules: { type: array, items: { $ref: '#/components/schemas/LearnModule' } }
+
+  /v1/learn/review-queue:
+    get:
+      x-api-id: API-31
+      tags: [learn]
+      operationId: getReviewQueue
+      summary: FSRS due cards (server mirror of the on-device ts-fsrs schedule)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Due cards
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, server_time]
+                properties:
+                  server_time: { type: string, format: date-time }
+                  items: { type: array, items: { $ref: '#/components/schemas/ReviewItem' } }
+
+  /v1/learn/answers:
+    post:
+      x-api-id: API-32
+      tags: [learn]
+      operationId: submitAnswers
+      summary: Submit answers in batch (offline queue sync; deduplicated by client_answer_id)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  type: array
+                  maxItems: 200
+                  items: { $ref: '#/components/schemas/AnswerSubmission' }
+            example:
+              answers:
+                - { client_answer_id: ans_01JB8ZL, card_id: sign.no_overtaking, question_id: q_sign_014, variant_id: v3, option_id: b, confidence: '100', latency_ms: 6400, answered_at: '2026-11-02T14:10:00Z', mode: practice }
+      responses:
+        '200':
+          description: Results and updated card states
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [results]
+                properties:
+                  results: { type: array, items: { $ref: '#/components/schemas/AnswerResult' } }
+
+  /v1/readiness:
+    get:
+      x-api-id: API-33
+      tags: [learn]
+      operationId: getReadiness
+      summary: Test Readiness Score = 100 x weighted topic mastery - calibration penalty (advisory gate at 85)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - { name: case_id, in: query, required: false, schema: { type: string } }
+      responses:
+        '200':
+          description: Readiness
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Readiness' }
+              example:
+                score: 78
+                knowledge: 84
+                calibration_penalty: 6
+                display_key: readiness.formula
+                topics:
+                  - { topic_id: signs, weight: 0.25, mastery: 0.91, coverage: 0.95 }
+                  - { topic_id: rules_of_road, weight: 0.25, mastery: 0.82, coverage: 0.9 }
+                  - { topic_id: hand_signals, weight: 0.25, mastery: 0.71, coverage: 0.8 }
+                  - { topic_id: documents_mv_act, weight: 0.25, mastery: 0.92, coverage: 1.0 }
+                weights_source: equal_default_topic_mix_unknown
+                brier: 0.21
+                gate: { threshold: 85, met: false, advisory: true, book_anyway_visible: true }
+                road_readiness: { nazar_score: 64, nodes: { M1: mastered, M4: learning, M6: learning } }
+
+  /v1/games/{gameId}/sessions:
+    post:
+      x-api-id: API-34
+      tags: [games]
+      operationId: startGameSession
+      summary: Start a game session; server issues seed, items and manifest version (adults only)
+      description: Under-18 users play locally with no server session, no telemetry, no streaks and no AI (D-13, brief section 15); this endpoint returns 403 `https://margdarshak.example/problems/minor-local-only` for them.
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/GameId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GameSessionCreate' }
+            example: { mode: mock, difficulty: null, a11y_modes: [no_audio], device_class: low, offline_started_at: null }
+      responses:
+        '201':
+          description: Session started
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GameSessionStart' }
+              example:
+                session_id: 0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f
+                game_id: nazar
+                manifest_version: 1.3.0
+                scoring_version: 1.3.0
+                seed: 734119
+                difficulty: 3
+                mode: mock
+                items: [ { item_ref: clip_jk_0042, kind: clip, asset_url: 'https://media.margdarshak.example/c/clip_jk_0042_360p.mp4', sha256: 'ab12...', bytes: 2483112 } ]
+                ctx: { user_band: adult, locale: hi, offline: false }
+                label_key: game.familiarisation_not_certification
+                expires_at: '2026-11-02T15:10:00Z'
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/games/sessions/{sessionId}/complete:
+    post:
+      x-api-id: API-35
+      tags: [games]
+      operationId: completeGameSession
+      summary: Submit client result + replay; server replays with game-core and overwrites the score
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GameSessionComplete' }
+      responses:
+        '200':
+          description: Server-checked result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CheckedSessionResult' }
+              example:
+                session_id: 0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f
+                game_id: nazar
+                server_checked: true
+                client_score_pct: 71
+                server_score_pct: 64
+                mismatch: true
+                score:
+                  raw: 64
+                  max: 100
+                  pct: 64
+                  passed: true
+                  components: [ { id: clip_jk_0042, value: 6, max: 10, weight: 1, explainKey: nazar.clip_score } ]
+                findings:
+                  - { findingId: NAZ_LATE_RESPONSE, severity: 0.8, ruleIds: [PED-BUS-STOP], skillId: M18, facts: { late_s: 1.4, speed_kmh: 40, metres: 16, hazard_type: bus_stop_pedestrian }, itemRef: clip_jk_0042 }
+                integrity: { flags: [replay_mismatch_corrected], trust: 0.82, timingMode: rvfc }
+                xp_awarded: 26
+                debrief: { debrief_id: dbf_01JB8ZM, status: template_ready, url: /v1/games/sessions/0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f/debrief }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+
+  /v1/games/sessions/{sessionId}/debrief:
+    get:
+      x-api-id: API-36
+      tags: [games]
+      operationId: getDebrief
+      summary: Debrief card (template immediately; AI narration when ready and allowed)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/AcceptLanguage'
+      responses:
+        '200':
+          description: Debrief
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Debrief' }
+              example:
+                debrief_id: dbf_01JB8ZM
+                session_id: 0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f
+                status: ai_ready
+                source: ai
+                label_key: debrief.coach_notes
+                locale: hinglish
+                how_you_did: 'Aapne 10 mein se 6 clips time par pakdi.'
+                where_you_lacked:
+                  - { finding_id: NAZ_LATE_RESPONSE, rule_id: PED-BUS-STOP, text: 'Bus ke peeche se aadmi nikla, aapne 1.4 s der se dekha, yaani ≈ 16 m aage.' }
+                what_you_could_have_done:
+                  - { finding_id: NAZ_LATE_RESPONSE, rule_id: PED-BUS-STOP, text: 'Ruki hui bus dikhe to speed kam karein aur uske aage dekhte rahein.' }
+                next_drill: { drill_id: nazar.learn.bus_stop, why: 'Isi tarah ke khatre par occlusion practice.', deep_link: /learn/nazar?drill=bus_stop }
+                rules: [ { rule_id: PED-BUS-STOP, text: '...', source_url: https://morth.nic.in, verified_on: '2026-10-22' } ]
+                validator: { passed: true, attempts: 1, violations: [] }
+        '202':
+          description: Debrief not yet available (template being rendered); poll with Retry-After
+          headers:
+            Retry-After: { $ref: '#/components/headers/RetryAfter' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/nazar/clips:
+    get:
+      x-api-id: API-37
+      tags: [games]
+      operationId: listNazarClips
+      summary: Published Nazar clip manifest (blurred, CC-BY 4.0) for offline packs
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/StateQuery'
+        - { name: resolution, in: query, required: false, schema: { type: string, enum: ['360p', '480p'], default: '360p' } }
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Clip manifest page (hazard windows are never included; scoring happens server-side)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ClipPage' }
+
+  /v1/me/achievements:
+    get:
+      x-api-id: API-38
+      tags: [games]
+      operationId: getAchievements
+      summary: XP, rank, badges and weekly streak (adults only; under-18 returns rules-only stub)
+      security:
+        - userBearer: [user]
+      responses:
+        '200':
+          description: Achievements
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Achievement' }
+              example:
+                xp_total: 1240
+                xp_today: 85
+                xp_multiplier_today: 0.5
+                rank: mohalla
+                rank_requirements: { next: shehar, missing_nodes: [M6] }
+                badges: [ { badge_id: calibrated, awarded_at: '2026-11-03T10:00:00Z', self_declared: false }, { badge_id: khud_licence, awarded_at: null, self_declared: true } ]
+                streak: { weekly_goal: 4, this_week: 3, weeks: 5, freeze_tokens: 1, archived: false }
+
+  /v1/squads:
+    post:
+      x-api-id: API-39
+      tags: [games]
+      operationId: createSquad
+      summary: Create a co-op squad of 3-5 friends (adults only; under-18 users get no squads)
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SquadCreate' }
+            example: { name: GCET Riders, weekly_goal_sessions: 15 }
+      responses:
+        '201':
+          description: Squad created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Squad' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /v1/squads/{squadId}/join:
+    post:
+      x-api-id: API-39
+      tags: [games]
+      operationId: joinSquad
+      summary: Join a squad with an invite code (adults only)
+      security:
+        - userBearer: [user]
+      parameters:
+        - { name: squadId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [invite_code], properties: { invite_code: { type: string } } }
+      responses:
+        '201':
+          description: Joined
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Squad' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /v1/voice:
+    get:
+      x-api-id: API-40
+      tags: [ai]
+      operationId: openVoiceSocket
+      summary: WebSocket upgrade for the ADK live voice guide (18+, consent ai_voice)
+      description: |
+        Get a ticket from `POST /v1/voice/ticket`, open the socket, and send
+        `{type: "hello", v: 1, locale, screen, caseId?, token: <ticket>}` as the first frame. Client frames: `VoiceClientMessage` (JSON control) and binary 16-bit PCM 16 kHz mono
+        audio. Server frames: `VoiceServerMessage` (JSON) and binary 24 kHz PCM audio.
+        Max session 10 minutes (Gemini Live connection lifetime); 10 min/user/month on the
+        free plan. The agent can navigate and fill non-sensitive fields inside Margdarshak
+        only; it never submits, pays or books on Sarathi.
+      security:
+        - userBearer: [user]
+      parameters:
+        - { name: case_id, in: query, required: false, schema: { type: string } }
+        - { name: lang, in: query, required: false, schema: { type: string, enum: [hi, en, doi] } }
+      responses:
+        '101': { description: Switching protocols }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '426': { description: Upgrade required }
+
+  /v1/voice/ticket:
+    post:
+      x-api-id: API-40
+      tags: [ai]
+      operationId: createVoiceTicket
+      summary: Short-lived (60 s, single-use) WebSocket ticket for API-40 (cookies are not relied on for WS auth)
+      security:
+        - userBearer: [user]
+      responses:
+        '201':
+          description: Ticket
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ticket, expires_at]
+                properties:
+                  ticket: { type: string }
+                  expires_at: { type: string, format: date-time }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /v1/tutor/explain:
+    post:
+      x-api-id: API-41
+      tags: [ai]
+      operationId: explainAnswer
+      summary: Explain the user's wrong answer from reviewed content (TutorAgent, grounded)
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/AcceptLanguage'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TutorExplainRequest' }
+            example: { question_id: q_sign_014, variant_id: v3, chosen_option_id: b, locale: hi }
+      responses:
+        '200':
+          description: Explanation (reviewed text plus optional AI glue without digits)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TutorExplanation' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /v1/decode/screenshot:
+    post:
+      x-api-id: API-42
+      tags: [ai]
+      operationId: decodeScreenshot
+      summary: Sarathi status screenshot -> catalogue entry + next step (ScreenDecoderAgent)
+      description: The client blurs name regions and Aadhaar-pattern boxes on device before upload. Image is processed in memory and not stored.
+      security:
+        - userBearer: [user]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image: { type: string, contentMediaType: image/jpeg, description: '<= 1024 px longest side, <= 1 MB' }
+                case_id: { type: string }
+      responses:
+        '200':
+          description: Decoded result (user must confirm before it changes the case)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ScreenDecode' }
+              example:
+                catalogue_id: SAR_STAGE_SCRUTINY
+                confidence: 0.86
+                doc_kind: sarathi_status
+                stage: scrutiny
+                classes: [ { class_code: MCWG, result: UNKNOWN } ]
+                remark_raw: 'Application pending at Scrutiny'
+                meaning_key: decode.scrutiny.meaning
+                next_steps: [ { step_key: decode.scrutiny.wait_then_escalate, due_on: '2026-12-09', rule_id: RTS-JK-DL } ]
+                confirm_required: true
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '413': { description: Image too large }
+
+  /v1/scam/check:
+    post:
+      x-api-id: API-43
+      tags: [ai]
+      operationId: checkScam
+      summary: Scam checker; rules decide (allowlist, APK rule, fee table), AI only explains red flags
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ScamCheckRequest' }
+            example: { text: 'Aapka e-challan pending hai. Download karein: echallan-pay.apk', sender: '+919000000000' }
+      responses:
+        '200':
+          description: Verdict (never "safe")
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ScamVerdict' }
+              example:
+                verdict: likely_scam
+                red_flags: [apk_link, non_allowlisted_domain, urgency]
+                domain_checks: [ { host: echallan-pay.apk, allowlisted: false } ]
+                explanation_source: template
+                explanation: 'APK file bhejna kisi sarkari service ka tareeka nahi hai. Ise install na karein.'
+                guidance_key: scam.use_parivahan_gov_in_only
+                rules_version: scam-rules-2026.10.23
+
+  /v1/cases/{caseId}/letters:
+    post:
+      x-api-id: API-45
+      tags: [records]
+      operationId: draftLetter
+      summary: Draft an escalation or RTI s.6 letter from facts (user reviews and sends; we never file)
+      security:
+        - userBearer: [user]
+        - userBearer: [helper]
+      parameters:
+        - $ref: '#/components/parameters/CaseId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LetterCreate' }
+            example: { kind: escalation, language: en, recipient_office_id: off_jk02 }
+      responses:
+        '201':
+          description: Draft created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Letter' }
+
+  /v1/me/practice-record:
+    get:
+      x-api-id: API-46
+      tags: [records]
+      operationId: getPracticeRecord
+      summary: User-held Practice Record (facts counted in-app only; never described as verified or certified)
+      security:
+        - userBearer: [user]
+      parameters:
+        - { name: format, in: query, required: false, schema: { type: string, enum: [json, pdf], default: json } }
+      responses:
+        '200':
+          description: Practice Record
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PracticeRecord' }
+            application/pdf:
+              schema: { type: string, contentMediaType: application/pdf }
+
+  /v1/check/practice-record/{token}:
+    get:
+      x-api-id: API-47
+      tags: [records]
+      operationId: checkPracticeRecord
+      summary: Public QR check page data - does this Practice Record match what Margdarshak counted in-app
+      security: [{}]
+      parameters:
+        - { name: token, in: path, required: true, schema: { type: string, pattern: '^pr_[A-Za-z0-9_-]{16,64}$' } }
+      responses:
+        '200':
+          description: Signature and summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PracticeRecordCheck' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '410': { description: Revoked or expired by the holder }
+
+  /v1/me/practice-record/tokens/{token}:
+    delete:
+      x-api-id: API-48
+      tags: [records]
+      operationId: revokePracticeRecordToken
+      summary: Holder revokes a shared Practice Record QR token (API-47 then returns 410)
+      security:
+        - userBearer: [user]
+      parameters:
+        - { name: token, in: path, required: true, schema: { type: string, pattern: '^pr_[A-Za-z0-9_-]{16,64}$' } }
+      responses:
+        '204': { description: Revoked }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /v1/me/signoff-requests:
+    post:
+      x-api-id: API-49
+      tags: [records]
+      operationId: requestSignOff
+      summary: Ask a school or a supervisor to sign off practice entries (attributed, separate from in-app facts)
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SignOffRequestCreate' }
+            example: { practice_log_ids: [plg_01JB8ZR, plg_01JB8ZS], signer_kind: school, school_id: sch_jk_017, consent_id: cns_01JB8ZN }
+      responses:
+        '201':
+          description: Request sent (school via the School Pro inbox; supervisor via a one-time link)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SignOffRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /v1/me/declarations/khud-licence:
+    post:
+      x-api-id: API-44
+      tags: [records]
+      operationId: declareKhudLicence
+      summary: Self-declare "got my DL without an agent" (Khud Licence badge, always shown as self-declared)
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/KhudLicenceDeclaration' }
+            example: { case_id: cas_01JB8ZC, dl_issued_on: '2026-12-02', no_agent_used: true, first_attempt_pass: true }
+      responses:
+        '201':
+          description: Declaration stored; badges awarded with self_declared=true
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Achievement' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /v1/share-cards/{kind}/{id}.png:
+    get:
+      x-api-id: API-57
+      tags: [games]
+      operationId: getShareCard
+      summary: Server-rendered share card image (scores recomputed server-side; no PII, no RTO, no dates)
+      security: [{}]
+      parameters:
+        - { name: kind, in: path, required: true, schema: { type: string, enum: [nazar, readiness, badge, squad] } }
+        - { name: id, in: path, required: true, schema: { type: string, pattern: '^[A-Za-z0-9_-]{6,32}$' }, description: Opaque short ID created when the user chooses to share }
+      responses:
+        '200':
+          description: PNG (1200x630) with Open Graph-friendly caching
+          headers:
+            Cache-Control: { $ref: '#/components/headers/CacheControl' }
+          content:
+            image/png:
+              schema: { type: string, contentMediaType: image/png }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '410': { description: Card withdrawn by the user }
+
+  /v1/schools:
+    get:
+      x-api-id: API-50
+      tags: [ecosystem]
+      operationId: listSchools
+      summary: Driving schools and ADTCs (paid listings labelled "Sponsored")
+      security: [{}]
+      parameters:
+        - $ref: '#/components/parameters/StateQuery'
+        - { name: offers_test_vehicle, in: query, required: false, schema: { type: boolean } }
+        - { name: class_code, in: query, required: false, schema: { $ref: '#/components/schemas/VehicleClassCode' } }
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Schools
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SchoolPage' }
+
+  /v1/schools/{schoolId}/bookings:
+    post:
+      x-api-id: API-51
+      tags: [ecosystem]
+      operationId: createBooking
+      summary: Request a lesson or test-day vehicle from a school (lead routed by n8n W7; no payment)
+      security:
+        - userBearer: [user]
+      parameters:
+        - { name: schoolId, in: path, required: true, schema: { type: string } }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BookingCreate' }
+            example: { kind: test_vehicle, class_code: MCWG, preferred_date: '2026-11-24', consent_id: cns_01JB8ZN, case_id: cas_01JB8ZC }
+      responses:
+        '202':
+          description: Request sent to school; awaiting acceptance
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+
+  /v1/school/learners:
+    get:
+      x-api-id: API-52
+      tags: [ecosystem]
+      operationId: schoolListLearners
+      summary: School Pro - learners who consented to share progress
+      security:
+        - userBearer: [school]
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Learners
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SchoolLearnerPage' }
+  /v1/school/practice-logs/{practiceLogId}/sign-off:
+    post:
+      x-api-id: API-52
+      tags: [ecosystem]
+      operationId: schoolSignOffPractice
+      summary: School Pro - attributed sign-off of a supervised practice entry
+      security:
+        - userBearer: [school]
+      parameters:
+        - { name: practiceLogId, in: path, required: true, schema: { type: string } }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instructor_name, decision]
+              properties:
+                instructor_name: { type: string, maxLength: 80 }
+                decision: { type: string, enum: [signed, rejected] }
+      responses:
+        '200':
+          description: Signed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PracticeLog' }
+  /v1/school/hazard-training-log:
+    get:
+      x-api-id: API-52
+      tags: [ecosystem]
+      operationId: schoolHazardTrainingLog
+      summary: School Pro - hazard-training log export for RTO inspections (Kerala use case)
+      security:
+        - userBearer: [school]
+      parameters:
+        - { name: from, in: query, required: true, schema: { type: string, format: date } }
+        - { name: to, in: query, required: true, schema: { type: string, format: date } }
+        - { name: format, in: query, required: false, schema: { type: string, enum: [json, csv, pdf], default: json } }
+      responses:
+        '200':
+          description: Log rows (pseudonymous learner codes)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  school_id: { type: string }
+                  rows:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        learner_code: { type: string }
+                        date: { type: string, format: date }
+                        minutes: { type: integer }
+                        game_id: { $ref: '#/components/schemas/GameId' }
+                        server_score_pct: { type: number }
+
+  /v1/console/stalls:
+    get:
+      x-api-id: API-53
+      tags: [ecosystem]
+      operationId: consoleStalls
+      summary: State console - where cases stall, per office and stage (aggregated, k >= 10)
+      security:
+        - userBearer: [console]
+      parameters:
+        - $ref: '#/components/parameters/StateQuery'
+        - { name: from, in: query, required: true, schema: { type: string, format: date } }
+        - { name: to, in: query, required: true, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Stall report
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConsoleStallReport' }
+  /v1/console/fail-reasons:
+    get:
+      x-api-id: API-53
+      tags: [ecosystem]
+      operationId: consoleFailReasons
+      summary: State console - self-reported fail reasons per office (no examiner identities)
+      security:
+        - userBearer: [console]
+      parameters:
+        - $ref: '#/components/parameters/StateQuery'
+        - { name: office_id, in: query, required: false, schema: { type: string } }
+      responses:
+        '200':
+          description: Aggregated reasons
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConsoleAggregate' }
+  /v1/console/demand:
+    get:
+      x-api-id: API-53
+      tags: [ecosystem]
+      operationId: consoleDemand
+      summary: State console - demand forecast (cases reaching DL-test unlock per week) and query deflection
+      security:
+        - userBearer: [console]
+      parameters:
+        - $ref: '#/components/parameters/StateQuery'
+        - { name: weeks, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 26, default: 8 } }
+      responses:
+        '200':
+          description: Forecast
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConsoleAggregate' }
+
+  /v1/admin/rulepacks:
+    get:
+      x-api-id: API-54
+      tags: [ecosystem]
+      operationId: listRulePacks
+      summary: Rule-pack studio - list packs and versions
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/StateQuery'
+      responses:
+        '200':
+          description: Packs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/RulePackVersion' } }
+    post:
+      x-api-id: API-54
+      tags: [ecosystem]
+      operationId: createRulePackDraft
+      summary: Rule-pack studio - create a draft version (maker)
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RulePackDraftCreate' }
+      responses:
+        '201':
+          description: Draft created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RulePackVersion' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /v1/admin/rulepacks/{packId}/versions/{version}/submit:
+    post:
+      x-api-id: API-54
+      tags: [ecosystem]
+      operationId: submitRulePack
+      summary: Maker submits a draft for checking (runs schema + golden tests)
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/PackId'
+        - $ref: '#/components/parameters/PackVersion'
+      responses:
+        '200':
+          description: Submitted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RulePackVersion' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /v1/admin/rulepacks/{packId}/versions/{version}/approve:
+    post:
+      x-api-id: API-54
+      tags: [ecosystem]
+      operationId: approveRulePack
+      summary: Checker approves and publishes (checker must differ from maker); triggers EC-27 re-evaluation
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/PackId'
+        - $ref: '#/components/parameters/PackVersion'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { type: string, enum: [approve, reject] }
+                comment: { type: string, maxLength: 500 }
+                effective_from: { type: string, format: date }
+      responses:
+        '200':
+          description: Decision recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RulePackVersion' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /v1/admin/clips:
+    post:
+      x-api-id: API-55
+      tags: [ecosystem]
+      operationId: registerClip
+      summary: Clip admin - register an uploaded raw clip and start the clip_ingest workflow
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClipRegister' }
+            example: { raw_object_key: raw/2026-10-24/jammu_bypass_0042.mp4, state: JK, filmed_by: passenger, filmed_on: '2026-10-23', road_type: urban_arterial, licence: CC-BY-4.0, contributor_consent_id: cns_01JB8ZP }
+      responses:
+        '202':
+          description: Ingest workflow started
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Clip' }
+  /v1/admin/clips/{clipId}:
+    get:
+      x-api-id: API-55
+      tags: [ecosystem]
+      operationId: getClipAdmin
+      summary: Clip admin - status, proposals, ratings, agreement, workflow run IDs
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/ClipId'
+      responses:
+        '200':
+          description: Clip
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Clip' }
+  /v1/admin/clips/{clipId}/ratings:
+    post:
+      x-api-id: API-55
+      tags: [ecosystem]
+      operationId: rateClip
+      summary: Clip admin - a rater submits hazard windows (two independent raters; the two-rater wait is handled in n8n W08, which then calls API-67 to start clip_finalize)
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/ClipId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClipRatingCreate' }
+            example:
+              blur_audit_passed: true
+              hazards:
+                - { hazard_type: bus_stop_pedestrian, onset_ms: 23400, offset_ms: 27900, speed_kmh_est: 40 }
+      responses:
+        '201':
+          description: Rating stored; n8n W08 is notified and starts clip_finalize via API-67 once both ratings exist
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ClipRating' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /v1/admin/clips/{clipId}/publish:
+    post:
+      x-api-id: API-55
+      tags: [ecosystem]
+      operationId: publishClip
+      summary: Clip admin - publish after agreement passes and blur audit is 100% (never automatic from AI)
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/ClipId'
+      responses:
+        '200':
+          description: Published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Clip' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /v1/admin/intel/reports/{reportId}/decision:
+    post:
+      x-api-id: API-56
+      x-proposed: true
+      tags: [ecosystem]
+      operationId: moderateReport
+      summary: Moderator decision on an RTO Live Intel report
+      security:
+        - userBearer: [admin]
+      parameters:
+        - { name: reportId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision, reason_code]
+              properties:
+                decision: { type: string, enum: [publish, reject, escalate_takedown] }
+                reason_code: { type: string, enum: [ok, duplicate, pii, named_person, agent_promotion, scam_offer, off_topic, unverifiable] }
+      responses:
+        '200':
+          description: Decision stored
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RtoReport' }
+
+  /v1/me:
+    get:
+      x-api-id: API-59
+      x-proposed: true
+      tags: [privacy]
+      operationId: getMe
+      summary: Current principal (pseudonymous profile, scopes, age band)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+        - userBearer: [helper]
+      responses:
+        '200':
+          description: Me
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Applicant' }
+    patch:
+      x-api-id: API-59
+      x-proposed: true
+      tags: [privacy]
+      operationId: updateMe
+      summary: Update language, accessibility preferences, notification quiet hours
+      security:
+        - userBearer: [user]
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: { $ref: '#/components/schemas/ApplicantPatch' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Applicant' }
+    delete:
+      x-api-id: API-62
+      tags: [privacy]
+      operationId: deleteMe
+      summary: Erase the account (DPDP right to erasure); hard delete within 30 days, backups roll off in 35
+      security:
+        - userBearer: [user]
+        - deviceSession: []
+      responses:
+        '202':
+          description: Erasure scheduled
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Accepted' }
+
+  /v1/me/consents:
+    get:
+      x-api-id: API-60
+      tags: [privacy]
+      operationId: listConsents
+      summary: Consent artefacts held by the caller
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      responses:
+        '200':
+          description: Consents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/ConsentArtefact' } }
+    post:
+      x-api-id: API-60
+      tags: [privacy]
+      operationId: grantOrRevokeConsent
+      summary: Grant or revoke a purpose-bound consent (DEPA-style artefact)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConsentChange' }
+            example: { purpose: ai_coach, action: grant, notice_version: notice-2026.10.23-hi, language: hi }
+      responses:
+        '201':
+          description: Artefact created or revoked
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConsentArtefact' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /v1/me/export:
+    post:
+      x-api-id: API-61
+      tags: [privacy]
+      operationId: exportMyData
+      summary: Export all personal data (JSON + PDF) as a signed, expiring link
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '202':
+          description: Export job started; link delivered in-app and by email within 24 h
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Accepted' }
+
+  /v1/events/analytics:
+    post:
+      x-api-id: API-63
+      tags: [privacy]
+      operationId: ingestAnalytics
+      summary: Privacy-preserving analytics events (no PII; dropped for under-18 and without analytics consent)
+      security:
+        - deviceSession: []
+        - userBearer: [user]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [events]
+              properties:
+                events:
+                  type: array
+                  maxItems: 100
+                  items: { $ref: '#/components/schemas/AnalyticsEvent' }
+      responses:
+        '202': { description: Accepted (silently dropped where not permitted) }
+
+  /internal/clock/sweep:
+    post:
+      x-api-id: API-65
+      tags: [platform]
+      operationId: triggerClockSweep
+      summary: n8n Schedule -> start the case_clock_sweep Render Workflows run (HMAC signed)
+      security:
+        - internalBearer: []
+          internalHmac: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClockSweepRequest' }
+            example: { sweep_id: sweep-2026-10-24-0630, as_of: '2026-10-24T01:00:00Z', tenants: [JK], shard_count: 8, dry_run: false }
+      responses:
+        '202':
+          description: Workflow run started
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JobRun' }
+              example: { job: case_clock_sweep, run_id: trn-d3f1c2..., runner: render_workflows, status: started, idempotent_replay: false }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /internal/webhooks/n8n:
+    post:
+      x-api-id: API-66
+      tags: [platform]
+      operationId: n8nWebhook
+      summary: n8n -> backend callbacks (delivery receipts, inbound replies, STOP opt-outs, approvals)
+      security:
+        - internalBearer: []
+          internalHmac: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/N8nCallback' }
+            examples:
+              receipt:
+                value: { event: delivery_receipt, notification_id: ntf_01JB8Z7C, status: delivered, provider_message_id: wamid.HBg..., at: '2026-10-24T01:02:03Z' }
+              stop:
+                value: { event: inbound_opt_out, channel: whatsapp, phone_blind_index: 'hmac:7a1e...', keyword: STOP, at: '2026-10-24T09:00:00Z' }
+      responses:
+        '204': { description: Processed (idempotent by event + id) }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /internal/webhooks/payment/{adapter}:
+    post:
+      x-api-id: API-24
+      x-proposed: true
+      tags: [platform]
+      operationId: paymentCallback
+      summary: Signed status callback from the payment adapter (mock gateway in hackathon); reconciles by receipt number only
+      security:
+        - internalBearer: []
+          internalHmac: []
+      parameters:
+        - { name: adapter, in: path, required: true, schema: { type: string, enum: [mock, sarathi_redirect, state_gateway] } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [payment_intent_id, status]
+              properties:
+                payment_intent_id: { type: string }
+                status: { type: string, enum: [success, pending, failed] }
+                receipt_number: { type: string, maxLength: 40 }
+                at: { type: string, format: date-time }
+      responses:
+        '204': { description: Reconciled }
+
+  /internal/jobs/{job}:
+    post:
+      x-api-id: API-67
+      tags: [platform]
+      operationId: startInternalJob
+      summary: n8n starts a named job through JobRunnerPort (e.g. clip_finalize after the two-rater wait in W08, nightly_stats from W13)
+      description: |
+        The API validates the job name and arguments, applies an input-derived idempotency key and
+        starts the run on the configured runner (Render Workflows in the hackathon, Temporal in
+        production, inline in dev/CI). n8n never queries Postgres directly; it only calls these
+        internal endpoints.
+      security:
+        - internalBearer: []
+          internalHmac: []
+      parameters:
+        - name: job
+          in: path
+          required: true
+          schema: { type: string, enum: [case_clock_sweep, clip_finalize, nightly_stats, debrief_backfill, replay_pending_sessions] }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                args: { type: object, additionalProperties: true, description: 'Job-specific arguments, IDs only (e.g. clip_id); max 4 KB' }
+            example: { args: { clip_id: clip_jk_0042 } }
+      responses:
+        '202':
+          description: Run started (or idempotent replay)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JobRun' }
+              example: { job: clip_finalize, run_id: trn-a81c..., runner: render_workflows, status: started, idempotent_replay: false }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /internal/intel/{reportId}/precheck:
+    post:
+      x-api-id: API-68
+      tags: [platform]
+      operationId: precheckIntelReport
+      summary: n8n W9 asks the backend to precheck a Live Intel report (schema, PII patterns, duplicates, corroboration count)
+      security:
+        - internalBearer: []
+          internalHmac: []
+      parameters:
+        - { name: reportId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Precheck verdict (computed in code; n8n only routes on it)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IntelPrecheck' }
+              example: { report_id: rpt_01JB8ZK, risk: low, corroborating_24h: 3, auto_publish_allowed: true, flags: [] }
+  /internal/intel/{reportId}/decision:
+    post:
+      x-api-id: API-68
+      tags: [platform]
+      operationId: decideIntelReport
+      summary: n8n W9 posts the moderator's send-and-wait decision (or the auto-publish rule result)
+      security:
+        - internalBearer: []
+          internalHmac: []
+      parameters:
+        - { name: reportId, in: path, required: true, schema: { type: string } }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision, reason_code, decided_by]
+              properties:
+                decision: { type: string, enum: [publish, reject, escalate_takedown] }
+                reason_code: { type: string, enum: [ok, duplicate, pii, named_person, agent_promotion, scam_offer, off_topic, unverifiable] }
+                decided_by: { type: string, description: 'moderator pseudonym or auto_rule' }
+      responses:
+        '200':
+          description: Decision stored; aggregates refreshed; W3 triggered if slots_opened
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RtoReport' }
+
+  /internal/watchers/{slotWatchId}/fire:
+    post:
+      x-api-id: API-69
+      tags: [platform]
+      operationId: fireSlotWatcher
+      summary: n8n W3 marks a slot watch as fired and gets the templated messages to send (reminder only)
+      security:
+        - internalBearer: []
+          internalHmac: []
+      parameters:
+        - { name: slotWatchId, in: path, required: true, schema: { type: string } }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [report_id]
+              properties:
+                report_id: { type: string, description: The moderated "slots opened" report that triggered the watch }
+      responses:
+        '200':
+          description: Messages to send (template IDs + vars; no business decisions in n8n)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slot_watch_id: { type: string }
+                  status: { type: string, enum: [fired, expired, suppressed] }
+                  messages: { type: array, items: { $ref: '#/components/schemas/OutboundMessage' } }
+
+  /internal/letters/{letterId}/dispatch:
+    post:
+      x-api-id: API-72
+      tags: [platform]
+      operationId: dispatchLetter
+      summary: n8n W11 dispatches a letter after the user's explicit in-app approval (PDF to the user; optional copy to the published grievance address only if the user ticked it)
+      security:
+        - internalBearer: []
+          internalHmac: []
+      parameters:
+        - { name: letterId, in: path, required: true, schema: { type: string } }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Dispatch instructions (we never file on CPGRAMS for the user)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  letter_id: { type: string }
+                  approved_by_user_at: { type: string, format: date-time }
+                  pdf_url: { type: string, format: uri }
+                  messages: { type: array, items: { $ref: '#/components/schemas/OutboundMessage' } }
+        '409': { description: Not approved by the user yet }
+
+  /internal/leads:
+    post:
+      x-api-id: API-73
+      tags: [platform]
+      operationId: nextSchoolLead
+      summary: n8n W7 asks which school to offer a booking to next (routing decided in code from consent, area, class and prior declines)
+      security:
+        - internalBearer: []
+          internalHmac: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [booking_id]
+              properties:
+                booking_id: { type: string }
+                previous_school_id: { type: [string, 'null'] }
+                previous_outcome: { type: [string, 'null'], enum: [declined, timeout, null] }
+      responses:
+        '200':
+          description: Next school to contact, or none
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  booking_id: { type: string }
+                  next_school_id: { type: [string, 'null'] }
+                  wait_hours: { type: integer }
+                  messages: { type: array, items: { $ref: '#/components/schemas/OutboundMessage' } }
+
+  /v1/lab/trials:
+    post:
+      x-api-id: API-70
+      tags: [field-study]
+      operationId: recordLabTrial
+      summary: Field-study journey-test trial (pseudonymous participant code; 18+; consent field_study)
+      security:
+        - userBearer: [admin]
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LabTrialCreate' }
+            example: { participant_code: P-017, arm: margdarshak, task_id: find_fee_and_documents, started_at: '2026-10-24T06:00:00Z', ended_at: '2026-10-24T06:01:12Z', errors: 0, completed: true, sus_score: 82.5, would_pay_agent: false, consent_id: cns_01JB8ZQ }
+      responses:
+        '201':
+          description: Trial recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LabTrial' }
+
+  /v1/stats/public:
+    get:
+      x-api-id: API-71
+      tags: [field-study]
+      operationId: getPublicStats
+      summary: Live counters for judges (recomputed nightly by the nightly_stats task plus live counts)
+      security: [{}]
+      responses:
+        '200':
+          description: Public stats
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublicStats' }
+              example:
+                as_of: '2026-10-24T15:00:00Z'
+                nazar: { participants: 43, below_kerala_60_pct: 0.51, r_ll_quiz_vs_nazar: 0.12, r_ci95: [-0.18, 0.4], sample: convenience }
+                journey_test: { participants: 6, median_seconds_find_fee_docs: { portal: 412, margdarshak: 58 } }
+                counters: { plans_computed: 311, game_sessions_counted: 1294 }
+                disclaimer_key: stats.convenience_sample_preregistered
+
+components:
+  securitySchemes:
+    deviceSession:
+      type: apiKey
+      in: cookie
+      name: md_sid
+      description: 'Anonymous device session (scope `anon`), issued by API-06 as an opaque 256-bit token in the `md_sid` cookie (HttpOnly, Secure, SameSite=Lax; session record in Key Value, 180-day sliding TTL). Unsafe methods also require the header `X-Requested-With` set to `margdarshak` (CSRF defence).'
+    userBearer:
+      type: apiKey
+      in: cookie
+      name: md_sid
+      description: |
+        Account session: the same `md_sid` cookie after upgrade (magic link / Google), or
+        `Authorization: Bearer <session token>` for non-browser clients (console scripts, tests). Role list on each operation = required scope: `user`, `helper` (acts for an
+        applicant via HelperLink, `act` claim), `school`, `console`, `admin` (sub-roles
+        `admin:rules.maker`, `admin:rules.checker`, `admin:clips.curator`, `admin:clips.rater`,
+        `admin:moderation`, `admin:field_study`). The session record carries `age_band` and `tenant`;
+        every request also sends `X-Tenant: <state code>` which must match.
+    internalBearer:
+      type: http
+      scheme: bearer
+      description: Internal scope. n8n (and Render Workflows tasks) authenticate with a per-caller service bearer token (rotated quarterly). Always combined with `internalHmac`.
+    internalHmac:
+      type: apiKey
+      in: header
+      name: Margdarshak-Signature
+      description: '`t=<unix>,v1=<hex hmac-sha256(secret, t + "." + body)>`; 300 s skew window; replay cache 10 min. Used by n8n, Render Workflows and payment adapters.'
+
+  parameters:
+    CaseId:
+      name: caseId
+      in: path
+      required: true
+      schema: { type: string, pattern: '^cas_[0-9A-Z]{6,26}$' }
+    PlanId:
+      name: planId
+      in: path
+      required: true
+      schema: { type: string, pattern: '^pln_[0-9A-Z]{6,26}$' }
+    OfficeId:
+      name: officeId
+      in: path
+      required: true
+      schema: { type: string, pattern: '^off_[0-9a-z_]{2,40}$' }
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    ClipId:
+      name: clipId
+      in: path
+      required: true
+      schema: { type: string, pattern: '^clip_[0-9a-z_]{2,40}$' }
+    PackId:
+      name: packId
+      in: path
+      required: true
+      schema: { type: string, pattern: '^([A-Z]{2}|IN-base)$' }
+    PackVersion:
+      name: version
+      in: path
+      required: true
+      schema: { type: string }
+    GameId:
+      name: gameId
+      in: path
+      required: true
+      schema: { $ref: '#/components/schemas/GameId' }
+    State:
+      name: state
+      in: path
+      required: true
+      description: State/UT tenant code (two letters, e.g. JK, KL, DL)
+      schema: { $ref: '#/components/schemas/StateCode' }
+    StateQuery:
+      name: state
+      in: query
+      required: false
+      schema: { $ref: '#/components/schemas/StateCode' }
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema: { type: string, maxLength: 512 }
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere.
+      schema: { type: string, minLength: 16, maxLength: 64 }
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: ETag from the last GET/PATCH of the case (W/"<version>")
+      schema: { type: string }
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      required: false
+      schema: { type: string, default: en }
+
+  headers:
+    Location:
+      schema: { type: string }
+    ETag:
+      schema: { type: string }
+    CacheControl:
+      schema: { type: string }
+    RetryAfter:
+      schema: { type: integer }
+    RateLimit:
+      description: 'IETF draft-ietf-httpapi-ratelimit-headers, e.g. `"default";r=58;t=42`'
+      schema: { type: string }
+    RateLimitPolicy:
+      description: 'e.g. `"default";q=60;w=60`'
+      schema: { type: string }
+
+  responses:
+    BadRequest:
+      description: Malformed request
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: 'https://margdarshak.example/problems/bad-request', title: Malformed request, status: 400, detail: Body is not valid JSON, trace_id: 4bf92f3577b34da6a3ce929d0e0e4736 }
+    Unauthorized:
+      description: Missing or invalid credentials
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Forbidden:
+      description: Scope, consent or age gate denies the action
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: 'https://margdarshak.example/problems/age-gate', title: This feature is for 18+ only, status: 403, detail: AI features need a date of birth showing age 18 or more, code: AI_AGE_GATED, trace_id: 4bf92f3577b34da6a3ce929d0e0e4736 }
+    NotFound:
+      description: Not found (also returned for resources the caller may not see)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Conflict:
+      description: State conflict (e.g. idempotency key reused with a different body, illegal stage transition)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: 'https://margdarshak.example/problems/journey-invalid-transition', title: Event not allowed in this stage, status: 409, detail: test_passed requires stage S6 or S6F, code: JOURNEY_INVALID_TRANSITION }
+    PreconditionFailed:
+      description: ETag mismatch (edited on another device)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unprocessable:
+      description: Validation failed
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: 'https://margdarshak.example/problems/validation-failed'
+            title: Validation failed
+            status: 422
+            code: VALIDATION_FAILED
+            errors: [ { pointer: /answers/aadhaar_number, code: prohibited_field, message_key: error.prohibited_field } ]
+    TooManyRequests:
+      description: Rate limited
+      headers:
+        Retry-After: { $ref: '#/components/headers/RetryAfter' }
+        RateLimit: { $ref: '#/components/headers/RateLimit' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    ServiceUnavailable:
+      description: Dependency down; client should fall back (offline draft, template debrief)
+      headers:
+        Retry-After: { $ref: '#/components/headers/RetryAfter' }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+
+  schemas:
+    Problem:
+      type: object
+      description: RFC 9457 problem details with Margdarshak extensions
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri, examples: ['https://margdarshak.example/problems/validation-failed'], description: 'Placeholder host until the domain is registered (owner Backend lead, 2026-10-30)' }
+        title: { type: string }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        detail: { type: string }
+        instance: { type: string }
+        code: { type: string, description: 'Stable machine code (BACKEND.md section 14): VALIDATION_FAILED, UNAUTHENTICATED, FORBIDDEN, AI_AGE_GATED, MINOR_LOCAL_ONLY, CONSENT_REQUIRED, NOT_FOUND, GONE_DELETED, JOURNEY_INVALID_TRANSITION, PRECONDITION_FAILED, IDEMPOTENCY_KEY_REUSED, IDEMPOTENCY_IN_PROGRESS, RULEPACK_UNAVAILABLE, ADAPTER_UNAVAILABLE, RATE_LIMITED, VOICE_QUOTA_EXCEEDED, SESSION_EXPIRED, REPLAY_REJECTED, PROHIBITED_FIELD, MAKER_CHECKER, INTERNAL' }
+        retryable: { type: boolean }
+        trace_id: { type: string }
+        title_key: { type: string, description: i18n key for the client to localise }
+        errors:
+          type: array
+          items:
+            type: object
+            required: [pointer, code]
+            properties:
+              pointer: { type: string, description: RFC 6901 JSON Pointer }
+              code: { type: string }
+              message_key: { type: string }
+    Accepted:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [accepted] }
+        job_id: { type: string }
+    Health:
+      type: object
+      required: [status, version, time]
+      properties:
+        status: { type: string, enum: [ok, degraded, down] }
+        version: { type: string }
+        time: { type: string, format: date-time }
+        checks:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status: { type: string, enum: [ok, degraded, down] }
+              latency_ms: { type: integer }
+              detail: { type: string }
+        adapters:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              implementation: { type: string }
+              status: { type: string, enum: [ok, degraded, down] }
+
+    StateCode:
+      type: string
+      pattern: '^[A-Z]{2}$'
+      examples: [JK, KL, DL]
+    VehicleClassCode:
+      type: string
+      enum: [MC50CC, MCWOG, MCWG, LMV-NT, LMV-TR, E-RICKSHAW, E-CART, MGV, HGMV, HPMV, HTV, ADAPTED]
+    StageCode:
+      type: string
+      enum: [S0, S1, S2, S3, S4, S5, S6, S6F, S7, S8, S9]
+    AgeBand:
+      type: string
+      enum: [under_16, '16_17', '18_19', '20_39', 40_plus, unknown]
+    UserBand:
+      type: string
+      enum: [u18, adult, unknown]
+    Confidence:
+      type: string
+      enum: [high, medium, low]
+    Provenance:
+      type: object
+      required: [source_title, verified_on, confidence, verified]
+      properties:
+        source_title: { type: string }
+        source_url: { type: string, format: uri }
+        verified_on: { type: string, format: date }
+        confidence: { $ref: '#/components/schemas/Confidence' }
+        verified: { type: boolean, description: 'Public inverse of the pack row flag `verify` (verified = !verify). false means usable in UI with a "verify at your RTO" banner, never citable by AI' }
+        rule_pack_version: { type: string }
+    RulePackRef:
+      type: object
+      required: [pack_id, version]
+      properties:
+        pack_id: { type: string }
+        version: { type: string }
+        base_version: { type: string }
+
+    PlanRequest:
+      type: object
+      required: [state, vehicles]
+      additionalProperties: false
+      properties:
+        state: { $ref: '#/components/schemas/StateCode' }
+        dob: { type: string, format: date, description: Used only to derive age band and key birthdays; never stored raw for anonymous plans }
+        dob_precision: { type: string, enum: [day, year_only], default: day, description: EC-01 Aadhaar shows year only }
+        age_years: { type: integer, minimum: 10, maximum: 100, description: Alternative to dob }
+        vehicles:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items: { type: string, enum: [scooter_gearless, moped_50cc, motorcycle, car, auto_rickshaw, e_rickshaw, light_goods, truck, bus, adapted_vehicle] }
+        aadhaar_address_matches_residence: { type: boolean }
+        aadhaar_has_relation_line: { type: boolean, description: EC-03 }
+        already_holds_ll: { type: boolean, description: EC-22 }
+        holds_foreign_licence: { type: boolean, description: EC-12 }
+        disability_needs: { type: array, items: { type: string, enum: [adapted_controls, deaf, colour_vision, low_vision, other] } }
+        language: { type: string, enum: [en, hi, doi] }
+    Plan:
+      type: object
+      required: [plan_id, state, rule_pack, eligible_classes, steps, fees, documents, blockers, expires_at]
+      properties:
+        plan_id: { type: string }
+        state: { $ref: '#/components/schemas/StateCode' }
+        rule_pack: { $ref: '#/components/schemas/RulePackRef' }
+        age_band: { $ref: '#/components/schemas/AgeBand' }
+        eligible_classes:
+          type: array
+          items:
+            type: object
+            required: [class_code, eligible, rule_id]
+            properties:
+              class_code: { $ref: '#/components/schemas/VehicleClassCode' }
+              eligible: { type: boolean }
+              eligible_from: { type: string, format: date }
+              content_depth: { type: string, enum: [deep, thin, coming] }
+              rule_id: { type: string }
+              reason_key: { type: string }
+        recommended_bundle:
+          type: object
+          properties:
+            classes: { type: array, items: { $ref: '#/components/schemas/VehicleClassCode' } }
+            saving_note_key: { type: string }
+            rule_id: { type: string }
+        steps:
+          type: array
+          items:
+            type: object
+            required: [step_id, stage, title_key]
+            properties:
+              step_id: { type: string }
+              stage: { $ref: '#/components/schemas/StageCode' }
+              title_key: { type: string }
+              rto_visits: { type: integer, minimum: 0 }
+        max_rto_visits: { type: integer, minimum: 0 }
+        earliest_dates:
+          type: object
+          additionalProperties: { type: string, format: date }
+        fees: { $ref: '#/components/schemas/FeeQuote' }
+        documents:
+          type: array
+          items:
+            type: object
+            required: [doc_id, required]
+            properties:
+              doc_id: { type: string }
+              required: { type: boolean }
+              why_key: { type: string }
+              rule_id: { type: string }
+        blockers: { type: array, items: { $ref: '#/components/schemas/Blocker' } }
+        disclaimers: { type: array, items: { type: string } }
+        expires_at: { type: string, format: date-time }
+    WhatsAppSendRequest:
+      type: object
+      required: [phone_e164, consent]
+      properties:
+        phone_e164: { type: string, pattern: '^\+91[6-9]\d{9}$' }
+        consent: { $ref: '#/components/schemas/ConsentChangeInline' }
+        language: { type: string, enum: [en, hi] }
+    NotificationAccepted:
+      type: object
+      required: [notification_id, status, channel]
+      properties:
+        notification_id: { type: string }
+        status: { type: string, enum: [queued, suppressed_quiet_hours, suppressed_opt_out, suppressed_daily_cap] }
+        channel: { $ref: '#/components/schemas/Channel' }
+        template_id: { type: string }
+    Channel:
+      type: string
+      enum: [whatsapp, email, web_push, sms, in_app]
+    ClassCatalogue:
+      type: object
+      required: [state, rule_pack, classes]
+      properties:
+        state: { $ref: '#/components/schemas/StateCode' }
+        rule_pack: { $ref: '#/components/schemas/RulePackRef' }
+        classes:
+          type: array
+          items:
+            type: object
+            required: [class_code, min_age_years, transport, content_depth, rule_id, provenance]
+            properties:
+              class_code: { $ref: '#/components/schemas/VehicleClassCode' }
+              label_key: { type: string }
+              min_age_years: { type: integer }
+              guardian_consent_required: { type: boolean }
+              medical_form_1a: { type: string, enum: [never, over_40, always] }
+              transport: { type: boolean }
+              content_depth: { type: string, enum: [deep, thin, coming] }
+              rule_id: { type: string }
+              flags: { type: array, items: { type: string } }
+              provenance: { $ref: '#/components/schemas/Provenance' }
+    FeeTable:
+      type: object
+      required: [state, rule_pack, items]
+      properties:
+        state: { $ref: '#/components/schemas/StateCode' }
+        rule_pack: { $ref: '#/components/schemas/RulePackRef' }
+        items:
+          type: array
+          items:
+            type: object
+            required: [fee_id, per, amount_paise, rule_id]
+            properties:
+              fee_id: { type: string }
+              per: { type: string, enum: [class, attempt, class_attempt, licence, application] }
+              amount_paise: { type: integer, minimum: 0 }
+              rule_id: { type: string }
+        quote: { $ref: '#/components/schemas/FeeQuote' }
+    FeeQuote:
+      type: object
+      description: E-07. Computed from the rule pack in integer paise; never contains a hard-coded amount.
+      required: [quote_id, currency, lines, subtotal_govt_fee_paise, total_paise, provenance]
+      properties:
+        quote_id: { type: string }
+        currency: { type: string, const: INR }
+        lines:
+          type: array
+          items:
+            type: object
+            required: [line_id, label_key, quantity, amount_paise, rule_id]
+            properties:
+              line_id: { type: string }
+              label_key: { type: string }
+              class_code: { $ref: '#/components/schemas/VehicleClassCode' }
+              quantity: { type: integer, minimum: 1 }
+              amount_paise: { type: integer, minimum: 0 }
+              rule_id: { type: string }
+        subtotal_govt_fee_paise: { type: integer, description: Before smart card }
+        total_paise: { type: integer }
+        excludes: { type: array, items: { type: string, enum: [state_service_charge, postage, medical_certificate, school_fees] } }
+        provenance: { $ref: '#/components/schemas/Provenance' }
+    Blocker:
+      type: object
+      description: One evaluated edge-case rule row (F-04)
+      required: [blocker_id, severity, title_key, rule_id, confidence]
+      properties:
+        blocker_id: { type: string, pattern: '^EC-\d{2}$' }
+        severity: { type: string, enum: [block, warn, info] }
+        title_key: { type: string }
+        fix_key: { type: string }
+        rule_id: { type: string }
+        confidence: { $ref: '#/components/schemas/Confidence' }
+        due_on: { type: string, format: date }
+        provenance: { $ref: '#/components/schemas/Provenance' }
+
+    DeviceSessionRequest:
+      type: object
+      required: [device_public_key, platform]
+      properties:
+        device_public_key: { type: string, description: Ed25519 public key (base64 SPKI) used for proof-of-possession on refresh }
+        platform: { type: string, enum: [android_web, ios_web, desktop_web, pwa] }
+        app_version: { type: string }
+        lite_mode: { type: boolean }
+    MagicLinkRequest:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        language: { type: string, enum: [en, hi] }
+    TokenRequest:
+      type: object
+      required: [grant_type]
+      properties:
+        grant_type: { type: string, enum: [magic_link, google_id_token] }
+        code: { type: string }
+        id_token: { type: string }
+        device_session: { type: string }
+    TokenPair:
+      type: object
+      description: Session grant. Web clients receive the opaque session in the md_sid cookie (Set-Cookie); session_token is returned only to non-browser clients that send Prefer return=token.
+      required: [scope, subject, expires_at]
+      properties:
+        scope: { type: string, enum: [anon, user, helper, school, console, admin] }
+        subject: { type: string }
+        age_band: { $ref: '#/components/schemas/UserBand' }
+        expires_at: { type: string, format: date-time }
+        session_token: { type: [string, 'null'] }
+    HelperLinkCreate:
+      type: object
+      required: [case_id, helper_kind, permissions, consent]
+      properties:
+        case_id: { type: string }
+        helper_kind: { type: string, enum: [family, csc_operator, cyber_cafe] }
+        permissions:
+          type: array
+          items: { type: string, enum: [case.read, case.write_answers, case.record_events, learn.read, letters.draft] }
+        expires_in_days: { type: integer, minimum: 1, maximum: 90, default: 30 }
+        consent: { $ref: '#/components/schemas/ConsentChangeInline' }
+    HelperLink:
+      type: object
+      description: E-29
+      required: [helper_link_id, case_id, helper_kind, permissions, status, expires_at]
+      properties:
+        helper_link_id: { type: string }
+        case_id: { type: string }
+        helper_kind: { type: string, enum: [family, csc_operator, cyber_cafe] }
+        permissions: { type: array, items: { type: string } }
+        status: { type: string, enum: [pending, active, revoked, expired] }
+        invite_code: { type: string }
+        expires_at: { type: string, format: date-time }
+        consent_id: { type: string }
+    HelperLinkPage:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/HelperLink' } }
+        next_cursor: { type: [string, 'null'] }
+
+    ClassSelection:
+      type: object
+      description: E-03
+      required: [class_code, status]
+      properties:
+        class_code: { $ref: '#/components/schemas/VehicleClassCode' }
+        status: { type: string, enum: [planned, ll_applied, ll_issued, dl_test_booked, dl_failed, dl_passed, dl_issued, withdrawn] }
+        attempts: { type: integer, minimum: 0 }
+    LearnerLicenceMirror:
+      type: object
+      description: E-04. Never the LL number in clear.
+      required: [issued_on, expires_on, classes, source]
+      properties:
+        issued_on: { type: string, format: date }
+        expires_on: { type: string, format: date }
+        classes: { type: array, items: { $ref: '#/components/schemas/VehicleClassCode' } }
+        number_last4: { type: string, pattern: '^[0-9A-Z]{4}$' }
+        source: { type: string, enum: [user_entered, digilocker, adapter, screenshot_confirmed] }
+    DrivingLicenceMirror:
+      type: object
+      description: E-05
+      required: [valid_to_non_transport, classes, source]
+      properties:
+        issued_on: { type: string, format: date }
+        valid_to_non_transport: { type: string, format: date }
+        valid_to_transport: { type: string, format: date }
+        classes: { type: array, items: { $ref: '#/components/schemas/VehicleClassCode' } }
+        number_last4: { type: string }
+        renewal_window_opens: { type: string, format: date }
+        source: { type: string, enum: [user_entered, digilocker, adapter] }
+    NextAction:
+      type: object
+      required: [action_id, stage, title_key]
+      properties:
+        action_id: { $ref: '#/components/schemas/PrimaryActionId' }
+        stage: { $ref: '#/components/schemas/StageCode' }
+        title_key: { type: string }
+        due_at: { type: [string, 'null'], format: date-time }
+        deep_link: { type: string }
+    CaseCreate:
+      type: object
+      required: [classes]
+      properties:
+        plan_id: { type: string }
+        state: { $ref: '#/components/schemas/StateCode' }
+        classes: { type: array, minItems: 1, maxItems: 4, items: { $ref: '#/components/schemas/VehicleClassCode' } }
+        path: { type: string, enum: [aadhaar_contactless, non_aadhaar_rto, adtc] }
+        existing_ll: { $ref: '#/components/schemas/LearnerLicenceMirror' }
+        existing_dl: { $ref: '#/components/schemas/DrivingLicenceMirror' }
+        for_family_member: { type: boolean, default: false, description: F-17 family mode (applicant is the account holder's relative) }
+    JourneyState:
+      type: string
+      description: Persisted journey state (14-state machine, BACKEND.md section 5)
+      enum: [PLAN, LL_APPLYING, HANDED_OFF, PAYMENT_PENDING, LL_TEST, BRIDGE, DL_BOOKABLE, TEST_BOOKED, TEST_FAILED, AWAITING_APPROVAL, DL_ISSUED, DL_HOLDER, LL_EXPIRED, RENEWAL_DUE]
+    DisplayStage:
+      type: string
+      description: Derived per request; equals the journey state unless an alert overrides it (LL_EXPIRING is display-only, never stored)
+      enum: [PLAN, LL_APPLYING, HANDED_OFF, PAYMENT_PENDING, LL_TEST, BRIDGE, DL_BOOKABLE, TEST_BOOKED, TEST_FAILED, AWAITING_APPROVAL, DL_ISSUED, DL_HOLDER, LL_EXPIRED, RENEWAL_DUE, LL_EXPIRING]
+    PrimaryActionId:
+      type: string
+      enum: [START_PLAN, RESUME_STEP, OPEN_HANDOFF, CHECK_PAYMENT, TAKE_MOCK_TEST, PRACTISE_NAZAR, BOOK_TEST, OPEN_TEST_DAY, SEE_RETEST_PLAN, CHASE_APPROVAL, SHOW_CARD, RENEW]
+    Case:
+      type: object
+      description: E-02
+      required: [case_id, tenant, state, stage, display_stage, alerts, classes, version, rule_pack_version, next_action, server_time]
+      properties:
+        case_id: { type: string }
+        tenant: { $ref: '#/components/schemas/StateCode' }
+        state: { $ref: '#/components/schemas/JourneyState' }
+        stage: { $ref: '#/components/schemas/StageCode', description: 'Product stage S0-S9/S6F, derived from state' }
+        display_stage: { $ref: '#/components/schemas/DisplayStage' }
+        alerts:
+          type: array
+          items: { type: string, enum: [LL_EXPIRING, DOB_YEAR_ONLY, RULES_CHANGED, SARATHI_DOWN, PAYMENT_PENDING_LONG, APPROVAL_STALLED] }
+        path: { type: string, enum: [aadhaar_contactless, non_aadhaar_rto, adtc] }
+        classes: { type: array, items: { $ref: '#/components/schemas/ClassSelection' } }
+        answers:
+          type: object
+          description: Autosaved form state. Prohibited keys rejected server-side (aadhaar_number, otp, captcha, password, biometric*); personal values (name*, relation*, address*) stay in the on-device vault.
+          additionalProperties: true
+          propertyNames:
+            not:
+              pattern: '(?i)(aadhaar_?(no|num|number)|otp|captcha|password|biometric|^name|^relation|^address)'
+        ll: { oneOf: [ { $ref: '#/components/schemas/LearnerLicenceMirror' }, { type: 'null' } ] }
+        dl: { oneOf: [ { $ref: '#/components/schemas/DrivingLicenceMirror' }, { type: 'null' } ] }
+        key_dates:
+          type: object
+          additionalProperties: { type: [string, 'null'], format: date }
+        next_action: { $ref: '#/components/schemas/NextAction' }
+        rule_pack_version: { type: string }
+        version: { type: integer, minimum: 1 }
+        flags: { type: array, items: { type: string, enum: [helper_linked, minor_rules_only, deleted_pending] } }
+        server_time: { type: string, format: date-time }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    CasePatch:
+      type: object
+      properties:
+        answers:
+          type: object
+          additionalProperties: true
+          propertyNames:
+            not:
+              pattern: '(?i)(aadhaar_?(no|num|number)|otp|captcha|password|biometric|^name|^relation|^address)'
+        classes: { type: array, items: { $ref: '#/components/schemas/VehicleClassCode' } }
+        path: { type: string, enum: [aadhaar_contactless, non_aadhaar_rto, adtc] }
+    CaseEventType:
+      type: string
+      description: 'The six PROJECT_BRIEF status updates (ll_issued, slot_booked, test_failed, test_passed, approved, card_received) plus the BACKEND.md journey events (application_started, handoff_done, payment_pending, payment_confirmed, ll_test_failed, reapply, renewed). Clock-driven transitions (day 30, LL expiry, renewal window) are system events, not client events.'
+      enum: [ll_issued, slot_booked, test_failed, test_passed, approved, card_received, application_started, handoff_done, payment_pending, payment_confirmed, ll_test_failed, reapply, renewed]
+    CaseEventCreate:
+      type: object
+      required: [type, occurred_on]
+      properties:
+        type: { $ref: '#/components/schemas/CaseEventType' }
+        occurred_on: { type: string, format: date, description: User-declared date; server records recorded_at with its own clock (EC-15) }
+        payload:
+          type: object
+          properties:
+            classes: { type: array, items: { $ref: '#/components/schemas/VehicleClassCode' } }
+            class_code: { $ref: '#/components/schemas/VehicleClassCode' }
+            test: { type: string, enum: [ll, dl] }
+            office_id: { type: string }
+            slot_date: { type: string, format: date }
+            reason_codes: { type: array, items: { type: string } }
+            number_last4: { type: string }
+            receipt_number: { type: string, maxLength: 40 }
+    CaseEventResult:
+      type: object
+      required: [event, case]
+      properties:
+        event:
+          type: object
+          properties:
+            seq: { type: integer }
+            type: { $ref: '#/components/schemas/CaseEventType' }
+            occurred_on: { type: string, format: date }
+            recorded_at: { type: string, format: date-time }
+        case:
+          type: object
+          properties:
+            case_id: { type: string }
+            state: { $ref: '#/components/schemas/JourneyState' }
+            stage: { $ref: '#/components/schemas/StageCode' }
+            version: { type: integer }
+        timeline_changes:
+          type: object
+          properties:
+            scheduled: { type: array, items: { type: string } }
+            cancelled: { type: array, items: { type: string } }
+        warnings: { type: array, items: { $ref: '#/components/schemas/Blocker' } }
+    TimelineEvent:
+      type: object
+      description: E-12
+      required: [event_id, kind, code, status]
+      properties:
+        event_id: { type: string }
+        kind: { type: string, enum: [fact, milestone, reminder, deadline] }
+        code: { type: string, examples: [LL_ISSUED, LL_DAY_25_PREP, LL_DAY_30_UNLOCK, LL_EXPIRY_M30, LL_EXPIRY_M7, TEST_EVE, RETEST_ELIGIBLE, APPROVAL_CHASE, FORM_1A_AT_40, DL_RENEWAL_M60, DL_EXPIRED, DL_EXPIRED_Y1, RULES_CHANGED], description: 'Milestone ID from timelines.json; idempotency key = {caseId}:{milestoneId}:{dueOn}' }
+        occurred_at: { type: string, format: date-time }
+        due_at: { type: string, format: date-time }
+        status: { type: string, enum: [scheduled, sent, done, cancelled, superseded] }
+        source: { type: string, enum: [user, helper, adapter, system] }
+        rule_id: { type: string }
+        idempotency_key: { type: string }
+    TimelinePage:
+      type: object
+      required: [items, server_time]
+      properties:
+        server_time: { type: string, format: date-time }
+        items: { type: array, items: { $ref: '#/components/schemas/TimelineEvent' } }
+        next_cursor: { type: [string, 'null'] }
+    HandoffPack:
+      type: object
+      required: [case_id, step, mode, adapter, target_url, steps]
+      properties:
+        case_id: { type: string }
+        step: { type: string, enum: [ll_application, dl_application, slot_booking, fee_payment] }
+        mode: { type: string, enum: [A, B], description: A = prefilled hand-off + copy-pack (works today); B = adapter after state adoption }
+        adapter: { type: string, enum: [mock, deeplink, nic] }
+        simulated: { type: boolean }
+        target_url: { type: string, format: uri }
+        prohibited_note_key: { type: string }
+        steps:
+          type: array
+          items:
+            type: object
+            required: [order, screen_hint_key, fields]
+            properties:
+              order: { type: integer }
+              screen_hint_key: { type: string }
+              note_key: { type: string }
+              fields:
+                type: array
+                items:
+                  type: object
+                  required: [label_key]
+                  properties:
+                    label_key: { type: string }
+                    vault_key: { type: [string, 'null'], description: Key in the on-device vault; personal values (name, relation name, address) are filled on the device and never returned by the server }
+                    value: { type: [string, 'null'], description: Only non-personal values (state, classes, office) }
+                    copyable: { type: boolean }
+        expires_at: { type: string, format: date-time }
+    AadhaarOfflineVerdict:
+      type: object
+      required: [signature_valid, simulated, retained_fields]
+      properties:
+        signature_valid: { type: boolean }
+        age_band: { $ref: '#/components/schemas/AgeBand' }
+        dob_precision: { type: string, enum: [day, year_only] }
+        address_state_matches: { type: boolean }
+        reference_hash: { type: string }
+        simulated: { type: boolean }
+        retained_fields: { type: array, items: { type: string } }
+    PaymentIntent:
+      type: object
+      required: [payment_intent_id, adapter, redirect_url, amount_paise, collected_by, status]
+      properties:
+        payment_intent_id: { type: string }
+        adapter: { type: string, enum: [mock, sarathi_redirect, state_gateway] }
+        redirect_url: { type: string, format: uri }
+        amount_paise: { type: integer }
+        collected_by: { type: string, const: state_gateway, description: Margdarshak never collects government fees }
+        status: { type: string, enum: [redirected, pending, success, failed, expired] }
+        receipt_number: { type: string }
+        pending_guidance_key: { type: string }
+    PhotoCheckCreate:
+      type: object
+      required: [case_id, item, spec_id, passed]
+      additionalProperties: false
+      properties:
+        case_id: { type: string }
+        item: { type: string, enum: [photo, signature, form_1a, address_proof, age_proof] }
+        spec_id: { type: string }
+        width_px: { type: integer }
+        height_px: { type: integer }
+        bytes: { type: integer }
+        format: { type: string, enum: [jpeg, png, pdf] }
+        face_detected: { type: boolean }
+        background_ok: { type: boolean }
+        passed: { type: boolean }
+        issues: { type: array, items: { type: string, enum: [too_large, too_small, wrong_format, blurry, dark, background, face_not_centred, cropped, unknown] } }
+    DocumentCheck:
+      type: object
+      description: E-06 (no document images stored)
+      required: [check_id, case_id, item, passed, checked_at]
+      properties:
+        check_id: { type: string }
+        case_id: { type: string }
+        item: { type: string }
+        spec_id: { type: string }
+        passed: { type: boolean }
+        issues: { type: array, items: { type: string } }
+        checked_at: { type: string, format: date-time }
+        label_key: { type: string, default: check.precheck_not_approval }
+
+    OfficeKind:
+      type: string
+      enum: [rto, arto, adtc, csc, adtt]
+    Office:
+      type: object
+      description: E-09
+      required: [office_id, kind, name, district]
+      properties:
+        office_id: { type: string }
+        kind: { $ref: '#/components/schemas/OfficeKind' }
+        code: { type: string }
+        name: { type: string }
+        district: { type: string }
+        location: { type: object, properties: { lat: { type: number }, lng: { type: number } } }
+        tracks: { type: array, items: { type: string, enum: [eight_track, h_track, s_track, reverse_park, gradient, automated] } }
+        test_mode: { type: string, enum: [manual, automated, mixed, unknown] }
+        grievance_url: { type: string, format: uri }
+        sample_data: { type: boolean }
+    OfficePage:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/Office' } }
+        next_cursor: { type: [string, 'null'] }
+    Slot:
+      type: object
+      description: E-10
+      required: [slot_id, office_id, kind, date, source]
+      properties:
+        slot_id: { type: string }
+        office_id: { type: string }
+        kind: { type: string, enum: [ll_test, dl_test] }
+        date: { type: string, format: date }
+        window: { type: string }
+        capacity_band: { type: string, enum: [none, few, some, many, unknown] }
+        source: { type: string, enum: [mock, crowd_reported, adapter] }
+        sample_data: { type: boolean }
+    SlotWatchCreate:
+      type: object
+      required: [office_ids, kind, channels]
+      properties:
+        case_id: { type: string }
+        office_ids: { type: array, minItems: 1, maxItems: 5, items: { type: string } }
+        kind: { type: string, enum: [ll_test, dl_test] }
+        earliest: { type: string, format: date }
+        latest: { type: string, format: date, description: Defaults to LL expiry minus retest buffer (EC-07) }
+        channels: { type: array, items: { $ref: '#/components/schemas/Channel' } }
+    SlotWatch:
+      allOf:
+        - $ref: '#/components/schemas/SlotWatchCreate'
+        - type: object
+          required: [slot_watch_id, status]
+          properties:
+            slot_watch_id: { type: string }
+            status: { type: string, enum: [active, fired, expired, cancelled] }
+            label_key: { type: string, default: slotwatch.reminder_only_no_booking }
+    RtoReportCreate:
+      type: object
+      description: Structured fields only; no free text (D-14)
+      required: [visited_on, report_type]
+      additionalProperties: false
+      properties:
+        visited_on: { type: string, format: date }
+        report_type: { type: string, enum: [visit, slots_opened, scam_offer] }
+        slot_release_seen:
+          type: object
+          additionalProperties: false
+          properties:
+            weekday: { type: string, enum: [mon, tue, wed, thu, fri, sat, sun] }
+            time_band: { type: string, enum: ['06:00-09:00', '09:00-10:00', '10:00-12:00', '12:00-15:00', '15:00-18:00', '18:00-24:00'] }
+        documents_asked:
+          type: array
+          items: { type: string, enum: [ll_printout, rc, insurance, puc, aadhaar_physical, form_1a, photos, address_proof, other] }
+        track_checked:
+          type: array
+          items: { type: string, enum: [eight_track, h_track, s_track, reverse_park, gradient, road_test, hpt] }
+        wait_minutes_band: { type: string, enum: ['0_30', '30_60', '60_120', '120_240', '240_plus'] }
+        scam_offer_kind: { type: string, enum: [setting_offer, fake_slot_sale, no_test_licence, other], description: EC-24; never published, routed to ACB/CPGRAMS guidance }
+    RtoReport:
+      type: object
+      description: E-24
+      required: [report_id, office_id, status, report_type]
+      properties:
+        report_id: { type: string }
+        office_id: { type: string }
+        report_type: { type: string }
+        status: { type: string, enum: [pending_moderation, published, rejected, takedown] }
+        created_at: { type: string, format: date-time }
+        reason_code: { type: string }
+    OfficeIntel:
+      type: object
+      required: [office_id, window_days, k_threshold, fields]
+      properties:
+        office_id: { type: string }
+        window_days: { type: integer }
+        k_threshold: { type: integer }
+        fields:
+          type: array
+          items:
+            type: object
+            required: [field, n]
+            properties:
+              field: { type: string, enum: [slot_release_time, documents_asked, track_checked, wait_minutes] }
+              value: {}
+              n: { type: integer }
+              last_reported_at: { type: string, format: date-time }
+              sample_data: { type: boolean }
+        suppressed_fields: { type: array, items: { type: string } }
+        corruption_reporting:
+          type: object
+          properties:
+            label_key: { type: string }
+            links: { type: array, items: { type: object, properties: { name: { type: string }, url: { type: string, format: uri } } } }
+
+    LearnModule:
+      type: object
+      required: [module_id, title_key, kind, content_depth]
+      properties:
+        module_id: { type: string, examples: [LL-SIGNS, M1, M4, M19] }
+        title_key: { type: string }
+        kind: { type: string, enum: [ll_syllabus, survival_skill, dl_test] }
+        content_depth: { type: string, enum: [deep, thin, coming] }
+        games: { type: array, items: { $ref: '#/components/schemas/GameId' } }
+        rule_ids: { type: array, items: { type: string } }
+        sources: { type: array, items: { $ref: '#/components/schemas/Provenance' } }
+        min_user_band: { $ref: '#/components/schemas/UserBand' }
+    ReviewItem:
+      type: object
+      required: [card_id, topic_id, due_at]
+      properties:
+        card_id: { type: string }
+        topic_id: { type: string }
+        due_at: { type: string, format: date-time }
+        retrievability: { type: number, minimum: 0, maximum: 1 }
+        question_id: { type: string }
+        variant_id: { type: string }
+    AnswerSubmission:
+      type: object
+      required: [client_answer_id, card_id, question_id, variant_id, option_id, answered_at, mode]
+      properties:
+        client_answer_id: { type: string }
+        card_id: { type: string }
+        question_id: { type: string }
+        variant_id: { type: string }
+        option_id: { type: string }
+        confidence: { type: string, enum: ['50', '75', '100'] }
+        latency_ms: { type: integer, minimum: 0 }
+        answered_at: { type: string, format: date-time }
+        mode: { type: string, enum: [practice, mock, review] }
+    AnswerResult:
+      type: object
+      required: [client_answer_id, correct, rating]
+      properties:
+        client_answer_id: { type: string }
+        correct: { type: boolean }
+        rating: { type: integer, minimum: 1, maximum: 4, description: FSRS rating (1 Again .. 4 Easy) }
+        overconfident: { type: boolean }
+        next_due_at: { type: string, format: date-time }
+        duplicate: { type: boolean }
+    Readiness:
+      type: object
+      required: [score, knowledge, calibration_penalty, topics, gate]
+      properties:
+        score: { type: integer, minimum: 0, maximum: 100 }
+        knowledge: { type: integer, minimum: 0, maximum: 100 }
+        calibration_penalty: { type: integer, minimum: 0, maximum: 10 }
+        display_key: { type: string }
+        topics:
+          type: array
+          items:
+            type: object
+            properties:
+              topic_id: { type: string }
+              weight: { type: number }
+              mastery: { type: number, minimum: 0, maximum: 1 }
+              coverage: { type: number, minimum: 0, maximum: 1 }
+        weights_source: { type: string }
+        brier: { type: number, minimum: 0, maximum: 1 }
+        gate:
+          type: object
+          required: [threshold, met, advisory, book_anyway_visible]
+          properties:
+            threshold: { type: integer }
+            met: { type: boolean }
+            advisory: { type: boolean, const: true }
+            book_anyway_visible: { type: boolean, const: true }
+        road_readiness: { type: object, additionalProperties: true }
+
+    GameId:
+      type: string
+      enum: [nazar, junction_scan, stopping_distance, blind_spot, track_twin, night_glare, hill_road, helmet_fit, golden_hour, ll_sim]
+    GameSessionCreate:
+      type: object
+      required: [mode]
+      properties:
+        mode: { type: string, enum: [learn, practice, mock, duel] }
+        difficulty: { type: [integer, 'null'], minimum: 1, maximum: 5 }
+        a11y_modes: { type: array, items: { type: string, enum: [no_audio, colour_safe, one_hand, reduced_motion, tap_only, screen_reader_alt] } }
+        device_class: { type: string, enum: [low, mid, high] }
+        duel_seed_from: { type: string, format: uuid }
+        offline_started_at: { type: [string, 'null'], format: date-time, description: Set when the session was played offline and is being registered late }
+    GameSessionStart:
+      type: object
+      description: E-16 (start)
+      required: [session_id, game_id, manifest_version, scoring_version, seed, mode, items, expires_at]
+      properties:
+        session_id: { type: string, format: uuid }
+        game_id: { $ref: '#/components/schemas/GameId' }
+        manifest_version: { type: string }
+        scoring_version: { type: string }
+        seed: { type: integer }
+        difficulty: { type: integer }
+        mode: { type: string }
+        items:
+          type: array
+          items:
+            type: object
+            required: [item_ref, kind]
+            properties:
+              item_ref: { type: string }
+              kind: { type: string, enum: [clip, scenario, question, track] }
+              asset_url: { type: string, format: uri }
+              sha256: { type: string }
+              bytes: { type: integer }
+        ctx:
+          type: object
+          properties:
+            user_band: { $ref: '#/components/schemas/UserBand' }
+            locale: { type: string }
+            offline: { type: boolean }
+        label_key: { type: string }
+        expires_at: { type: string, format: date-time }
+    ScoreComponent:
+      type: object
+      required: [id, value, max, weight, explainKey]
+      properties:
+        id: { type: string }
+        value: { type: number }
+        max: { type: number }
+        weight: { type: number }
+        explainKey: { type: string }
+    Finding:
+      type: object
+      required: [findingId, severity, ruleIds, skillId, facts]
+      properties:
+        findingId: { type: string, examples: [NAZ_LATE_RESPONSE, BS_LEFT_OVERTAKE] }
+        severity: { type: number, minimum: 0, maximum: 1 }
+        ruleIds: { type: array, items: { type: string } }
+        skillId: { type: string }
+        facts:
+          type: object
+          additionalProperties: { type: [number, string, boolean] }
+        itemRef: { type: string }
+    SessionResult:
+      type: object
+      description: Game SDK SessionResult (mirrors packages/game-core Zod schema)
+      required: [sid, gameId, gameVersion, seed, difficulty, mode, score, findings, evidence, integrity, replay]
+      properties:
+        sid: { type: string, format: uuid }
+        gameId: { $ref: '#/components/schemas/GameId' }
+        gameVersion: { type: string }
+        seed: { type: integer }
+        difficulty: { type: integer, minimum: 1, maximum: 5 }
+        mode: { type: string, enum: [learn, practice, mock, duel] }
+        score:
+          type: object
+          required: [raw, max, pct, components]
+          properties:
+            raw: { type: number }
+            max: { type: number }
+            pct: { type: number, minimum: 0, maximum: 100 }
+            passed: { type: [boolean, 'null'] }
+            components: { type: array, items: { $ref: '#/components/schemas/ScoreComponent' } }
+        findings: { type: array, items: { $ref: '#/components/schemas/Finding' } }
+        evidence:
+          type: array
+          items:
+            type: object
+            required: [cardId, correct, rating]
+            properties:
+              cardId: { type: string }
+              correct: { type: boolean }
+              latencyMs: { type: number }
+              confidence: { type: string, enum: ['50', '75', '100'] }
+              rating: { type: integer, minimum: 1, maximum: 4 }
+        integrity:
+          type: object
+          required: [flags, trust, timingMode]
+          properties:
+            flags: { type: array, items: { type: string } }
+            trust: { type: number, minimum: 0, maximum: 1 }
+            timingMode: { type: string, enum: [rvfc, fallback, sim] }
+        replay:
+          type: object
+          required: [seed, inputs]
+          properties:
+            seed: { type: integer }
+            inputs: { type: string, description: delta-encoded, gzip, base64; max 512 KB }
+    GameSessionComplete:
+      type: object
+      required: [client_result, events_digest, telemetry_version]
+      properties:
+        client_result: { $ref: '#/components/schemas/SessionResult' }
+        events_digest: { type: string, pattern: '^sha256:[0-9a-f]{64}$' }
+        telemetry_version: { type: integer, const: 1 }
+        event_count: { type: integer }
+        commentary:
+          type: object
+          description: Optional record-then-score commentary (adult, consent ai_coach); audio uploaded separately and transcribed, never stored beyond 24 h
+          properties:
+            audio_object_key: { type: string }
+            language: { type: string, enum: [hi, en, doi] }
+    CheckedSessionResult:
+      type: object
+      required: [session_id, game_id, server_checked, server_score_pct, score, findings, integrity]
+      properties:
+        session_id: { type: string, format: uuid }
+        game_id: { $ref: '#/components/schemas/GameId' }
+        server_checked: { type: boolean, description: false when the score verifier was unavailable; result marked provisional and re-checked by the debrief fan-out workflow }
+        client_score_pct: { type: number }
+        server_score_pct: { type: number, description: The score that counts (cards, percentiles, Practice Record) }
+        mismatch: { type: boolean }
+        score: { $ref: '#/components/schemas/SessionResult/properties/score' }
+        findings: { type: array, items: { $ref: '#/components/schemas/Finding' } }
+        integrity: { $ref: '#/components/schemas/SessionResult/properties/integrity' }
+        xp_awarded: { type: integer }
+        debrief:
+          type: object
+          properties:
+            debrief_id: { type: string }
+            status: { type: string, enum: [template_ready, ai_pending, ai_ready, ai_failed] }
+            url: { type: string }
+    DebriefPoint:
+      type: object
+      required: [finding_id, rule_id, text]
+      properties:
+        finding_id: { type: string }
+        rule_id: { type: string }
+        text: { type: string, maxLength: 200 }
+    Debrief:
+      type: object
+      description: E-19
+      required: [debrief_id, session_id, status, source, how_you_did, where_you_lacked, what_you_could_have_done, next_drill, validator]
+      properties:
+        debrief_id: { type: string }
+        session_id: { type: string, format: uuid }
+        status: { type: string, enum: [template_ready, ai_pending, ai_ready, ai_failed] }
+        source: { type: string, enum: [template, ai] }
+        label_key: { type: string, enum: [debrief.auto_notes, debrief.coach_notes] }
+        locale: { type: string, enum: [en, hi, hinglish] }
+        how_you_did: { type: string }
+        where_you_lacked: { type: array, maxItems: 3, items: { $ref: '#/components/schemas/DebriefPoint' } }
+        what_you_could_have_done: { type: array, maxItems: 3, items: { $ref: '#/components/schemas/DebriefPoint' } }
+        next_drill:
+          type: object
+          required: [drill_id]
+          properties:
+            drill_id: { type: string }
+            why: { type: string }
+            deep_link: { type: string }
+        improved_since_last: { type: [string, 'null'] }
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              rule_id: { type: string }
+              text: { type: string }
+              source_url: { type: string, format: uri }
+              verified_on: { type: string, format: date }
+        validator:
+          type: object
+          required: [passed, attempts]
+          properties:
+            passed: { type: boolean }
+            attempts: { type: integer }
+            violations: { type: array, items: { type: string, enum: [digit_in_text, unknown_finding, unknown_rule, unverified_rule, unknown_placeholder, top_finding_missing, tone, language, length] } }
+    ClipManifestItem:
+      type: object
+      description: E-20 (public view; no hazard windows)
+      required: [clip_id, url_360p, sha256, bytes, duration_ms, licence]
+      properties:
+        clip_id: { type: string }
+        state: { $ref: '#/components/schemas/StateCode' }
+        road_type: { type: string }
+        url_360p: { type: string, format: uri }
+        url_480p: { type: string, format: uri }
+        sha256: { type: string }
+        bytes: { type: integer }
+        duration_ms: { type: integer }
+        hazard_count: { type: integer, minimum: 0, maximum: 2 }
+        difficulty: { type: integer, minimum: 1, maximum: 5 }
+        licence: { type: string, const: CC-BY-4.0 }
+        attribution: { type: string }
+        audio_described_alt_url: { type: string, format: uri }
+    ClipPage:
+      type: object
+      required: [items, manifest_version]
+      properties:
+        manifest_version: { type: string }
+        total_bytes: { type: integer, description: Shown before an offline pack download }
+        items: { type: array, items: { $ref: '#/components/schemas/ClipManifestItem' } }
+        next_cursor: { type: [string, 'null'] }
+    Achievement:
+      type: object
+      description: E-22
+      required: [xp_total, rank, badges, streak]
+      properties:
+        xp_total: { type: integer }
+        xp_today: { type: integer }
+        xp_multiplier_today: { type: number, enum: [1.0, 0.5, 0.2] }
+        rank: { type: string, enum: [gali, mohalla, shehar, highway, ghat] }
+        rank_requirements: { type: object, additionalProperties: true }
+        badges:
+          type: array
+          items:
+            type: object
+            properties:
+              badge_id: { type: string, enum: [khud_licence, pehli_baar_pass, nazar_90, calibrated, no_zone_navigator, strap_streak, night_ready, ghat_ready, rah_veer_ready, squad_sangathan], description: '9 badge slots; slot 7 has Night and Hill (Ghat) variants (brief section 15)' }
+              awarded_at: { type: [string, 'null'], format: date-time }
+              self_declared: { type: boolean }
+        streak:
+          type: object
+          properties:
+            weekly_goal: { type: integer, minimum: 2, maximum: 6 }
+            this_week: { type: integer }
+            weeks: { type: integer }
+            freeze_tokens: { type: integer, maximum: 2 }
+            archived: { type: boolean }
+    SquadCreate:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 40 }
+        weekly_goal_sessions: { type: integer, minimum: 3, maximum: 40, default: 15 }
+    Squad:
+      type: object
+      description: E-23
+      required: [squad_id, name, members, invite_code]
+      properties:
+        squad_id: { type: string }
+        name: { type: string }
+        invite_code: { type: string }
+        members:
+          type: array
+          maxItems: 5
+          items:
+            type: object
+            properties:
+              display_name: { type: string }
+              role: { type: string, enum: [owner, member] }
+        squad_score: { type: number }
+        weekly_progress: { type: object, properties: { done: { type: integer }, goal: { type: integer } } }
+
+    VoiceClientMessage:
+      type: object
+      description: API-40 client JSON frame
+      required: [type]
+      properties:
+        type: { type: string, enum: [hello, stop, ui_state, confirm, cancel, text] }
+        v: { type: integer, const: 1 }
+        locale: { type: string, enum: [hi, en, doi] }
+        screen: { type: string }
+        caseId: { type: string }
+        token: { type: string, description: ticket from POST /v1/voice/ticket (hello frame only) }
+        screen_id: { type: string }
+        field_values_visible: { type: object, additionalProperties: { type: string } }
+        confirm_action_id: { type: string }
+        text: { type: string, maxLength: 500 }
+    VoiceServerMessage:
+      type: object
+      description: API-40 server JSON frame
+      required: [type]
+      properties:
+        type: { type: string, enum: [transcript_in, transcript_out, ui_action, confirm_request, rule_chip, pii_blocked, interrupted, error, session_end] }
+        text: { type: string }
+        action:
+          type: object
+          properties:
+            kind: { type: string, enum: [navigate, set_field, open_drill, read_back] }
+            screen_id: { type: string }
+            field_id: { type: string }
+            value: { type: string }
+            action_id: { type: string }
+        rule_id: { type: string }
+        reason_key: { type: string }
+    TutorExplainRequest:
+      type: object
+      required: [question_id, variant_id, chosen_option_id]
+      properties:
+        question_id: { type: string }
+        variant_id: { type: string }
+        chosen_option_id: { type: string }
+        locale: { type: string, enum: [en, hi, hinglish] }
+    TutorExplanation:
+      type: object
+      required: [explanation_id, reviewed_text, rule_ids, source]
+      properties:
+        explanation_id: { type: string }
+        reviewed_text: { type: string }
+        glue_text: { type: [string, 'null'], description: AI glue linking the user's choice to the reviewed text; no digits }
+        rule_ids: { type: array, items: { type: string } }
+        source: { type: string, enum: [reviewed_bank, template] }
+        provenance: { $ref: '#/components/schemas/Provenance' }
+    ScreenDecode:
+      type: object
+      required: [catalogue_id, confidence, confirm_required]
+      properties:
+        catalogue_id: { type: string, description: Error-catalogue ID or UNKNOWN }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        doc_kind: { type: string, enum: [sarathi_status, result_slip, ll, other] }
+        stage: { type: string }
+        classes:
+          type: array
+          items:
+            type: object
+            properties:
+              class_code: { $ref: '#/components/schemas/VehicleClassCode' }
+              result: { type: string, enum: [PASS, FAIL, ABSENT, UNKNOWN] }
+        remark_raw: { type: string }
+        meaning_key: { type: string }
+        next_steps:
+          type: array
+          items:
+            type: object
+            properties:
+              step_key: { type: string }
+              due_on: { type: string, format: date }
+              rule_id: { type: string }
+        confirm_required: { type: boolean, const: true }
+    ScamCheckRequest:
+      type: object
+      properties:
+        text: { type: string, maxLength: 4000 }
+        url: { type: string, maxLength: 2048 }
+        sender: { type: string, maxLength: 64 }
+    ScamVerdict:
+      type: object
+      required: [verdict, red_flags, explanation_source, rules_version]
+      properties:
+        verdict: { type: string, enum: [likely_scam, cannot_verify], description: Never "safe" or "official" (D-19) }
+        red_flags:
+          type: array
+          items: { type: string, enum: [apk_link, non_allowlisted_domain, lookalike_domain, upi_collect_request, fee_mismatch, urgency, no_test_promise, otp_request, impersonation, setting_offer] }
+        domain_checks:
+          type: array
+          items:
+            type: object
+            properties:
+              host: { type: string }
+              allowlisted: { type: boolean }
+        explanation_source: { type: string, enum: [ai, template] }
+        explanation: { type: string }
+        guidance_key: { type: string }
+        rules_version: { type: string }
+
+    LetterCreate:
+      type: object
+      required: [kind, language]
+      properties:
+        kind: { type: string, enum: [escalation, rti_s6_test_record, cpgrams_steps] }
+        language: { type: string, enum: [en, hi] }
+        recipient_office_id: { type: string }
+    Letter:
+      type: object
+      description: E-28
+      required: [letter_id, case_id, kind, status, body]
+      properties:
+        letter_id: { type: string }
+        case_id: { type: string }
+        kind: { type: string }
+        status: { type: string, enum: [draft, approved_by_user, sent_by_user, discarded] }
+        body: { type: string }
+        facts_used: { type: object, additionalProperties: true }
+        pdf_url: { type: string, format: uri }
+        rti_fee_note_key: { type: string }
+        we_never_file_key: { type: string, default: letter.user_sends_we_never_file }
+    PracticeLog:
+      type: object
+      description: E-27
+      required: [practice_log_id, date, minutes, kind]
+      properties:
+        practice_log_id: { type: string }
+        date: { type: string, format: date }
+        minutes: { type: integer, minimum: 1, maximum: 600 }
+        kind: { type: string, enum: [supervised_drive, school_lesson, in_app_session] }
+        conditions: { type: array, items: { type: string, enum: [day, night, rain, highway, hill, urban] } }
+        supervisor: { type: object, properties: { kind: { type: string, enum: [parent, school, other] }, display_name: { type: string } } }
+        sign_off: { type: object, properties: { status: { type: string, enum: [none, signed, rejected] }, by: { type: string }, at: { type: string, format: date-time } } }
+    PracticeRecord:
+      type: object
+      required: [record_id, generated_at, sessions, disclaimer_key, check_token]
+      properties:
+        record_id: { type: string }
+        generated_at: { type: string, format: date-time }
+        practice_hours: { type: number }
+        nazar_score: { type: [integer, 'null'] }
+        modules_done: { type: array, items: { type: string } }
+        sessions: { type: integer }
+        logs: { type: array, items: { $ref: '#/components/schemas/PracticeLog' } }
+        signature: { type: string, description: Ed25519 over the canonical JSON (in-app facts only) }
+        check_token: { type: string }
+        check_url: { type: string, format: uri }
+        disclaimer_key: { type: string, default: record.in_app_facts_only_not_a_licence }
+    PracticeRecordCheck:
+      type: object
+      description: Result of the QR check. Wording is "matches what Margdarshak counted", never "verified".
+      required: [matches, generated_at, summary]
+      properties:
+        matches: { type: boolean }
+        generated_at: { type: string, format: date-time }
+        summary: { type: object, additionalProperties: true }
+        disclaimer_key: { type: string }
+
+    School:
+      type: object
+      description: E-25
+      required: [school_id, name, district, accreditation]
+      properties:
+        school_id: { type: string }
+        name: { type: string }
+        district: { type: string }
+        accreditation: { type: string, enum: [adtc_accredited, licensed_school, unknown] }
+        classes: { type: array, items: { $ref: '#/components/schemas/VehicleClassCode' } }
+        offers_test_vehicle: { type: boolean }
+        pro: { type: boolean }
+        sponsored: { type: boolean }
+        sample_data: { type: boolean }
+    SchoolPage:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/School' } }
+        next_cursor: { type: [string, 'null'] }
+    BookingCreate:
+      type: object
+      required: [kind, consent_id]
+      properties:
+        kind: { type: string, enum: [lesson, test_vehicle, remedial_training, hazard_training] }
+        class_code: { $ref: '#/components/schemas/VehicleClassCode' }
+        preferred_date: { type: string, format: date }
+        consent_id: { type: string }
+        case_id: { type: string }
+    Booking:
+      type: object
+      description: E-26
+      required: [booking_id, school_id, kind, status]
+      properties:
+        booking_id: { type: string }
+        school_id: { type: string }
+        kind: { type: string }
+        status: { type: string, enum: [requested, accepted, declined, rerouted, cancelled, completed] }
+        price_shown_paise: { type: [integer, 'null'], description: Total including vehicle rental, shown by the school before confirmation }
+    SchoolLearnerPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              learner_code: { type: string }
+              stage: { $ref: '#/components/schemas/StageCode' }
+              readiness: { type: integer }
+              nazar_score: { type: [integer, 'null'] }
+              last_active_on: { type: string, format: date }
+        next_cursor: { type: [string, 'null'] }
+    ConsoleStallReport:
+      type: object
+      required: [state, from, to, k_threshold, rows]
+      properties:
+        state: { $ref: '#/components/schemas/StateCode' }
+        from: { type: string, format: date }
+        to: { type: string, format: date }
+        k_threshold: { type: integer }
+        rows:
+          type: array
+          items:
+            type: object
+            properties:
+              office_id: { type: string }
+              stage: { $ref: '#/components/schemas/StageCode' }
+              cases: { type: integer }
+              median_days_in_stage: { type: number }
+              p90_days_in_stage: { type: number }
+              suppressed: { type: boolean }
+    ConsoleAggregate:
+      type: object
+      required: [metric, rows]
+      properties:
+        metric: { type: string }
+        k_threshold: { type: integer }
+        rows: { type: array, items: { type: object, additionalProperties: true } }
+
+    RuleRow:
+      type: object
+      description: E-08 Rule
+      required: [rule_id, kind, value, provenance]
+      properties:
+        rule_id: { type: string, pattern: '^[A-Z0-9]{2,6}-[A-Z0-9-]+$', description: 'Rule ID from the pack, e.g. ELIG-MC50-16, FEE-LL-ISSUE, TL-LL-MIN-WAIT, BLK-DOB-YEAR-ONLY' }
+        kind: { type: string, enum: [eligibility, fee, timeline, document, test_format, blocker, office, content] }
+        applies_to: { type: object, additionalProperties: true }
+        value: {}
+        text_en: { type: string }
+        text_hi: { type: string }
+        effective_from: { type: string, format: date }
+        effective_to: { type: [string, 'null'], format: date }
+        overrides: { type: [string, 'null'], description: rule_id in the base pack this row overrides }
+        provenance: { $ref: '#/components/schemas/Provenance' }
+    RulePackDraftCreate:
+      type: object
+      required: [pack_id, base_version, rules]
+      properties:
+        pack_id: { type: string }
+        base_version: { type: string }
+        changelog: { type: string, maxLength: 2000 }
+        rules: { type: array, items: { $ref: '#/components/schemas/RuleRow' } }
+    RulePackVersion:
+      type: object
+      description: E-08 RulePack
+      required: [pack_id, tenant, version, status]
+      properties:
+        pack_id: { type: string }
+        tenant: { $ref: '#/components/schemas/StateCode' }
+        version: { type: string }
+        base_version: { type: string }
+        status: { type: string, enum: [draft, submitted, approved, published, rejected, retired] }
+        maker: { type: string }
+        checker: { type: [string, 'null'] }
+        content_sha256: { type: string }
+        signature: { type: string }
+        effective_from: { type: string, format: date }
+        affected_cases_estimate: { type: integer }
+        rules: { type: array, items: { $ref: '#/components/schemas/RuleRow' } }
+    ClipRegister:
+      type: object
+      required: [raw_object_key, state, filmed_by, licence, contributor_consent_id]
+      properties:
+        raw_object_key: { type: string }
+        state: { $ref: '#/components/schemas/StateCode' }
+        filmed_by: { type: string, enum: [passenger, fixed_mount], description: Never the rider }
+        filmed_on: { type: string, format: date }
+        road_type: { type: string, enum: [urban_arterial, residential, highway, hill, rural, junction] }
+        licence: { type: string, const: CC-BY-4.0 }
+        contributor_consent_id: { type: string }
+    Clip:
+      type: object
+      description: E-20 (admin view)
+      required: [clip_id, status]
+      properties:
+        clip_id: { type: string }
+        status: { type: string, enum: [registered, transcoding, blurring, proposing, awaiting_ratings, computing_agreement, ready_to_publish, published, rejected, failed] }
+        workflow_runs: { type: array, items: { $ref: '#/components/schemas/JobRun' } }
+        proposals:
+          type: array
+          items:
+            type: object
+            properties:
+              hazard_type: { type: string }
+              start: { type: string }
+              end: { type: string }
+              why: { type: string }
+        agreement: { type: [object, 'null'], properties: { onset_delta_ms_median: { type: number }, hazards_matched: { type: integer }, passed: { type: boolean } } }
+        blur_audit: { type: string, enum: [pending, passed, failed] }
+        difficulty: { type: integer }
+    ClipRatingCreate:
+      type: object
+      required: [blur_audit_passed, hazards]
+      properties:
+        blur_audit_passed: { type: boolean }
+        hazards:
+          type: array
+          maxItems: 2
+          items:
+            type: object
+            required: [hazard_type, onset_ms, offset_ms]
+            properties:
+              hazard_type: { type: string, enum: [pedestrian, bus_stop_pedestrian, two_wheeler_cut_in, auto_cut_in, cattle, door_opening, child, oncoming_overtake, wrong_side_rider, other] }
+              onset_ms: { type: integer, minimum: 0 }
+              offset_ms: { type: integer, minimum: 0 }
+              speed_kmh_est: { type: integer, minimum: 0, maximum: 120 }
+    ClipRating:
+      type: object
+      description: E-21
+      required: [rating_id, clip_id, rater, created_at]
+      properties:
+        rating_id: { type: string }
+        clip_id: { type: string }
+        rater: { type: string }
+        created_at: { type: string, format: date-time }
+        hazards: { $ref: '#/components/schemas/ClipRatingCreate/properties/hazards' }
+
+    Applicant:
+      type: object
+      description: E-01 (pseudonymous)
+      required: [subject, scope, user_band]
+      properties:
+        subject: { type: string }
+        scope: { type: string }
+        user_band: { $ref: '#/components/schemas/UserBand' }
+        age_band: { $ref: '#/components/schemas/AgeBand' }
+        language: { type: string, enum: [en, hi, doi] }
+        a11y: { type: object, additionalProperties: { type: boolean } }
+        quiet_hours: { type: object, properties: { start: { type: string }, end: { type: string } } }
+        flags: { type: array, items: { type: string, enum: [minor, helper, field_study, deletion_pending] } }
+        tenant: { $ref: '#/components/schemas/StateCode' }
+    ApplicantPatch:
+      type: object
+      properties:
+        language: { type: string, enum: [en, hi, doi] }
+        a11y: { type: object, additionalProperties: { type: boolean } }
+        quiet_hours: { type: object, properties: { start: { type: string }, end: { type: string } } }
+        dob: { type: string, format: date, writeOnly: true }
+        dob_precision: { type: string, enum: [day, year_only] }
+    ConsentPurpose:
+      type: string
+      enum: [ai_coach, ai_voice, whatsapp_updates, email_updates, web_push, analytics, field_study, helper_link, digilocker_pull, aadhaar_offline_check, school_share, parent_card, clip_contribution]
+    ConsentChangeInline:
+      type: object
+      required: [purpose, notice_version, granted]
+      properties:
+        purpose: { $ref: '#/components/schemas/ConsentPurpose' }
+        notice_version: { type: string }
+        granted: { type: boolean }
+    ConsentChange:
+      type: object
+      required: [purpose, action, notice_version]
+      properties:
+        purpose: { $ref: '#/components/schemas/ConsentPurpose' }
+        action: { type: string, enum: [grant, revoke] }
+        notice_version: { type: string }
+        language: { type: string }
+        recipient: { type: string, description: e.g. school_id or helper_link_id }
+    ConsentArtefact:
+      type: object
+      description: E-15 DEPA-style purpose-bound artefact
+      required: [consent_id, purpose, status, granted_at, notice_version]
+      properties:
+        consent_id: { type: string }
+        purpose: { $ref: '#/components/schemas/ConsentPurpose' }
+        data_categories: { type: array, items: { type: string } }
+        recipient: { type: [string, 'null'] }
+        status: { type: string, enum: [active, revoked, expired] }
+        granted_at: { type: string, format: date-time }
+        expires_at: { type: [string, 'null'], format: date-time }
+        revoked_at: { type: [string, 'null'], format: date-time }
+        notice_version: { type: string }
+        language: { type: string }
+        signature: { type: string }
+    AnalyticsEvent:
+      type: object
+      required: [name, at]
+      additionalProperties: false
+      properties:
+        name: { type: string, pattern: '^[a-z0-9_.]{3,64}$' }
+        at: { type: string, format: date-time }
+        props:
+          type: object
+          maxProperties: 12
+          additionalProperties: { type: [string, number, boolean] }
+    ClockSweepRequest:
+      type: object
+      required: [sweep_id, as_of]
+      properties:
+        sweep_id: { type: string }
+        as_of: { type: string, format: date-time }
+        tenants: { type: array, items: { $ref: '#/components/schemas/StateCode' } }
+        shard_count: { type: integer, minimum: 1, maximum: 256, default: 8 }
+        dry_run: { type: boolean, default: false }
+    JobRun:
+      type: object
+      required: [job, run_id, runner, status]
+      properties:
+        job: { type: string, enum: [case_clock_sweep, clock_batch, clip_ingest, clip_finalize, session_debrief, debrief_backfill, nightly_stats, rulepack_reevaluate, user_export, user_delete, replay_pending_sessions] }
+        run_id: { type: string }
+        runner: { type: string, enum: [render_workflows, temporal, inline], description: 'JobRunnerPort implementation: Render Workflows (hackathon), Temporal (production), inline (dev/CI)' }
+        status: { type: string, enum: [started, running, succeeded, failed, cancelled] }
+        idempotent_replay: { type: boolean }
+    N8nCallback:
+      type: object
+      required: [event, at]
+      properties:
+        event: { type: string, enum: [delivery_receipt, inbound_reply, inbound_opt_out, school_lead_decision, letter_approval, field_form_submitted] }
+        at: { type: string, format: date-time }
+        notification_id: { type: string }
+        status: { type: string, enum: [sent, delivered, read, failed] }
+        provider_message_id: { type: string }
+        channel: { $ref: '#/components/schemas/Channel' }
+        phone_blind_index: { type: string }
+        keyword: { type: string }
+        report_id: { type: string }
+        decision: { type: string }
+        reason_code: { type: string }
+        moderator: { type: string }
+        booking_id: { type: string }
+        letter_id: { type: string }
+    LabTrialCreate:
+      type: object
+      required: [participant_code, arm, task_id, started_at, ended_at, completed, consent_id]
+      properties:
+        participant_code: { type: string, pattern: '^P-\d{3}$' }
+        arm: { type: string, enum: [portal_replica, margdarshak] }
+        task_id: { type: string, enum: [find_fee_and_documents, start_ll_application, choose_class, nazar_mock] }
+        started_at: { type: string, format: date-time }
+        ended_at: { type: string, format: date-time }
+        errors: { type: integer, minimum: 0 }
+        completed: { type: boolean }
+        sus_score: { type: number, minimum: 0, maximum: 100 }
+        would_pay_agent: { type: boolean }
+        consent_id: { type: string }
+    LabTrial:
+      allOf:
+        - $ref: '#/components/schemas/LabTrialCreate'
+        - type: object
+          required: [trial_id]
+          properties:
+            trial_id: { type: string }
+    IntelPrecheck:
+      type: object
+      required: [report_id, risk, auto_publish_allowed]
+      properties:
+        report_id: { type: string }
+        risk: { type: string, enum: [low, medium, high] }
+        corroborating_24h: { type: integer }
+        auto_publish_allowed: { type: boolean }
+        flags: { type: array, items: { type: string, enum: [pii_pattern, duplicate, new_account, burst, scam_offer] } }
+    OutboundMessage:
+      type: object
+      description: What n8n should send; content comes from approved templates only
+      required: [notification_id, channel, template_id, to]
+      properties:
+        notification_id: { type: string }
+        channel: { $ref: '#/components/schemas/Channel' }
+        template_id: { type: string }
+        to: { type: string, description: 'Phone (E.164) or email, only for users who opted in to that channel; n8n execution-data retention is set to minimal' }
+        vars: { type: object, additionalProperties: { type: [string, number] }, description: 'Template variables; first name only when the user opted in; no other PII' }
+        idempotency_key: { type: string, description: '{timelineEventKey}:{channel}' }
+    Tenant:
+      type: object
+      description: E-31 public tenant config (theme, languages, adapter modes, feature flags)
+      required: [tenant, display_name_key, languages, adapters, features, rule_pack]
+      properties:
+        tenant: { $ref: '#/components/schemas/StateCode' }
+        display_name_key: { type: string }
+        languages: { type: array, items: { type: string, enum: [en, hi, doi, ks, ur, ml, pa] } }
+        theme:
+          type: object
+          description: UX4G-based design tokens; no State Emblem in independent mode
+          properties:
+            primary: { type: string }
+            surface: { type: string }
+            logo_url: { type: [string, 'null'], format: uri }
+        adapters:
+          type: object
+          properties:
+            sarathi: { type: string, enum: [mock, deeplink, nic] }
+            digilocker: { type: string, enum: [mock, negd] }
+            aadhaar_offline: { type: string, enum: [disabled, mock, state_service] }
+            bhashini: { type: string, enum: [mock, dhruva, local_indictrans2] }
+            payment: { type: string, enum: [mock, sarathi_redirect, state_gateway] }
+            notification: { type: string, enum: [console, n8n, mgov_sms] }
+            slot: { type: string, enum: [mock, crowd, nic] }
+        features: { type: object, additionalProperties: { type: boolean } }
+        rule_pack: { $ref: '#/components/schemas/RulePackRef' }
+        hosting_mode: { type: string, enum: [independent, government_hosted] }
+        disclaimer_key: { type: string }
+        grievance_officer: { type: object, properties: { name: { type: string }, email: { type: string, format: email } } }
+    Notification:
+      type: object
+      description: E-13 (exposed to the owner only in the privacy export)
+      required: [notification_id, channel, template_id, status]
+      properties:
+        notification_id: { type: string }
+        channel: { $ref: '#/components/schemas/Channel' }
+        template_id: { type: string }
+        status: { type: string, enum: [queued, sent, delivered, read, failed, suppressed_quiet_hours, suppressed_opt_out, suppressed_daily_cap] }
+        timeline_event_id: { type: [string, 'null'] }
+        created_at: { type: string, format: date-time }
+    Contact:
+      type: object
+      description: E-14 (write-only in the API; stored encrypted, separate from the case)
+      properties:
+        kind: { type: string, enum: [phone, email] }
+        value: { type: string, writeOnly: true }
+        verified: { type: boolean }
+    GameEvent:
+      type: object
+      description: E-17 Game SDK event envelope (inside the replay blob; bounded, no PII)
+      required: [sid, seq, t, type, p]
+      properties:
+        sid: { type: string, format: uuid }
+        seq: { type: integer, minimum: 0 }
+        t: { type: number }
+        mt: { type: number }
+        type: { type: string, enum: [session_start, item_start, item_end, tap, hazard_response, scan_look, creep, mirror_check, indicator, lane_pos, speed_sample, speed_choice, gear_choice, brake, beam_toggle, decision, prediction, confidence, answer, fault, collision, near_miss, camera_check, pause, resume, visibility_hidden, a11y_toggle, session_end] }
+        p: { type: object, additionalProperties: true }
+    TopicMastery:
+      type: object
+      description: E-18
+      required: [topic_id, mastery, coverage]
+      properties:
+        topic_id: { type: string }
+        mastery: { type: number, minimum: 0, maximum: 1 }
+        coverage: { type: number, minimum: 0, maximum: 1 }
+        brier: { type: [number, 'null'] }
+        node_state: { type: string, enum: [locked, learning, mastered, fading] }
+    AuditLogEntry:
+      type: object
+      description: E-30 (append-only; exposed only to admin tooling, not in this public contract's paths)
+      required: [audit_id, at, actor, action, target]
+      properties:
+        audit_id: { type: string }
+        at: { type: string, format: date-time }
+        actor: { type: string }
+        actor_scope: { type: string }
+        action: { type: string }
+        target: { type: string }
+        tenant: { $ref: '#/components/schemas/StateCode' }
+        ip_trunc: { type: string }
+        trace_id: { type: string }
+        prev_hash: { type: string }
+        hash: { type: string }
+    LlFormat:
+      type: object
+      required: [state, rule_id, known, provenance]
+      properties:
+        state: { $ref: '#/components/schemas/StateCode' }
+        rule_id: { type: string }
+        known: { type: boolean, description: false means the default format is used with an "unknown for your state" banner }
+        questions: { type: [integer, 'null'] }
+        pass_correct: { type: [integer, 'null'] }
+        pass_pct: { type: [integer, 'null'] }
+        per_question_timer_s: { type: [integer, 'null'] }
+        total_timer_s: { type: [integer, 'null'] }
+        online_test_available: { type: boolean, description: EC-10 false switches the plan card to "test at RTO" }
+        where: { type: array, items: { type: string, enum: [home_online, csc, rto] } }
+        languages: { type: array, items: { type: string } }
+        provenance: { $ref: '#/components/schemas/Provenance' }
+    SignOffRequestCreate:
+      type: object
+      required: [practice_log_ids, signer_kind]
+      properties:
+        practice_log_ids: { type: array, minItems: 1, maxItems: 50, items: { type: string } }
+        signer_kind: { type: string, enum: [school, supervisor] }
+        school_id: { type: string }
+        supervisor_contact: { $ref: '#/components/schemas/Contact' }
+        consent_id: { type: string }
+    SignOffRequest:
+      type: object
+      required: [signoff_request_id, status, signer_kind]
+      properties:
+        signoff_request_id: { type: string }
+        signer_kind: { type: string, enum: [school, supervisor] }
+        status: { type: string, enum: [sent, signed, rejected, expired] }
+        expires_at: { type: string, format: date-time }
+    KhudLicenceDeclaration:
+      type: object
+      required: [dl_issued_on, no_agent_used]
+      properties:
+        case_id: { type: string }
+        dl_issued_on: { type: string, format: date }
+        no_agent_used: { type: boolean, const: true }
+        first_attempt_pass: { type: boolean }
+    PublicStats:
+      type: object
+      required: [as_of]
+      properties:
+        as_of: { type: string, format: date-time }
+        nazar: { type: object, additionalProperties: true }
+        journey_test: { type: object, additionalProperties: true }
+        counters: { type: object, additionalProperties: { type: integer } }
+        disclaimer_key: { type: string }

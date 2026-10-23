@@ -1,0 +1,499 @@
+# Margdarshak CI: every PR and every push to main.
+# Stages: lint -> typecheck -> unit -> golden rules -> adapter contracts -> game determinism
+#         -> API integration (Postgres 16 + migrations + OpenAPI diff) -> web build + Lite budget
+#         -> e2e (Playwright) + axe -> docker build smoke -> ci-gate (the single required check)
+# AI evals live in evals.yml, security scans in security.yml, deploys in deploy.yml.
+# Spec: docs/05-ops/CICD.md. Action versions are tags; pin to commit SHAs at H0 (CICD.md §8).
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "10.18.0"
+  PYTHON_VERSION: "3.12"
+  UV_VERSION: "0.8.17"
+  TZ: UTC
+  # CI never talks to Gemini, n8n, Render or any government system; all adapters are mocks.
+  AI_MODE: template
+  ADAPTER_SARATHI: mock
+  ADAPTER_DIGILOCKER: mock
+  ADAPTER_PAYMENT: mock
+  ADAPTER_BHASHINI: mock
+  ADAPTER_NOTIFICATION: console
+  ADAPTER_SLOT: mock
+  JOB_RUNNER: inline
+  DATA_CLASS: synthetic-only
+
+jobs:
+  changes:
+    name: detect changes
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      ts: ${{ steps.filter.outputs.ts }}
+      py: ${{ steps.filter.outputs.py }}
+      rules: ${{ steps.filter.outputs.rules }}
+      game: ${{ steps.filter.outputs.game }}
+      web: ${{ steps.filter.outputs.web }}
+      api: ${{ steps.filter.outputs.api }}
+      docker: ${{ steps.filter.outputs.docker }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            ts:
+              - 'apps/**'
+              - 'packages/**'
+              - 'services/score-verifier/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            py:
+              - 'services/api/**'
+              - 'services/workflows/**'
+              - 'tests/**'
+            rules:
+              - 'rulepacks/**'
+              - 'packages/rules/**'
+              - 'services/api/app/rules/**'
+              - 'tests/golden/rules/**'
+            game:
+              - 'packages/game-core/**'
+              - 'services/score-verifier/**'
+              - 'tests/golden/games/**'
+            web:
+              - 'apps/web/**'
+              - 'packages/ui/**'
+            api:
+              - 'services/api/**'
+              - 'api/openapi.yaml'
+            docker:
+              - 'infra/docker/**'
+
+  # ---------------------------------------------------------------------------
+  # 1. Lint + typecheck (TypeScript)
+  # ---------------------------------------------------------------------------
+  lint-ts:
+    name: lint + typecheck (ts)
+    # Path filters are used only for docker-smoke: skipping a lint job would cascade-skip
+    # the golden/contract/e2e jobs that depend on it, which is exactly what we must not skip.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: ESLint (incl. no-dark-patterns + no-rupee-literal custom rules)
+        run: pnpm -r --if-present lint --max-warnings=0
+      - name: Prettier
+        run: pnpm prettier --check .
+      - name: TypeScript (tsc --noEmit, strict)
+        run: pnpm -r --if-present typecheck
+      - name: Wording bans (D-19) + rupee literals (D-06) in UI strings, messages and prompts
+        run: node scripts/ci/check-wording.mjs --paths apps packages ai/prompts n8n/workflows rulepacks --fail-on-match
+
+  # ---------------------------------------------------------------------------
+  # 2. Lint + typecheck (Python)
+  # ---------------------------------------------------------------------------
+  lint-py:
+    name: lint + typecheck (py)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - name: Sync api deps
+        working-directory: services/api
+        run: uv sync --frozen
+      - name: Ruff lint
+        working-directory: services/api
+        run: uv run ruff check --output-format=github .
+      - name: Ruff format
+        working-directory: services/api
+        run: uv run ruff format --check .
+      - name: mypy (strict on app/, adapters/ and rules/)
+        working-directory: services/api
+        run: uv run mypy app
+      - name: Sync + lint workflows service
+        working-directory: services/workflows
+        run: |
+          uv sync --frozen
+          uv run ruff check --output-format=github .
+          uv run mypy .
+
+  # ---------------------------------------------------------------------------
+  # 3. Unit tests
+  # ---------------------------------------------------------------------------
+  unit-ts:
+    name: unit (ts, vitest)
+    needs: lint-ts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Vitest with coverage (game-core >= 90 % lines, rules >= 95 %, ui >= 70 %)
+        run: pnpm -r --if-present test -- --coverage --reporter=default --reporter=junit --outputFile=reports/junit.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-ts-reports
+          path: |
+            **/reports/junit.xml
+            **/coverage/coverage-summary.json
+          retention-days: 14
+
+  unit-py:
+    name: unit (py, pytest)
+    needs: lint-py
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - working-directory: services/api
+        run: uv sync --frozen
+      - name: pytest unit (pytest-socket blocks network)
+        working-directory: services/api
+        run: uv run pytest -m "unit" --disable-socket --allow-unix-socket --cov=app --cov-report=xml --cov-fail-under=80 --junitxml=reports/junit.xml
+      - name: workflows tasks unit tests (render_sdk mocked)
+        working-directory: services/workflows
+        run: |
+          uv sync --frozen
+          uv run pytest -m "unit" --disable-socket
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-py-reports
+          path: services/api/reports/
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # 4. Golden rules tests: fees, eligibility, timelines, EC-01..EC-30
+  #    The SAME fixtures run against the Python engine and the TS @margdarshak/rules package.
+  # ---------------------------------------------------------------------------
+  golden-rules:
+    name: golden rules (fees, eligibility, EC-01..EC-30)
+    needs: [unit-py, unit-ts]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - working-directory: services/api
+        run: uv sync --frozen
+      - name: Rule-pack schema + provenance (every row has source, verified_on, confidence; D-05)
+        working-directory: services/api
+        run: uv run python -m app.rules.validate --dir ../../rulepacks --require-provenance --fail-on-expired-verification-days 120
+      - name: Golden fixtures, Python engine
+        working-directory: services/api
+        run: uv run pytest ../../tests/golden/rules -m golden --junitxml=reports/golden-rules-py.xml
+      - name: Golden fixtures, TS engine (parity)
+        run: pnpm --filter @margdarshak/rules test:golden
+      - name: Cross-engine parity diff (byte-equal JSON outputs)
+        run: node scripts/ci/diff-golden.mjs tests/golden/rules/.out/py tests/golden/rules/.out/ts
+
+  # ---------------------------------------------------------------------------
+  # 5. Adapter contract tests (F-56): mock adapters must pass the same suite real ones will
+  # ---------------------------------------------------------------------------
+  adapter-contracts:
+    name: adapter contracts (mock + deeplink)
+    needs: unit-py
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        adapter: [sarathi, digilocker, aadhaar_offline, bhashini, payment, notification, slot]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - working-directory: services/api
+        run: uv sync --frozen
+      - name: Contract suite for ${{ matrix.adapter }}
+        working-directory: services/api
+        run: >
+          uv run pytest ../../tests/contract/adapters
+          -m contract -k "${{ matrix.adapter }}"
+          --adapter-impl=mock,deeplink
+          --junitxml=reports/contract-${{ matrix.adapter }}.xml
+      - name: Guard - no Aadhaar number / OTP / biometric field in any adapter DTO (D-07)
+        working-directory: services/api
+        run: uv run python -m app.adapters.lint_dto --forbid aadhaar_number,otp,biometric,face_match
+
+  # ---------------------------------------------------------------------------
+  # 6. Game determinism: same seed + same events => identical SessionResult hash,
+  #    on client build (vitest/node), score-verifier, at 60 Hz and simulated 30 fps render.
+  # ---------------------------------------------------------------------------
+  game-determinism:
+    name: game determinism (replay golden)
+    needs: unit-ts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build game-core + score-verifier
+        run: pnpm --filter "@margdarshak/score-verifier..." build
+      - name: Replay golden sessions (Nazar, Junction Scan, Stopping Distance, Blind Spot, Track Twin, LL sim)
+        run: pnpm --filter @margdarshak/game-core test:determinism -- --golden ../../tests/golden/games --render-fps 60,30
+      - name: Verifier replay must match client hashes
+        run: node services/score-verifier/dist/cli/replay.js --dir tests/golden/games --expect-hash-match
+      - name: Anti-cheat cases (spam taps, pattern clicking = 0, clock skew EC-15, buffering EC-18)
+        run: pnpm --filter @margdarshak/game-core test -- --run tests/anticheat
+
+  # ---------------------------------------------------------------------------
+  # 7. API integration: real Postgres 16 + Valkey, migrations up/down, OpenAPI breaking-change diff
+  # ---------------------------------------------------------------------------
+  api-integration:
+    name: api integration (pg16, migrations, openapi)
+    needs: [unit-py]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-bookworm
+        env:
+          POSTGRES_DB: margdarshak
+          POSTGRES_USER: margdarshak
+          POSTGRES_PASSWORD: ci-only
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U margdarshak"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+      kv:
+        image: valkey/valkey:8-bookworm
+        ports: ["6379:6379"]
+    env:
+      DATABASE_URL: postgresql+psycopg://margdarshak:ci-only@localhost:5432/margdarshak
+      REDIS_URL: redis://localhost:6379/0
+      N8N_HMAC_SECRET: ci-only-hmac
+      CONTACT_ENCRYPTION_KEY: Y2ktb25seS1jb250YWN0LWtleS0zMi1ieXRlcy0tLS0=
+      SESSION_SIGNING_KEY: ci-only-session
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - working-directory: services/api
+        run: uv sync --frozen
+      - name: Migrations up -> down 1 -> up (reversibility of the newest revision)
+        working-directory: services/api
+        run: |
+          uv run alembic upgrade head
+          uv run alembic downgrade -1
+          uv run alembic upgrade head
+      - name: Expand/contract lint (no DROP/RENAME in the same release as code that stops using it)
+        working-directory: services/api
+        run: uv run python -m app.db.migration_lint --since origin/main
+      - name: Single head check
+        working-directory: services/api
+        run: test "$(uv run alembic heads | wc -l)" -eq 1
+      - name: Integration tests (HMAC on /internal/*, idempotency keys, k>=5 Live Intel, age gates)
+        working-directory: services/api
+        run: uv run pytest -m "integration" --junitxml=reports/integration.xml
+      - name: Export OpenAPI from the app and compare with api/openapi.yaml
+        working-directory: services/api
+        run: uv run python -m app.openapi_export --out ../../.ci/openapi.generated.yaml --check-against ../../api/openapi.yaml
+      - name: OpenAPI breaking-change diff vs main (oasdiff)
+        if: github.event_name == 'pull_request'
+        run: |
+          git show origin/main:api/openapi.yaml > .ci/openapi.main.yaml || exit 0
+          docker run --rm -v "$PWD:/w" -w /w tufin/oasdiff:v1.11.7 breaking .ci/openapi.main.yaml api/openapi.yaml --fail-on ERR
+
+  # ---------------------------------------------------------------------------
+  # 8. Web build + performance budget (Lite mode < 300 KB first load, F-51)
+  # ---------------------------------------------------------------------------
+  build-web:
+    name: web build + Lite budget
+    needs: lint-ts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/cache@v4
+        with:
+          path: apps/web/.next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/web/**/*.{ts,tsx}') }}
+          restore-keys: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+      - name: next build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+          NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
+        run: pnpm --filter "@margdarshak/web..." build
+      - name: Bundle budgets (Lite route first load < 300 KB gzip; per-game chunk <= 350 KB gzip)
+        run: node scripts/ci/check-bundle-budget.mjs --app apps/web --lite-max-kb 300 --game-chunk-max-kb 350
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-build-stats
+          path: apps/web/.next/analyze/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # 9. End-to-end (Playwright) + accessibility (axe-core, WCAG 2.1 AA) on the compose stack
+  # ---------------------------------------------------------------------------
+  e2e:
+    name: e2e + axe (playwright)
+    needs: [build-web, api-integration, golden-rules, adapter-contracts, game-determinism]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [mobile-chrome-lowend, desktop-chrome]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Start stack (mock adapters, AI_MODE=template, synthetic seed)
+        run: |
+          docker compose -f infra/docker/compose.yaml up --build -d --wait api web
+          docker compose -f infra/docker/compose.yaml exec -T api python -m app.seed --profile demo --synthetic
+      - name: Install Playwright browsers
+        run: pnpm --filter @margdarshak/e2e exec playwright install --with-deps chromium
+      - name: Playwright (journeys S0-S9, three deep slices, EC screens) + axe on every page
+        env:
+          BASE_URL: http://localhost:3000
+          API_URL: http://localhost:8000
+          # 3G-ish throttling on the low-end project: 400 ms RTT, 400 kbps down (Lite mode budget)
+          E2E_NETWORK_PROFILE: ${{ matrix.project == 'mobile-chrome-lowend' && 'slow-3g' || 'none' }}
+        run: pnpm --filter @margdarshak/e2e exec playwright test --project=${{ matrix.project }} --reporter=html,junit
+      - name: axe gate (0 serious/critical violations; wcag2a, wcag2aa, wcag21aa tags)
+        run: node scripts/ci/axe-gate.mjs --report tests/e2e/axe-results --max-serious 0 --max-critical 0
+      - name: Compose logs on failure
+        if: failure()
+        run: docker compose -f infra/docker/compose.yaml logs --no-color > compose-logs.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-${{ matrix.project }}
+          path: |
+            tests/e2e/playwright-report/
+            tests/e2e/axe-results/
+            compose-logs.txt
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # 10. Docker build smoke (no push; deploy.yml builds + pushes signed images)
+  # ---------------------------------------------------------------------------
+  docker-smoke:
+    name: docker build smoke
+    needs: changes
+    if: needs.changes.outputs.docker == 'true' || github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, web, score-verifier]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Hadolint
+        run: docker run --rm -i hadolint/hadolint:v2.12.0 hadolint --failure-threshold warning - < infra/docker/${{ matrix.image }}.Dockerfile
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/docker/${{ matrix.image }}.Dockerfile
+          push: false
+          load: true
+          tags: margdarshak-${{ matrix.image }}:ci
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+      - name: Runs as non-root
+        run: test "$(docker inspect --format '{{.Config.User}}' margdarshak-${{ matrix.image }}:ci)" = "10001:10001"
+
+  # ---------------------------------------------------------------------------
+  # Single required status check for branch protection (and for Render checksPass, if used)
+  # ---------------------------------------------------------------------------
+  ci-gate:
+    name: ci-gate
+    if: always()
+    needs: [lint-ts, lint-py, unit-ts, unit-py, golden-rules, adapter-contracts, game-determinism, api-integration, build-web, e2e, docker-smoke]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any required job failed or was cancelled (skipped by path filter is OK)
+        run: |
+          echo '${{ toJSON(needs) }}' > needs.json
+          if grep -E '"result": "(failure|cancelled)"' needs.json; then
+            echo "::error::A required CI job failed"; exit 1
+          fi
+          echo "All required CI jobs passed or were skipped by path filters."

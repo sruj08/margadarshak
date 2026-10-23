@@ -1,0 +1,25 @@
+# Normalise line endings to LF in the repo (Windows and macOS developers; see ENVIRONMENT_SETUP §3.5)
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.riv binary
+*.lottie binary
+*.task binary
+*.wasm binary
+
+# Test media fixtures via Git LFS (TESTING.md §2, GIT_WORKFLOW.md §8)
+tests/fixtures/media/** filter=lfs diff=lfs merge=lfs -text
+
+# Generated files: collapse in diffs
+packages/api-client/src/generated/** linguist-generated=true
+packages/rules/src/generated/** linguist-generated=true
+pnpm-lock.yaml linguist-generated=true -diff
+**/uv.lock linguist-generated=true -diff

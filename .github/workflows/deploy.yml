@@ -1,0 +1,314 @@
+# Margdarshak deploy pipeline (docs/05-ops/DEPLOYMENT.md)
+#   Track A, hackathon (Render, Singapore, synthetic data):
+#     main green on ci + evals -> trigger Render deploys (API first; its preDeployCommand runs
+#     Alembic) -> wait for "live" -> smoke tests -> warm-up -> tag release.
+#   Track B, production for a state tenant (Docker + Helm on MeghRaj/NIC or a MeitY-empanelled
+#     CSP, India region): build -> sign (cosign keyless) -> SBOM attest -> push to GHCR ->
+#     mirror into the state registry -> helm upgrade --atomic from a self-hosted runner INSIDE the
+#     state network, gated by a GitHub Environment with required reviewers (state + Nestiq).
+# Environments (GitHub): hackathon-prod, staging, prod-gov-<tenant> (e.g. prod-gov-jk).
+name: deploy
+
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Where to deploy"
+        type: choice
+        options: [render-hackathon, render-staging, gov-tenant]
+        default: render-hackathon
+      tenant:
+        description: "State tenant id for gov-tenant (e.g. jk, kl)"
+        required: false
+        default: jk
+      ref:
+        description: "Git ref / tag to deploy (gov-tenant requires a vX.Y.Z tag)"
+        required: false
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.event.inputs.target || 'render-hackathon' }}-${{ github.event.inputs.tenant || 'na' }}
+  cancel-in-progress: false      # never cancel a deploy half-way
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/margdarshak
+  RENDER_API: https://api.render.com/v1
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Gate: only deploy a commit whose ci run succeeded (workflow_run) or a manual dispatch.
+  # ---------------------------------------------------------------------------
+  gate:
+    name: gate
+    runs-on: ubuntu-24.04
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    outputs:
+      sha: ${{ steps.meta.outputs.sha }}
+      target: ${{ steps.meta.outputs.target }}
+    steps:
+      - id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+            echo "target=render-hackathon" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=${{ github.event.inputs.ref }}" >> "$GITHUB_OUTPUT"
+            echo "target=${{ github.event.inputs.target }}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Require evals to be green on this commit (AI gate, D-10)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha="${{ steps.meta.outputs.sha }}"
+          # evals.yml only runs when AI paths change; absence of a run is OK, a failed run is not.
+          concl=$(gh api "repos/${{ github.repository }}/actions/workflows/evals.yml/runs?head_sha=${sha}&per_page=1" --jq '.workflow_runs[0].conclusion // "none"' || echo none)
+          echo "evals conclusion for ${sha}: ${concl}"
+          if [ "$concl" = "failure" ]; then echo "::error::AI evals failed on ${sha}"; exit 1; fi
+
+  # ---------------------------------------------------------------------------
+  # Track A: Render (hackathon prod / staging)
+  # ---------------------------------------------------------------------------
+  render:
+    name: render deploy (${{ needs.gate.outputs.target }})
+    needs: gate
+    if: startsWith(needs.gate.outputs.target, 'render-')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    environment:
+      name: ${{ needs.gate.outputs.target == 'render-staging' && 'staging' || 'hackathon-prod' }}
+      url: ${{ vars.WEB_URL }}
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      SVC_API: ${{ vars.RENDER_SERVICE_ID_API }}
+      SVC_WEB: ${{ vars.RENDER_SERVICE_ID_WEB }}
+      SVC_VERIFIER: ${{ vars.RENDER_SERVICE_ID_VERIFIER }}
+      SVC_WORKFLOWS: ${{ vars.RENDER_SERVICE_ID_WORKFLOWS }}
+      SHA: ${{ needs.gate.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.gate.outputs.sha }}
+      - name: Helper - deploy a Render service at a commit and wait until live
+        run: |
+          cat > /tmp/render_deploy.sh <<'EOS'
+          #!/usr/bin/env bash
+          # usage: render_deploy.sh <service-id> <label>
+          set -euo pipefail
+          svc="$1"; label="$2"
+          echo "Triggering ${label} (${svc}) at ${SHA}"
+          dep=$(curl -fsS -X POST "${RENDER_API}/services/${svc}/deploys" \
+                 -H "Authorization: Bearer ${RENDER_API_KEY}" -H "Content-Type: application/json" \
+                 -d "{\"commitId\":\"${SHA}\",\"clearCache\":\"do_not_clear\"}")
+          id=$(echo "$dep" | jq -r '.id')
+          for i in $(seq 1 120); do
+            st=$(curl -fsS "${RENDER_API}/services/${svc}/deploys/${id}" -H "Authorization: Bearer ${RENDER_API_KEY}" | jq -r '.status')
+            echo "  ${label}: ${st}"
+            case "$st" in
+              live) exit 0 ;;
+              build_failed|update_failed|canceled|pre_deploy_failed|deactivated) echo "::error::${label} deploy ${id} ended ${st}"; exit 1 ;;
+            esac
+            sleep 10
+          done
+          echo "::error::${label} deploy timed out"; exit 1
+          EOS
+          chmod +x /tmp/render_deploy.sh
+      # Order matters for zero downtime (expand/contract migrations, DEPLOYMENT.md §6):
+      # 1) score-verifier (backward compatible replays) 2) API (runs Alembic in preDeployCommand)
+      # 3) workflows (tasks read the new schema) 4) web (calls the new API).
+      - name: Deploy score-verifier
+        run: /tmp/render_deploy.sh "$SVC_VERIFIER" score-verifier
+      - name: Deploy API (+ Alembic upgrade head via preDeployCommand)
+        run: /tmp/render_deploy.sh "$SVC_API" api
+      - name: Deploy Render Workflows service
+        # [unverified, owner Ops lead, H0] that POST /services/{id}/deploys accepts a workflow
+        # service id. Fallback: `render workflows` CLI or autoDeployTrigger: checksPass on it.
+        run: /tmp/render_deploy.sh "$SVC_WORKFLOWS" workflows
+      - name: Deploy web
+        run: /tmp/render_deploy.sh "$SVC_WEB" web
+      - name: Smoke tests
+        env:
+          WEB_URL: ${{ vars.WEB_URL }}
+          API_URL: ${{ vars.API_URL }}
+        run: |
+          set -euo pipefail
+          curl -fsS "${API_URL}/v1/health" | tee /tmp/health.json
+          jq -e '.status == "ok" and .db == "ok" and .kv == "ok"' /tmp/health.json
+          jq -e --arg sha "$SHA" '.build_sha == $sha' /tmp/health.json
+          # API-01: 3-tap plan, no auth. Fee total must come from fees.json (one class LL+test+DL test+DL = 700, card 200)
+          curl -fsS -X POST "${API_URL}/v1/plans" -H 'Content-Type: application/json' \
+            -d '{"dob":"2007-05-01","vehicles":["MCWG"],"state":"JK"}' | tee /tmp/plan.json
+          jq -e '.fees.total_without_card.amount_inr == 700 and .fees.smart_card.amount_inr == 200' /tmp/plan.json
+          curl -fsS "${WEB_URL}/" -o /tmp/home.html
+          grep -q "Not affiliated with MoRTH" /tmp/home.html
+          curl -fsS "${API_URL}/v1/stats/public" > /dev/null
+      - name: Workflows smoke (start a no-op task and wait for it)
+        env:
+          API_URL: ${{ vars.API_URL }}
+          OPS_TOKEN: ${{ secrets.OPS_SMOKE_TOKEN }}
+        run: |
+          curl -fsS -X POST "${API_URL}/internal/ops/smoke-task" -H "Authorization: Bearer ${OPS_TOKEN}" | tee /tmp/task.json
+          jq -e '.status == "completed"' /tmp/task.json
+      - name: Warm-up (avoid cold paths before judging, R-11)
+        env:
+          WEB_URL: ${{ vars.WEB_URL }}
+          API_URL: ${{ vars.API_URL }}
+        run: |
+          for p in / /plan /practice/nazar /learn /track /lite; do curl -fsS -o /dev/null -w "%{http_code} %{time_total}s ${p}\n" "${WEB_URL}${p}" || true; done
+          for p in /v1/health /v1/rules/JK/classes /v1/rules/JK/fees /v1/nazar/clips; do curl -fsS -o /dev/null -w "%{http_code} %{time_total}s ${p}\n" "${API_URL}${p}" || true; done
+      - name: Record the release
+        if: success()
+        run: |
+          echo "### Deployed ${SHA} to ${{ needs.gate.outputs.target }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Rollback: Render dashboard -> service -> Events -> 'Rollback' on the previous live deploy (or re-run this workflow with ref=<previous sha>)." >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------------
+  # Track B: production for a state tenant
+  # ---------------------------------------------------------------------------
+  images:
+    name: build + sign images
+    needs: gate
+    if: needs.gate.outputs.target == 'gov-tenant'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+      id-token: write          # cosign keyless (Sigstore OIDC)
+      attestations: write
+    strategy:
+      fail-fast: true
+      matrix:
+        image: [api, web, score-verifier]
+    outputs:
+      digest-api: ${{ steps.out.outputs.digest-api }}
+      digest-web: ${{ steps.out.outputs.digest-web }}
+      digest-score-verifier: ${{ steps.out.outputs.digest-score-verifier }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.gate.outputs.sha }}
+      - name: Require a release tag for government deploys
+        run: |
+          git fetch --tags --force
+          git describe --exact-match --tags HEAD | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || { echo "::error::gov-tenant deploys need a vX.Y.Z tag"; exit 1; }
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_PREFIX }}-${{ matrix.image }}
+          tags: |
+            type=sha,format=long
+            type=semver,pattern={{version}}
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/docker/${{ matrix.image }}.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          provenance: mode=max
+          sbom: true
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+          build-args: |
+            NEXT_PUBLIC_BUILD_SHA=${{ needs.gate.outputs.sha }}
+      - uses: sigstore/cosign-installer@v3
+      - name: Sign image (keyless)
+        run: cosign sign --yes "${{ env.IMAGE_PREFIX }}-${{ matrix.image }}@${{ steps.build.outputs.digest }}"
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.IMAGE_PREFIX }}-${{ matrix.image }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+      - id: out
+        run: echo "digest-${{ matrix.image }}=${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
+
+  gov-deploy:
+    name: helm deploy (tenant ${{ github.event.inputs.tenant }})
+    needs: [gate, images]
+    if: needs.gate.outputs.target == 'gov-tenant'
+    # Self-hosted runner inside the state's network segment: the cluster API is never exposed
+    # to the internet. Label convention: md-<tenant>.
+    runs-on: [self-hosted, linux, "md-${{ github.event.inputs.tenant }}"]
+    timeout-minutes: 60
+    environment:
+      name: prod-gov-${{ github.event.inputs.tenant }}     # required reviewers: state nodal officer + Nestiq ops lead
+      url: ${{ vars.TENANT_WEB_URL }}
+    env:
+      TENANT: ${{ github.event.inputs.tenant }}
+      STATE_REGISTRY: ${{ vars.STATE_REGISTRY }}           # e.g. harbor.<state-dc>.internal/margdarshak
+      KUBE_NAMESPACE: margdarshak-${{ github.event.inputs.tenant }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.gate.outputs.sha }}
+      - uses: sigstore/cosign-installer@v3
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.19.0
+      - name: Verify signatures before anything enters the state network
+        run: |
+          for img in api web score-verifier; do
+            case $img in
+              api) d="${{ needs.images.outputs.digest-api }}";;
+              web) d="${{ needs.images.outputs.digest-web }}";;
+              score-verifier) d="${{ needs.images.outputs.digest-score-verifier }}";;
+            esac
+            cosign verify "${IMAGE_PREFIX}-${img}@${d}" \
+              --certificate-identity-regexp "^https://github.com/${{ github.repository }}/.github/workflows/deploy.yml@" \
+              --certificate-oidc-issuer https://token.actions.githubusercontent.com
+          done
+      - name: Mirror images into the state registry (data and images stay in India)
+        env:
+          STATE_REGISTRY_USER: ${{ secrets.STATE_REGISTRY_USER }}
+          STATE_REGISTRY_PASSWORD: ${{ secrets.STATE_REGISTRY_PASSWORD }}
+        run: |
+          echo "$STATE_REGISTRY_PASSWORD" | docker login "${STATE_REGISTRY%%/*}" -u "$STATE_REGISTRY_USER" --password-stdin
+          for pair in "api:${{ needs.images.outputs.digest-api }}" "web:${{ needs.images.outputs.digest-web }}" "score-verifier:${{ needs.images.outputs.digest-score-verifier }}"; do
+            img="${pair%%:*}"; d="${pair#*:}"
+            docker buildx imagetools create -t "${STATE_REGISTRY}/${img}:${{ needs.gate.outputs.sha }}" "${IMAGE_PREFIX}-${img}@${d}"
+          done
+      - name: Kubeconfig (namespaced deployer service account, short-lived token)
+        env:
+          KUBECONFIG_B64: ${{ secrets.TENANT_KUBECONFIG_B64 }}
+        run: |
+          mkdir -p ~/.kube && echo "$KUBECONFIG_B64" | base64 -d > ~/.kube/config && chmod 600 ~/.kube/config
+      - name: helm diff (visible in the approval log)
+        run: |
+          helm plugin install https://github.com/databus23/helm-diff --version v3.13.1 || true
+          helm diff upgrade margdarshak infra/helm/margdarshak -n "$KUBE_NAMESPACE" \
+            -f infra/helm/margdarshak/values.yaml -f "infra/helm/tenants/values-${TENANT}.yaml" \
+            --set global.imageRegistry="$STATE_REGISTRY" --set global.imageTag="${{ needs.gate.outputs.sha }}" || true
+      - name: helm upgrade --atomic (pre-upgrade hook runs Alembic as a Job; rolling update maxUnavailable 0)
+        run: |
+          helm upgrade --install margdarshak infra/helm/margdarshak \
+            -n "$KUBE_NAMESPACE" --create-namespace \
+            -f infra/helm/margdarshak/values.yaml -f "infra/helm/tenants/values-${TENANT}.yaml" \
+            --set global.imageRegistry="$STATE_REGISTRY" \
+            --set global.imageTag="${{ needs.gate.outputs.sha }}" \
+            --atomic --wait --timeout 15m --history-max 20
+      - name: Post-deploy smoke (from inside the network)
+        env:
+          TENANT_API_URL: ${{ vars.TENANT_API_URL }}
+        run: |
+          curl -fsS "${TENANT_API_URL}/v1/health" | jq -e '.status=="ok" and .ntp_offset_ms < 1000 and .log_shipping=="ok"'
+      - name: Rollback hint
+        if: failure()
+        run: |
+          echo "helm --atomic already rolled back the release. Inspect: helm history margdarshak -n $KUBE_NAMESPACE" >> "$GITHUB_STEP_SUMMARY"

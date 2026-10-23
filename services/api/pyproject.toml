@@ -1,0 +1,233 @@
+# Margdarshak API (FastAPI + Google ADK + Render Workflows client), hexagonal layout.
+# All versions are exact pins, checked on PyPI on 2026-10-23 (https://pypi.org/pypi/<name>/json).
+# Re-pin at H0 with `uv lock --upgrade-package <name>` and record changes in CHANGELOG.md.
+# See docs/03-engineering/BACKEND.md and docs/03-engineering/CODING_STANDARDS.md.
+
+[project]
+name = "margdarshak-api"
+version = "0.1.0"
+description = "Margdarshak backend: rules engine, journey state machine, case clock, game sessions, AI debrief and voice (ADK). Independent prototype, not affiliated with MoRTH/NIC."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12,<3.13"
+authors = [{ name = "Team Chanakya (Nestiq Private Limited)" }]
+
+dependencies = [
+  # --- Web framework and server ---
+  "fastapi==0.161.1",                 # 2026-10-22
+  "uvicorn[standard]==0.54.0",        # 2026-09-25 (pulls httptools; uvloop only on non-Windows)
+  "python-multipart==0.0.32",         # screenshot upload (API-42)
+  "orjson==3.13.0",                   # fast JSON responses
+
+  # --- Validation and settings ---
+  "pydantic==2.14.1",
+  "pydantic-settings==2.16.1",
+  "email-validator==2.3.0",
+  "jsonschema==4.26.0",               # rule-pack schema validation at load time
+
+  # --- Database ---
+  "sqlalchemy[asyncio]==2.1.6",
+  "alembic==1.20.1",
+  "psycopg[binary]==3.3.6",           # async driver for SQLAlchemy (postgresql+psycopg://)
+
+  # --- Cache / sessions / rate limits (Render Key Value is Redis-compatible) ---
+  "redis==8.1.0",
+
+  # --- Outbound HTTP, retries ---
+  "httpx==0.28.1",
+  "tenacity==9.2.1",
+
+  # --- AI: Google ADK (Python) + Gemini SDK ---
+  "google-adk==2.12.0",               # 2026-10-13, requires Python >= 3.11
+  "google-genai==2.33.0",             # 2026-10-23
+
+  # --- Durable jobs: Render Workflows Python SDK (client side: start_task / get_task_run) ---
+  "render-sdk==1.4.0",                # 2026-10-22, early access; imported as `render_sdk`
+
+  # --- Security ---
+  "pyjwt[crypto]==2.15.1",            # Google OIDC id-token verification, magic-link tokens
+  "cryptography==50.0.2",             # AES-GCM field encryption for E-14 contacts
+
+  # --- Observability ---
+  "structlog==26.1.0",
+  "sentry-sdk[fastapi]==2.73.0",
+  "opentelemetry-api==1.45.1",
+  "opentelemetry-sdk==1.45.1",
+  "opentelemetry-exporter-otlp-proto-http==1.45.1",
+  "opentelemetry-instrumentation-fastapi==0.66b1",
+  "opentelemetry-instrumentation-sqlalchemy==0.66b1",
+  "opentelemetry-instrumentation-httpx==0.66b1",
+  "opentelemetry-instrumentation-redis==0.66b1",
+]
+
+[dependency-groups]
+dev = [
+  # tests
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
+  "pytest-cov==7.1.0",
+  "pytest-xdist==3.8.0",
+  "pytest-randomly==5.0.0",
+  "pytest-timeout==2.4.0",
+  "hypothesis==6.170.8",
+  "freezegun==1.5.5",
+  "polyfactory==3.5.0",
+  "respx==0.23.1",
+  "syrupy==6.1.1",
+  "schemathesis==4.32.4",
+  "testcontainers[postgres,redis,minio]==4.15.0",
+  "google-adk[eval]==2.12.0",         # `adk eval` for AI eval sets (D-10)
+  # quality
+  "ruff==0.17.2",
+  "mypy==2.4.0",
+  "import-linter==2.15",
+  "deptry==0.25.1",
+  "types-python-dateutil==2.9.0.20261021",
+  # security
+  "pip-audit==2.10.1",
+  "bandit==1.9.4",
+  "detect-secrets==1.5.0",
+]
+
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/margdarshak"]
+
+[tool.uv]
+default-groups = ["dev"]
+
+# ---------------------------------------------------------------- Ruff
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = ["migrations/versions"]
+
+[tool.ruff.lint]
+select = [
+  "E", "W", "F", "I", "N", "UP", "B", "A", "C4", "DTZ", "T20", "RET", "SIM", "PTH", "ERA",
+  "PL", "RUF", "S", "ASYNC", "FAST", "PT", "TID", "TC", "ARG", "PIE", "PERF", "LOG", "G", "BLE",
+]
+ignore = [
+  "PLR0913",   # use cases legitimately take several ports
+  "S105",      # false positives on constant names like TOKEN_TTL
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLR2004", "ARG001"]
+"migrations/**" = ["ERA001"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"datetime.datetime.now".msg = "Inject ClockPort; server time is the source of truth (EC-15)."
+"datetime.datetime.utcnow".msg = "Inject ClockPort."
+"datetime.date.today".msg = "Inject ClockPort (IST calendar date)."
+"random".msg = "Use the injected SeedGenerator (secrets) or game-core seeds."
+"pickle".msg = "Unsafe deserialisation."
+"requests".msg = "Use httpx with timeouts."
+"yaml.load".msg = "Use yaml.safe_load."
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = ["pydantic.field_validator", "pydantic.model_validator"]
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+packages = ["margdarshak"]
+
+[[tool.mypy.overrides]]
+module = ["margdarshak.domain.*", "margdarshak.application.*"]
+disallow_any_explicit = true
+
+[[tool.mypy.overrides]]
+# render-sdk is early access and may not ship complete type information.
+module = ["render_sdk", "render_sdk.*"]
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config --timeout=60"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+  "ec(id): edge case covered by this test, e.g. ec('EC-07') (D-20 coverage check)",
+  "real: contract test against a real or sandbox adapter (nightly/manual only)",
+  "golden: rules/fees/journey/clock golden fixture test",
+  "slow: takes more than 5 seconds",
+]
+filterwarnings = ["error::DeprecationWarning:margdarshak.*"]
+
+[tool.coverage.run]
+branch = true
+source = ["margdarshak"]
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+fail_under = 85
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "\\.\\.\\."]
+
+# ---------------------------------------------------------------- import-linter (see CODING_STANDARDS §4.6)
+[tool.importlinter]
+root_package = "margdarshak"
+
+[[tool.importlinter.contracts]]
+name = "Hexagonal layers"
+type = "layers"
+layers = [
+  "margdarshak.bootstrap",
+  "margdarshak.adapters",
+  "margdarshak.application",
+  "margdarshak.ports",
+  "margdarshak.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "Domain imports no frameworks or I/O libraries"
+type = "forbidden"
+source_modules = ["margdarshak.domain"]
+forbidden_modules = [
+  "fastapi", "sqlalchemy", "httpx", "redis", "google.adk", "google.genai",
+  "render_sdk", "structlog", "opentelemetry", "sentry_sdk",
+]
+
+[[tool.importlinter.contracts]]
+name = "Outbound adapters are independent"
+type = "independence"
+modules = [
+  "margdarshak.adapters.outbound.db",
+  "margdarshak.adapters.outbound.gov",
+  "margdarshak.adapters.outbound.ai",
+  "margdarshak.adapters.outbound.notify",
+  "margdarshak.adapters.outbound.jobs",
+  "margdarshak.adapters.outbound.scoring",
+  "margdarshak.adapters.outbound.storage",
+  "margdarshak.adapters.outbound.cache",
+]
+
+# ---------------------------------------------------------------- bandit / deptry
+[tool.bandit]
+exclude_dirs = ["tests", "migrations"]
+
+[tool.deptry]
+known_first_party = ["margdarshak"]

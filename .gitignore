@@ -1,0 +1,111 @@
+# =====================================================================================
+# Margdarshak .gitignore
+# Rule: no secrets, no real participant data, no unblurred clips, no n8n credentials in Git.
+# =====================================================================================
+
+# ---- Secrets and environment (only .env.example is committed) ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+service-account*.json
+credentials*.json
+.secrets/
+# Local HTTPS certificates (mkcert / next --experimental-https)
+certificates/
+*.crt
+
+# ---- Node / pnpm ----
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+.turbo/
+
+# ---- Next.js / build outputs ----
+.next/
+out/
+dist/
+build/
+next-env.d.ts
+# Serwist-generated service worker (source is apps/web/src/app/sw.ts)
+apps/web/public/sw.js
+apps/web/public/sw.js.map
+apps/web/public/swe-worker-*.js
+apps/web/public/workbox-*.js
+
+# ---- Python / uv ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.python-version.local
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+.import_linter_cache/
+
+# ---- Tests and reports ----
+coverage/
+playwright-report/
+test-results/
+blob-report/
+.lighthouseci/
+tests/load/results/
+ai/evals/results/*.local.json
+# syrupy snapshots ARE committed (tests/**/__snapshots__/); do not ignore them
+
+# ---- Media and data (never in Git) ----
+# Raw or intermediate clips stay off Git; only the manifest and CC0 test fixtures (Git LFS) are tracked
+clips/raw/
+clips/work/
+*.mp4
+*.mov
+*.mkv
+*.webm
+!tests/fixtures/media/**/*.mp4
+# Field-study exports and any participant data
+field-study/
+exports/
+*.participants.csv
+# Database dumps
+*.dump
+*.sql.gz
+pgdata/
+
+# ---- n8n ----
+n8n/credentials/
+n8n/.n8n/
+n8n/**/*.credentials.json
+
+# ---- Render / infra local state ----
+.render/
+infra/**/.terraform/
+infra/**/terraform.tfstate*
+
+# ---- ADK local artefacts ----
+.adk/
+**/.adk/
+
+# ---- Editors and OS ----
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

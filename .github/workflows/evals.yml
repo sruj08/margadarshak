@@ -1,0 +1,230 @@
+# Margdarshak AI evals gate (D-10): >= 30 cases per agent, run with ADK `adk eval`.
+#   - offline job: validators, provenance guard, template fallback, PII redaction. No model, no secret.
+#   - model job:   real Gemini (PAID tier key, D-13) for M-02..M-05 (+ M-06/M-07 nightly).
+# Gates (from docs/04-ai/AI_EVALS.md and research 08 §5.9):
+#   schema-valid after validator 100 % · invented numbers 0 · rule-ID precision >= 95 %
+#   top-finding coverage 100 % · hallucinations_v1 flagged 0 · safety_v1 + banned-phrase 0
+#   fallback rate in eval < 5 % · regression vs main baseline <= 2 pts on any rubric metric
+# Fork PRs never receive the Gemini key: they run the offline job only, and a maintainer
+# re-runs the model job with the `run-evals` label.
+name: evals
+
+on:
+  pull_request:
+    paths:
+      - "ai/**"
+      - "services/api/app/agents/**"
+      - "services/api/app/ai/**"
+      - "rulepacks/**"
+      - ".github/workflows/evals.yml"
+    types: [opened, synchronize, reopened, labeled]
+  push:
+    branches: [main]
+    paths:
+      - "ai/**"
+      - "services/api/app/agents/**"
+      - "services/api/app/ai/**"
+  schedule:
+    - cron: "30 20 * * *"   # 02:00 IST nightly: full suite incl. vision/video agents + drift check
+  workflow_dispatch:
+    inputs:
+      agents:
+        description: "Comma-separated agents (debrief,coach,tutor,screen_decoder,clip_window,sign_snap,voice_text)"
+        required: false
+        default: "debrief,coach,tutor,screen_decoder"
+      max_inr:
+        description: "Hard spend cap for this run in INR"
+        required: false
+        default: "150"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evals-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  UV_VERSION: "0.8.17"
+  TZ: UTC
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Offline: deterministic guardrails. Always runs, needs no secrets.
+  # ---------------------------------------------------------------------------
+  offline-guardrails:
+    name: guardrails (offline, no model)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      AI_MODE: template
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - working-directory: services/api
+        run: uv sync --frozen
+      - name: Eval sets are well-formed and big enough (>= 30 cases per agent)
+        working-directory: services/api
+        run: uv run python -m app.ai.evals.check_sets --dir ../../ai/evals --min-cases 30
+      - name: Validator rejects digits outside {{fact:*}}, unknown IDs, unverified rules (08 §5.5)
+        working-directory: services/api
+        run: uv run pytest ../../tests/ai/validator -m "ai_offline" --junitxml=reports/validator.xml
+      - name: Template fallback renders for every finding_id x locale (en, hi)
+        working-directory: services/api
+        run: uv run pytest ../../tests/ai/templates -m "ai_offline"
+      - name: PII redaction (Aadhaar-like 12 digits, OTP, phone, UPI) before any model call (EC-20)
+        working-directory: services/api
+        run: uv run pytest ../../tests/ai/pii -m "ai_offline"
+      - name: Under-18 / no-consent never reaches a model (D-13)
+        working-directory: services/api
+        run: uv run pytest ../../tests/ai/age_gate -m "ai_offline"
+      - name: No rupee literal or banned wording in prompts (D-06, D-19)
+        run: node scripts/ci/check-wording.mjs --paths ai/prompts --fail-on-match
+
+  # ---------------------------------------------------------------------------
+  # Model evals: real Gemini, paid tier. Skipped on fork PRs unless labelled.
+  # ---------------------------------------------------------------------------
+  model-evals:
+    name: adk eval (${{ matrix.agent }})
+    needs: offline-guardrails
+    if: >
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      contains(github.event.pull_request.labels.*.name, 'run-evals')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: ai-evals            # holds GEMINI_API_KEY_EVALS (paid project, low quota cap)
+    strategy:
+      fail-fast: false
+      max-parallel: 2                # respect Gemini RPM on the eval project
+      matrix:
+        agent: [debrief, coach, tutor, screen_decoder]
+        include:
+          - agent: debrief
+            evalset: ai/evals/debrief.evalset.json
+            config: ai/evals/debrief.test_config.json
+          - agent: coach
+            evalset: ai/evals/coach.evalset.json
+            config: ai/evals/coach.test_config.json
+          - agent: tutor
+            evalset: ai/evals/tutor.evalset.json
+            config: ai/evals/tutor.test_config.json
+          - agent: screen_decoder
+            evalset: ai/evals/screen_decoder.evalset.json
+            config: ai/evals/screen_decoder.test_config.json
+    env:
+      GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY_EVALS }}
+      GOOGLE_GENAI_USE_VERTEXAI: "FALSE"
+      GEMINI_MODEL_DEBRIEF: ${{ vars.GEMINI_MODEL_DEBRIEF || 'gemini-3.1-flash-lite' }}
+      GEMINI_MODEL_VISION: ${{ vars.GEMINI_MODEL_VISION || 'gemini-3.8-flash' }}
+      EVAL_MAX_INR: ${{ github.event.inputs.max_inr || '150' }}
+      AI_MODE: live
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - working-directory: services/api
+        run: uv sync --frozen
+      - name: Skip if the agent is not selected (workflow_dispatch)
+        id: sel
+        run: |
+          want="${{ github.event.inputs.agents }}"
+          if [ -n "$want" ] && ! echo ",$want," | grep -q ",${{ matrix.agent }},"; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; else echo "skip=false" >> "$GITHUB_OUTPUT"; fi
+      - name: adk eval ${{ matrix.agent }}
+        if: steps.sel.outputs.skip == 'false'
+        working-directory: services/api
+        run: |
+          mkdir -p ../../.ci/evals
+          uv run adk eval app/agents/${{ matrix.agent }} ../../${{ matrix.evalset }} \
+            --config_file_path ../../${{ matrix.config }} \
+            --print_detailed_results | tee ../../.ci/evals/${{ matrix.agent }}.log
+      - name: Margdarshak gates (provenance, rule-ID precision, coverage, fallback, cost)
+        if: steps.sel.outputs.skip == 'false'
+        working-directory: services/api
+        run: >
+          uv run python -m app.ai.evals.gate
+          --agent ${{ matrix.agent }}
+          --evalset ../../${{ matrix.evalset }}
+          --results ../../.ci/evals/${{ matrix.agent }}.log
+          --thresholds ../../ai/evals/thresholds.yaml
+          --baseline-ref origin/main
+          --max-regression-pts 2
+          --max-inr "$EVAL_MAX_INR"
+          --out ../../.ci/evals/${{ matrix.agent }}.summary.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evals-${{ matrix.agent }}
+          path: .ci/evals/
+          retention-days: 30
+
+  nightly-multimodal:
+    name: nightly multimodal evals (clip windows M-06, sign snap M-07)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: offline-guardrails
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment: ai-evals
+    env:
+      GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY_EVALS }}
+      GOOGLE_GENAI_USE_VERTEXAI: "FALSE"
+      EVAL_MAX_INR: "300"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+      - working-directory: services/api
+        run: uv sync --frozen
+      - name: Clip-window proposer vs two-rater gold windows (+-1 s tolerance)
+        working-directory: services/api
+        run: uv run python -m app.ai.evals.clip_windows --gold ../../ai/evals/clip_windows.gold.json --tolerance-s 1.0 --max-inr "$EVAL_MAX_INR"
+      - name: Sign snap vs sign catalogue (top-1 accuracy, "unknown" allowed)
+        working-directory: services/api
+        run: uv run python -m app.ai.evals.sign_snap --gold ../../ai/evals/sign_snap.gold.json --min-top1 0.90
+      - name: Model-ID drift check (pinned env models still listed, not legacy)
+        working-directory: services/api
+        run: uv run python -m app.ai.evals.model_drift --models "$GEMINI_MODEL_DEBRIEF,$GEMINI_MODEL_VISION" --warn-only
+
+  report:
+    name: eval summary
+    if: always() && github.event_name == 'pull_request'
+    needs: [offline-guardrails, model-evals]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: evals-*
+          path: evals
+          merge-multiple: true
+      - name: Comment summary on the PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            let rows = ['| agent | cases | schema | invented numbers | rule-ID precision | fallback | ₹ spent | gate |', '|---|---|---|---|---|---|---|---|'];
+            if (fs.existsSync('evals')) {
+              for (const f of fs.readdirSync('evals').filter(f => f.endsWith('.summary.json'))) {
+                const s = JSON.parse(fs.readFileSync(path.join('evals', f), 'utf8'));
+                rows.push(`| ${s.agent} | ${s.cases} | ${s.schema_valid_pct}% | ${s.invented_numbers} | ${s.rule_id_precision_pct}% | ${s.fallback_pct}% | ${s.spend_inr} | ${s.passed ? 'PASS' : 'FAIL'} |`);
+              }
+            }
+            const body = `### AI evals (D-10)\n${rows.join('\n')}\n\nOffline guardrails: **${{ needs.offline-guardrails.result }}** · model evals: **${{ needs.model-evals.result }}**`;
+            await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
