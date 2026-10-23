@@ -12,7 +12,7 @@
 - **Tagline:** *Learner se licence tak, bina agent ke.*
 - **Positioning (D-02):** a reference citizen front end plus an open adapter specification that MoRTH, NIC or a State Transport Department can host over Sarathi, DigiLocker and Bhashini. The hackathon build is a working product on mock adapters. It is **not affiliated** with MoRTH or NIC (D-01).
 - **Shape (D-03):** the journey is the body; **Nazar** (hazard perception) plus the game debrief is the heart. The demo hook, the evidence slide and the closing QR belong to Nazar.
-- **Depth contract (D-04):** three deep slices (A: plan → guided LL → check answers; B: Nazar + AI debrief + field study; C: stage-aware home + journey sweeper on Render Workflows + n8n WhatsApp). Every other stage works end to end on mocks with **no dead buttons**.
+- **Depth contract (D-04):** three deep slices (A: plan → guided LL → check answers; B: Nazar + AI debrief + field study; C: stage-aware home + journey sweeper on Render Workflows + WhatsApp from the backend notifier). Every other stage works end to end on mocks with **no dead buttons**.
 
 ---
 
@@ -140,7 +140,7 @@ Detail in [PERSONAS.md](PERSONAS.md).
 ### 5.1 Release scopes
 | Release | Phase | What ships | Data | Hosting |
 |---|---|---|---|---|
-| **R0 Hackathon (MVP)** | Phase 1–2 (Oct 2026) | All Must features working end to end on mocks; three deep slices; Nazar field study; clip pipeline on Render Workflows; n8n messaging edge | Synthetic cases; field-study data anonymous and 18+ | Render Singapore (stated in README), Cloudflare R2 for blurred clips |
+| **R0 Hackathon (MVP)** | Phase 1–2 (Oct 2026) | All Must features working end to end on mocks; three deep slices; Nazar field study; clip pipeline on Render Workflows; backend notifier for citizen messages; n8n for schedules and staff queues | Synthetic cases; field-study data anonymous and 18+ | Render Singapore (stated in README), Cloudflare R2 for blurred clips |
 | **R1 Pilot (v1)** | Phase 3 (Nov 2026–Mar 2027) | Should features to "thin+" depth: Live Intel with real reports, school Pro beta, console beta on pilot data, DigiLocker requester onboarding started, paid Gemini tier, WhatsApp approved templates | Real users 18+ (minors rules-only), consent artefacts | India-region object store; India copy of logs (CERT-In) |
 | **R2 State adoption (v2)** | Phase 4–5 (2027–2028+) | Mode B adapters with a state, tenant theming, rule-pack studio in state hands, console on adapter data, Bhashini, SMS after DLT | State data under MoU; Sarathi stays system of record | NIC or MeitY-empanelled Indian cloud; Vertex AI India region [unverified: asia-south1 availability; owner Tech lead; 2026-11-15] |
 
@@ -149,7 +149,7 @@ Detail in [PERSONAS.md](PERSONAS.md).
 |---|---|---|---|
 | **Deep-A** | S0–S2 | F-01, F-02, F-03, F-04, F-05, F-06, F-07 (Mode A) | Real rules engine over `fees.json` + `rules/JK.json` with sources; every EC-01..EC-06, EC-09..EC-11 rule row; guided 6-screen flow with autosave/resume; photo/signature fixer on device; check-answers; copy-pack hand-off |
 | **Deep-B** | S4 (+S3 sim) | F-23, F-24 (4 deep games), F-25, F-26 (core), F-22, F-57 | Clip bank with two-rater windows; server replay scoring; Kerala-format mock; AI debrief with provenance validator and template fallback; ≥ 30-case eval per agent; field study live |
-| **Deep-C** | All | F-08, F-09, F-53, F-30 (one scripted Hindi flow), F-54 (core), F-55, F-56 | Journey state machine with persona switcher; journey sweeper Workflow triggered by n8n Schedule; WhatsApp test number + email; age gate; consent artefacts; analytics schema enforcement; adapters with contract tests |
+| **Deep-C** | All | F-08, F-09, F-53, F-30 (one scripted Hindi flow), F-54 (core), F-55, F-56 | Journey state machine with persona switcher; journey sweeper Workflow triggered by n8n Schedule; WhatsApp test number + email sent by the backend notifier; age gate; consent artefacts; analytics schema enforcement; adapters with contract tests |
 | **Thin** | S5–S9, Eco | F-10–F-17, F-20, F-21, F-27, F-28, F-31–F-33, F-40–F-42, F-50–F-52, F-58 | Works end to end on mocks, honest labels, no lorem ipsum |
 
 ---
@@ -274,11 +274,11 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 - **Priority.** Must. **R0 depth.** Deep-C. **Edge cases.** EC-15, EC-22.
 
 ### F-09 Case clock
-- **Description.** LL-expiry countdown from day 180, day-30 unlock, test-eve checklist, approval chase. Durable timers on Render Workflows, with n8n as trigger and messaging edge.
+- **Description.** LL-expiry countdown from day 180, day-30 unlock, test-eve checklist, approval chase. Durable timers on Render Workflows, with n8n as the daily trigger and watchdog; the backend notifier delivers (ADR-0006).
 - **Personas.** P-01, P-02, P-03. **Stories.** US-070, US-140, US-143, US-161, US-224–US-226.
 - **Acceptance criteria.**
   - FR-09.1 TimelineEvents (E-12) for: LL day 25 ("book now"), day 30 (unlock), LL expiry T-30 and T-7, test-eve 19:00, approval stall day N (from rule pack or "no notified timeline"), DL renewal T-365/T-60/T-7.
-  - FR-09.2 n8n Schedule (06:30 IST) calls API-65; the Render Workflow computes due milestones and returns `{uid, milestone_id, channel, template_id, vars}`; n8n only sends (D-16).
+  - FR-09.2 n8n Schedule (06:30 IST) calls API-65; the Render Workflow computes due milestones and writes outbox rows `{uid, milestone_id, channel, template_id, vars, send_after}`; the backend notifier sends them; n8n never sees a recipient (D-16).
   - FR-09.3 Idempotency key `(case_id, milestone, due_date)`; a retried run never double-sends.
   - FR-09.4 Collision warning when `expiry − today < 2 × (slot_lead + retest_gap)` (EC-07), with the new-application-number warning.
   - FR-09.5 Rule-pack change mid-case triggers re-evaluation and a diff notice (EC-27).
@@ -304,7 +304,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
   - FR-11.2 A field is shown only when n ≥ 5 reports in 30 days; otherwise "Not enough reports yet".
   - FR-11.3 Seeded rows carry a "sample data" chip.
   - FR-11.4 "Setting"/bribe reports are counted as an aggregate and deep-link to the state ACB/vigilance and CPGRAMS; we never host allegations.
-  - FR-11.5 Moderation via n8n W9 with backend precheck (PII regex, duplicates); grievance officer in the footer (IT Rules 2021).
+  - FR-11.5 Backend precheck inline on API-28 (PII regex, duplicates); only flagged reports go to moderators via n8n W9; grievance officer in the footer (IT Rules 2021).
 - **Priority.** Should. **R0 depth.** Thin. **Edge cases.** EC-24.
 
 ### F-12 Driving-test readiness
@@ -312,7 +312,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 - **Personas.** P-01, P-02, P-03. **Stories.** US-081, US-160–US-164.
 - **Acceptance criteria.**
   - FR-12.1 Explainer per track type (manual, ADTT) with "not published" for unknown parameters.
-  - FR-12.2 Test-eve template (n8n W4) with LL, RC, insurance, PUC, L-plate, helmet + ICS.
+  - FR-12.2 Test-eve template (TimelineEvent `test_eve`, sent by the notifier at 19:00 IST) with LL, RC, insurance, PUC, L-plate, helmet + ICS.
   - FR-12.3 QR contains only the plan summary; no identifiers.
   - FR-12.4 Vehicle listing is seeded and labelled; no booking, no payment, no AI prices.
 - **Priority.** Must. **R0 depth.** Thin.
@@ -334,7 +334,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 - **Acceptance criteria.**
   - FR-14.1 Stages Passed → Approved → Printed → Dispatched → Received from events (or adapter in Mode B).
   - FR-14.2 "No SMS within 3 days" state (EC-23) with status-check steps, proof-to-carry and the s.181 ₹5,000 note.
-  - FR-14.3 Letter drafted only from user facts + rule-pack timelines; human approval in-app (n8n W11 Wait/resume); email to the user; optional CC to the published grievance address; never filed on CPGRAMS by us.
+  - FR-14.3 Letter drafted only from user facts + rule-pack timelines; human approval in-app (backend letter flow); email to the user via the notifier; optional CC to the published grievance address; never filed on CPGRAMS by us.
 - **Priority.** Should. **R0 depth.** Thin. **Edge cases.** EC-23.
 
 ### F-15 New-rider year
@@ -596,7 +596,7 @@ Every edge case needs a rule row or screen state **and** a test. Test IDs follow
 | ID | Requirement | R0 | R1+ |
 |---|---|---|---|
 | NFR-A1 | Availability | Instance pre-warmed before and during judging; health check API-64; README notes ~1-min cold start | 99.5% monthly (pilot), 99.9% (state) |
-| NFR-A2 | Degradation | AI down → templates; n8n down → messages delayed, facts unchanged; Sarathi down → drafts safe | same, with status page |
+| NFR-A2 | Degradation | AI down → templates; n8n down → staff tasks delayed, citizen messages and facts unchanged; Sarathi down → drafts safe | same, with status page |
 | NFR-A3 | Durable jobs | Render Workflows retries per policy; idempotent timeline keys | `JobRunner` second implementation for NIC/MeitY (Celery/Temporal-style) |
 | NFR-A4 | Backups | Daily Postgres snapshot (Render) | RPO ≤ 15 min, RTO ≤ 4 h, in India |
 
@@ -678,7 +678,7 @@ No AI in: eligibility, fees, timelines, scores, scam verdicts, golden hour, clas
 | Dependency | Type | Used by | Status | Fallback |
 |---|---|---|---|---|
 | Render (web services, Postgres, Key Value, Workflows Python SDK) | Platform | All; clip pipeline, sweeper, stats | Available (Singapore region) | Docker on any host; `JobRunner` alt |
-| n8n Pro | Messaging edge, schedules | F-09, F-11, F-14, F-40, F-53 | Team has Pro | Direct webhook to backend for schedules |
+| n8n Pro | Schedules, staff queues and notifications (no citizen messages) | F-09, F-11, F-23, F-40, F-41, F-42 | Team has Pro | Direct call to API-65 for the sweep; backend review pages for staff queues |
 | Google ADK 2.12 (Python) + Gemini | AI | F-25, F-30–F-32 | Pin at H0 | Templates |
 | Sarvam Saaras v3 | Dogri ASR | F-30 | API key needed | Hindi-only voice |
 | Meta WhatsApp Cloud API | Notifications | F-53 | Test number | Email, web push |

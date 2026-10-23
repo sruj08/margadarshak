@@ -90,7 +90,7 @@ Scale: **L0** = no AI. **L1** = AI suggests and a human decides every time. **L2
 | Transliteration bias against less common names | Both scripts always shown; edit before save; correction rate tracked by name-origin slice |
 | Women less represented in voice training data, so higher ASR errors `HUNCH` | Women ≥ 40% of the recorded eval set; gap gate |
 | Hazard clips filmed only in Jammu city underrepresent rural/hill hazards | Clip quotas by road type (DATA_PIPELINE §2.2); hill-road content for J&K |
-| Tone that shames failures (hurts the overconfident 19-year-old who fears failing in front of friends) | Tone lint, private debrief, face-saving copy in S6F, no outcome words in notification previews (08 W10) |
+| Tone that shames failures (hurts the overconfident 19-year-old who fears failing in front of friends) | Tone lint, private debrief, face-saving copy in S6F, no outcome words in notification previews (fail follow-up TimelineEvents sent by the notifier; 08 §6) |
 | Low-literacy users over-trust the AI | "AI can't book, pay or submit"; the source chip on every rule; read-back confirmations; the decoder shows "Did your screen say *this*?" |
 
 ### 4.3 Fairness audit cadence

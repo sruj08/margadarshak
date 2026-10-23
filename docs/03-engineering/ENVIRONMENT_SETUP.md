@@ -258,12 +258,12 @@ For deploys and `RENDER_API_KEY` handling see [DEPLOYMENT](../05-ops/DEPLOYMENT.
 
 1. Open http://localhost:5678, create the owner account (local only).
 2. Import workflows: `pnpm n8n:import` (runs `n8n import:workflow --separate --input=/n8n/workflows` inside the container; credentials are **not** in Git).
-3. Create credentials in the n8n UI: `Margdarshak API HMAC` (header auth using `HMAC_N8N_SECRET`), WhatsApp Cloud API test number (optional), SMTP (optional).
+3. Create credentials in the n8n UI: `Margdarshak API HMAC` (header auth using `HMAC_N8N_SECRET`), staff WhatsApp test number (optional), SMTP for staff email (optional). Citizen WhatsApp and email are sent by the backend notifier, not n8n.
 4. Set n8n variables: `API_BASE_URL=http://host.docker.internal:8000` (Docker Desktop on Windows/macOS resolves `host.docker.internal` to the host).
 5. In `.env`, set `N8N_WEBHOOK_BASE_URL=http://localhost:5678/webhook`.
-6. Trigger W1 manually to run a clock sweep end to end.
+6. Trigger W01 manually to start a clock sweep end to end (the sweep queues outbox rows; the backend notifier, `ConsoleNotifier` locally, delivers them).
 
-n8n is the messaging edge only (D-16): if your local n8n is off, the app still works; notifications just stay queued.
+n8n is the internal and staff operations layer only (D-16, ADR-0006): if your local n8n is off, the app still works and citizen notifications still go out through the notifier; only staff tasks (clip review, moderation, alerts) wait, and you can start a sweep by calling API-65 directly.
 
 ---
 

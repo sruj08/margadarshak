@@ -22,7 +22,7 @@
 |---|---|---|---|---|---|
 | M-01 | VoiceGuideAgent | `MD_MODEL_VOICE_LIVE` → `gemini-3.8-live`; fallback `MD_MODEL_VOICE_LIVE_FALLBACK` → `gemini-2.5-flash-native-audio-preview-12-2025` | Cloud (Gemini Live via ADK `run_live`) | **Build (thin, bounded):** Hindi + English, 8 destinations, 10 fields (04 §3.1) | **No** |
 | M-02 | DebriefAgent | `MD_MODEL_DEBRIEF` → `gemini-3.1-flash-lite` | Cloud (one LLM node in the ADK graph) | **Build:** deep slice B | **No** (template card instead) |
-| M-03 | CoachAgent | `MD_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly batch through n8n W6 → API | Build (thin) | **No** (template plan) |
+| M-03 | CoachAgent | `MD_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly coach-plan TimelineEvent inside the `case_clock_sweep` Workflows run | Build (thin) | **No** (template plan) |
 | M-04 | TutorAgent | `MD_MODEL_TUTOR` → `gemini-3.1-flash-lite` | Cloud | Build (thin; explanations reviewed offline, see §M-04) | **No** (static reviewed explanation) |
 | M-05 | ScreenDecoderAgent | `MD_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Build: status-screenshot path. Paper slip is **thin/stretch** (04 §3.6) | **No** (manual stage dropdown) |
 | M-06 | ClipWindowProposer | `MD_MODEL_VIDEO` → `gemini-3.8-flash` | Cloud, **offline**, inside the Render Workflows clip pipeline | **Build first** (04 §4 order 2; D-15 headline Workflow) | n/a (never user-facing) |
@@ -173,7 +173,7 @@ Each card covers task, model, why chosen, alternatives, inputs/outputs, latency 
 | Intended use | Narrating code-computed results to adults who consented to "AI coach" |
 | Limitations | Can't compute, can't cite `verified:false` rules, can't mention numbers except through placeholders. The Golden Hour game (G9) is **template-only** (safety-critical first-aid content, D-14 row 12): DebriefAgent is never called for `golden_hour` sessions |
 
-### M-03 CoachAgent (F-26, n8n W6)
+### M-03 CoachAgent (F-26, weekly TimelineEvent)
 
 | Field | Value |
 |---|---|
@@ -182,7 +182,7 @@ Each card covers task, model, why chosen, alternatives, inputs/outputs, latency 
 | Inputs | `CoachPlan` JSON: `week_goal_sessions`, `due_topics[]` (IDs), `fading_nodes[]`, `streak_state` (enum), `locale`, `allowed_drill_ids` |
 | Outputs | `CoachDraft` ([PROMPTS §3.2](PROMPTS.md#32-coachdraft-m-03)): `headline`, `plan_items[]` (drill IDs in order), `intention_prompt`, all digit-free |
 | Cost | ≈ 2k in + 300 out ≈ $0.001/run. 4 runs/month ≈ **₹0.5/user/month** (08 §5.8) |
-| Latency | Batch (n8n Monday 07:00); p90 < 6 s per user is fine [D]. Batched inside one n8n execution (08 §6) |
+| Latency | Batch (weekly, inside the `case_clock_sweep` Workflows run); p90 < 6 s per user is fine [D]. Batched per sweep page, never one n8n execution per user |
 | Fallback | Template plan ("This week: 4 short sessions. Start with {{topic}}") |
 | Limitations | No guilt, no streak shaming, no "your friend beat you" (08 §4.10). Quiet hours 22:00–07:00 IST [D]. Max 1 nudge/day |
 

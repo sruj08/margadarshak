@@ -17,7 +17,7 @@ flowchart LR
   subgraph Clients
     W[apps/web PWA]
     C[apps/console]
-    N8[n8n Pro<br/>messaging edge + schedules]
+    N8[n8n Pro<br/>internal ops: schedules,<br/>staff approvals + alerts]
   end
   subgraph Render["Render (Singapore) — Phase 1–2"]
     API[services/api<br/>FastAPI + ADK<br/>Python 3.12]
@@ -32,7 +32,7 @@ flowchart LR
   W -->|HTTPS REST /v1, WS /v1/voice| API
   C -->|HTTPS /v1/school, /v1/console, /v1/admin| API
   N8 -->|HMAC /internal/*| API
-  API -->|HMAC webhooks: what to send to whom| N8
+  API -->|HMAC webhooks: staff tasks only| N8
   API -->|private network HTTP| SV
   API -->|start_task| WF
   WF -->|imports application layer| PG
@@ -100,11 +100,11 @@ services/api/
 │   │   ├── inbound/
 │   │   │   ├── http/              # FastAPI routers per API group: plans, rules, cases, checks, offices, learn, games, ai, letters, schools, console, admin, me, platform, lab
 │   │   │   ├── ws/voice.py        # API-40 WebSocket ↔ ADK run_live
-│   │   │   └── internal/          # API-65 clock sweep, API-66 n8n webhooks (HMAC)
+│   │   │   └── internal/          # API-65 clock sweep, API-66 channel + n8n staff webhooks (HMAC), API-67/68/73 staff jobs
 │   │   └── outbound/
 │   │       ├── db/                # SQLAlchemy 2 models + repositories (async, psycopg 3)
 │   │       ├── gov/               # sarathi_mock, sarathi_deeplink, sarathi_real (stub, contract only); digilocker_mock; aadhaar_offline_mock; bhashini_mock; payment_redirect; slot_mock
-│   │       ├── notify/            # n8n_webhook (WhatsApp/email via n8n), webpush, console_log
+│   │       ├── notify/            # whatsapp_cloud (Meta Cloud API), email_smtp, webpush, console_log; outbox worker
 │   │       ├── ai/                # adk_runtime.py, agents/ (voice_guide, debrief_graph, coach, tutor, screen_decoder), sarvam_asr.py, plugins/ (pii, provenance)
 │   │       ├── jobs/              # render_workflows.py, inline.py
 │   │       ├── scoring/           # score_verifier_http.py
@@ -169,7 +169,7 @@ sequenceDiagram
 | `AadhaarOfflinePort` | `verify_offline_xml(zip, share_code)` / `verify_secure_qr(payload)` → age band + name only; **never** stores the number | `AadhaarOfflineMockAdapter` | **Mock-only in Margdarshak.** Real offline QR/XML verification carries OVSE duties, so in government mode it runs through the state's own system (PROJECT_BRIEF F-56, D-07) |
 | `BhashiniPort` | `translate(text, src, tgt)` · `asr(audio, lang)` · `tts(text, lang)` | `BhashiniMockAdapter` (returns reviewed strings) | Bhashini ULCA pipelines |
 | `PaymentPort` | `payment_redirect(case) -> URL` · `status(ref)` | `PaymentRedirectAdapter` (points to Sarathi/state gateway; we never take money) | PayGov / state gateway status adapter |
-| `NotificationPort` | `send(template_id, channel, recipient_ref, vars, idem_key)` · `status(msg_id)` | `N8nWebhookNotifier` (WhatsApp sandbox/test numbers, email), `WebPushNotifier`, `ConsoleNotifier` (dev) | Same + SMS after TRAI DLT (D-16) |
+| `NotificationPort` | `send(template_id, channel, recipient_ref, vars, idem_key)` · `status(msg_id)` | `WhatsAppCloudNotifier` (Meta WhatsApp Cloud API, test number), `EmailNotifier` (SMTP), `WebPushNotifier`, `ConsoleNotifier` (dev). Citizen messages never go through n8n (ADR-0006) | Same with the state's WhatsApp business number + SMS after TRAI DLT (D-16) |
 | `SlotPort` | `list_offices(state, near)` · `availability(office, week)` | `SlotMockAdapter` (seeded, labelled) | State slot API via adapter |
 | `ScoreVerifierPort` | `verify(game_id, game_version, scoring_version, seed, items, inputs) -> VerifiedResult` | `ScoreVerifierHttp` (private network) | same |
 | `NarratorPort` | `debrief(facts, allowed_rule_ids, drill_candidates, locale) -> DebriefDraft` · `coach(plan) -> CoachDraft` | `AdkNarrator` (Gemini Flash-Lite via ADK graph), `TemplateNarrator` (fallback, EC-29) | + India-region model or Bhashini/local Indic model behind the same port (D-17) |
@@ -394,7 +394,7 @@ Overlays may add state items (e.g. J&K postage, which `02-rules-process.md` repo
 
 All milestones are computed by `domain/clock/schedule(case, decision) -> list[Milestone]` from **server dates**. They are stored as `TimelineEvent` rows (E-12) with a unique **idempotency key** `"{caseId}:{milestoneId}:{dueOn}"`. A re-computation that yields the same key is a no-op; a changed due date cancels the old row and inserts the new one.
 
-### 7.2 Execution: n8n triggers, Workflows runs, API decides
+### 7.2 Execution: n8n triggers, Workflows runs, API decides, notifier delivers
 
 Render Workflows has **no native cron and no documented sleep** (`B-sponsors.md` §1), so durable timers are rows in Postgres swept on a schedule:
 
@@ -406,25 +406,28 @@ sequenceDiagram
   participant T as task case_clock_sweep
   participant B as task clock_batch ×K
   participant DB as Postgres
-  participant N2 as n8n W1/W2 webhook
+  participant NT as notifier worker (services/api)
+  participant WA as WhatsApp / email / web push
   N->>A: POST (HMAC, ts, nonce) {asOf?}
   A->>A: verify HMAC, asOf := server today (IST) — never trust caller time
   A->>J: start("case_clock_sweep", [tenant, asOf], idem="sweep:{tenant}:{asOf}")
   J->>T: run
   T->>DB: SELECT due TimelineEvent WHERE due_on <= asOf AND status='scheduled' (keyset pages of 500)
   T->>B: ctx.run(clock_batch, page) in parallel (asyncio.gather, ≤ 8 concurrent)
-  B->>DB: lock rows (FOR UPDATE SKIP LOCKED), mark 'firing', create Notification (E-13) per opted-in channel
-  B->>N2: POST batch {uid_ref, milestone_id, channel, template_id, vars} (HMAC)
-  N2-->>B: 202
+  B->>DB: lock rows (FOR UPDATE SKIP LOCKED), mark 'firing', create Notification (E-13) per opted-in channel with send_after
   B->>DB: mark 'fired' (or 'retry' with attempt++)
   T-->>J: summary {due, fired, skipped_opt_out, failed}
+  NT->>DB: claim queued notifications with send_after <= now (SKIP LOCKED)
+  NT->>WA: send template (idempotency_key)
+  WA-->>NT: receipt (or later via API-66)
 ```
 
-- Exactly-once user effect: `Notification.idempotency_key = timelineEventKey + ":" + channel`; n8n receives the key and drops duplicates; the WhatsApp send is keyed too.
-- WhatsApp opt-out "STOP" (EC-30): inbound n8n webhook (API-66) sets the channel consent to withdrawn; the batch skips that channel and falls back to web push / in-app only.
+- Exactly-once user effect: `Notification.idempotency_key = timelineEventKey + ":" + channel`; the notifier claims each row once and the WhatsApp send is keyed too.
+- WhatsApp opt-out "STOP" (EC-30): the Meta channel webhook (API-66) sets the channel consent to withdrawn; the batch skips that channel and falls back to web push / in-app only.
+- The notifier is a worker inside `services/api` (same image, separate process) and scales by replica count; it applies quiet hours, the ≤ 1 nudge/day cap and per-number rate limits. n8n is not on this path (ADR-0006).
 - Under-18 cases get reminders only to the guardian contact the guardian consented to (no streak nudges).
 - Sweep is also triggered after a deploy and on demand from the console (idempotent by `asOf`).
-- If n8n is down, nothing the user sees changes; in-app timelines read the same rows (n8n can only delay a message, never change a fact).
+- If n8n is down, citizens notice nothing: on-call starts the sweep through API-65 by hand (idempotent by `asOf`), and the notifier keeps sending.
 
 ---
 
@@ -443,7 +446,7 @@ sequenceDiagram
 |---|---|---|---|---|
 | `clip_ingest(clip_id)` **(headline, D-15)** | console upload (API-55) | `transcode` (ffmpeg → 360p/480p H.264, faststart) → `blur` (face + plate detection, M-09) → `flash_check` (≤ 3 flashes/s, WCAG 2.3.1) → `propose_windows` (M-06 Gemini Flash video, offline) → `open_review` (two-rater task) | 30 min | Visible retry in the Workflows dashboard for the demo. AI never publishes |
 | `clip_publish(clip_id)` | after two raters submit (API-55) | `agreement` (Δ onset ≤ 0.5 s; else third rater) → `blur_audit_check` (100% audited flag) → `publish_manifest` (R2) → `cdn_warm` | 5 min | Human gates live outside the run (no sleep API) |
-| `case_clock_sweep(tenant, as_of)` | n8n W1 via API-65 | page → `clock_batch` fan-out | 20 min | §7.2 |
+| `case_clock_sweep(tenant, as_of)` | n8n W01 via API-65 | page → `clock_batch` fan-out (incl. weekly coach-plan and family-card TimelineEvents) | 20 min | §7.2 |
 | `session_debrief(sid)` | API-35 when inline debrief times out, or batch replays | `load_and_gate` → `narrate` → `validate` → `persist` | 60 s | Inline path is preferred for latency; this is the retry/fan-out path |
 | `debrief_backfill(cohort)` | field study end | fan-out `session_debrief` | 30 min | — |
 | `nightly_stats(date)` | n8n W13 schedule | aggregate field-study metrics (n, % below 60/100, r with LL quiz, 95% CI) → `stats_public` (API-71) | 15 min | No PII; k ≥ 5 |
@@ -522,7 +525,7 @@ Graph (ADK 2.x graph workflow: deterministic nodes around one LLM node), hosted 
 |---|---|---|---|---|
 | VoiceGuideAgent (M-01) | live (bidi audio) | API process, `Runner.run_live()` behind the WS endpoint API-40 | `VOICE_MODEL` = `gemini-3.8-live` (fallback `VOICE_MODEL_FALLBACK` = `gemini-2.5-flash-native-audio-preview-12-2025`, the ADK default; ADK support for 3.8 Live is unknown, `04` §0.4) | `navigate(route_id: enum)`, `fill_field(field_id: enum, value)`, `get_rule(rule_id)`, `get_fee_quote(case_id)`, `get_case_summary(case_id)`, `read_debrief(sid)`, `open_drill(drill_id: enum)`. **No submit/pay/book tools exist.** |
 | DebriefAgent (M-02) | graph node | API process (inline) and Workflows (`session_debrief`) | `DEBRIEF_MODEL` | none |
-| CoachAgent (M-03) | graph node | Workflows (weekly, n8n W6) | `COACH_MODEL` | none; input = plan JSON computed by code |
+| CoachAgent (M-03) | graph node | Workflows (weekly coach-plan TimelineEvents in `case_clock_sweep`) | `COACH_MODEL` | none; input = plan JSON computed by code |
 | TutorAgent (M-04) | single LLM call with retrieved reviewed text | API | `TUTOR_MODEL` | content-grounded only (reviewed question bank) |
 | ScreenDecoderAgent (M-05) | vision | API (API-42) | `DECODER_MODEL` (Gemini Flash) | matches the verified error catalogue; `unknown` allowed |
 | ClipWindowProposer (M-06) | video, offline | Workflows (`clip_ingest`) | `CLIP_PROPOSER_MODEL` | proposals only; two humans set windows |
@@ -583,7 +586,7 @@ ABAC conditions evaluated in the application layer by a single `authorize(princi
 | Timeline / notifications | deterministic keys `{caseId}:{milestone}:{dueOn}[:{channel}]` |
 | Telemetry | unique `(sid, seq)` |
 | Workflows tasks | input-derived idempotency key stored in `job_runs`; tasks re-read state |
-| Inbound webhooks (n8n) | HMAC + nonce replay cache (Key Value, 10 min) + `deliveryId` unique |
+| Inbound webhooks (n8n staff events, Meta/email channel receipts) | HMAC (n8n) or provider signature (Meta `X-Hub-Signature-256`) + nonce replay cache (Key Value, 10 min) + `deliveryId` unique |
 
 ---
 

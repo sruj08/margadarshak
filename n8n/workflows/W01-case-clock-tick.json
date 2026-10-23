@@ -1,5 +1,5 @@
 {
-  "name": "W01 · Case-clock tick (06:30 IST) → Render Workflows sweep → WhatsApp/email",
+  "name": "W01 · Case-clock tick (06:30 IST) → Render Workflows sweep → watchdog",
   "nodes": [
     {
       "parameters": {
@@ -122,7 +122,7 @@
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ $vars.MD_API_BASE }}/internal/clock/sweep/{{ $('API-65 start sweep (Render Workflows run)').item.json.sweep_id }}/outbox",
+        "url": "={{ $vars.MD_API_BASE }}/internal/clock/sweep/{{ $('API-65 start sweep (Render Workflows run)').item.json.sweep_id }}/status",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -137,7 +137,7 @@
         }
       },
       "id": "a1f0c001-0000-4000-8000-000000000006",
-      "name": "Get outbox (status + due messages)",
+      "name": "Get sweep status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -147,7 +147,7 @@
       "retryOnFail": true,
       "maxTries": 3,
       "waitBetweenTries": 10000,
-      "notes": "Returns { status: running|completed|failed, poll_count, messages: [{ notification_id, channel, to, template_id, lang, vars[] }] }. `to` is present only for users who opted in to that channel (E-14, E-15)."
+      "notes": "Returns { status: running|completed|failed, poll_count, counts: { cases_scanned, notifications_queued } }. No recipients or phone numbers: delivery happens in the backend notifier (ADR-0006)."
     },
     {
       "parameters": {
@@ -228,228 +228,16 @@
       ]
     },
     {
-      "parameters": {
-        "fieldToSplitOut": "messages",
-        "options": {}
-      },
-      "id": "a1f0c001-0000-4000-8000-00000000000a",
-      "name": "Split messages",
-      "type": "n8n-nodes-base.splitOut",
+      "parameters": {},
+      "id": "a1f0c001-0000-4000-8000-000000000020",
+      "name": "Done (backend notifier delivers)",
+      "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
         1540,
         200
-      ]
-    },
-    {
-      "parameters": {
-        "batchSize": 50,
-        "options": {}
-      },
-      "id": "a1f0c001-0000-4000-8000-00000000000b",
-      "name": "Batches of 50",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1760,
-        200
       ],
-      "notes": "Keeps under WhatsApp Cloud API throughput and n8n memory; one execution covers all users (execution budget, N8N_WORKFLOWS.md §4)."
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.channel }}",
-                    "rightValue": "whatsapp",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "whatsapp"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.channel }}",
-                    "rightValue": "email",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "email"
-            }
-          ]
-        },
-        "options": {
-          "fallbackOutput": "extra",
-          "renameFallbackOutput": "push-or-other"
-        }
-      },
-      "id": "a1f0c001-0000-4000-8000-00000000000c",
-      "name": "Route by channel",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
-      "position": [
-        1980,
-        200
-      ],
-      "notes": "SMS is deliberately absent until TRAI DLT registration (D-16). Web push is sent by the backend itself."
-    },
-    {
-      "parameters": {
-        "operation": "sendTemplate",
-        "phoneNumberId": "={{ $vars.MD_WA_PHONE_NUMBER_ID }}",
-        "recipientPhoneNumber": "={{ $json.to }}",
-        "template": "={{ $json.template_id }}|{{ $json.lang }}",
-        "components": {
-          "component": [
-            {
-              "type": "body",
-              "bodyParameters": {
-                "parameter": "={{ $json.vars.map(v => ({ type: 'text', text: String(v) })) }}"
-              }
-            }
-          ]
-        }
-      },
-      "id": "a1f0c001-0000-4000-8000-00000000000d",
-      "name": "WhatsApp template",
-      "type": "n8n-nodes-base.whatsApp",
-      "typeVersion": 1,
-      "position": [
-        2200,
-        100
-      ],
-      "credentials": {
-        "whatsAppApi": {
-          "id": "REPLACE_ON_IMPORT",
-          "name": "Margdarshak WhatsApp Cloud (test number)"
-        }
-      },
-      "onError": "continueRegularOutput",
-      "retryOnFail": true,
-      "maxTries": 2,
-      "waitBetweenTries": 3000,
-      "notes": "Templates (Meta-approved, utility category): md_ll_day25_v1, md_ll_expiry_t30_v1, md_ll_expiry_t7_v1, md_renewal_v1. Text is fixed in the template; vars are dates/names computed by the rules engine. No rupee or day literals here (D-06)."
-    },
-    {
-      "parameters": {
-        "sendTo": "={{ $json.to }}",
-        "subject": "={{ $json.subject }}",
-        "emailType": "text",
-        "message": "={{ $json.text_body }}",
-        "options": {
-          "appendAttribution": false
-        }
-      },
-      "id": "a1f0c001-0000-4000-8000-00000000000e",
-      "name": "Email",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        2200,
-        300
-      ],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "REPLACE_ON_IMPORT",
-          "name": "Margdarshak notifications mailbox"
-        }
-      },
-      "onError": "continueRegularOutput",
-      "notes": "Subject/body are rendered by the backend from reviewed templates."
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "// Runs per item; paired-item lineage gives us the original outbox row.\nconst src = $('Batches of 50').item.json;\nconst r = $json;\nconst failed = !!r.error;\nreturn { json: {\n  notification_id: src.notification_id,\n  provider_message_id: r.messages?.[0]?.id ?? r.id ?? null,\n  status: failed ? 'failed' : (src.channel === 'whatsapp' || src.channel === 'email' ? 'sent' : 'skipped_backend_channel'),\n  error_code: failed ? String(r.error?.code ?? r.error?.message ?? 'unknown').slice(0, 80) : null\n} };"
-      },
-      "id": "a1f0c001-0000-4000-8000-00000000000f",
-      "name": "Collect receipts",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2420,
-        200
-      ]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $vars.MD_API_BASE }}/internal/webhooks/n8n",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
-            },
-            {
-              "name": "X-MD-Event",
-              "value": "delivery_receipts"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ workflow: 'W01', execution_id: $execution.id, receipts: $json.receipts }) }}",
-        "options": {
-          "timeout": 20000
-        }
-      },
-      "id": "a1f0c001-0000-4000-8000-000000000010",
-      "name": "API-66 ack receipts",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        2640,
-        200
-      ],
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
-      "notes": "Backend marks E-13 Notification rows sent/failed; failed WhatsApp → backend schedules email/web-push fallback. Idempotent by notification_id."
-    },
-    {
-      "parameters": {
-        "aggregate": "aggregateAllItemData",
-        "destinationFieldName": "receipts",
-        "options": {}
-      },
-      "id": "a1f0c001-0000-4000-8000-000000000011",
-      "name": "Aggregate receipts",
-      "type": "n8n-nodes-base.aggregate",
-      "typeVersion": 1,
-      "position": [
-        2530,
-        320
-      ]
+      "notes": "The sweep queued citizen notifications in the outbox; the backend notifier sends them (WhatsApp Cloud API, email, web push). n8n never sees a citizen phone number."
     }
   ],
   "connections": {
@@ -501,14 +289,14 @@
       "main": [
         [
           {
-            "node": "Get outbox (status + due messages)",
+            "node": "Get sweep status",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Get outbox (status + due messages)": {
+    "Get sweep status": {
       "main": [
         [
           {
@@ -523,7 +311,7 @@
       "main": [
         [
           {
-            "node": "Split messages",
+            "node": "Done (backend notifier delivers)",
             "type": "main",
             "index": 0
           }
@@ -554,109 +342,6 @@
           }
         ]
       ]
-    },
-    "Split messages": {
-      "main": [
-        [
-          {
-            "node": "Batches of 50",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Batches of 50": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Route by channel",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Route by channel": {
-      "main": [
-        [
-          {
-            "node": "WhatsApp template",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Email",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Collect receipts",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "WhatsApp template": {
-      "main": [
-        [
-          {
-            "node": "Collect receipts",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Email": {
-      "main": [
-        [
-          {
-            "node": "Collect receipts",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Collect receipts": {
-      "main": [
-        [
-          {
-            "node": "Aggregate receipts",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "API-66 ack receipts": {
-      "main": [
-        [
-          {
-            "node": "Batches of 50",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Aggregate receipts": {
-      "main": [
-        [
-          {
-            "node": "API-66 ack receipts",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "pinData": {},
@@ -680,7 +365,7 @@
       "name": "F-09 case clock"
     },
     {
-      "name": "messaging-edge"
+      "name": "internal-ops"
     }
   ],
   "meta": {
@@ -689,13 +374,12 @@
       "workflow_id": "W01",
       "owner": "Ops lead",
       "doc": "docs/05-ops/N8N_WORKFLOWS.md#w01",
-      "business_logic": "none (dates and recipients come from the rules engine via API-65)",
+      "business_logic": "none (the sweep decides who is due; the backend notifier delivers)",
       "executions_per_month": 31,
       "required_variables": [
         "MD_API_BASE",
         "MD_HMAC_SECRET",
-        "MD_N8N_READ_TOKEN",
-        "MD_WA_PHONE_NUMBER_ID"
+        "MD_N8N_READ_TOKEN"
       ]
     }
   },

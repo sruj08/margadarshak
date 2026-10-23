@@ -52,8 +52,8 @@
 5. **R2.** Create buckets `margdarshak-clips-ingest` (lifecycle: delete after 14 days), `margdarshak-clips-public` (public via a custom domain or r2.dev, CORS GET from the web origin, `Accept-Ranges` for video seeking), `margdarshak-exports` (delete after 7 days), `margdarshak-backups` (keep 14).
 6. **GitHub.** Environments `hackathon-prod` and `staging` with variables `RENDER_SERVICE_ID_API/WEB/VERIFIER/WORKFLOWS`, `WEB_URL`, `API_URL` and secrets `RENDER_API_KEY`, `OPS_SMOKE_TOKEN`; environment `ai-evals` with `GEMINI_API_KEY_EVALS`. Branch protection on `main` requires `ci-gate`.
 7. **Set `autoDeployTrigger: off`** (already in the Blueprint), so only `deploy.yml` deploys.
-8. **n8n.** Follow `n8n/README.md`: Variables, credentials, import W01/W04/W08/W09 (then the rest), set W12 as the error workflow, test with pinned data, activate.
-9. **WhatsApp Cloud API.** Meta app + test number; add up to 5 verified recipient numbers (team phones + one judge-demo phone) (B-sponsors §3 `HUNCH`: 5 recipients). Submit templates `md_ll_day25_v1`, `md_ll_expiry_t30_v1`, `md_ll_expiry_t7_v1`, `md_test_eve_v1`, `md_retest_plan_v1` (utility category, en + hi). Template approval can take time, so submit them on Day 1 morning (R-08).
+8. **n8n.** Follow `n8n/README.md`: Variables, credentials, import W01/W08/W09 (then the rest), set W12 as the error workflow, test with pinned data, activate.
+9. **WhatsApp Cloud API.** Meta app + test number for citizens, used by the backend notifier (`WhatsAppCloudNotifier`), not n8n; n8n's staff number is separate; add up to 5 verified recipient numbers (team phones + one judge-demo phone) (B-sponsors §3 `HUNCH`: 5 recipients). Submit templates `md_ll_day25_v1`, `md_ll_expiry_t30_v1`, `md_ll_expiry_t7_v1`, `md_test_eve_v1`, `md_retest_plan_v1` (utility category, en + hi). Template approval can take time, so submit them on Day 1 morning (R-08).
 10. **Custom domain (optional).** It must not contain "parivahan", "sarathi" or "gov" (war-room G10).
 
 ### 2.2 Every deploy (automatic)
@@ -152,7 +152,7 @@ Data export (standard formats) + source escrow + handover runbook to NIC/the sta
 | `live_intel_public` | on, k ≥ 5 | off ⇒ intel hidden, reports still collected (PB-11) |
 | `whatsapp_outbound` | on | off ⇒ email + web push only (PB-02) |
 | `sms_outbound` | **off** | stays off until TRAI DLT registration (D-16) |
-| `slot_watch_alerts` | on | W03 relay |
+| `slot_watch_alerts` | on | backend fires slot-watch alerts on a published "slots opened" report (API-68 → outbox → notifier) |
 | `squads`, `streaks` | on (18+ only) | always off for under-18 (D-13) |
 | `sarathi_mode` | `handoff_a` | `handoff_a` (prefilled hand-off + copy-pack) / `adapter_b` (state adopted) |
 | `tenant_public` | on (hackathon) | per-tenant go-live gate (§4.4) |

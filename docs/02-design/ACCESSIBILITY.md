@@ -129,7 +129,7 @@ Test key:
 | Accessibility baseline | WCAG 2.1 AA | §2, CI reports | Full audit before hosting (Accessibility lead) |
 | Bilingual / multilingual | English + Hindi minimum; regional languages encouraged | EN + HI in full; Dogri voice-in (F-50, D-21) | Native review records (LOCALIZATION §11) |
 | Accessibility statement | Published, with contact and known issues | §10 template | Publish at launch (Content lead) |
-| Feedback / contact | Visible feedback mechanism and response | Footer "Report an accessibility problem" form → n8n → team inbox; target reply ≤ 5 working days | n8n workflow (Backend lead) |
+| Feedback / contact | Visible feedback mechanism and response | Footer "Report an accessibility problem" form → backend (stored as a ticket, emailed to the team inbox by the notifier; citizen text never passes through n8n, ADR-0006); target reply ≤ 5 working days | Backend ticket + W18 staff reminder (Backend lead) |
 | Content currency | Page-level "last updated" / content review dates | Every rule shows `verified_on`; footer "Last updated {date}" | — |
 | Sitemap, help, search | Present | `/sitemap`, Help tab, search | — |
 | Security clearance before hosting | Audit clearance from NIC/STQC/empanelled lab (5.3.1, secondary) | "Audit-ready" pack (SBOM, VAPT scope, threat model) | Production only (Security lead) |

@@ -282,7 +282,7 @@ The Guidelines (notified 30 Nov 2023) specify **13 patterns** ([Mondaq](https://
 | DP-07 | Bait and switch | Badge criteria shown before starting; scores shown exactly as computed | review + unit test: badge copy generated from the criterion config |
 | DP-08 | Drip pricing | Government fees from `fees.json` shown in full up front (₹700 for one class + ₹200 card, from the file, never a literal); school prices include everything | copy: rupee literals banned in UI strings and prompts (D-06); e2e: fee card total = sum of lines |
 | DP-09 | Disguised advertisement | Paid school listings labelled "Sponsored" / "प्रायोजित" | component: `<SchoolCard paid>` must render the label |
-| DP-10 | Nagging | ≤ 1 push or WhatsApp per day, tied to a real deadline; quiet hours 22:00–07:00 IST [D]; one-tap opt-out per channel; WhatsApp "STOP" honoured (EC-30) | backend unit test on the notification scheduler; n8n W1/W2 read the same cap |
+| DP-10 | Nagging | ≤ 1 push or WhatsApp per day, tied to a real deadline; quiet hours 22:00–07:00 IST [D]; one-tap opt-out per channel; WhatsApp "STOP" honoured (EC-30) | backend unit test on the notification scheduler; the backend notifier enforces the same cap for every channel |
 | DP-11 | Trick question | Consent copy is a plain yes/no in the user's language; no double negatives | copy: consent strings checked for negation patterns ("don't not", "न… नहीं…" pairs); review |
 | DP-12 | SaaS billing | No recurring billing in the MVP; any future billing shows the renewal date and amount before each charge | review |
 | DP-13 | Rogue malware | No APK links anywhere; share links only on our domain | copy + e2e: link scanner rejects `.apk` and non-allowlisted domains |
@@ -333,7 +333,7 @@ A PR that fails any DP lint can't merge. Waivers need the product lead's sign-of
 | Streaks | weekly with tokens and repair | same |
 | Squads | create/join, squad score, pair mode on Nazar | squad goals across games; school-run cohorts for adult learners (driving-school Pro) |
 | Badges | B1–B6 live; B7 via Nazar night types; B8 J&K storyboard only; B9 only after medical sign-off | all |
-| Share cards | Nazar Score card via n8n → WhatsApp (test number) | full |
+| Share cards | Nazar Score card via WhatsApp (test number), sent by the backend notifier | full |
 | Practice Record | JSON + PDF, Ed25519 signature, QR check page | KMS keys, driving-school sign-off via Pro portal |
 | DP lint | DP-01, 03, 04, 06, 08, 10, 13, 18 automated; others review-only | all automated where possible |
 

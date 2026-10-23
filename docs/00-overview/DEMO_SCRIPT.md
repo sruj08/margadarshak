@@ -25,8 +25,8 @@
 - [ ] Hit the live URL and API health (`GET /v1/health`, API-64) to wake the Render services (free services sleep after 15 min and take ~1 min to wake; B-sponsors §0). Leave a tab auto-refreshing `/v1/health` every 5 minutes until the slot.
 - [ ] Run `scripts/demo-seed` (or the admin seed endpoint) to reset the seven demo personas (§2) and clear yesterday's sessions.
 - [ ] Trigger `ingest_clip` once with `inject_failure=transcode:1` so a fresh run with a visible retry is on the Render Runs page; bookmark it.
-- [ ] Trigger `journey_sweep` from n8n manually once; confirm a WhatsApp lands on Phone C.
-- [ ] Open the n8n canvas (journey sweep workflow) in a laptop tab; zoom to fit.
+- [ ] Trigger `journey_sweep` from n8n manually once; confirm the backend notifier lands a WhatsApp on Phone C.
+- [ ] Open the n8n canvas (W01 journey sweep and W08 clip-review queue) in laptop tabs; zoom to fit.
 - [ ] Preload the Nazar demo clip in the PWA: open `/learn/nazar/practice?clip=demo-jammu-bus-01`, let it buffer fully, go back (the clip is served from the PWA cache).
 - [ ] Voice check: say the line once in a quiet corner; confirm the transcript and the Form 1A card appear.
 - [ ] Phone A: brightness max, Do Not Disturb on (except WhatsApp on Phone C), font scale default, battery > 80%, mobile hotspot ready as Wi-Fi backup.
@@ -84,7 +84,7 @@ Timings match [PITCH §3](PITCH.md). The 3-minute version uses beats 3.1, 3.2, 3
 | 9 | Tap **motorcycle (with gears)** and **car** pictures → "Next" | Step 3/3: state | — |
 | 10 | Tap **Jammu & Kashmir** | Plan card (`/plan/result`): MCWG + LMV-NT on one LL; fee lines LL ₹150 × 2, LL test ₹50, DL test ₹300 × 2, DL ₹200 = ₹1,150 + card ₹200; "source: CMVR r.32, checked 22 Oct 2026"; documents; max RTO visits; earliest DL test "day 31"; LL validity 6 months | **F-4**: API-01 error → the client shows the cached plan for this exact input (seeded in the PWA cache at T−60); if that fails, show slide `fallback/03-plan-card.png` |
 | 11 | Scroll once to show "Smart class planner" note and "verify at your RTO" chips | — | — |
-| 12 | Tap **"WhatsApp पर भेजें"** (Send to WhatsApp) → choose the demo contact | Toast "Sent"; Phone C buzzes in ≤ 10 s (API-04 → n8n → WhatsApp template) | **F-5**: if no buzz in 10 s, narrator continues; Phone holder shows `fallback/04-whatsapp-plan.png` on Phone C's gallery; the email copy also arrives |
+| 12 | Tap **"WhatsApp पर भेजें"** (Send to WhatsApp) → choose the demo contact | Toast "Sent"; Phone C buzzes in ≤ 10 s (API-04 → outbox → notifier → WhatsApp template) | **F-5**: if no buzz in 10 s, narrator continues; Phone holder shows `fallback/04-whatsapp-plan.png` on Phone C's gallery; the email copy also arrives |
 
 ### 3.3 1:30–2:15 — Voice guide and family (F-30, F-17)
 | # | Action | Expected | Fallback |
@@ -127,7 +127,7 @@ Timings match [PITCH §3](PITCH.md). The 3-minute version uses beats 3.1, 3.2, 3
 | # | Device | Action | Expected | Fallback |
 |---|---|---|---|---|
 | 32 | Laptop | Switch projector to the Render dashboard tab → Workflows → `margdarshak-jobs` → Runs → the bookmarked `ingest_clip` run | Parent run with child tasks `transcode → blur → propose_windows → await_two_raters → compute_agreement → publish`; one child shows "retrying" then "succeeded" | **F-15**: dashboard login/session problem → `fallback/09-render-runs.mp4` (recorded at T−60) |
-| 33 | Laptop | Switch to the n8n tab → journey-sweep workflow | Schedule Trigger → HTTP Request (Render run-task API) → WhatsApp node | **F-16**: `fallback/10-n8n-canvas.png` |
+| 33 | Laptop | Switch to the n8n tab → journey-sweep workflow, then the clip-review queue | Schedule Trigger → HTTP Request (Render run-task API) → watchdog; W08 waiting on rater 2 | **F-16**: `fallback/10-n8n-canvas.png` |
 | 34 | Phone C | Hold up the WhatsApp message from the sweep ("Your LL expires in 15 days…" for the expiring persona) | — | Screenshot in the gallery |
 
 ### 3.8 4:15–4:45 — Evidence
@@ -159,7 +159,7 @@ Timings match [PITCH §3](PITCH.md). The 3-minute version uses beats 3.1, 3.2, 3
 | F-2 | Phone mirroring (scrcpy) | USB/driver failure | Black projector | Document camera, or full-run video | `fallback/02-full-run.mp4` (≤ 4:30, recorded on the final build) |
 | F-3 | Home render | API slow | Spinner > 2 s | PWA cached shell renders anyway | — |
 | F-4 | Plan API (API-01) | 5xx / timeout | Error state | Cached plan for the scripted input; slide | `fallback/03-plan-card.png` |
-| F-5 | WhatsApp via n8n | No delivery in 10 s (Meta test number limits, R-08) | Phone C silent | Screenshot; email copy | `fallback/04-whatsapp-plan.png` |
+| F-5 | WhatsApp via the notifier | No delivery in 10 s (Meta test number limits, R-08) | Phone C silent | Screenshot; email copy | `fallback/04-whatsapp-plan.png` |
 | F-6 | Mic permission | Denied | Browser prompt | "Type instead" path | Clipboard line |
 | F-7 | Voice guide (M-01) | ASR/Live latency or outage | No reply in 4 s | Typed path → same card; rules-only card; video | `fallback/05-voice.mp4` |
 | F-8 | Autosave (API-12) | Network | "Saved on this phone" banner | Continue offline (EC-11) | — |

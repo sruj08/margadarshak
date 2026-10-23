@@ -31,13 +31,13 @@ Team Chanakya is three people plus AI coding agents. This file says who owns wha
 
 ### 1.4 BE · Backend + AI engineer
 - **Mission:** one Python backend that is correct, private and boringly reliable; AI that only narrates numbers code computed.
-- **Owns (accountable):** Python layout and backend core (EP-06); CI/CD deploy and contracts (EP-02 except front-end jobs); rules engine (MD-027..029, MD-033, MD-034); adapters and the adapter spec (EP-05, EP-41); case clock and all Render Workflows RW-1..RW-4; all n8n workflows W1..W15; privacy controls and analytics (EP-11 back end); score-verifier service (MD-206 with FE); the whole AI layer and evals (EP-18..EP-22); slots, intel, letters, scam checker, Practice Record back end (EP-23, EP-26, parts of EP-27/28); console, studio and multi-tenancy back ends (EP-31..EP-33); security hardening and load (EP-35, MD-614, MD-615).
+- **Owns (accountable):** Python layout and backend core (EP-06); CI/CD deploy and contracts (EP-02 except front-end jobs); rules engine (MD-027..029, MD-033, MD-034); adapters and the adapter spec (EP-05, EP-41); case clock and all Render Workflows RW-1..RW-4; the backend notifier and all n8n workflows (W1, W7–W9, W12–W18); privacy controls and analytics (EP-11 back end); score-verifier service (MD-206 with FE); the whole AI layer and evals (EP-18..EP-22); slots, intel, letters, scam checker, Practice Record back end (EP-23, EP-26, parts of EP-27/28); console, studio and multi-tenancy back ends (EP-31..EP-33); security hardening and load (EP-35, MD-614, MD-615).
 - **Decides:** data model, API contracts, model IDs and fallbacks, guardrail thresholds (with PD on tone), infrastructure.
 - **Hard lines:** no Aadhaar number, OTP, biometric or face-for-matching stored or sent anywhere; no business logic in n8n; every AI number comes from a tool or facts.
 
 ### 1.5 AG · AI coding agents
 - **Mission:** multiply the humans on well-specified, verifiable work.
-- **Good fits (label `agent-ready`):** golden cases and EC tests (MD-034, MD-801..830), mock adapters and contract tests (MD-039..044), Storybook stories (MD-026), re-pin and Renovate (MD-008), eval-case drafting (MD-321..325), red-team drafts (MD-326), n8n workflow JSON exports (MD-127, MD-128, MD-141), question-variant drafts for human approval (MD-209), dark-pattern checks (MD-235).
+- **Good fits (label `agent-ready`):** golden cases and EC tests (MD-034, MD-801..830), mock adapters and contract tests (MD-039..044), Storybook stories (MD-026), re-pin and Renovate (MD-008), eval-case drafting (MD-321..325), red-team drafts (MD-326), n8n workflow JSON exports (MD-127, MD-141, MD-521), question-variant drafts for human approval (MD-209), dark-pattern checks (MD-235).
 - **Never:** rule rows without `source_url` + `verified_on`; rupee/day/age literals; scoring constants; `banned-terms.json`; consent, privacy or legal text; prompt guardrail sections; real-looking Aadhaar/phone/OTP fixtures; calls to government domains; merging their own PRs.
 - **Accountability:** the first human role in `owner=` (e.g. `BE+AG` → BE) reviews line by line and must be able to explain the code (D-24).
 
@@ -67,7 +67,7 @@ Team Chanakya is three people plus AI coding agents. This file says who owns wha
 | Score verifier | `services/score-verifier` | BE | FE | Replay and overwrite, integrity flags |
 | Nazar clip pipeline (RW-1) | `services/workflows/clips` | BE | PD (rating, audit) | Each task, retries, two raters, blur audit |
 | AI layer (ADK agents, validator, evals) | `services/api/.../agents`, `ai/prompts`, `ai/evals` | BE | PD (tone, review) | Gate, PII, provenance, enums, fallback, eval gates |
-| n8n workflows | `n8n/` | BE | PD | Why n8n holds no logic; W1..W15 |
+| n8n workflows | `n8n/` | BE | PD | Why n8n holds no logic and sends nothing to citizens; W1, W7–W9, W12–W18 |
 | Privacy centre + consent | `services/api/.../consent`, `apps/web/privacy` | BE (controls), PD (text) | FE | Consent artefacts, export/delete, under-18 position |
 | Console, school portal, rule studio | `apps/console` | FE (UI), BE (APIs), PD (product) | — | RBAC, k ≥ 5, maker-checker |
 | Field study + analysis | `analysis/`, `apps/web/lab` | PD (protocol), BE (scripts) | FE (lab replica) | Pre-registration, every statistic on the slide |
@@ -174,7 +174,8 @@ Budget about 30% of an agent-assisted ticket's estimate for human specification 
 | DEC-008 | 2026-10-23 | Stack: one Python backend (FastAPI + ADK + Render Workflows Python SDK), Postgres 16, Next.js 16 PWA, Phaser 4 for top-down sims, `game-core` in TS with a Node verifier | D-17, PROJECT_BRIEF §8 | Team | Accepted; versions re-pinned at G0 (MD-008) |
 | DEC-009 | 2026-10-23 | Render Singapore for the hackathon with synthetic data; containerised for MeitY-empanelled cloud/NIC later; JobRunner interface | Render has no India region (VG-4) | Team | Accepted |
 | DEC-010 | 2026-10-23 | Render Workflows headline = RW-1 clip pipeline; also RW-2 sweep, RW-3 debrief fan-out, RW-4 stats; n8n Schedule triggers because Workflows has no cron | D-15; B-sponsors §7 | Team | Accepted |
-| DEC-011 | 2026-10-23 | n8n = messaging edge and schedules only; no business logic; SMS off until TRAI DLT | D-16 | Team | Accepted |
+| DEC-011 | 2026-10-23 | n8n = messaging edge and schedules only; no business logic; SMS off until TRAI DLT | D-16 | Team | Superseded by DEC-012 |
+| DEC-012 | 2026-10-24 | n8n = internal and staff operations only (schedules, approvals, staff and RTO notifications); citizen messages go through the backend notifier so n8n load never grows with citizens; no business logic; SMS off until TRAI DLT | D-16, ADR-0006 rev. | Team | Accepted |
 | DEC-012 | 2026-10-23 | Commentary coach = record, then score; Gemini Live commentary is roadmap | Cost and fragility of live streaming (D-12) | Council | Accepted |
 | DEC-013 | 2026-10-23 | Under 18: rules only (no AI, telemetry, streaks, squads, account history) | DPDP children = under 18; Gemini terms 18+ (D-13, VG-7, VG-8) | Council | Accepted |
 | DEC-014 | 2026-10-23 | Feature verdicts: Live Intel thin (structured, k ≥ 5, no names); route-risk to roadmap; "Practice Record" (not passport); Golden Hour static, no AI; test record = RTI template; test vehicle = checklist + listing; novice year voluntary + riding lock | D-14 | Council | Accepted |

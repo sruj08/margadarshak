@@ -59,7 +59,7 @@ flowchart LR
   subgraph Z4["Zone 4: third-party processors"]
     GEM["Gemini API (paid tier)"]
     SAR["Sarvam Saaras (Dogri ASR)"]
-    N8N["n8n Pro (messaging edge)"]
+    N8N["n8n Pro (staff operations; no citizen data)"]
     WA["Meta WhatsApp Cloud API"]
     MAIL["Email provider"]
     SEN["Sentry (scrubbed)"]
@@ -74,7 +74,9 @@ flowchart LR
   API --> PG & RD
   WF --> PG & R2 & GEM
   N8N -->|HMAC webhook API-66 / API-65| API
-  API -->|signed outbound jobs| N8N --> WA & MAIL
+  API -->|signed staff tasks and alerts| N8N
+  API -->|notifier: citizen templates| WA & MAIL
+  WA -->|signed receipts, STOP API-66| API
   API -->|adapter port F-56| GOV
   PWA -. "deep link (Mode A hand-off, F-07)" .-> GOV
 ```
@@ -98,7 +100,8 @@ The full DFD with every flow numbered and the STRIDE table per component is in [
 | **Rule-pack maker / checker** (F-42, API-54) | STD rules cell | Two separate demo accounts; passkey | State SSO + passkey; **maker ≠ checker** enforced in code and in DB constraint (`approved_by <> authored_by`) | 4 h | Step-up on publish |
 | **Clip rater / clip admin** (API-55, M-06) | CL team | Passkey; role `clip_rater` (sees blurred media only), `clip_publisher` | Same | 8 h | Step-up on publish |
 | **Platform admin / on-call** | OPS, SEC | Passkey (hardware key preferred); just-in-time elevation logged to E-30; no standing DB superuser | Same + bastion with session recording; break-glass account sealed, two-person rule | 1 h | Every elevation |
-| **n8n → API** | machine | `POST /internal/webhooks/n8n` (API-66) and `/internal/clock/sweep` (API-65): HMAC-SHA256 over `timestamp + body` with a 5-min replay window and a nonce cache in Redis; internal paths not routed from the public edge except n8n's egress IPs | Same + mTLS where the host supports it | per request | n/a |
+| **n8n → API** | machine | `POST /internal/webhooks/n8n` (API-66, staff events) and `/internal/clock/sweep` (API-65): HMAC-SHA256 over `timestamp + body` with a 5-min replay window and a nonce cache in Redis; internal paths not routed from the public edge except n8n's egress IPs | Same + mTLS where the host supports it | per request | n/a |
+| **Meta / email provider → API** | machine | citizen delivery receipts, replies and STOP on API-66: provider signature (Meta `X-Hub-Signature-256`) + nonce replay cache + `deliveryId` unique (BACKEND §12) | Same | per request | n/a |
 | **Render Workflows → API / DB** | machine | Short-lived service token (`aud=workflows`), least-privilege DB role `wf_role` | Workload identity of the host (K8s service account) | 15 min | n/a |
 | **Score verifier** | machine | Private service, no public route; called only by API with a service token | Same | per request | n/a |
 | **Government adapter (real mode)** | machine | Not used (mocks only) | Credentials from the STD/NIC (DigiLocker client ID, Sarathi API key if granted) in the tenant's KMS; mTLS where offered | per adapter | n/a |
@@ -212,7 +215,7 @@ Crypto shredding: deleting a tenant DEK makes all that tenant's E-14 data unread
 - **No secrets in git.** `gitleaks` pre-commit hook and CI job (blocking); GitHub push protection on.
 - **Environments:** `dev` (local, `.env` from `.env.example` with fake values), `preview` (PR deploys, synthetic data, separate keys), `prod-demo` (judging), `prod` (Phase 3+). Keys are never shared between environments.
 - **CI:** GitHub Actions uses OIDC to the cloud in Phase 3+; Phase 1–2 uses repository secrets scoped to `environment: prod-demo` with required reviewers.
-- **n8n:** credentials only in n8n's credential store; workflows hold no business logic (D-16) and no PII beyond the message payload; n8n execution logs retention set to 7 days and "save data on success" off for message workflows.
+- **n8n:** credentials only in n8n's credential store; workflows hold no business logic (D-16) and no citizen personal data, only staff work contacts, IDs and k-anonymous aggregates (ADR-0006); n8n execution logs retention set to 7 days and "save data on success" off for staff-messaging workflows. The citizen WhatsApp/email credentials live only in the API's environment (backend notifier).
 - **Model IDs and endpoints in env vars** (PROJECT_BRIEF §10), never hard-coded.
 - **Security headers** (set in Next.js middleware and FastAPI):
   - `Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{n}' 'strict-dynamic'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://<cdn>; media-src 'self' blob: https://<cdn>; connect-src 'self' wss://<api>; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'; upgrade-insecure-requests`
@@ -326,7 +329,7 @@ Implementation: Redis token buckets (sliding window) keyed by `{tenant}:{actor|d
 | API-47 verify Practice Record | IP | 60/min | Tokens are 128-bit, unguessable |
 | API-61 export | account | 2/day | Step-up required |
 | API-63 analytics | device | 100/min, batched | Payload schema-validated, no PII fields allowed |
-| API-65/66 internal | n8n IP + HMAC | 60/min | Replay window 5 min |
+| API-65/66 internal | n8n IP + HMAC (staff events); provider signature for Meta/email channel webhooks on API-66 | 60/min (n8n); channel webhooks sized to notifier volume | Replay window 5 min |
 | Global per IP | IP | 600/min | Edge |
 | Gemini budget circuit breaker | project | daily ₹ cap (set in env, e.g. ₹2,000/day in Phase 2) | When hit, AI surfaces show template fallback (EC-29) |
 

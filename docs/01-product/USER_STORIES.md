@@ -11,7 +11,7 @@
 - **Meta line.** `F-xx · MoSCoW · Estimate · Stage · EC · API · Depth`.
   - **MoSCoW** inherits the feature's product priority from PROJECT_BRIEF §5.1 unless a story narrows it.
   - **Estimate:** S ≤ 4 h, M ≤ 1 day, L ≤ 3 days of one engineer (production estimate; hackathon builds the thin version).
-  - **Depth** (hackathon, D-04): **Deep-A** (plan → guided LL → check answers), **Deep-B** (Nazar + AI debrief + field study), **Deep-C** (stage-aware home + journey sweeper on Render Workflows + n8n WhatsApp), **Thin** (works end to end on mocks, no dead buttons), **Roadmap** (Phase 3+; not built in the hackathon; may appear as a labelled, disabled state).
+  - **Depth** (hackathon, D-04): **Deep-A** (plan → guided LL → check answers), **Deep-B** (Nazar + AI debrief + field study), **Deep-C** (stage-aware home + journey sweeper on Render Workflows + WhatsApp from the backend notifier), **Thin** (works end to end on mocks, no dead buttons), **Roadmap** (Phase 3+; not built in the hackathon; may appear as a labelled, disabled state).
 - **Gherkin.** Each story has at least one scenario. Numbers in "Then" steps come from the rule pack or fixtures (`fees.json`, `rules/<STATE>.json`, `game-config.json`), never from AI text (D-09, D-10). Example values use the J&K tenant unless stated.
 - **Global background** (implicit in every scenario unless overridden):
   ```gherkin
@@ -1230,7 +1230,7 @@ As Kabir (P-01), I want a reminder to book on day 25, so that I get a slot near 
 Scenario: Journey sweeper
   Given my LL was issued 25 days ago and I opted in to WhatsApp reminders
   When the n8n Schedule trigger calls API-65 at 06:30 IST
-  Then the Render Workflow sweep computes my milestone and n8n sends the approved template "Book your driving test: it unlocks on <date>"
+  Then the Render Workflow sweep computes my milestone and queues it, and the backend notifier sends the approved template "Book your driving test: it unlocks on <date>"
   And at most 1 nudge is sent to me that day
 ```
 
@@ -1252,7 +1252,7 @@ As Kabir (P-01), I want to watch for earlier slots, so that I don't miss one.
 Scenario: Honest watcher
   When I create a slot watch for ARTO Jammu
   Then I am told "We can't see Sarathi slots. We'll alert you when other users report slots opening, and remind you to check."
-  And alerts come only from moderated Live Intel reports with timestamps (n8n W3)
+  And alerts come only from moderated Live Intel reports with timestamps (fired by the backend when a "slots opened" report is published)
 ```
 
 #### US-143 · LL expiry collision warning
@@ -1325,7 +1325,7 @@ As Kabir (P-01), I want to record my slot date, so that I get test-eve help.
 ```gherkin
 Scenario: slot_booked event
   When I enter my slot date and office
-  Then event slot_booked is recorded idempotently and the test-eve reminder (n8n W4) is scheduled for 19:00 the day before
+  Then event slot_booked is recorded idempotently and the test-eve reminder (TimelineEvent `test_eve`, `send_after` 19:00 IST) is scheduled for the day before
 ```
 
 ---
@@ -1349,8 +1349,8 @@ As Tanvi (P-02), I want a checklist the evening before, so that I don't get turn
 ```gherkin
 Scenario: Test-eve message
   Given my slot is tomorrow
-  When n8n W4 runs at 19:00 IST
-  Then I receive a template with: LL, vehicle RC, insurance, PUC, L-plate, helmet, and an ICS calendar file
+  When the test-eve TimelineEvent's send time (19:00 IST) arrives
+  Then the backend notifier sends me a template with: LL, vehicle RC, insurance, PUC, L-plate, helmet, and an ICS calendar file
 ```
 
 #### US-162 · Test-day co-pilot
@@ -1408,7 +1408,7 @@ As Kabir (P-01), I want my earliest retest date and the training I need, so that
 Scenario: Retest
   Given I failed on 2026-11-12
   Then the earliest retest date is computed from the rule pack's retest gap (7 days, flagged "verify")
-  And a remedial-training note cites the 2019 s.9(5) proviso with a list of schools (n8n W10 referral)
+  And a remedial-training note cites the 2019 s.9(5) proviso with a list of schools (fail follow-up TimelineEvent, sent by the notifier)
   And "Book retest on Sarathi" is on the same screen
 ```
 
@@ -1480,7 +1480,7 @@ Scenario: No SMS
 As Tanvi (P-02), I want a factual letter when approval stalls, so that I can escalate without a lawyer or agent.
 `F-14 · Should · M · S7 · — · API-45 · Thin`
 ```gherkin
-Scenario: Human-approved letter (n8n W11)
+Scenario: Human-approved letter (backend letter flow)
   Given my case has been at "Approval of DL" for more than the configured days
   When I open the drafted letter
   Then it contains only facts I entered and the rule-pack timeline (or "no notified timeline found")
@@ -1704,7 +1704,7 @@ Scenario: s.199A card for parents
 ---
 
 ## EP-13 Case clock and notifications
-**Goal:** durable, honest timers (Render Workflows), n8n only at the messaging edge (D-15, D-16). **PS1 box:** 14.
+**Goal:** durable, honest timers (Render Workflows), citizen messages sent by the backend notifier; n8n only triggers the daily sweep (D-15, D-16). **PS1 box:** 14.
 
 #### US-220 · Opt in per channel
 As Kabir (P-01), I want to choose WhatsApp, email or web push separately, so that I control how I'm contacted.
@@ -1721,9 +1721,9 @@ As P-06 (state), I want only pre-approved templates sent, so that messages are c
 `F-53 · Must · S · Cross · — · API-66 · Deep-C`
 ```gherkin
 Scenario: Template only
-  When the backend asks n8n to message a user
-  Then n8n sends only a template_id from the approved list with variables computed by the backend
-  And n8n holds no business logic (D-16)
+  When the backend notifier messages a user
+  Then it sends only a template_id from the approved list with variables computed by the backend
+  And no citizen message passes through n8n, which holds no business logic (D-16)
 ```
 
 #### US-222 · STOP means stop
@@ -1789,7 +1789,7 @@ As P-06 (state), I want SMS disabled until TRAI DLT registration is complete, so
 ```gherkin
 Scenario: Flag guard
   Given ff_sms_channel is false
-  Then no code path can enqueue an SMS and the n8n SMS branch is disabled
+  Then no code path can enqueue an SMS and the notifier has no SMS adapter enabled
 ```
 
 ---
@@ -1850,7 +1850,7 @@ As Sreeja (P-05), I want parents to get progress updates, so that families trust
 ```gherkin
 Scenario: Opted-in parent card
   Given an adult student opted in to share with a named parent
-  Then the weekly parent card (n8n W5) includes attendance and next date
+  Then the weekly parent card (weekly TimelineEvent, sent by the notifier) includes attendance and next date
 ```
 
 #### US-236 · List a test-day vehicle

@@ -200,10 +200,11 @@ paths:
       x-api-id: API-04
       tags: [plan]
       operationId: sendPlanToWhatsApp
-      summary: Send the plan card to WhatsApp (opt-in, template message via n8n)
+      summary: Send the plan card to WhatsApp (opt-in, template message sent by the backend notifier)
       description: |
         Creates a `whatsapp_updates` consent artefact if none exists, stores the phone number
-        encrypted (E-14) and enqueues an approved template message through NotificationPort.
+        encrypted (E-14) and enqueues an approved template message through NotificationPort
+        (WhatsAppCloudNotifier calls the Meta WhatsApp Cloud API directly; n8n is not on this path).
         In the hackathon the Meta test number reaches only allow-listed recipients.
       parameters:
         - $ref: '#/components/parameters/PlanId'
@@ -384,7 +385,7 @@ paths:
                 display_name_key: tenant.jk
                 languages: [en, hi, doi]
                 theme: { primary: '#1F4E79', surface: '#FFFFFF', logo_url: null }
-                adapters: { sarathi: deeplink, digilocker: mock, aadhaar_offline: disabled, bhashini: mock, payment: sarathi_redirect, notification: n8n, slot: mock }
+                adapters: { sarathi: deeplink, digilocker: mock, aadhaar_offline: disabled, bhashini: mock, payment: sarathi_redirect, notification: whatsapp_cloud, slot: mock }
                 features: { ai_coach: true, voice_guide: true, live_intel: true, school_portal: true, sms: false }
                 rule_pack: { pack_id: JK, version: 2026.10.0, base_version: IN-base@2026.10.0 }
                 hosting_mode: independent
@@ -1408,7 +1409,7 @@ paths:
                   - { finding_id: NAZ_LATE_RESPONSE, rule_id: PED-BUS-STOP, text: 'Bus ke peeche se aadmi nikla, aapne 1.4 s der se dekha, yaani ≈ 16 m aage.' }
                 what_you_could_have_done:
                   - { finding_id: NAZ_LATE_RESPONSE, rule_id: PED-BUS-STOP, text: 'Ruki hui bus dikhe to speed kam karein aur uske aage dekhte rahein.' }
-                next_drill: { drill_id: nazar.learn.bus_stop, why: 'Isi tarah ke khatre par occlusion practice.', deep_link: /learn/nazar?drill=bus_stop }
+                next_drill: { drill_id: nazar.learn.bus_stop, why: 'Isi tarah ke khatre par occlusion practice.', deep_link: '/learn/nazar?drill=bus_stop' }
                 rules: [ { rule_id: PED-BUS-STOP, text: '...', source_url: https://morth.nic.in, verified_on: '2026-10-22' } ]
                 validator: { passed: true, attempts: 1, violations: [] }
         '202':
@@ -2324,7 +2325,7 @@ paths:
       x-api-id: API-66
       tags: [platform]
       operationId: n8nWebhook
-      summary: n8n -> backend callbacks (delivery receipts, inbound replies, STOP opt-outs, approvals)
+      summary: Channel and staff callbacks (citizen delivery receipts, inbound replies and STOP opt-outs from the Meta/email webhooks; staff receipts, decisions and acknowledgements from n8n)
       security:
         - internalBearer: []
           internalHmac: []
@@ -2413,7 +2414,7 @@ paths:
       x-api-id: API-68
       tags: [platform]
       operationId: precheckIntelReport
-      summary: n8n W9 asks the backend to precheck a Live Intel report (schema, PII patterns, duplicates, corroboration count)
+      summary: Precheck a Live Intel report (schema, PII patterns, duplicates, corroboration count); runs inline on API-28, and only flagged reports go to n8n W9
       security:
         - internalBearer: []
           internalHmac: []
@@ -2421,7 +2422,7 @@ paths:
         - { name: reportId, in: path, required: true, schema: { type: string } }
       responses:
         '200':
-          description: Precheck verdict (computed in code; n8n only routes on it)
+          description: Precheck verdict (computed in code; low-risk reports auto-publish in the backend, flagged ones are sent to n8n W9)
           content:
             application/json:
               schema: { $ref: '#/components/schemas/IntelPrecheck' }
@@ -2431,7 +2432,7 @@ paths:
       x-api-id: API-68
       tags: [platform]
       operationId: decideIntelReport
-      summary: n8n W9 posts the moderator's send-and-wait decision (or the auto-publish rule result)
+      summary: n8n W9 posts the moderator's send-and-wait decision for a flagged report (or the backend records the auto-publish rule result)
       security:
         - internalBearer: []
           internalHmac: []
@@ -2451,7 +2452,7 @@ paths:
                 decided_by: { type: string, description: 'moderator pseudonym or auto_rule' }
       responses:
         '200':
-          description: Decision stored; aggregates refreshed; W3 triggered if slots_opened
+          description: Decision stored; aggregates refreshed; if slots_opened, the backend fires slot-watch alerts into the outbox (API-69 logic)
           content:
             application/json:
               schema: { $ref: '#/components/schemas/RtoReport' }
@@ -2461,7 +2462,7 @@ paths:
       x-api-id: API-69
       tags: [platform]
       operationId: fireSlotWatcher
-      summary: n8n W3 marks a slot watch as fired and gets the templated messages to send (reminder only)
+      summary: Backend-internal - marks a slot watch as fired and queues the templated messages in the outbox for the notifier (reminder only; called by the API-68 decision handler, not by n8n)
       security:
         - internalBearer: []
           internalHmac: []
@@ -2479,7 +2480,7 @@ paths:
                 report_id: { type: string, description: The moderated "slots opened" report that triggered the watch }
       responses:
         '200':
-          description: Messages to send (template IDs + vars; no business decisions in n8n)
+          description: Messages queued (template IDs + vars; sent by the backend notifier)
           content:
             application/json:
               schema:
@@ -2494,7 +2495,7 @@ paths:
       x-api-id: API-72
       tags: [platform]
       operationId: dispatchLetter
-      summary: n8n W11 dispatches a letter after the user's explicit in-app approval (PDF to the user; optional copy to the published grievance address only if the user ticked it)
+      summary: Backend letter flow dispatches a letter after the user's explicit in-app approval (PDF emailed to the user by the notifier; optional copy to the published grievance address only if the user ticked it; not called by n8n)
       security:
         - internalBearer: []
           internalHmac: []
@@ -4236,7 +4237,7 @@ components:
       type: object
       required: [event, at]
       properties:
-        event: { type: string, enum: [delivery_receipt, inbound_reply, inbound_opt_out, school_lead_decision, letter_approval, field_form_submitted] }
+        event: { type: string, enum: [delivery_receipt, inbound_reply, inbound_opt_out, school_lead_decision, field_form_submitted] }
         at: { type: string, format: date-time }
         notification_id: { type: string }
         status: { type: string, enum: [sent, delivered, read, failed] }
@@ -4282,13 +4283,13 @@ components:
         flags: { type: array, items: { type: string, enum: [pii_pattern, duplicate, new_account, burst, scam_offer] } }
     OutboundMessage:
       type: object
-      description: What n8n should send; content comes from approved templates only
+      description: A message queued for the backend notifier; content comes from approved templates only
       required: [notification_id, channel, template_id, to]
       properties:
         notification_id: { type: string }
         channel: { $ref: '#/components/schemas/Channel' }
         template_id: { type: string }
-        to: { type: string, description: 'Phone (E.164) or email, only for users who opted in to that channel; n8n execution-data retention is set to minimal' }
+        to: { type: string, description: 'Phone (E.164) or email, only for users who opted in to that channel; never sent to n8n' }
         vars: { type: object, additionalProperties: { type: [string, number] }, description: 'Template variables; first name only when the user opted in; no other PII' }
         idempotency_key: { type: string, description: '{timelineEventKey}:{channel}' }
     Tenant:
@@ -4314,7 +4315,7 @@ components:
             aadhaar_offline: { type: string, enum: [disabled, mock, state_service] }
             bhashini: { type: string, enum: [mock, dhruva, local_indictrans2] }
             payment: { type: string, enum: [mock, sarathi_redirect, state_gateway] }
-            notification: { type: string, enum: [console, n8n, mgov_sms] }
+            notification: { type: string, enum: [console, whatsapp_cloud, mgov_sms] }
             slot: { type: string, enum: [mock, crowd, nic] }
         features: { type: object, additionalProperties: { type: boolean } }
         rule_pack: { $ref: '#/components/schemas/RulePackRef' }

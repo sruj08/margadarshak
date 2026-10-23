@@ -16,13 +16,13 @@
 | 5 | Aadhaar eKYC / OTP | — (none) | **never** — hand-off to Sarathi's own eKYC | stays inside Sarathi (government AUA) | — | — |
 | 6 | **Bhashini** (ULCA / Dhruva) | BhashiniPort | **mock** | Bhashini onboarding under a state/MeitY partnership | Nestiq / state | no |
 | 7 | **Payments** (Sarathi page, state gateway, PayGov) | PaymentPort | **redirect** to Sarathi (`PaymentRedirectAdapter`) + mock gateway | state gateway reconciliation by receipt number | state | no |
-| 8 | **WhatsApp Cloud API** (Meta) | NotificationPort (via n8n) | **real, test number** (allow-listed recipients) | business number + approved templates per tenant | Nestiq / state | demo moment |
-| 9 | Email | NotificationPort (via n8n) | real (n8n email node, provider [unverified], owner Platform lead, H+4) | transactional provider in India / state mail relay | Nestiq | no |
+| 8 | **WhatsApp Cloud API** (Meta) | NotificationPort (`WhatsAppCloudNotifier`, called by the backend) | **real, test number** (allow-listed recipients) | business number + approved templates per tenant | Nestiq / state | demo moment |
+| 9 | Email | NotificationPort (`EmailNotifier`) | real (SMTP to a transactional provider [unverified], owner Platform lead, H+4) | transactional provider in India / state mail relay | Nestiq | no |
 | 10 | Web push | NotificationPort | real (VAPID) | same | — | no |
 | 11 | SMS (mGov / NIC / DLT) | NotificationPort | **not used** (roadmap until TRAI DLT) | DLT entity, headers and templates; mGov in government mode | Nestiq / state | no |
 | 12 | Slots | SlotPort | **mock** (seeded, `sample_data`) + crowd intel relay | NIC slot read API after adoption | state + NIC | no |
 | 13 | **Render Workflows** | JobRunnerPort | **real** (headline sponsor tech) | Temporal on the state cloud | team | yes |
-| 14 | **n8n** | edge | **real** (Pro) | self-host or replace with a notifier service | team | yes |
+| 14 | **n8n** | internal/staff ops (no citizen messages) | **real** (Pro) | self-host, or replace with CronJobs + review pages | team | yes |
 | 15 | **Gemini API / ADK** | AgentRuntimePort, NarratorPort | **real** (paid tier before any real user) | Vertex AI `asia-south1` | team | partly (template fallback) |
 | 16 | **Sarvam** (Saaras v3, Bulbul v3) | SpeechPort | real (Dogri voice-in, Hindi read-out) | same or Bhashini | team | no |
 | 17 | **Cloudflare R2** | ObjectStorePort | real | S3-compatible store in India | team | yes (clips) |
@@ -117,16 +117,16 @@
 - **Failure handling:** automatic retries; `InlineJobRunner` degraded mode; idempotent tasks.
 - **Cost:** a few dollars for the event; every participant has $50 in Render credits.
 
-### 3.2 n8n (sponsor; the edge)
+### 3.2 n8n (sponsor; internal and staff operations)
 - **Plan:** Pro (perk) — €50/month annual list, ~10k executions/month, 20+ concurrent ([n8n pricing](https://n8n.io/pricing/)); keep under budget by batching.
-- **Role:** schedules, WhatsApp/email, inbound replies, human approvals (send-and-wait), digests. **No business logic; never queries Postgres directly**; calls only `/internal/*` (API-65..69, 72, 73) with a service bearer token + HMAC, and receives signed webhooks from our outbox.
-- **Workflows:** W1 clock tick, W2 milestones, W3 slot watch (API-69), W4 test eve, W5 parent card, W6 coach plan, W7 lead routing (API-73), **W08 clip review / two-rater wait (API-67 `clip_finalize`)**, W9 moderation (API-68), W10 fail follow-up, W11 letter approval (API-72), W12 alerts, W13 digest (API-71/53), W14 field-test capture, W15 rule-source freshness.
-- **Setup:** import `n8n/workflows/*.json`; credentials created in the n8n vault (never in Git); set execution-data retention to minimal; PII limited to phone + first name of opted-in users.
+- **Role:** schedules, human approvals (send-and-wait), staff notifications and digests. **Never messages citizens** (the backend notifier does, §3.3; ADR-0006). **No business logic; never queries Postgres directly**; calls only `/internal/*` (API-65..68, 73) with a service bearer token + HMAC, and receives signed staff-task webhooks from the backend.
+- **Workflows:** W01 clock trigger + watchdog, W07 school lead routing (API-73), **W08 clip review / two-rater wait (API-67 `clip_finalize`)**, W09 moderation of flagged reports (API-68), W12 alerts, W13 digest, W14 field-test capture, W15 rule-source freshness, W16 RTO morning brief, W17 RTO/state stall alerts, W18 staff task reminders.
+- **Setup:** import `n8n/workflows/*.json`; credentials created in the n8n vault (never in Git); set execution-data retention to minimal; no citizen personal data, staff work contacts only.
 - **Known issue:** reports of send-and-wait nodes not resuming on some channels ([n8n #13331](https://github.com/n8n-io/n8n/issues/13331)); fallback is our approval page calling the Wait node resume webhook.
-- **Adoption:** self-host (check the Sustainable Use License for government use) or replace with a small notifier service; nothing in the core changes.
+- **Adoption:** self-host (check the Sustainable Use License for government use) or replace with CronJobs/Temporal schedules and the backend's review pages; nothing citizens see changes.
 
-### 3.3 WhatsApp Cloud API (Meta) — via n8n
-- **Endpoint:** `POST https://graph.facebook.com/{Version}/{Phone-Number-ID}/messages` with a Bearer token; supports text, media, interactive and **template** messages ([Meta reference](https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages), fetched 2026-10-23). Version pinned in the n8n credential [unverified which version; owner Platform lead, H+2].
+### 3.3 WhatsApp Cloud API (Meta) — via the backend notifier
+- **Endpoint:** `POST https://graph.facebook.com/{Version}/{Phone-Number-ID}/messages` with a Bearer token; supports text, media, interactive and **template** messages ([Meta reference](https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages), fetched 2026-10-23). Version pinned in the `WhatsAppCloudNotifier` config [unverified which version; owner Platform lead, H+2]. Delivery receipts and STOP arrive on the Meta webhook (API-66), checked with `X-Hub-Signature-256`. n8n uses a separate staff number for W07/W09/W17.
 - **Rules we follow:** business-initiated messages only with **pre-approved templates and user opt-in** (`whatsapp_updates` consent, E-15); ≤ 1 nudge/day; quiet hours 22:00–07:00 IST; STOP → opt-out within one message (EC-30).
 - **Hackathon:** Meta test number reaches only allow-listed recipients (about 5, per B-sponsors §3, HUNCH) — enough for the demo; set up on Day 1 morning (30–60 min).
 - **Templates:** `plan_card_v1`, `ll_day25_v1`, `ll_unlock_v1`, `ll_expiry_v1`, `test_eve_v1`, `retest_plan_v1` (no outcome words in the preview), `approval_chase_v1`, `parent_card_v1`, `slot_reported_v1`.

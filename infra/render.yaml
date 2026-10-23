@@ -177,6 +177,8 @@ services:
         sync: false                     # shared with n8n Variables `MD_HMAC_SECRET`
       - key: N8N_RESUME_AUTH_TOKEN
         sync: false                     # header token our pages send when resuming n8n Wait nodes
+      - key: WHATSAPP_APP_SECRET
+        sync: false                     # verifies Meta webhook X-Hub-Signature-256 on API-66 (receipts, STOP)
       - key: R2_ACCOUNT_ID
         sync: false
       - key: R2_ACCESS_KEY_ID
@@ -200,11 +202,49 @@ services:
       - key: ADAPTER_BHASHINI
         value: mock
       - key: ADAPTER_NOTIFICATION
-        value: n8n                      # n8n edge; SMS stays off until TRAI DLT (D-16)
+        value: whatsapp_cloud           # backend notifier (ADR-0006); SMS stays off until TRAI DLT (D-16)
       - key: ADAPTER_SLOT
         value: mock
       - key: CORS_ALLOWED_ORIGINS
         sync: false
+
+  # -------------------------------------------------------------------------
+  # 2b. Notifier worker - same image as the API; sends every citizen message from
+  #     the outbox (WhatsApp Cloud API, email, web push). n8n is not on this path
+  #     (ADR-0006). Scale with numInstances; rows are claimed with SKIP LOCKED.
+  # -------------------------------------------------------------------------
+  - type: worker
+    name: margdarshak-notifier
+    runtime: docker
+    region: singapore
+    plan: 0.5c-512mb
+    dockerfilePath: ./infra/docker/api.Dockerfile
+    dockerContext: .
+    dockerCommand: python -m app.notify.worker   # [unverified] module path until services/api exists (owner Backend lead)
+    numInstances: 1
+    autoDeployTrigger: off
+    buildFilter:
+      paths:
+        - services/api/**
+        - infra/docker/api.Dockerfile
+    envVars:
+      - fromGroup: margdarshak-shared
+      - key: OTEL_SERVICE_NAME
+        value: margdarshak-notifier
+      - key: DATABASE_URL
+        fromDatabase:
+          name: margdarshak-db
+          property: connectionString
+      - key: ADAPTER_NOTIFICATION
+        value: whatsapp_cloud
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false                     # Meta test number (allow-listed recipients, R-08)
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: SMTP_URL
+        sync: false                     # transactional email provider (choice open, INTEGRATIONS #9)
+      - key: CONTACT_ENCRYPTION_KEY
+        sync: false                     # same key as the API: decrypts E-14 contacts at send time
 
   # -------------------------------------------------------------------------
   # 3. Score verifier (Node 22, runs @margdarshak/game-core replays) - private only

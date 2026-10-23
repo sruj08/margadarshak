@@ -397,7 +397,7 @@ To reduce fingerprinting, durations, counts and scores in analytics use buckets:
 | `rti_template_generated` | — | Generated | F-13 |
 | `tracker_viewed` | `stage` | View | F-14 |
 | `no_sms_guide_viewed` | — | EC-23 | F-14 |
-| `letter_drafted` / `letter_approved` | — | n8n W11 flow | F-14 |
+| `letter_drafted` / `letter_approved` | — | backend letter flow | F-14 |
 | `digilocker_pointer_opened` | — | Open | F-14 |
 
 #### S8, S9, family and helper
@@ -419,7 +419,7 @@ To reduce fingerprinting, durations, counts and scores in analytics use buckets:
 | Event | Properties | Trigger | Feature |
 |---|---|---|---|
 | `notification_optin_changed` | `channel` {whatsapp, email, webpush}, `on` bool | Toggle | F-53 |
-| `notification_sent` | `template_id`, `channel`, `milestone_id` | n8n ack | F-53 |
+| `notification_sent` | `template_id`, `channel`, `milestone_id` | notifier ack | F-53 |
 | `notification_delivered` / `notification_clicked` | `template_id`, `channel` | Receipt / click | F-53 |
 | `notification_suppressed` | `reason` {daily_cap, quiet_hours, no_consent} | Guardrail fired | F-53 |
 | `optout_stop_received` | `channel` | EC-30 | F-53 |
@@ -466,7 +466,7 @@ To reduce fingerprinting, durations, counts and scores in analytics use buckets:
 | **Product daily digest** | Team | Funnel S0→S7, activation, plan → start, debrief source mix, fallback rate, cost/day, guardrails | Daily 21:00 IST (n8n W13) | Slack + Google Sheet → Metabase on India-hosted DB |
 | **Learning** | Nazar lead | Readiness distribution, Brier trend, Nazar Score trend, fresh-clip gain, clip difficulty fit, pattern-click rate | Daily | Notebook (`nazar_stats.py`) → Metabase |
 | **Journey ops** | Rules owner | Blockers by rule ID, collision warnings, retest cycle time, pass-to-card, letters | Daily | Metabase |
-| **Messaging** | Tech lead | Sent/delivered/clicked by template, suppressed (cap, quiet hours), STOP latency, n8n executions vs Pro budget (~10k/month) | Hourly | n8n + Metabase |
+| **Messaging** | Tech lead | Sent/delivered/clicked by template, suppressed (cap, quiet hours), STOP latency, outbox backlog age; n8n executions vs Pro budget (~10k/month, staff workflows only) | Hourly | notifier/outbox + n8n + Metabase |
 | **AI quality** | Tech lead | Eval pass rate per agent, validator rejects, latency p95, tokens and ₹/day | Per CI run + daily | CI artefact + Metabase |
 | **School Pro** | P-05 | Consenting students: readiness parts, Nazar trend, HPT minutes, ready-to-book list | Live | In-app (F-40) |
 | **State console** | P-06 | Stalls, fail reasons, demand forecast, deflection (k ≥ 5) | Daily | In-app (F-41) |

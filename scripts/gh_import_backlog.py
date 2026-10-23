@@ -155,7 +155,8 @@ def check(tickets, epics) -> int:
          + [40, 41, 42] + list(range(50, 59))]
         + [f"EC-{i:02d}" for i in range(1, 31)]
         + [f"M-{i:02d}" for i in range(1, 10)]
-        + [f"W{i}" for i in range(1, 16)]
+        # W2–W6, W10, W11 moved to the backend notifier (ADR-0006)
+        + [f"W{i}" for i in [1, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18]]
         + [f"G{i}" for i in range(1, 11)]
         + [f"RW-{i}" for i in range(1, 5)]
     )

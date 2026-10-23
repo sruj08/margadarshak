@@ -39,7 +39,7 @@ Chosen option: **1**, because it makes the honest claim ("we ship the socket and
 | AadhaarOffline | `AadhaarOfflineMockAdapter` only | the state's OVSE service |
 | Bhashini | `BhashiniMockAdapter` | `BhashiniDhruvaAdapter` |
 | Payment | `PaymentRedirectAdapter` + mock gateway | `PaymentStateGatewayAdapter` |
-| Notification | `N8nWebhookNotifier`, `WebPushNotifier`, `ConsoleNotifier` | + `MgovSmsNotifier` after DLT |
+| Notification | `WhatsAppCloudNotifier` (Meta WhatsApp Cloud API, direct), `EmailNotifier`, `WebPushNotifier`, `ConsoleNotifier` (citizen messages never go through n8n, ADR-0006) | + `MgovSmsNotifier` after DLT |
 | Slot | `SlotMockAdapter`, `SlotCrowdIntelAdapter` | `SlotRealAdapter` |
 
 ## Pros and cons of the options

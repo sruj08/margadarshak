@@ -1,5 +1,5 @@
 {
-  "name": "W09 · RTO Live Intel moderation (precheck in backend → auto-publish or WhatsApp approve/reject)",
+  "name": "W09 · RTO Live Intel moderation (backend prechecks; only flagged reports reach the moderator)",
   "nodes": [
     {
       "parameters": {
@@ -18,7 +18,7 @@
       "credentials": {
         "httpHeaderAuth": { "id": "REPLACE_ON_IMPORT", "name": "MD inbound webhook token" }
       },
-      "notes": "Signed envelope { ts, payload, sig }. payload = { report_id, office_id, fields: [slot_release_time|documents_asked|track_type|wait_time] } — structured fields only, no free text, no names (D-14). The report is stored as `pending` before this call; nothing is public yet."
+      "notes": "Signed envelope { ts, payload, sig }. payload = { report_id, office_id, fields: [slot_release_time|documents_asked|track_type|wait_time] } — structured fields only, no free text, no names (D-14). The backend has already stored the report as `pending` and run the precheck inline on API-28 (PII, phone/UPI, duplicates, velocity, agent-promotion, corroboration, k-threshold); it calls W09 only when the precheck says a human must decide, adding { risk, reasons, corroborating_24h, summary_for_moderator }. Low-risk reports auto-publish in the backend and never reach n8n, so executions track the moderation queue, not citizen volume (ADR-0006)."
     },
     {
       "parameters": {
@@ -84,57 +84,13 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const p = JSON.parse($('New Live Intel report (from API-28)').item.json.body.payload);\nif (!/^rep_[a-z0-9]{8,40}$/.test(p.report_id)) throw new Error('bad report_id');\nreturn { json: { report_id: p.report_id, office_id: p.office_id } };"
+        "jsCode": "const p = JSON.parse($('New Live Intel report (from API-28)').item.json.body.payload);\nif (!/^rep_[a-z0-9]{8,40}$/.test(p.report_id)) throw new Error('bad report_id');\nreturn { json: { report_id: p.report_id, office_id: p.office_id, risk: p.risk, reasons: p.reasons, corroborating_24h: p.corroborating_24h, summary_for_moderator: p.summary_for_moderator } };"
       },
       "id": "d9b00009-0000-4000-8000-000000000006",
       "name": "Parse payload",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [880, 220]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $vars.MD_API_BASE }}/internal/intel/{{ $json.report_id }}/precheck",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}" }
-          ]
-        },
-        "options": { "timeout": 20000 }
-      },
-      "id": "d9b00009-0000-4000-8000-000000000007",
-      "name": "Backend precheck (rules decide)",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [1100, 220],
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
-      "notes": "Backend returns { risk: low|medium|high, auto_publish_allowed: bool, reasons: [pii_pattern|phone|upi|agent_promo|duplicate|velocity|setting_offer], corroborating_24h: n, k_threshold_met: bool, summary_for_moderator, slots_opened: bool }. The thresholds (≥ 3 corroborating in 24 h, k ≥ 5 in 30 days to SHOW a field) live in code, not here. EC-24: a 'setting'/fake-slot offer is always risk=high."
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": { "caseSensitive": true, "typeValidation": "loose", "version": 2 },
-          "conditions": [
-            {
-              "id": "c-auto",
-              "leftValue": "={{ $json.auto_publish_allowed }}",
-              "rightValue": true,
-              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "d9b00009-0000-4000-8000-000000000008",
-      "name": "Backend allows auto-publish?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [1320, 220]
     },
     {
       "parameters": {
@@ -179,17 +135,6 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "return { json: { decision: 'publish', moderator: 'auto', decided_via: 'backend_precheck' } };"
-      },
-      "id": "d9b00009-0000-4000-8000-00000000000b",
-      "name": "Auto decision",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1540, 120]
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "={{ $vars.MD_API_BASE }}/internal/intel/{{ $('Parse payload').item.json.report_id }}/decision",
         "sendHeaders": true,
@@ -212,52 +157,7 @@
       "retryOnFail": true,
       "maxTries": 3,
       "waitBetweenTries": 5000,
-      "notes": "Backend applies the decision, writes E-30 AuditLog, re-checks k ≥ 5 before any field becomes visible, notifies the reporter by web push, and returns { published: bool, slots_opened: bool, office_id }."
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": { "caseSensitive": true, "typeValidation": "loose", "version": 2 },
-          "conditions": [
-            {
-              "id": "c-slots",
-              "leftValue": "={{ $json.published === true && $json.slots_opened === true }}",
-              "rightValue": true,
-              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "d9b00009-0000-4000-8000-00000000000d",
-      "name": "Published 'slots opened'?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [2200, 220]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $vars.MD_N8N_SELF_BASE }}/webhook/md/slot-watch-alert",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "X-MD-Internal", "value": "={{ $vars.MD_N8N_INTERNAL_TOKEN }}" }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ office_id: $json.office_id, report_id: $('Parse payload').item.json.report_id }) }}",
-        "options": { "timeout": 15000 }
-      },
-      "id": "d9b00009-0000-4000-8000-00000000000e",
-      "name": "Trigger W03 slot-watch alerts",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [2420, 140],
-      "onError": "continueRegularOutput",
-      "notes": "W03 relays 'reported by N users, check Sarathi now' to watchers. We never book or scrape (D-08)."
+      "notes": "Backend applies the decision, writes E-30 AuditLog, re-checks k ≥ 5 before any field becomes visible, notifies the reporter by web push and, for a published 'slots opened' report, fires slot-watch alerts to watchers through the backend notifier (API-69 logic; no n8n hop)."
     },
     {
       "parameters": {},
@@ -278,24 +178,10 @@
       ]
     },
     "202 Accepted": { "main": [[{ "node": "Parse payload", "type": "main", "index": 0 }]] },
-    "Parse payload": { "main": [[{ "node": "Backend precheck (rules decide)", "type": "main", "index": 0 }]] },
-    "Backend precheck (rules decide)": { "main": [[{ "node": "Backend allows auto-publish?", "type": "main", "index": 0 }]] },
-    "Backend allows auto-publish?": {
-      "main": [
-        [{ "node": "Auto decision", "type": "main", "index": 0 }],
-        [{ "node": "Moderator: WhatsApp approve / reject (≤ 12 h)", "type": "main", "index": 0 }]
-      ]
-    },
+    "Parse payload": { "main": [[{ "node": "Moderator: WhatsApp approve / reject (≤ 12 h)", "type": "main", "index": 0 }]] },
     "Moderator: WhatsApp approve / reject (≤ 12 h)": { "main": [[{ "node": "Normalise decision", "type": "main", "index": 0 }]] },
     "Normalise decision": { "main": [[{ "node": "Record decision (backend publishes/rejects + audit log)", "type": "main", "index": 0 }]] },
-    "Auto decision": { "main": [[{ "node": "Record decision (backend publishes/rejects + audit log)", "type": "main", "index": 0 }]] },
-    "Record decision (backend publishes/rejects + audit log)": { "main": [[{ "node": "Published 'slots opened'?", "type": "main", "index": 0 }]] },
-    "Published 'slots opened'?": {
-      "main": [
-        [{ "node": "Trigger W03 slot-watch alerts", "type": "main", "index": 0 }],
-        [{ "node": "Done", "type": "main", "index": 0 }]
-      ]
-    }
+    "Record decision (backend publishes/rejects + audit log)": { "main": [[{ "node": "Done", "type": "main", "index": 0 }]] }
   },
   "pinData": {},
   "settings": {
@@ -321,9 +207,9 @@
       "workflow_id": "W09",
       "owner": "Trust & safety lead (grievance-officer delegate)",
       "doc": "docs/05-ops/N8N_WORKFLOWS.md#w09",
-      "business_logic": "none (risk, k-threshold, corroboration and PII checks run in /internal/intel/*/precheck)",
-      "executions_per_month": "1 per report",
-      "required_variables": ["MD_API_BASE", "MD_HMAC_SECRET", "MD_N8N_READ_TOKEN", "MD_WA_PHONE_NUMBER_ID", "MD_MODERATOR_WA", "MD_N8N_SELF_BASE", "MD_N8N_INTERNAL_TOKEN"]
+      "business_logic": "none (risk, k-threshold, corroboration and PII checks run in the backend on API-28; slot-watch alerts fire from the backend on publish)",
+      "executions_per_month": "1 per report the backend flags for a human",
+      "required_variables": ["MD_API_BASE", "MD_HMAC_SECRET", "MD_N8N_READ_TOKEN", "MD_WA_PHONE_NUMBER_ID", "MD_MODERATOR_WA"]
     }
   },
   "active": false,

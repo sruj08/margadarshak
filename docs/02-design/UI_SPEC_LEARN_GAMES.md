@@ -2241,7 +2241,7 @@ EC-20 (redaction), EC-29 (AI unavailable → state 7 variant: *"The guide is res
 
 **Consent model.** A learner links to a school from their app (*"Share my progress with {school}"* with a per-item choice: progress, Nazar sessions, Practice Record). The school sees **only** what the learner shares, and loses access the moment the learner revokes. u18 learners cannot be linked (no account history, D-13); schools see them only as walk-ins.
 
-**Phase.** Hackathon: **Thin** (learners list, learner detail, hazard-training log export, sign-off). **Slide**: bookings, vehicle hire, Pro billing. Production: all, plus parent updates via n8n W5/W7 and remedial-training referrals.
+**Phase.** Hackathon: **Thin** (learners list, learner detail, hazard-training log export, sign-off). **Slide**: bookings, vehicle hire, Pro billing. Production: all, plus parent updates (weekly parent card sent by the backend notifier), lead routing via n8n W7 and remedial-training referrals.
 
 ### 9.1 Learners (home)
 **Route.** `/school/[schoolId]/learners` · filters `?class=&stage=&ready=`.
@@ -2474,8 +2474,8 @@ Copy (EN/HI): "Stall funnel" / "कहाँ अटकते हैं" · "Medi
 └───────────────┴──────────────────────────────────────────────────────────────────────────────────────┘
 ```
 - **EC-24** (fake slot or "setting" offer reported): reject; the pattern (phone/UPI/URL shape) joins the pre-check blocklist; the reporter gets the state ACB/vigilance and CPGRAMS links (we never host corruption reports).
-- "Slots opened" approvals trigger n8n W3 alerts labelled *"Reported {time} by {n} users, check Sarathi now"* (no fake urgency).
-- Rules drawer: auto-publish if low risk AND ≥ 3 corroborating reports in 24 h; otherwise moderator decision (08 W9).
+- "Slots opened" approvals make the backend fire slot-watch alerts (outbox → notifier; not n8n) labelled *"Reported {time} by {n} users, check Sarathi now"* (no fake urgency).
+- Rules drawer: auto-publish if low risk AND ≥ 3 corroborating reports in 24 h; otherwise moderator decision (n8n W9 for flagged reports, or this queue).
 
 Copy (EN/HI): "Approve" / "मंज़ूर करें" · "Reject" / "अस्वीकार करें" · "Hold for corroboration" / "पुष्टि के लिए रोकें" · "Sample data" / "नमूना डेटा" · "Reported {time} by {n} users" / "{time} पर {n} लोगों ने बताया".
 
@@ -2537,7 +2537,7 @@ Copy (EN/HI): "Approve" / "मंज़ूर करें" · "Reject" / "अ�
 └───────────────┴──────────────────────────────────────────────────────────────────────────────────────┘
 ```
 - Diff colours: added rows use `--success-soft` + "＋ added" word; removed rows `--danger-soft` + "− removed" + strikethrough; changed cells `--warning-soft` + "✎ changed". Words and glyphs always present (colour-blind safe).
-- **Impact preview (EC-27):** the backend re-evaluates open cases against the draft (dry run) and shows counts by effect (new fee line, changed eligibility, changed dates). Publishing sends the in-app notice (and WhatsApp only to opted-in users, ≤ 1/day, W2).
+- **Impact preview (EC-27):** the backend re-evaluates open cases against the draft (dry run) and shows counts by effect (new fee line, changed eligibility, changed dates). Publishing sends the in-app notice (and WhatsApp only to opted-in users, ≤ 1/day, queued in the outbox and sent by the backend notifier).
 - The sample amounts in the wireframe are the CMVR r.32 values from `02-rules-process.md` §7; in the product they are data rows, never copy strings (D-06).
 - Publish creates an immutable version; **Rollback** (history page) creates a new version equal to an old one (never deletes), and also needs a checker.
 

@@ -63,12 +63,12 @@ Golden rules:
 **Close:** re-enable flags one by one; watch fallback < 5 % for 15 min.
 
 ### PB-02 WhatsApp delivery failure
-**Symptoms:** A-09; W01/W04 receipts show `failed`; users say "no reminder".
+**Symptoms:** A-09; notifier receipts (API-66) show `failed` on outbox rows; users say "no reminder".
 **First 5 minutes**
-1. n8n → W01/W04 executions → read the Meta error code. Common: token expired (401), template not approved / paused, recipient not in the test-number allow-list (hackathon: max about 5 verified recipients), 24-hour customer-service window rules for non-template messages.
+1. Backend logs for the notifier (`WhatsAppCloudNotifier`) and D5 → read the Meta error code on the failed outbox rows (n8n is not on this path). Common: token expired (401), template not approved / paused, recipient not in the test-number allow-list (hackathon: max about 5 verified recipients), 24-hour customer-service window rules for non-template messages.
 2. Set flag `whatsapp_outbound=off` if failures are total; the backend NotificationAdapter switches to **email + web push** for the same outbox rows (no message is lost; the outbox keeps them).
-3. If it's test-eve (W04) and the test is tomorrow: run W04 manually after the fix; the backend's idempotency key `test-eve:<date>` prevents duplicates.
-**Fix:** refresh the system-user token in the n8n credential; resubmit/fix the template; add the recipient to the allow-list (demo phone).
+3. If it's test-eve and the test is tomorrow: re-queue the failed `test_eve` outbox rows through the backend after the fix; the idempotency key `test-eve:<date>` is unchanged, so nobody gets a duplicate.
+**Fix:** refresh the system-user token in the API's environment (the notifier's Meta credential, not n8n); resubmit/fix the template; add the recipient to the allow-list (demo phone).
 **Never:** fall back to SMS (not DLT-registered; D-16), or to personal WhatsApp accounts.
 **User-facing:** the stage-aware home (F-08) shows the same reminder in-app, so the information is never only on WhatsApp.
 
@@ -135,7 +135,7 @@ Golden rules:
 
 ### PB-09 n8n down or execution budget exhausted
 **Symptoms:** A-13 heartbeat missing, A-12 budget > 85 %.
-- **Down:** nothing the user sees changes except message delay (D-16). The backend outbox holds messages. Set `whatsapp_outbound=off` to route through email + web push from the backend; reminders still show in-app. For the 06:30 sweep, trigger API-65 from the ops script (`scripts/ops/sweep.sh`).
+- **Down:** nothing the user sees changes and no citizen message is delayed (D-16, ADR-0006): the backend notifier sends from the outbox without n8n. Staff tasks (clip review, flagged moderation, alerts, RTO briefs) wait. For the 06:30 sweep, trigger API-65 from the ops script (`scripts/ops/sweep.sh`).
 - **Budget:** pause W12's schedule (biggest consumer if misconfigured, 08 §6) and switch it to webhook-only alerts; check for a loop (a workflow re-triggering itself); batch more per run.
 - **Approvals stuck** (W08/W09 Wait nodes): the backend keeps pending tasks; when n8n recovers, Waits resume by time limit and re-notify. Moderation can be done directly in `/admin/intel` (the backend applies the decision and n8n's later resume is ignored by the idempotency key).
 
@@ -185,7 +185,7 @@ Targets and scenarios are in INFRASTRUCTURE.md §7. Summary: hackathon RPO ≤ 2
 | When | Task |
 |---|---|
 | Daily 08:30 IST | check D1, D4 (sweep done?), D5 (executions, pending approvals), D3 (fallback, spend) |
-| Daily 19:30 IST | W04 receipts; failed WhatsApp count |
+| Daily 19:30 IST | test-eve notifier receipts; failed WhatsApp count (D5) |
 | Weekly | W15 rule-source changes triaged; security.yml findings triaged; restore test (production) |
 | Before every demo | §8 checklist |
 
@@ -196,7 +196,7 @@ Targets and scenarios are in INFRASTRUCTURE.md §7. Summary: hackathon RPO ≤ 2
 | T-24 h | Staging rehearsal of the full demo script (PITCH.md) on 4G with the low-end phone; restore drill done; **record the fallback video** (≤ 5 min, the same script; also the submission video) | whole team |
 | T-12 h | Kerala HPT status recheck (PB-05); trademark/rules items from D-25 noted | Product lead |
 | T-3 h | Deploy freeze begins at T-60 min; last deploy must be green on smoke | Ops lead |
-| T-60 min | **Freeze.** Gemini paid-tier quota headroom checked; WhatsApp token valid (send a test template to the demo phone); n8n W01/W04/W08/W09 active; Workflows Runs page open in a tab | Ops lead, AI lead |
+| T-60 min | **Freeze.** Gemini paid-tier quota headroom checked; WhatsApp token valid (send a test template to the demo phone); n8n W01/W08/W09 active; notifier outbox backlog empty (D5); Workflows Runs page open in a tab | Ops lead, AI lead |
 | T-30 min | `scripts/ops/warmup.sh`; `/v1/health` all ok; D1 on a laptop; `FAULT_INJECTION_CLIP_BLUR=once` set **only if** the clip retry beat is in the script | Ops lead |
 | T-10 min | Phones charged, hotspot on (two carriers: Jio + Airtel), screen mirroring tested, the QR (closing CTA: "take the 3-minute test") printed and on the slide | Presenter |
 | T-0 | Demo; one person watches D1 and the Telegram channel silently | Ops lead |
@@ -208,7 +208,7 @@ Targets and scenarios are in INFRASTRUCTURE.md §7. Summary: hackathon RPO ≤ 2
 | Live site slow > 60 s / down | play the **recorded video** from the same point; say the runbook line (§4) |
 | Gemini fails during the debrief | let it happen: the template card appears instantly ("Auto notes"). Say: "the AI is optional; the facts come from code". This is the guardrail story (D-09) |
 | Voice guide fails | voice is not on the critical demo path (war-room risk 5); skip to the next beat, show the pre-recorded clip |
-| WhatsApp message doesn't arrive | show the n8n execution and the in-app reminder; say that Meta test numbers reach only allow-listed phones |
+| WhatsApp message doesn't arrive | show the outbox row and receipt in the console/logs and the in-app reminder; say that Meta test numbers reach only allow-listed phones |
 | Workflows run doesn't show a retry | show a previous run's retry on the Runs page (keep a tab with yesterday's run) |
 | A judge finds a wrong rule | thank them, open the rule chip (source + verified date), flag it live in the studio (PB-04): this shows the trust mechanism working |
 | Laptop dies | second laptop with the deck (PDF) and the video locally; the live URL on any phone |

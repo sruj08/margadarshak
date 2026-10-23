@@ -64,7 +64,7 @@ Dates for Phases 1–2 depend on the **disputed start time** (Fri 00:00 vs Fri 2
 | Rule packs `fees.json`, `rules/JK.json`, `rules/KL.json` with source/verified_on/confidence; API-01–03, API-13 | MS-1.4 | Plan card for 6 fixture personas incl. EC-01..EC-06 | A |
 | **Deep-A**: plan → blockers → 6-screen guided LL → photo fixer → check answers → copy-pack | MS-1.5 | e2e green; ≤ 6 screens; no Aadhaar/OTP fields | A, C |
 | **Deep-B**: Nazar mock + learn, server replay, AI debrief + validator + template, 4 deep games, LL simulator; evals ≥ 30 cases | MS-1.6 | `adk eval` 0 invented numbers; replay overwrites tampered scores | B, TL |
-| **Deep-C**: stage-aware home with persona switcher, case clock (journey sweeper Workflow + n8n Schedule), WhatsApp test number + email, age gate, consent, analytics schema, adapters + contract tests | MS-1.7 | Day-25 message delivered to a test phone from a scheduled run | TL, C |
+| **Deep-C**: stage-aware home with persona switcher, case clock (journey sweeper Workflow + n8n Schedule), WhatsApp test number + email via the backend notifier, age gate, consent, analytics schema, adapters + contract tests | MS-1.7 | Day-25 message delivered to a test phone from a scheduled run | TL, C |
 | Nazar field study opens (Fri 19:00 link drop per field kit) | MS-1.8 | First 10 consented sessions | B |
 
 **Kill/shrink rules:** < 12 clips by Fri 12:00 → 6-clip mock, journey test carries the evidence. Voice guide never on the critical demo path; pre-recorded fallback.
@@ -163,7 +163,7 @@ See [PRD §14 R1](PRD.md#r1-pilot-phase-3-exit). Kill criteria: if by Mar 2027 p
 | Ecosystem | ADTCs, IDTRs (incl. Maruti-run IDTRs) | 4 | Curriculum tools, rehearsal | Listing, curriculum mapping |
 | Ecosystem | CSC operators | 3+ | Correct, faster applications | Helper-mode testing |
 | Academia | GCET Jammu and partner colleges | 3+ | Research, student distribution | Ethics review, cohorts |
-| Sponsors | Render, n8n | 1–3 | Workflows showcase; messaging edge | Credits, technical support |
+| Sponsors | Render, n8n | 1–3 | Workflows showcase; n8n for schedules and staff operations | Credits, technical support |
 
 ---
 

@@ -168,7 +168,7 @@ The moat is threefold:
 | AI | API-40 `WS /v1/voice` (ADK live) · API-41 `POST /v1/tutor/explain` · API-42 `POST /v1/decode/screenshot` · API-43 `POST /v1/scam/check` |
 | Letters and records | API-45 `POST /v1/cases/{id}/letters` · API-46 `GET /v1/me/practice-record` · API-47 `GET /v1/check/practice-record/{token}` (QR check page; never says "verified") · API-48 `DELETE /v1/me/practice-record/tokens/{token}` (revoke) · API-49 `POST /v1/me/signoff-requests` (ask a school/supervisor to sign off) |
 | Ecosystem | API-50 `GET /v1/schools` · API-51 `POST /v1/schools/{id}/bookings` · API-52 school Pro endpoints (`/v1/school/...`) · API-53 state console (`/v1/console/...`) · API-54 rule-pack studio (`/v1/admin/rulepacks/...`, maker-checker) · API-55 clip admin (`/v1/admin/clips/...`) |
-| Privacy and platform | API-60 `GET/POST /v1/me/consents` · API-61 `POST /v1/me/export` · API-62 `DELETE /v1/me` · API-63 `POST /v1/events/analytics` · API-64 `GET /v1/health` · API-65 `POST /internal/clock/sweep` (n8n → Workflows) · API-66 `POST /internal/webhooks/n8n` · API-67 `POST /internal/jobs/{job}` (n8n-triggered jobs) · API-68 `POST /internal/intel/{reportId}/precheck|decision` (Live Intel moderation) · API-69 `POST /internal/watchers/{id}/fire` (slot watches) · API-72 `POST /internal/letters/{id}/dispatch` (after user approval) · API-73 `POST /internal/leads` (school lead routing). n8n never queries the database directly |
+| Privacy and platform | API-60 `GET/POST /v1/me/consents` · API-61 `POST /v1/me/export` · API-62 `DELETE /v1/me` · API-63 `POST /v1/events/analytics` · API-64 `GET /v1/health` · API-65 `POST /internal/clock/sweep` (n8n → Workflows) · API-66 `POST /internal/webhooks/n8n` (staff events from n8n; citizen channel receipts and STOP from Meta/email) · API-67 `POST /internal/jobs/{job}` (n8n-triggered jobs) · API-68 `POST /internal/intel/{reportId}/precheck|decision` (Live Intel moderation) · API-69 `POST /internal/watchers/{id}/fire` (slot watches) · API-72 `POST /internal/letters/{id}/dispatch` (after user approval) · API-73 `POST /internal/leads` (school lead routing). n8n never queries the database directly |
 | Field study | API-70 `POST /v1/lab/trials` · API-71 `GET /v1/stats/public` (live counters for judges) |
 
 ## 8. Architecture and stack (versions verified in research; re-pin at H0)
@@ -183,7 +183,8 @@ The moat is threefold:
 | Score verifier | Node service running `game-core` to replay sessions server-side and overwrite client scores (anti-cheat) |
 | AI | **Google ADK 2.12 (Python)**: VoiceGuideAgent (live), DebriefAgent, CoachAgent, TutorAgent, ScreenDecoderAgent; **Gemini** models (§10); Sarvam Saaras (Dogri ASR); provenance validator + ADK PII plugin |
 | Durable jobs | **Render Workflows (Python SDK)**: clip pipeline (headline), case-clock sweep, debrief fan-out, nightly stats. n8n triggers the scheduled ones. |
-| Automation | **n8n Pro**: 15 workflows (messaging edge, schedules, moderation queues, approvals, digests, field-test export); never business logic (D-16) |
+| Citizen notifications | **Backend notifier** (`NotificationPort`): outbox → WhatsApp Cloud API, email, web push; quiet hours, ≤ 1 nudge/day, STOP. Scales with the API (ADR-0006) |
+| Automation | **n8n Pro**: internal and staff operations only: schedules, clip-review and moderation queues, school lead routing, on-call alerts, digests, field-test export, and RTO/state staff briefs, alerts and reminders. Never citizen messages, never business logic (D-16, ADR-0006). Load grows with staff and offices, not citizens |
 | Storage | Cloudflare R2 (blurred clips, static assets) in the hackathon; an Indian object store in production |
 | Auth | Anonymous device session → optional account (email magic link / Google); helper links with consent. Production: DigiLocker OAuth (PKCE) / Jan Parichay via adapters. |
 | Observability | OpenTelemetry, structured logs with PII redaction, Sentry; CERT-In 180-day retention in India in production |
@@ -326,6 +327,7 @@ All three are pre-registered in `HYPOTHESES.md` at the confirmed start. We never
 | Trust strip | "Designed to UX4G and GIGW 3.0 guidelines", never wording that reads as certification |
 | Clip pipeline | Split for Workflows limits: `clip_ingest` run → human two-rater wait in n8n (W08) → `clip_finalize` run |
 | Notifications fallback | Email + web push sent by the backend; SMS only after TRAI DLT |
+| n8n scope (24 Oct 2026) | Citizen messages go through the backend notifier, not n8n. n8n keeps schedules, human approvals and staff notifications (team, schools, RTO/state staff), so it never fans out per citizen. Retired workflows W02–W06, W10, W11 moved to the backend; new staff workflows W16–W18 (ADR-0006 rev., N8N_WORKFLOWS) |
 | Voice field-fill | Dictating your own name/address sends speech to Gemini; this is a documented exception behind separate consent (18+ only) |
 | Rule IDs | `rulepacks/` is the canonical rule-ID source; AI allowlists are generated from it |
 | AI hosting | Agents run inside the FastAPI service on Render (hackathon); Cloud Run or Vertex AI India region as the production alternative |

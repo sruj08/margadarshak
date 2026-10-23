@@ -20,7 +20,7 @@ Headline slide: **"X% of N licence holders would fail Kerala's new hazard test (
 **Hindi:**
 > 🚦 Driving licence ya learner licence hai (18+)? Sirf 3 minute ka challenge. Kerala December se licence ke liye *hazard perception test* la raha hai: road ki video dekho aur khatra dikhte hi tap karo. Humne hackathon ke liye Jammu ki asli sadkon par iska practice version banaya hai. Kya aap 60/100 cross kar paoge? Naam ya number nahi chahiye, poora anonymous. Link Friday shaam 7 baje, reply karo IN 👇
 
-**Score-card share (auto-generated, n8n → WhatsApp):**
+**Score-card share (auto-generated, sent on WhatsApp by the backend notifier):**
 > I saw the bus 1.2 s late (≈ 13 m at 40 km/h) on Nazar. Practice score 58/100 in Kerala's announced format. Can you beat me? <link>
 
 ## 2. Consent screen (in the app, before anything else)

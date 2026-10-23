@@ -973,7 +973,7 @@ Every EC has (a) a rule row or state flag, (b) the screen(s) where it appears, (
 | EC-27 Rule pack changes mid-case | `case.rulepack_version < tenant.current` with material diff | Home banner, SCR-014, SCR-020 | ⓘ/▲ | Rules for {state} changed on {date}: {diff_summary}. Your plan is updated. | {state} के नियम {date} को बदले: {diff_summary}। आपका प्लान अपडेट हो गया है। | See what changed |
 | EC-28 Kerala HPT stayed or postponed | rule pack flag `hpt_status ∈ {stayed, postponed}` | SCR-014 (Kerala), learning entry | ⓘ | Kerala's hazard perception test is {status} as of {date}. Practising hazards still helps on the road and in the driving test. | केरल का हैज़र्ड परसेप्शन टेस्ट {date} तक {status} है। खतरे पहचानने की प्रैक्टिस सड़क पर और ड्राइविंग टेस्ट में फिर भी काम आती है। | Keep practising |
 | EC-29 AI unavailable | M-01/M-02 health or timeouts | SCR-005, debrief cards, SCR-182 | ⓘ | Voice is resting. Type instead; it works the same. | आवाज़ अभी बंद है। लिखकर पूछिए, वैसे ही काम करेगा। | Type instead |
-| EC-30 WhatsApp opt-out ("STOP") | n8n inbound STOP → API-66 → consent off | SCR-160/161, SCR-017 | ⓘ | You've stopped WhatsApp messages. We'll still show reminders here in the app. | आपने WhatsApp मैसेज बंद कर दिए हैं। रिमाइंडर ऐप में दिखते रहेंगे। | Change channels |
+| EC-30 WhatsApp opt-out ("STOP") | Meta channel webhook STOP → API-66 → consent off | SCR-160/161, SCR-017 | ⓘ | You've stopped WhatsApp messages. We'll still show reminders here in the app. | आपने WhatsApp मैसेज बंद कर दिए हैं। रिमाइंडर ऐप में दिखते रहेंगे। | Change channels |
 | (extra) Under 16 | `age_band = <16` | SCR-014 variant | ⬣ | You can apply for a ≤50 cc learner's licence from your 16th birthday, {date}. Until then, the Learn hub's road-sign lessons are open to you. | आप अपने 16वें जन्मदिन {date} से 50 cc तक के लर्नर लाइसेंस के लिए अप्लाई कर सकते हैं। तब तक सड़क-चिह्नों के पाठ खुले हैं। | See road signs |
 
 Notes: EC-17's penalty values are statutory (MV Act s.199A, `03-lifecycle.md` §0.4 [P]) and still come from the rule pack, not the string (the HI/EN strings above show rendered values). EC-12 and EC-13 copy is marked **[verify per state]** in the pack; owner Rules lead, due 2026-10-24.
@@ -1265,7 +1265,7 @@ Notes: EC-17's penalty values are statutory (MV Act s.199A, `03-lifecycle.md` §
 - **Behaviour:** "Open Sarathi" opens `https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do` in a new tab (`rel="noopener"`), shows the full domain on the button (scam hygiene), and sets the case to H-03. On mobile, the copy-pack can be pinned as a floating "Pack" pill (Picture-in-Picture is not available for DOM on most Android browsers [verify]; fallback is switching tabs).
 - **Mode B `[P3+]` (government-hosted adapter, SarathiAdapter):** the same screen becomes "Send to Sarathi" with a DigiLocker/Sarathi consent sheet showing purpose, data items and validity (DEPA-style, F-54); eKYC still runs inside Sarathi's own flow (verification G1). The copy-pack disappears because the adapter prefills.
 - **Copy (HI):** `handoff.h1` "Sarathi पर पूरा करें" · `handoff.sub` "Sarathi सरकारी पोर्टल है। वहाँ आपको 4 काम करने हैं:" · steps "① राज्य चुनें → LL के लिए अप्लाई करें ② फ़ोन पर OTP से आधार eKYC ③ फ़ीस दें ({fee_at_ll_stage}) ④ एप्लीकेशन नंबर नोट करें" · `handoff.boundary` "Margdarshak, Sarathi पर कुछ भी देख या बदल नहीं सकता।" · `handoff.back` "मैं Sarathi से वापस आ गया"
-- **States:** Sarathi down (EC-11; detected by a HEAD probe from our server every 5 min `[P1–2]` and by user reports) → amber banner "Sarathi seems slow or down right now ({since}). Try later; we'll ping you." + "Ping me when it's back" (W2); offline → "Open Sarathi" disabled "Needs internet"; copy-pack still viewable.
+- **States:** Sarathi down (EC-11; detected by a HEAD probe from our server every 5 min `[P1–2]` and by user reports) → amber banner "Sarathi seems slow or down right now ({since}). Try later; we'll ping you." + "Ping me when it's back" (`sarathi_back_up`, sent by the notifier); offline → "Open Sarathi" disabled "Needs internet"; copy-pack still viewable.
 - **Accessibility:** external link announced "opens Sarathi in a new tab"; steps are an `ol`.
 - **Analytics:** `handoff_viewed {mode: A|B}`, `handoff_opened_sarathi`, `handoff_pack_opened`, `sarathi_down_banner_shown`.
 
@@ -1325,7 +1325,7 @@ Notes: EC-17's penalty values are statutory (MV Act s.199A, `03-lifecycle.md` §
 
 #### SCR-043 Payment pending (EC-09)
 - **Purpose:** the most-complained moment (15 of 33 consumer complaints; journey map row 5): stop double payment and cancellation, give the exact next steps and a date.
-- **Route:** `/case/{caseId}/handoff/payment-pending`. **Implements:** F-05, EC-09, W2.
+- **Route:** `/case/{caseId}/handoff/payment-pending`. **Implements:** F-05, EC-09, milestone message (case reducer → outbox → notifier).
 ```
 ┌────────────────────────────────────────┐
 │ ←  Payment pending                     │
@@ -1528,8 +1528,8 @@ H-07x LL expired                      Overlay: minor (16–17)
 - **Variant-specific rules:**
   - **H-05/H-06** context card = Readiness (F-21) with "Book anyway" text link always present (never gated).
   - **H-07** is one of the two places red (`--danger`) appears as a header (06 §B12); it has a real date and explains the consequence (new LL, new application number, lost slot; EC-07). It never shows a seconds-level timer.
-  - **H-08 test-eve** switches automatically at 17:00 local on T−1 and is paired with the W4 WhatsApp message (opt-in).
-  - **H-09** shows **no outcome words in notification previews** ("Your retest plan is ready") to save face (08 §6 W10).
+  - **H-08 test-eve** switches automatically at 17:00 local on T−1 and is paired with the test-eve WhatsApp message (TimelineEvent `test_eve`, sent by the notifier; opt-in).
+  - **H-09** shows **no outcome words in notification previews** ("Your retest plan is ready") to save face (fail follow-up TimelineEvents, sent by the notifier).
   - **H-10** after 3 days without approval flips the context card to EC-23.
   - **H-11** shows the riding lock (SCR-122) if motion > 10 km/h.
   - **EC-27** rule-pack banner sits above the header on any variant until dismissed.
@@ -1584,7 +1584,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 ---
 ### S5: Book the driving test (F-10, F-11)
 
-**Honesty rule (D-08, verification G3):** Margdarshak does not book slots, scrape Sarathi or run booking bots. The slot finder shows offices, published/adapter slot data (mock in `[P1–2]`) and moderated crowd reports, and hands the user to Sarathi's slot page to book. "Notify me" relays **moderated crowd reports** (W3), labelled as such.
+**Honesty rule (D-08, verification G3):** Margdarshak does not book slots, scrape Sarathi or run booking bots. The slot finder shows offices, published/adapter slot data (mock in `[P1–2]`) and moderated crowd reports, and hands the user to Sarathi's slot page to book. "Notify me" relays **moderated crowd reports** (slot-watch alerts the backend fires when a report is published), labelled as such.
 
 #### SCR-080 Slot finder (map + calendar)
 - **Purpose:** where and when to take the test: nearest RTO/ARTO/accredited centre, earliest date, and the hand-off to book.
@@ -1642,7 +1642,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 
 #### SCR-082 Notify me (slot watch)
 - **Purpose:** honest alerts: "when people report slots opening at {office}", not "we'll grab a slot".
-- **Route:** `/case/{caseId}/slots/watch`. **Implements:** F-10, API-27, W3, F-53, EC-30.
+- **Route:** `/case/{caseId}/slots/watch`. **Implements:** F-10, API-27, API-69 (slot-watch alerts, backend), F-53, EC-30.
 ```
 ╭──────────────────────────────────────╮
 │ ── Tell me when slots open        ✕  │
@@ -1665,7 +1665,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 - **Analytics:** `slot_watch_created {offices_count, channel}`, `slot_watch_alert_opened`.
 
 #### SCR-083 I booked a slot (record)
-- **Route:** `/case/{caseId}/slots/booked`. Fields: office (`ComboBox`, prefilled), date (`DatePicker`, constrained to the valid window), time (`TimeField`), class(es) on this slot (`CheckboxGroup`). Primary "Save my slot" → API-15 `slot_booked` → Home H-08, W4 scheduled for T−1 19:00, ICS download offered ("Add to calendar"). Guard: if date > LL expiry → EC-07 red notice before saving. Copy (HI): "मेरा स्लॉट सेव करें" · "कैलेंडर में जोड़ें". Analytics: `slot_recorded {days_ahead_bucket}`.
+- **Route:** `/case/{caseId}/slots/booked`. Fields: office (`ComboBox`, prefilled), date (`DatePicker`, constrained to the valid window), time (`TimeField`), class(es) on this slot (`CheckboxGroup`). Primary "Save my slot" → API-15 `slot_booked` → Home H-08, test-eve TimelineEvent scheduled for T−1 19:00, ICS download offered ("Add to calendar"). Guard: if date > LL expiry → EC-07 red notice before saving. Copy (HI): "मेरा स्लॉट सेव करें" · "कैलेंडर में जोड़ें". Analytics: `slot_recorded {days_ahead_bucket}`.
 
 #### SCR-085 RTO Live Intel: view
 - **Purpose:** the things agents monetise (when slots really open, what the counter asks for, what the track checks, wait times), as structured, moderated, anonymous crowd facts (F-11, D-14).
@@ -1761,7 +1761,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 
 #### SCR-091 Test-eve checklist (T−1)
 - **Purpose:** prevent "forgot documents" no-shows (team report #9): what to bring, how to get there, what will happen, ready by 9 pm.
-- **Route:** `/case/{caseId}/test/eve`. **Implements:** F-12, F-09, W4, EC-04.
+- **Route:** `/case/{caseId}/test/eve`. **Implements:** F-12, F-09, test-eve TimelineEvent, EC-04.
 ```
 ┌────────────────────────────────────────┐
 │ ←  Tomorrow · 10:30 · Jammu RTO        │
@@ -1967,7 +1967,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 
 #### SCR-110 Approval tracker
 - **Purpose:** passed, then silence: "stuck at Approval" for weeks (journey map row 13). Show where it is, what's normal, and when to escalate.
-- **Route:** `/case/{caseId}/approval`. **Implements:** F-14, EC-23, W11.
+- **Route:** `/case/{caseId}/approval`. **Implements:** F-14, EC-23, backend letter flow.
 ```
 ┌────────────────────────────────────────┐
 │ ←  Your licence is on its way          │
@@ -1994,8 +1994,8 @@ H-07x LL expired                      Overlay: minor (16–17)
 - **Analytics:** `approval_viewed {days_since_pass}`, `approval_status_handoff`, `approval_letter_started`.
 
 #### SCR-111 Escalation letter (facts only, user approves and sends)
-- **Purpose:** a ready grievance with facts only (dates, application number, office), reviewed and sent by the user; we never file on CPGRAMS for them (W11, D-09).
-- **Route:** `/case/{caseId}/approval/letter`. **Implements:** F-14, API-45, E-28, W11.
+- **Purpose:** a ready grievance with facts only (dates, application number, office), reviewed and sent by the user; we never file on CPGRAMS for them (backend letter flow, D-09).
+- **Route:** `/case/{caseId}/approval/letter`. **Implements:** F-14, API-45, E-28, API-72.
 ```
 ┌────────────────────────────────────────┐
 │ ←  Letter to the RTO                   │
@@ -2019,7 +2019,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  How to file on CPGRAMS ▸              │  pgportal.gov.in steps
 └────────────────────────────────────────┘
 ```
-- **Behaviour:** body text is a reviewed template (EN/HI); only fact slots are editable (`TextField`s for date/status); "status" is a dropdown of Sarathi's status phrases. Optional `[P3+]`: "Send from Margdarshak's address with me in CC" only if the user ticks it (W11).
+- **Behaviour:** body text is a reviewed template (EN/HI); only fact slots are editable (`TextField`s for date/status); "status" is a dropdown of Sarathi's status phrases. Optional `[P3+]`: "Send from Margdarshak's address with me in CC" only if the user ticks it (backend letter flow, API-72).
 - **Copy (HI):** `letter.h1` "RTO को पत्र" · `letter.tone` "विनम्र और तथ्यों पर। कोई आरोप नहीं, कोई नाम नहीं।" · `letter.confirm` "मैंने पढ़ लिया है और यह सही है।" · `letter.cta` "PDF डाउनलोड करें और खुद ईमेल करें"
 - **Analytics:** `letter_previewed {channel}`, `letter_approved`, `letter_downloaded`.
 
@@ -2382,7 +2382,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 
 #### SCR-160 Notifications centre (inbox)
 - **Purpose:** every message we sent, in one place, so WhatsApp is never the only copy; channel settings next to it.
-- **Route:** `/me/inbox`. **Implements:** F-53, F-09, E-13, W1–W6, W10, EC-30.
+- **Route:** `/me/inbox`. **Implements:** F-53, F-09, E-13 (outbox rows sent by the backend notifier), EC-30.
 ```
 ┌────────────────────────────────────────┐
 │ ←  Messages                 Settings ⚙ │
@@ -2399,7 +2399,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 └────────────────────────────────────────┘
 ```
 - **Rules (08 §4.10, D-16):** ≤ 1 push or WhatsApp per day, tied to a real deadline; quiet hours 22:00–07:00 IST; one-tap opt-out per channel; SMS is `[P3+]` after TRAI DLT registration; failed-test messages have neutral previews.
-- **Message catalogue (template IDs; text in LOCALIZATION):** `plan_saved`, `payment_pending_day3` (EC-09), `ll_day25_book_now`, `ll_day30_unlocked`, `ll_expiry_t30`, `ll_expiry_t7`, `slot_reported_open` (W3), `test_eve_checklist` (W4, with ICS), `test_day_morning`, `retest_plan_ready` (W10, neutral), `approval_day3_check` (EC-23), `approval_letter_ready` (W11), `rulepack_changed` (EC-27), `weekly_coach` (W6, 18+), `parent_card_weekly` (W5, opt-in), `renewal_t365`, `renewal_t30`, `sarathi_back_up` (EC-11).
+- **Message catalogue (template IDs; text in LOCALIZATION):** `plan_saved`, `payment_pending_day3` (EC-09), `ll_day25_book_now`, `ll_day30_unlocked`, `ll_expiry_t30`, `ll_expiry_t7`, `slot_reported_open` (slot-watch alert), `test_eve_checklist` (test-eve TimelineEvent, with ICS), `test_day_morning`, `retest_plan_ready` (fail follow-up, neutral), `approval_day3_check` (EC-23), `approval_letter_ready` (letter flow), `rulepack_changed` (EC-27), `weekly_coach` (weekly TimelineEvent, 18+), `parent_card_weekly` (weekly TimelineEvent, opt-in), `renewal_t365`, `renewal_t30`, `sarathi_back_up` (EC-11).
 - **States:** empty → "No messages yet. We'll only message you about real dates." ; offline → cached list.
 - **Analytics:** `inbox_viewed {unread}`, `notification_opened {template_id, channel}`.
 
@@ -2547,7 +2547,7 @@ All go through API-63; payloads carry the common props in §1.8; none carry PII 
 | Slots | MockSlotAdapter + seeded Live Intel ("Sample data") | SlotAdapter from the state; Live Intel with real n ≥ 5 |
 | DigiLocker | Pointer card + mock consent screen labelled "simulated" | DigiLockerAdapter (after NeGD requester onboarding) |
 | Voice | Gemini Live (Hindi/English) + Sarvam Saaras (Dogri in), one scripted demo flow, 18+ | Bhashini ASR/TTS as the government-preferred path; Vertex AI India region |
-| Notifications | WhatsApp test numbers via n8n, email, web push; no SMS | WhatsApp approved templates; SMS after TRAI DLT |
+| Notifications | WhatsApp test numbers, email, web push, all sent by the backend notifier; no SMS | WhatsApp approved templates; SMS after TRAI DLT |
 | Rule packs | J&K, Delhi, Punjab, Kerala + central CMVR; confidence chips | Tenant rule-pack studio with maker-checker (F-42) |
 | Theme | Margdarshak skin; non-affiliation footer | Tenant theme (UX4G skin: `--primary #4A2BC2`, Noto Sans) and tenant footer/emblem slot (F-58) |
 | Maps | MapLibre + OSM raster | State GIS / Bhuvan tiles [verify licensing] |

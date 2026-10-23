@@ -77,9 +77,9 @@ flowchart TB
   AI -- "F8 model call" --> GEM
   AI -- "F9 Dogri audio" --> SARV
   WF -- "F10 raw clip, windows" --> OBJ & GEM & PG
-  API -- "F11 signed job: send message" --> N8N
-  N8N -- "F12 HMAC webhook (API-65/66)" --> API
-  N8N -- "F13 template message" --> META & MAIL
+  API -- "F11 signed staff task / alert (no citizen data)" --> N8N
+  N8N -- "F12 HMAC webhook (API-65/66/67/68/73)" --> API
+  API -- "F13 notifier: citizen template message; receipts and STOP back to API-66" --> META & MAIL
   API -- "F14 scrubbed errors" --> SENTRY
   API -- "F15 adapter port (real mode only)" --> SAR & DGL & BHA
   U -. "F16 deep link hand-off (Mode A, user's own browser)" .-> SAR
@@ -168,15 +168,17 @@ flowchart TB
 | T-WF-4 | D | Workflow retries storm Gemini | Bounded retries with jitter, concurrency limits | L |
 | T-WF-5 | E | Workflow token used to read all tenants | `wf_role` scoped per job; stats job reads aggregates views only | L |
 
-### 2.7 n8n messaging edge and notifications (F-53, API-65/66)
+### 2.7 n8n staff operations (API-65/66/67/68/73; ADR-0006)
+
+n8n only fires schedules, holds human approvals and notifies staff. It holds no citizen personal data. The citizen channel (WhatsApp, email, web push; F-53) is held by the backend notifier (`NotificationPort`) inside the API, so its credentials and recipients sit behind the API's own controls (§2.2) and the Meta/email webhooks on API-66 are signature-verified.
 
 | ID | STRIDE | Threat | Mitigation | Residual |
 |---|---|---|---|---|
-| T-N8N-1 | S | Forged webhook triggers mass reminders or opt-out changes | HMAC + timestamp + nonce, IP allowlist | L |
-| T-N8N-2 | T | Workflow edited to change message content (phishing via our own number) | n8n access limited to OPS with MFA; workflows exported to git and diffed; templates are pre-approved WhatsApp templates (text fixed by Meta approval) | M |
-| T-N8N-3 | I | n8n execution logs keep phone numbers | Save-on-success off, 7-day retention, payload holds only first name + template vars | M |
-| T-N8N-4 | D | Messaging outage on test-eve | In-app timeline remains the source; email fallback | L |
-| T-N8N-5 | E | n8n credential reuse to call our admin API | n8n credential scoped to API-65/66 only | L |
+| T-N8N-1 | S | Forged webhook triggers a sweep, fake staff decisions (e.g. a moderation publish) or staff alert floods | HMAC + timestamp + nonce, IP allowlist; sweep idempotent by `asOf`; citizen opt-outs arrive only on signed Meta/email webhooks, never from n8n | L |
+| T-N8N-2 | T | Workflow edited to change staff message content or reroute approvals (phishing staff via our staff number) | n8n access limited to OPS with MFA; workflows exported to git and diffed; staff number separate from the citizen number; CI fails if an exported workflow contains a citizen WhatsApp template | M |
+| T-N8N-3 | I | n8n execution logs keep staff contacts or leak case data | No citizen personal data in any payload (IDs and k ≥ 5 aggregates only); save-on-success off, 7-day retention | L |
+| T-N8N-4 | D | n8n outage delays staff tasks (flagged moderation, clip review, RTO alerts) | Backend review pages still work; citizen messages (incl. test-eve) are unaffected because the notifier sends them; on-call starts the sweep via API-65 | L |
+| T-N8N-5 | E | n8n credential reuse to call our admin API | n8n credential scoped to the internal staff endpoints (API-65/66/67/68/73) only | L |
 
 ### 2.8 Live Intel (F-11, E-24, API-28/29)
 
@@ -186,7 +188,7 @@ flowchart TB
 | T-INT-2 | T | Touts post fake "slots open at 9 pm" or "setting available" (EC-24) | Structured fields only; k ≥ 5 in 30 days before showing; outlier detection vs adapter data; reports mentioning payments are impossible (no free text); a "setting/bribe offered" option routes the user to ACB/CPGRAMS, never published | M |
 | T-INT-3 | R | Reporter denies posting | E-30 | L |
 | T-INT-4 | I | Re-identification of reporters at low-volume RTOs | k ≥ 5; time bucketing to the week; no reporter IDs shown | L |
-| T-INT-5 | D | Report storms | Rate limits; moderation queue via n8n | L |
+| T-INT-5 | D | Report storms | Rate limits; inline backend precheck on API-28; only flagged reports reach the n8n W09 moderation queue | L |
 | T-INT-6 | E | Defamation of officials | No names, no free text; grievance officer takedown (IT Rules 2021) | L |
 
 ### 2.9 Consoles: school portal (F-40), state console (F-41), clip admin (API-55)
@@ -242,7 +244,7 @@ flowchart TB
 
 | Residual | Items | Accepted by | Review date |
 |---|---|---|---|
-| **M** | T-PWA-1, T-PWA-5, T-PWA-7, T-API-8, T-RUL-3, T-AI-4, T-AI-5, T-AI-6, T-WF-1, T-WF-3, T-N8N-2, T-N8N-3, T-INT-1, T-INT-2, AC-01, AC-03, AC-04, AC-08, AC-12, AC-14, AC-15, AC-21 | SEC + PL for Phase 1–2 (synthetic data limits impact) | Before Phase 3 gate and every quarter |
+| **M** | T-PWA-1, T-PWA-5, T-PWA-7, T-API-8, T-RUL-3, T-AI-4, T-AI-5, T-AI-6, T-WF-1, T-WF-3, T-N8N-2, T-INT-1, T-INT-2, AC-01, AC-03, AC-04, AC-08, AC-12, AC-14, AC-15, AC-21 | SEC + PL for Phase 1–2 (synthetic data limits impact) | Before Phase 3 gate and every quarter |
 | **L** | All others | SEC | Quarterly |
 | **H** | None accepted. Any H finding blocks release | — | — |
 

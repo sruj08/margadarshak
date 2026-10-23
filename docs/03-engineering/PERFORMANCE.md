@@ -178,7 +178,7 @@ Spike (H0): run Junction Scan with 30 sprites on the slowest team phone; record 
 | Key Value (Redis) | sessions + rate limits ≈ DAU × 2 KB | ~200 MB |
 | Object storage / CDN | clips: DAU × 0.3 pack downloads/day early, cached afterwards | CDN egress dominates; cache clips on device after first download |
 | Case-clock sweep | milestones/day ÷ batch 500 → batches; ≤ 8 concurrent Workflows runs | 45,000 / 500 = 90 batches; at ~10 s/batch and 8 parallel ≈ 2 min |
-| n8n executions | 1 execution per batch (never per user) | 90/day ≈ 2,700/month + event workflows; Pro ≈ 10k executions/month (third-party sources, `08` §6) → at N ≥ 5,000 move bulk messaging off n8n or upgrade (decision owner Ops lead) |
+| n8n executions | staff workflows only; citizen messages go through the backend notifier (ADR-0006) | ≈ 3,500–4,000/month at any number of citizens (N8N_WORKFLOWS §4); Pro ≈ 10k executions/month; grows only with staff, offices and review tasks |
 | AI (Gemini) | debriefs/day × tokens (≈ 2.4k in / 350 out) | ≈ 340 M input + 50 M output tokens/day; check paid-tier rate limits before a state pilot [unverified quota; owner AI lead] |
 
 ### 6.5 Hackathon load (Phase 1–2)

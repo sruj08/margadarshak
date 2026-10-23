@@ -111,7 +111,7 @@ jobs:
       - name: TypeScript (tsc --noEmit, strict)
         run: pnpm -r --if-present typecheck
       - name: Wording bans (D-19) + rupee literals (D-06) in UI strings, messages and prompts
-        run: node scripts/ci/check-wording.mjs --paths apps packages ai/prompts n8n/workflows rulepacks --fail-on-match
+        run: node scripts/ci/check-wording.mjs --paths apps packages ai/prompts n8n/workflows services/api rulepacks --fail-on-match
 
   # ---------------------------------------------------------------------------
   # 2. Lint + typecheck (Python)

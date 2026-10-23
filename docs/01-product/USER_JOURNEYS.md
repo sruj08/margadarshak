@@ -53,7 +53,7 @@ flowchart TD
   D6 -- pass --> L7[S7 Tracker, no-SMS guide,<br/>escalation letter, DigiLocker pointer]
   L7 --> N8[S8 Pledge, monthly refresher,<br/>missions, scam shield, golden-hour card]
   N8 --> R9[S9 Renew/fix/family]
-  CL[[Case clock: Render Workflows + n8n<br/>day 25, day 30, T-30, T-7, test eve, stall]] -.-> S5
+  CL[[Case clock: Render Workflows + notifier<br/>day 25, day 30, T-30, T-7, test eve, stall]] -.-> S5
   CL -.-> D6
   CL -.-> L7
 ```

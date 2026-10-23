@@ -89,7 +89,7 @@
 | Gemini: **voice** (₹2/min) | ₹1,200 | ₹1,20,000 | **₹1,20,00,000** | dominant AI line (04 §5) |
 | **AI subtotal** | **≈ ₹2,920** | **≈ ₹2,92,000** | **≈ ₹2,92,00,000** | Vertex AI India pricing may differ [U] |
 | WhatsApp (utility only, incl. GST) | ₹330 | ₹32,600 | ₹32,60,000 | volume tiers lower the utility rate at scale [S] |
-| n8n | ₹0 (Pro perk) | self-hosted, inside the compute line (≈ 1 vCPU) | ops queues only, self-hosted | §5 |
+| n8n | ₹0 (Pro perk) | self-hosted, inside the compute line (≈ 1 vCPU) | staff ops only, self-hosted | §5 |
 | SMS | 0 | 0 until TRAI DLT; then via the state's NIC/mGov gateway [U] | same | D-16 |
 | **Total / month** | **≈ ₹10,650** | **≈ ₹4,74,000** | **≈ ₹3,62,00,000** | |
 | **₹ per MAU per month** | **≈ ₹10.7** | **≈ ₹4.7** | **≈ ₹3.6** | AI is 27 % → 62 % → 81 % of the total |
@@ -102,20 +102,25 @@ Reading the table:
 ## 5. n8n execution budget
 Pro ≈ 10,000 executions/month; **each workflow run counts as one execution regardless of the number of steps** (08 §6, third-party sources [S]).
 
+Since ADR-0006 rev. (24 Oct 2026) citizen messaging runs in the backend notifier from day one, so no n8n workflow fans out per citizen. The per-user workflows of v0.1 (W02–W06, W10, W11) are gone from n8n.
+
 | Workflow group | Executions/month at 1k MAU | At 100k MAU | At 10M MAU |
 |---|---|---|---|
-| Daily schedules W01, W04, W13 (batch: one run covers every user) | ≈ 90 | ≈ 90 (runs are bigger, not more) | moved to CronJobs |
-| Weekly W05, W06, W15 | ≈ 12 | ≈ 12 | CronJobs |
+| Daily schedules W01, W13, W16, W18 (one run covers every case, office or staff member) | ≈ 120 | ≈ 120 | ≈ 120 (self-hosted, or CronJobs) |
+| Weekly W15 | ≈ 5 | ≈ 5 | ≈ 5 |
 | W12 alerts at 15-min schedule (5 min would be ≈ 8.6k, too many, 08 §6) | ≈ 2,900 | webhook-only alerts ≈ 300 | Grafana alerting, no n8n |
-| Event-driven W02, W03, W07–W11, W14 (≈ 3–5 per active user) | ≈ 3,000–5,000 | **≈ 300k–500k ⇒ exceeds Pro** | not in n8n |
-| **Total** | **≈ 6,000–8,000 ✓ fits Pro** | ≈ 300k+ | ops queues only (W08 clip review, W09 moderation, W11 letter approvals at low volume, W15) ≈ 20–50k |
+| Human queues W07, W08, W09 (flagged only), W17 | ≈ 150–500 | ≈ 1,000–3,000 (bounded by staff capacity; W07 moves to the school portal above ≈ 2k leads) | ≈ 5k–20k (offices × a few alerts; self-hosted, no cap) |
+| W14 field study (hackathon only) | ≈ 400 | 0 | 0 |
+| **Total** | **≈ 3,500–4,000 ✓ fits Pro** | **≈ 1,500–3,500 ✓ fits Pro** | staff ops only, self-hosted |
+
+Citizen notifications cost compute in the API/notifier line (≈ 660k/day at the national peak, ARCHITECTURE §13) plus per-message WhatsApp template fees, not n8n executions.
 
 **Decision path:**
-1. **Hackathon and pilot:** n8n Cloud Pro, batch everything, W12 at 15 min.
-2. **One state (100k):** move per-user event messaging (W02, W03, W10) into the backend `NotificationAdapter` + JobRunner (the content and decisions are already in the backend; only the sending moves). Keep n8n for human queues and digests (≈ 10k). Or self-host n8n inside the state's cluster, which has no per-execution fee [K; licence review [U], see helm README §2].
-3. **Several states (10M):** n8n is optional per tenant; CronJobs replace schedules; human queues stay in n8n only if the state wants the editable canvas.
+1. **Hackathon and pilot:** n8n Cloud Pro for staff ops; the backend notifier sends to citizens.
+2. **One state (100k):** same split; n8n stays inside Pro, or is self-hosted in the state's cluster, which has no per-execution fee [K; licence review [U], see helm README §2].
+3. **Several states (10M):** n8n is optional per tenant; CronJobs or Temporal schedules replace W01; human queues stay in n8n only if the state wants the editable canvas.
 
-This works because n8n holds **no business logic** (D-16): moving a workflow into code never changes a fact the user sees.
+This works because n8n holds **no business logic** (D-16) and **no citizen path**: replacing it never changes a fact or a message a citizen sees.
 
 ## 6. Optimisation levers (biggest first)
 | Lever | Saves | Effort | Risk |

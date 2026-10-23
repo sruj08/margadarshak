@@ -38,7 +38,7 @@ flowchart TB
 ## 2. Test data policy (no real PII, ever)
 - All fixtures are **synthetic**. Names from a fixed list of obviously fictional names; DOBs chosen to hit boundaries; addresses as "Test Mohalla, Jammu".
 - Aadhaar-like strings used for redaction tests are generated to **fail the Verhoeff checksum**, so no test fixture is a valid Aadhaar number (`tests/fixtures/pii/aadhaar_like.txt`, generator in `scripts/gen_fake_ids.py`).
-- Phone numbers use the reserved-looking pattern `+91 90000 0XXXX` and are never messaged (n8n sandbox recipients are team numbers configured only in the n8n vault).
+- Phone numbers use the reserved-looking pattern `+91 90000 0XXXX` and are never messaged (WhatsApp test-number recipients are team numbers configured only in the API's environment for the backend notifier).
 - Clips in tests are CC0/synthetic (`tests/fixtures/media/`, Git LFS); no bystander footage.
 - Field-study data never enters any test or CI system.
 - Factories: `polyfactory` (Python), hand-written builders in TS (`tests/builders/*.ts`). Seeds fixed (`pytest-randomly` seed printed on failure for reproduction).
@@ -186,7 +186,7 @@ class TestSarathiReal(SarathiContract): adapter = SarathiRealAdapter(...)
 | `AadhaarOfflinePort` | returns age band + name only; never returns or stores the number; rejects tampered XML/QR signature | Offline verification with test vectors when available |
 | `BhashiniPort` | language codes mapped; empty/oversize input errors; timeout fallback | ULCA sandbox [unverified access; owner Integrations lead] |
 | `PaymentPort` | never accepts money; redirect URL allow-listed; status mapping | — |
-| `NotificationPort` | idempotency key honoured (second send = no-op); opt-out respected (EC-30); template ID required; no free text | n8n test webhook + WhatsApp sandbox numbers |
+| `NotificationPort` | idempotency key honoured (second send = no-op); opt-out respected (EC-30); template ID required; no free text | `ConsoleNotifier` in CI; WhatsApp Cloud API test number + allow-listed team numbers and an SMTP sink for the real adapters |
 | `SlotPort` | seeded data labelled `simulated`; week boundaries IST | — |
 | `ScoreVerifierPort` | verify returns identical result to `game-core` local run for fixtures; timeout → `pending_verification` | real service in testcontainers (Node image) |
 | `NarratorPort` | schema-valid output or fallback; latency budget respected; under-18 never invoked | Gemini paid tier (nightly, small sample) |
@@ -288,7 +288,7 @@ Process: evals run on PRs that change prompts, agent code or model env defaults;
 | Input | oversize payloads, invalid enums, JSON bombs, Unicode confusables in reports | schemathesis + custom |
 | Uploads (API-42) | non-image, > 2 MB, polyglot files, EXIF present → rejected/stripped; not persisted | API |
 | Prompt injection | red-team eval cases (§7); tool calls outside enum ignored | eval |
-| Redaction | §9.4 corpus through all loggers, Sentry `beforeSend`, n8n payload builder | unit |
+| Redaction | §9.4 corpus through all loggers, Sentry `beforeSend`, notifier and n8n payload builders | unit |
 | Headers | CSP, HSTS, frame-ancestors, Permissions-Policy present on every route | e2e |
 | DAST | OWASP ZAP baseline against the staging URL (nightly), full scan before any state pilot | CI |
 | Dependencies / secrets | `pnpm audit --prod`, `pip-audit`, `bandit`, `detect-secrets` | every PR |

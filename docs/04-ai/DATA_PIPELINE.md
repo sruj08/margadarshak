@@ -286,7 +286,7 @@ Every user-visible AI output can be traced back to:
 | Published blurred clips + windows | R2/CDN | Indefinite, CC-BY 4.0; takedown on request within 72 h [D] | Clip bank |
 | Rater annotations (E-21) | Postgres | Indefinite (pseudonymous rater IDs) | Lineage, agreement stats |
 | AuditLog (E-30) | Postgres → India-region store in production | **180 days rolling, in India in production** (CERT-In; council G6) | Hackathon: Render Singapore, synthetic data, with that limitation stated |
-| n8n execution data | n8n Pro | Minimal; prune after 7 days [D] (08 §6: "execution-data retention set to minimal") | Phone + first name only for opted-in users |
+| n8n execution data | n8n Pro | Minimal; prune after 7 days [D] (08 §6: "execution-data retention set to minimal") | No citizen personal data; staff work contacts, IDs and k-anonymous aggregates only (ADR-0006) |
 | Field-study data (journey test, Nazar study) | Postgres + Sheets via W14 | Per `HYPOTHESES.md` consent; pseudonymous codes; delete on request | D-22 |
 | Eval datasets | Git (synthetic) / R2 (media, consented) | Indefinite; consented recordings deletable on request | No real user data |
 
