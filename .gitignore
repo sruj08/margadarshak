@@ -113,3 +113,5 @@ infra/**/terraform.tfstate*
 Thumbs.db
 desktop.ini
 *.log
+
+.n8n-data/

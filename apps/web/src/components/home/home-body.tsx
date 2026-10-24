@@ -9,6 +9,7 @@ import { DEMO_TENANT } from "@/lib/journey/api";
 import { KEYS, readJson, subscribe } from "@/lib/journey/storage";
 import { PersonaSwitcher } from "./persona-switcher";
 import { StageHome } from "./stage-home";
+import { VoiceButton } from "./voice-sheet";
 
 /**
  * Home body (SCR-003 / SCR-060). The logged-out home is rendered on the server (static, offline
@@ -29,7 +30,17 @@ export function HomeBody({ children }: { children: ReactNode }) {
     </div>
   ) : null;
   if (active) {
-    return <StageHome active={active} extra={demo} />;
+    return (
+      <StageHome
+        active={active}
+        extra={
+          <>
+            <VoiceButton />
+            {demo}
+          </>
+        }
+      />
+    );
   }
   return (
     <>

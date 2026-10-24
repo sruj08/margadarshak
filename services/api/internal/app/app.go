@@ -72,6 +72,8 @@ type Options struct {
 	Compute ComputeService
 	// ObjectStore replaces the clip media store (tests: a mock store in a temp dir).
 	ObjectStore ports.ObjectStore
+	// AI replaces the Google ADK agents (tests: agents over a scripted model).
+	AI *AIAgents
 }
 
 // New wires the API on an open database.
@@ -216,6 +218,11 @@ func New(cfg *config.Config, db *store.DB, log *slog.Logger, opt Options) (*App,
 		hp := cfg.ScoreVerifierHP
 		pings["score_verifier"] = func(ctx context.Context) error { return httpPing(ctx, "http://"+hp+"/healthz") }
 	}
+	agents := opt.AI
+	if agents == nil {
+		built := newAIAgents(context.Background(), cfg, log, ContentDir(cfg.ContentDir))
+		agents = &built
+	}
 	a.Handler = httpapi.New(httpapi.Deps{
 		Log: log, DB: db, Clock: clock, Tenants: a.Tenants, Accounts: a.Accounts, Jobs: a.Jobs, Notify: a.Notify, Registry: a.Registry,
 		Vault: vault, Limiter: limiter,
@@ -228,6 +235,7 @@ func New(cfg *config.Config, db *store.DB, log *slog.Logger, opt Options) (*App,
 		Games: a.P2.Games, Learn: a.P2.Learn, Gamify: a.P2.Gamify, Clips: a.P2.Clips, Study: a.P2.Study,
 		StudyStore: a.P2.StudyStore, Staircase: a.P2.Staircase, MockMedia: a.P2.MockMedia, ObjectStore: a.P2.ObjectStore,
 		WebBaseURLShare: cfg.WebBaseURL, N8NResumeToken: cfg.N8NResumeAuthToken,
+		Scam: agents.Scam, Debrief: agents.Debrief, Tutor: agents.Tutor, Decoder: agents.Decoder,
 	})
 	return a, nil
 }

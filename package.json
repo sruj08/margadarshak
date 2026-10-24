@@ -32,7 +32,7 @@
     "test:smoke": "pnpm --filter @margdarshak/e2e e2e --grep @smoke",
     "size": "size-limit && pnpm --filter @margdarshak/web size:first-load",
     "gen:api": "pnpm --filter @margdarshak/api-client generate",
-    "api:dev": "node -e \"process.env.DEV_EMBEDDED_PG??='true';process.exit(require('node:child_process').spawnSync('go',['run','./cmd/api','serve'],{cwd:'services/api',stdio:'inherit'}).status??1)\"",
+    "api:dev": "node --env-file-if-exists=.env -e \"process.env.DEV_EMBEDDED_PG??='true';process.exit(require('node:child_process').spawnSync('go',['run','./cmd/api','serve'],{cwd:'services/api',stdio:'inherit'}).status??1)\"",
     "api:seed": "node -e \"process.env.DEV_EMBEDDED_PG??='true';process.exit(require('node:child_process').spawnSync('go',['run','./cmd/seed','--profile','demo','--synthetic'],{cwd:'services/api',stdio:'inherit'}).status??1)\"",
     "api:build": "cd services/api && go build -o bin/api ./cmd/api",
     "infra:up": "docker compose -f infra/docker/compose.yaml up -d",

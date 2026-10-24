@@ -118,11 +118,20 @@ export async function loadPersona(id: PersonaId, server = API_MODE === "real"): 
   writeJson(KEYS.persona, id);
 }
 
+const NEW_VISITOR = "new_visitor";
+
+/** Back to the first-time, logged-out view: clears the case and persona held on this device. */
+function resetToNewVisitor(): void {
+  forgetCases();
+  seedPersonaCase(null, null, []);
+  writeJson(KEYS.persona, null);
+}
+
 export function PersonaSwitcher() {
   const t = useTranslations("personas");
   const ta = useTranslations("a11y");
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<PersonaId | null>(null);
+  const [value, setValue] = useState<PersonaId | typeof NEW_VISITOR | null>(null);
   const [busy, setBusy] = useState(false);
   // Real API: offer the personas GET /v1/demo/personas lists. "device" = mock mode, or the API
   // does not offer them (404 outside the demo tenant), so the device personas are used.
@@ -160,7 +169,11 @@ export function PersonaSwitcher() {
             onPress={async () => {
               if (!value) return;
               setBusy(true);
-              await loadPersona(value, fromServer).catch(() => loadPersona(value, false));
+              if (value === NEW_VISITOR) {
+                resetToNewVisitor();
+              } else {
+                await loadPersona(value, fromServer).catch(() => loadPersona(value, false));
+              }
               setBusy(false);
               setOpen(false);
             }}
@@ -175,12 +188,19 @@ export function PersonaSwitcher() {
         <ChoiceCards
           labelledBy="persona-label"
           value={value}
-          onChange={(v) => setValue(v as PersonaId)}
-          choices={(offered === "device" || offered === null ? PERSONA_IDS : offered).map((id) => ({
-            id,
-            label: t(`p.${id}.name`),
-            description: t(`p.${id}.line`),
-          }))}
+          onChange={(v) => setValue(v as PersonaId | typeof NEW_VISITOR)}
+          choices={[
+            {
+              id: NEW_VISITOR,
+              label: t("p.new_visitor.name"),
+              description: t("p.new_visitor.line"),
+            },
+            ...(offered === "device" || offered === null ? PERSONA_IDS : offered).map((id) => ({
+              id: id as string,
+              label: t(`p.${id}.name`),
+              description: t(`p.${id}.line`),
+            })),
+          ]}
         />
       </Sheet>
     </>

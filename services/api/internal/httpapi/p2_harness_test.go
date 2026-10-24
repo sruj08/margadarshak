@@ -49,6 +49,19 @@ type p2Compute struct {
 	lateS     float64
 	clipMarks []float64 // when set, the Kerala marks of clip i in the nazar_clips analysis (cycled)
 	requests  []ports.VerifyRequest
+	// withFindings makes the server result carry two debrief findings (API-36 tests).
+	withFindings bool
+}
+
+func (f *p2Compute) findings() []any {
+	if !f.withFindings {
+		return []any{}
+	}
+	return []any{
+		map[string]any{"findingId": "NAZ_LATE_RESPONSE", "severity": 0.7, "critical": false, "ruleIds": []any{}, "skillId": "SK-M18",
+			"drillIds": []any{"DR-NAZ-OCCL-TRUCK_LEFT_TURN"},
+			"facts":    map[string]any{"late_s": 1.4, "speed_kmh": 30, "metres": 12, "hazard_type": "truck_left_turn", "clip_ordinal": 7}},
+	}
 }
 
 func newP2Compute() *p2Compute { return &p2Compute{pct: 72, trust: 1, timing: "rvfc", lateS: 0.4} }
@@ -128,7 +141,7 @@ func (f *p2Compute) Verify(_ context.Context, req ports.VerifyRequest) (*ports.V
 		"seed": req.Seed, "seedOrigin": req.SeedOrigin, "difficulty": req.Difficulty, "mode": req.Mode,
 		"score": map[string]any{"raw": f.pct * max / 100, "max": max, "pct": f.pct, "passed": f.pct >= 60, "passRule": nil,
 			"components": []any{}, "capApplied": nil},
-		"findings": []any{}, "evidence": []any{}, "calibration": nil,
+		"findings": f.findings(), "evidence": []any{}, "calibration": nil,
 		"integrity": map[string]any{"flags": flags, "trust": trust, "timingMode": f.timing, "provisional": false},
 		"replay":    map[string]any{"seed": req.Seed, "inputs": req.Inputs},
 	})
@@ -192,15 +205,16 @@ type p2Env struct {
 func newP2Env(t *testing.T) *p2Env { return newP2EnvCfg(t, nil) }
 
 // newP2EnvCfg is newP2Env with a config mutation (applied before the app is built).
-func newP2EnvCfg(t *testing.T, mutate func(*config.Config)) *p2Env {
+func newP2EnvCfg(t *testing.T, mutate func(*config.Config), extra ...func(*app.Options)) *p2Env {
 	t.Helper()
 	fc := newP2Compute()
 	var media *mock.Store
 	var e *env
+	opts := append([]func(*app.Options){func(o *app.Options) { o.Compute = fc }}, extra...)
 	if mutate == nil {
-		e = newEnv(t, func(o *app.Options) { o.Compute = fc })
+		e = newEnv(t, opts...)
 	} else {
-		e = newEnvCfg(t, mutate, func(o *app.Options) { o.Compute = fc })
+		e = newEnvCfg(t, mutate, opts...)
 	}
 	// The object store needs the server URL, which exists only after newEnv; rebuild it on the
 	// live clip service (it reads Objects on every call).

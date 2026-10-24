@@ -153,6 +153,10 @@ type Config struct {
 	RenderUseLocalDev  bool   `env:"RENDER_USE_LOCAL_DEV" envDefault:"false"`
 	RenderLocalDevURL  string `env:"RENDER_LOCAL_DEV_URL" envDefault:"http://localhost:8120"`
 
+	// Gemini via Google ADK. An empty key keeps every AI feature on its template path (EC-29).
+	GeminiAPIKey string `env:"GEMINI_API_KEY"`
+	GeminiModel  string `env:"GEMINI_MODEL" envDefault:"gemini-3.8-flash"`
+
 	// AI model IDs live only in env vars (PROJECT_BRIEF §10); the AI layer reads them.
 	GeminiModelDebrief      string `env:"GEMINI_MODEL_DEBRIEF"`
 	GeminiModelVision       string `env:"GEMINI_MODEL_VISION"`

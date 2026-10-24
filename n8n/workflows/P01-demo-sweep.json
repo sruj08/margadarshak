@@ -1,0 +1,71 @@
+{
+  "name": "P01 · Prototype: daily case-clock sweep (manual or 08:00 IST)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b2e0p001-0000-4000-8000-000000000001",
+      "name": "Run now (demo button)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 200]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 0 8 * * *" }] }
+      },
+      "id": "b2e0p001-0000-4000-8000-000000000002",
+      "name": "Every day 08:00 IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 400],
+      "notes": "Timezone comes from GENERIC_TIMEZONE=Asia/Kolkata in docker-compose.yml. Activate the workflow to enable it."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prototype: reshape + sign only. The API decides everything (D-16).\n// Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(secret, t + '.' + body)>\nconst crypto = require('crypto');\nconst runDate = new Date().toISOString().slice(0, 10);\nconst body = JSON.stringify({\n  sweep_id: `proto-${runDate}-${Date.now()}`,\n  as_of: new Date().toISOString(),\n  dry_run: false,\n});\nconst ts = Math.floor(Date.now() / 1000).toString();\nconst v1 = crypto.createHmac('sha256', $env.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex');\nreturn [{ json: { body, signature: `t=${ts},v1=${v1}`, idempotency_key: `proto-${Date.now()}` } }];"
+      },
+      "id": "b2e0p001-0000-4000-8000-000000000003",
+      "name": "Build + sign request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MD_API_BASE }}/internal/clock/sweep",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.MD_N8N_READ_TOKEN }}" },
+            { "name": "Margdarshak-Signature", "value": "={{ $json.signature }}" },
+            { "name": "Idempotency-Key", "value": "={{ $json.idempotency_key }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {}
+      },
+      "id": "b2e0p001-0000-4000-8000-000000000004",
+      "name": "POST /internal/clock/sweep (API-65)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    }
+  ],
+  "connections": {
+    "Run now (demo button)": { "main": [[{ "node": "Build + sign request", "type": "main", "index": 0 }]] },
+    "Every day 08:00 IST": { "main": [[{ "node": "Build + sign request", "type": "main", "index": 0 }]] },
+    "Build + sign request": { "main": [[{ "node": "POST /internal/clock/sweep (API-65)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Asia/Kolkata", "saveDataSuccessExecution": "all" },
+  "active": false,
+  "tags": [],
+  "pinData": {}
+}

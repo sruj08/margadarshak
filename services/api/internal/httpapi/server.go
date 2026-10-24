@@ -24,6 +24,10 @@ import (
 
 	"github.com/sruj08/margadarshak/services/api/internal/accounts"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/debrief"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/decoder"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/scam"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/tutor"
 	"github.com/sruj08/margadarshak/services/api/internal/analytics"
 	"github.com/sruj08/margadarshak/services/api/internal/cases"
 	"github.com/sruj08/margadarshak/services/api/internal/clips"
@@ -109,6 +113,12 @@ type Deps struct {
 	N8NResumeToken string
 	// ResumeHTTP posts the resume; nil uses a client with a 5 s timeout.
 	ResumeHTTP *http.Client
+	// Scam is the API-43 checker (rules + optional Google ADK explainer); nil answers 503.
+	Scam *scam.Checker
+	// Debrief (API-36), Tutor (API-41) and Decoder (API-42): Google ADK agents behind a consent gate.
+	Debrief *debrief.Generator
+	Tutor   *tutor.Tutor
+	Decoder *decoder.Decoder
 }
 
 // Server implements gen.ServerInterface. Operations it does not override come from

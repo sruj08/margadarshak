@@ -58,6 +58,17 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Voice guide (MD-313): the microphone is allowed on the home route only, for this origin.
+      {
+        source: "/:locale(en|hi)",
+        headers: [
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(self), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), browsing-topics=()",
+          },
+        ],
+      },
       // Journey-test lab replica (MD-139): never indexed.
       {
         source: "/:locale(en|hi)/lab/:path*",

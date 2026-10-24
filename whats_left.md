@@ -27,7 +27,7 @@ Evidence lives in [docs/08-project/P0_P1_VERIFICATION.md](docs/08-project/P0_P1_
 - `content/` + `packages/content`: LL bank (75 concepts, 239 variants), curriculum LL0–LL4, M1–M22, DL1, rule/finding/drill/skill catalogues, AI allowlists, Nazar scene catalogue (29 scenes).
 - `packages/clip-pipeline`: clip schema + status machine, ffmpeg/blur/flash builders, two-rater agreement, AI-clip support.
 - `services/workflows`: RW-1 `clip_ingest` / `clip_finalize`, `clip_generate` (Gemini), RW-4 `nightly_stats`, `replay_pending_sessions`; n8n W08, W14.
-- Go API: every P2 endpoint (API-30..39, 44, 55, 57, 70, 71, replay; API-36 AI debrief stays 501 for P3), migrations 00005–00009, stores, DSR export/delete for P2 data, seeded sample clips.
+- Go API: every P2 endpoint (API-30..39, 44, 55, 57, 70, 71, replay; API-36 now serves the template card and, with consent and a key, an ADK-worded card), migrations 00005–00009, stores, DSR export/delete for P2 data, seeded sample clips.
 - Web: game host, Nazar (mock/practice/learn/screen-reader), debrief + replay, share card, learn hub, review, readiness, LL simulator, Me tab, squads, Lite mode, Stopping Distance, Blind Spot (Phaser), clip curator/rater UI, Nazar study flow.
 
 ## 3. What's left
@@ -45,8 +45,12 @@ Evidence lives in [docs/08-project/P0_P1_VERIFICATION.md](docs/08-project/P0_P1_
 - Render deploy and preview (`RENDER_API_KEY`, service IDs), GitHub Actions run.
 - Live WhatsApp Cloud API test number, SMTP, n8n instance.
 
+### Google ADK agents (Go, `services/api/internal/adapters/ai/`, demo build 24 Oct)
+Built and tested (fake-model tests through the real ADK runner, plus live Gemini 3.8 Flash tests when `GEMINI_API_KEY` is set): shared `ai.Structured` helper (llmagent + runner + in-memory session + schema output + PII and audit plugins), scam explainer (API-43), debrief (API-36), tutor glue (API-41), screenshot decoder (API-42). Server-side `ai_coach` consent gate before every agent except the scam checker; any validator failure falls back to template or reviewed text (EC-29).
+Not built: voice guide (API-40, `RunLive`), coach agent, sign snap, clip window proposer in Go, provenance and cost-guard plugins, consent gate on the scam checker, the 30-case eval sets (`ai/evals`), `/v1/scam/check` web screen, fee-mismatch flag, a real error catalogue for the decoder (a 7-stage demo table is built in), Hindi enum labels in the debrief.
+
 ### Not built (deferred or out of P2 scope)
-- AI debrief (API-36, P3), pair mode, share-card percentile, XP for lessons/predictions, production admin login (persona sessions only), offline late registration of sessions, per-hazard-type staircases, Lighthouse CI job.
+- pair mode, share-card percentile, XP for lessons/predictions, production admin login (persona sessions only), offline late registration of sessions, per-hazard-type staircases, Lighthouse CI job.
 
 ### Docs refreshed (24 Oct)
 - `docs/05-ops/N8N_WORKFLOWS.md` now lists W08's `/internal/clips/...` endpoints; `services/workflows/P2-PHASE2.md` covers `clip_generate`; TEAM.md records the MD-229 decision (DEC-018, ADR-0012); CHANGELOG and README carry the P0–P2 status.

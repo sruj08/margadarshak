@@ -1,0 +1,25 @@
+# Prototype n8n (self-hosted, no WhatsApp / Telegram / SMTP). Staff operations only (ADR-0006).
+#   docker compose -f n8n/docker-compose.yml --env-file .env up -d
+#   open http://localhost:5678 (create the owner account on first visit)
+# Import the demo workflow once:
+#   docker compose -f n8n/docker-compose.yml --env-file .env run --rm n8n import:workflow --input=/workflows/P01-demo-sweep.json
+name: margdarshak-n8n
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    ports: ["5678:5678"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    environment:
+      GENERIC_TIMEZONE: Asia/Kolkata
+      TZ: Asia/Kolkata
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"   # workflows read $env.MD_*
+      NODE_FUNCTION_ALLOW_BUILTIN: crypto     # HMAC signing in the Code node
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      MD_API_BASE: http://host.docker.internal:8000
+      MD_HMAC_SECRET: ${INTERNAL_HMAC_SECRET:-demo-hmac-secret-change-me-0123456789}
+      MD_N8N_READ_TOKEN: ${N8N_BEARER_TOKEN:-dev-internal-token}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./workflows:/workflows:ro
+volumes:
+  n8n_data:

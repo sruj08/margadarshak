@@ -59,10 +59,8 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir="ltr" className={fontVariables} suppressHydrationWarning>
-      <head>
-        <Script src="/theme-init.js" strategy="beforeInteractive" />
-      </head>
       <body className="md-body">
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
         <a href="#main" className="md-skip">
           {t("skipToContent")}
         </a>

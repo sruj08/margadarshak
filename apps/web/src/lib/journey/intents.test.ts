@@ -1,0 +1,41 @@
+import { describe, expect, it } from "vitest";
+import en from "../../../messages/en.json";
+import hi from "../../../messages/hi.json";
+import { INTENT_HREF, INTENTS, langOf, routeIntent } from "./intents";
+
+describe("voice intents", () => {
+  it.each([
+    ["I want a licence", "plan"],
+    ["mujhe licence banwana hai", "plan"],
+    ["मॉक टेस्ट खोलो", "mock_test"],
+    ["show road signs", "signs"],
+    ["सड़क के संकेत दिखाओ", "signs"],
+    ["upload my photo", "photo"],
+    ["मेरी फ़ोटो अपलोड करो", "photo"],
+    ["which documents do I need", "documents"],
+    ["where is my application", "check"],
+    ["renew my licence", "renew"],
+    ["licence for my father", "family"],
+    ["pay the fee", "handoff"],
+    ["voice guide kya hai", "about_voice"],
+    ["blah blah", "help"],
+  ])("%s -> %s", (text, intent) => {
+    expect(routeIntent(text)).toBe(intent);
+  });
+
+  it("detects Hindi by script", () => {
+    expect(langOf("मेरा प्लान बनाओ")).toBe("hi");
+    expect(langOf("make my plan")).toBe("en");
+  });
+
+  it("maps every intent to a route or stays on the sheet, and has copy in both languages", () => {
+    for (const id of INTENTS) {
+      const href = INTENT_HREF[id];
+      expect(href === null || href.startsWith("/")).toBe(true);
+      for (const m of [en, hi]) {
+        expect(m.voice.intent[id as keyof typeof m.voice.intent]).toBeTruthy();
+        expect(m.voice[`go_${id}` as keyof typeof m.voice]).toBeTruthy();
+      }
+    }
+  });
+});
