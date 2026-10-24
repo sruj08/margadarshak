@@ -36,5 +36,5 @@ func (s *Server) CheckScam(w http.ResponseWriter, r *http.Request) {
 		validation(w, r, "/text", "too_long")
 		return
 	}
-	writeJSON(w, http.StatusOK, s.deps.Scam.Check(r.Context(), in))
+	writeJSON(w, http.StatusOK, s.deps.Scam.Check(r.Context(), in, s.aiGate(r, aiCoachFeature) == ""))
 }

@@ -59,6 +59,18 @@ type ServerInterface interface {
 	// PaymentCallback Signed status callback from the payment adapter (mock gateway in hackathon); reconciles by receipt number only
 	// (POST /internal/webhooks/payment/{adapter})
 	PaymentCallback(w http.ResponseWriter, r *http.Request, adapter PaymentCallbackParamsAdapter)
+	// GetAIMetrics LLM observability (MD-307) - calls, failures, fallbacks by reason, latency, tokens, estimated cost, breaker state per agent
+	// (GET /v1/admin/ai/metrics)
+	GetAIMetrics(w http.ResponseWriter, r *http.Request)
+	// SampleAIReviews Human review loop (MD-327) - AI-worded debriefs of this tenant the calling rater has not rated (no PII by construction)
+	// (GET /v1/admin/ai/reviews)
+	SampleAIReviews(w http.ResponseWriter, r *http.Request, params SampleAIReviewsParams)
+	// RateAIReview A rater scores one AI answer on the rubric (0-2 per axis); the rater comes from the session
+	// (POST /v1/admin/ai/reviews)
+	RateAIReview(w http.ResponseWriter, r *http.Request, params RateAIReviewParams)
+	// GetAIReviewAgreement Inter-rater agreement (quadratic-weighted kappa per axis) over items two raters scored; items whose scores differ by 2 on any axis are listed to become eval cases
+	// (GET /v1/admin/ai/reviews/agreement)
+	GetAIReviewAgreement(w http.ResponseWriter, r *http.Request, params GetAIReviewAgreementParams)
 	// ListClipsAdmin Clip admin - the curator board, filtered by status and tenant
 	// (GET /v1/admin/clips)
 	ListClipsAdmin(w http.ResponseWriter, r *http.Request, params ListClipsAdminParams)
@@ -104,6 +116,9 @@ type ServerInterface interface {
 	// SubmitRulePack Maker submits a draft for checking (runs schema + golden tests)
 	// (POST /v1/admin/rulepacks/{packId}/versions/{version}/submit)
 	SubmitRulePack(w http.ResponseWriter, r *http.Request, packId PackId, version PackVersion)
+	// SendAIFeedback Thumbs up or down on an AI answer, with a closed reason (feeds the human review loop)
+	// (POST /v1/ai/feedback)
+	SendAIFeedback(w http.ResponseWriter, r *http.Request, params SendAIFeedbackParams)
 	// Logout Revoke tokens; with clear_device=true also wipes local drafts (EC-14 "clear this device")
 	// (POST /v1/auth/logout)
 	Logout(w http.ResponseWriter, r *http.Request)
@@ -173,6 +188,9 @@ type ServerInterface interface {
 	// IngestAnalytics Privacy-preserving analytics events (no PII; dropped for under-18 and without analytics consent)
 	// (POST /v1/events/analytics)
 	IngestAnalytics(w http.ResponseWriter, r *http.Request)
+	// ScoreCommentary Nazar commentary mode, record then score (D-12; DEBRIEF_SPEC §10)
+	// (POST /v1/games/sessions/{sessionId}/commentary)
+	ScoreCommentary(w http.ResponseWriter, r *http.Request, sessionId SessionId)
 	// CompleteGameSession Submit client result + replay; server replays with game-core and overwrites the score
 	// (POST /v1/games/sessions/{sessionId}/complete)
 	CompleteGameSession(w http.ResponseWriter, r *http.Request, sessionId SessionId, params CompleteGameSessionParams)
@@ -227,6 +245,12 @@ type ServerInterface interface {
 	// GetAchievements XP, rank, badges and weekly streak (account holders; a minor family member needs the parent's recorded consent)
 	// (GET /v1/me/achievements)
 	GetAchievements(w http.ResponseWriter, r *http.Request, params GetAchievementsParams)
+	// GetCoachPlan CoachAgent weekly plan (F-26, M-03) - plan computed in code, AI words it when allowed
+	// (GET /v1/me/coach-plan)
+	GetCoachPlan(w http.ResponseWriter, r *http.Request, params GetCoachPlanParams)
+	// SaveCoachIntention Store the learner's implementation intention ("On <day> at <time> I will <drill>")
+	// (POST /v1/me/coach-plan/intentions)
+	SaveCoachIntention(w http.ResponseWriter, r *http.Request, params SaveCoachIntentionParams)
 	// ListConsents Consent artefacts held by the caller
 	// (GET /v1/me/consents)
 	ListConsents(w http.ResponseWriter, r *http.Request)
@@ -332,6 +356,9 @@ type ServerInterface interface {
 	// GetShareCardData Public share-card data (the JSON the web app renders the card page and its Open Graph image from)
 	// (GET /v1/share-cards/{shareCardId})
 	GetShareCardData(w http.ResponseWriter, r *http.Request, shareCardId ShareCardId)
+	// SnapSign Road Sign Snap (F-27, M-07) - photo to a catalogue sign; meaning from the catalogue only
+	// (POST /v1/signs/snap)
+	SnapSign(w http.ResponseWriter, r *http.Request, params SnapSignParams)
 	// CreateSlotWatch Notify me if an earlier slot is reported (reminder only; no booking bot)
 	// (POST /v1/slot-watches)
 	CreateSlotWatch(w http.ResponseWriter, r *http.Request, params CreateSlotWatchParams)
@@ -467,6 +494,30 @@ func (_ Unimplemented) PaymentCallback(w http.ResponseWriter, r *http.Request, a
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// GetAIMetrics LLM observability (MD-307) - calls, failures, fallbacks by reason, latency, tokens, estimated cost, breaker state per agent
+// (GET /v1/admin/ai/metrics)
+func (_ Unimplemented) GetAIMetrics(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// SampleAIReviews Human review loop (MD-327) - AI-worded debriefs of this tenant the calling rater has not rated (no PII by construction)
+// (GET /v1/admin/ai/reviews)
+func (_ Unimplemented) SampleAIReviews(w http.ResponseWriter, r *http.Request, params SampleAIReviewsParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// RateAIReview A rater scores one AI answer on the rubric (0-2 per axis); the rater comes from the session
+// (POST /v1/admin/ai/reviews)
+func (_ Unimplemented) RateAIReview(w http.ResponseWriter, r *http.Request, params RateAIReviewParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// GetAIReviewAgreement Inter-rater agreement (quadratic-weighted kappa per axis) over items two raters scored; items whose scores differ by 2 on any axis are listed to become eval cases
+// (GET /v1/admin/ai/reviews/agreement)
+func (_ Unimplemented) GetAIReviewAgreement(w http.ResponseWriter, r *http.Request, params GetAIReviewAgreementParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // ListClipsAdmin Clip admin - the curator board, filtered by status and tenant
 // (GET /v1/admin/clips)
 func (_ Unimplemented) ListClipsAdmin(w http.ResponseWriter, r *http.Request, params ListClipsAdminParams) {
@@ -554,6 +605,12 @@ func (_ Unimplemented) ApproveRulePack(w http.ResponseWriter, r *http.Request, p
 // SubmitRulePack Maker submits a draft for checking (runs schema + golden tests)
 // (POST /v1/admin/rulepacks/{packId}/versions/{version}/submit)
 func (_ Unimplemented) SubmitRulePack(w http.ResponseWriter, r *http.Request, packId PackId, version PackVersion) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// SendAIFeedback Thumbs up or down on an AI answer, with a closed reason (feeds the human review loop)
+// (POST /v1/ai/feedback)
+func (_ Unimplemented) SendAIFeedback(w http.ResponseWriter, r *http.Request, params SendAIFeedbackParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -695,6 +752,12 @@ func (_ Unimplemented) IngestAnalytics(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// ScoreCommentary Nazar commentary mode, record then score (D-12; DEBRIEF_SPEC §10)
+// (POST /v1/games/sessions/{sessionId}/commentary)
+func (_ Unimplemented) ScoreCommentary(w http.ResponseWriter, r *http.Request, sessionId SessionId) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // CompleteGameSession Submit client result + replay; server replays with game-core and overwrites the score
 // (POST /v1/games/sessions/{sessionId}/complete)
 func (_ Unimplemented) CompleteGameSession(w http.ResponseWriter, r *http.Request, sessionId SessionId, params CompleteGameSessionParams) {
@@ -800,6 +863,18 @@ func (_ Unimplemented) UpdateMe(w http.ResponseWriter, r *http.Request) {
 // GetAchievements XP, rank, badges and weekly streak (account holders; a minor family member needs the parent's recorded consent)
 // (GET /v1/me/achievements)
 func (_ Unimplemented) GetAchievements(w http.ResponseWriter, r *http.Request, params GetAchievementsParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// GetCoachPlan CoachAgent weekly plan (F-26, M-03) - plan computed in code, AI words it when allowed
+// (GET /v1/me/coach-plan)
+func (_ Unimplemented) GetCoachPlan(w http.ResponseWriter, r *http.Request, params GetCoachPlanParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// SaveCoachIntention Store the learner's implementation intention ("On <day> at <time> I will <drill>")
+// (POST /v1/me/coach-plan/intentions)
+func (_ Unimplemented) SaveCoachIntention(w http.ResponseWriter, r *http.Request, params SaveCoachIntentionParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1010,6 +1085,12 @@ func (_ Unimplemented) WithdrawShareCard(w http.ResponseWriter, r *http.Request,
 // GetShareCardData Public share-card data (the JSON the web app renders the card page and its Open Graph image from)
 // (GET /v1/share-cards/{shareCardId})
 func (_ Unimplemented) GetShareCardData(w http.ResponseWriter, r *http.Request, shareCardId ShareCardId) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// SnapSign Road Sign Snap (F-27, M-07) - photo to a catalogue sign; meaning from the catalogue only
+// (POST /v1/signs/snap)
+func (_ Unimplemented) SnapSign(w http.ResponseWriter, r *http.Request, params SnapSignParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1651,6 +1732,127 @@ func (siw *ServerInterfaceWrapper) PaymentCallback(w http.ResponseWriter, r *htt
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PaymentCallback(w, r, adapter)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetAIMetrics operation middleware
+func (siw *ServerInterfaceWrapper) GetAIMetrics(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAIMetrics(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SampleAIReviews operation middleware
+func (siw *ServerInterfaceWrapper) SampleAIReviews(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SampleAIReviewsParams
+
+	// ------------- Optional query parameter "n" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "n", r.URL.Query(), &params.N, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "n"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "n", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SampleAIReviews(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RateAIReview operation middleware
+func (siw *ServerInterfaceWrapper) RateAIReview(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RateAIReviewParams
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = &IdempotencyKey
+
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RateAIReview(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetAIReviewAgreement operation middleware
+func (siw *ServerInterfaceWrapper) GetAIReviewAgreement(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetAIReviewAgreementParams
+
+	// ------------- Optional query parameter "agent" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "agent", r.URL.Query(), &params.Agent, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "agent"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "agent", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAIReviewAgreement(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -2325,6 +2527,47 @@ func (siw *ServerInterfaceWrapper) SubmitRulePack(w http.ResponseWriter, r *http
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.SubmitRulePack(w, r, packId, version)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SendAIFeedback operation middleware
+func (siw *ServerInterfaceWrapper) SendAIFeedback(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SendAIFeedbackParams
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = &IdempotencyKey
+
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SendAIFeedback(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -3178,6 +3421,32 @@ func (siw *ServerInterfaceWrapper) IngestAnalytics(w http.ResponseWriter, r *htt
 	handler.ServeHTTP(w, r)
 }
 
+// ScoreCommentary operation middleware
+func (siw *ServerInterfaceWrapper) ScoreCommentary(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "sessionId" -------------
+	var sessionId SessionId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "sessionId", chi.URLParam(r, "sessionId"), &sessionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sessionId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ScoreCommentary(w, r, sessionId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // CompleteGameSession operation middleware
 func (siw *ServerInterfaceWrapper) CompleteGameSession(w http.ResponseWriter, r *http.Request) {
 
@@ -3902,6 +4171,114 @@ func (siw *ServerInterfaceWrapper) GetAchievements(w http.ResponseWriter, r *htt
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetAchievements(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetCoachPlan operation middleware
+func (siw *ServerInterfaceWrapper) GetCoachPlan(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoachPlanParams
+
+	// ------------- Optional query parameter "family_member_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "family_member_id", r.URL.Query(), &params.FamilyMemberId, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "family_member_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "family_member_id", Err: err})
+		}
+		return
+	}
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "Accept-Language" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Accept-Language")]; found {
+		var AcceptLanguage AcceptLanguage
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Accept-Language", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Accept-Language", valueList[0], &AcceptLanguage, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Accept-Language", Err: err})
+			return
+		}
+
+		params.AcceptLanguage = &AcceptLanguage
+
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCoachPlan(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SaveCoachIntention operation middleware
+func (siw *ServerInterfaceWrapper) SaveCoachIntention(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SaveCoachIntentionParams
+
+	// ------------- Optional query parameter "family_member_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "family_member_id", r.URL.Query(), &params.FamilyMemberId, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "family_member_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "family_member_id", Err: err})
+		}
+		return
+	}
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = &IdempotencyKey
+
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SaveCoachIntention(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -5401,6 +5778,47 @@ func (siw *ServerInterfaceWrapper) GetShareCardData(w http.ResponseWriter, r *ht
 	handler.ServeHTTP(w, r)
 }
 
+// SnapSign operation middleware
+func (siw *ServerInterfaceWrapper) SnapSign(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SnapSignParams
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "Accept-Language" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Accept-Language")]; found {
+		var AcceptLanguage AcceptLanguage
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Accept-Language", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Accept-Language", valueList[0], &AcceptLanguage, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Accept-Language", Err: err})
+			return
+		}
+
+		params.AcceptLanguage = &AcceptLanguage
+
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SnapSign(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // CreateSlotWatch operation middleware
 func (siw *ServerInterfaceWrapper) CreateSlotWatch(w http.ResponseWriter, r *http.Request) {
 
@@ -5888,6 +6306,19 @@ func (siw *ServerInterfaceWrapper) OpenVoiceSocket(w http.ResponseWriter, r *htt
 		return
 	}
 
+	// ------------- Optional query parameter "state" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "state", r.URL.Query(), &params.State, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "state"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "state", Err: err})
+		}
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.OpenVoiceSocket(w, r, params)
 	}))
@@ -6072,6 +6503,18 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/internal/webhooks/payment/{adapter}", wrapper.PaymentCallback)
 	})
 	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/admin/ai/metrics", wrapper.GetAIMetrics)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/admin/ai/reviews", wrapper.SampleAIReviews)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/v1/admin/ai/reviews", wrapper.RateAIReview)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/admin/ai/reviews/agreement", wrapper.GetAIReviewAgreement)
+	})
+	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v1/admin/clips", wrapper.ListClipsAdmin)
 	})
 	r.Group(func(r chi.Router) {
@@ -6115,6 +6558,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v1/admin/rulepacks/{packId}/versions/{version}/submit", wrapper.SubmitRulePack)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/v1/ai/feedback", wrapper.SendAIFeedback)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v1/auth/logout", wrapper.Logout)
@@ -6186,6 +6632,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/v1/events/analytics", wrapper.IngestAnalytics)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/v1/games/sessions/{sessionId}/commentary", wrapper.ScoreCommentary)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v1/games/sessions/{sessionId}/complete", wrapper.CompleteGameSession)
 	})
 	r.Group(func(r chi.Router) {
@@ -6238,6 +6687,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v1/me/achievements", wrapper.GetAchievements)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/me/coach-plan", wrapper.GetCoachPlan)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/v1/me/coach-plan/intentions", wrapper.SaveCoachIntention)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v1/me/consents", wrapper.ListConsents)
@@ -6343,6 +6798,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v1/share-cards/{shareCardId}", wrapper.GetShareCardData)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/v1/signs/snap", wrapper.SnapSign)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v1/slot-watches", wrapper.CreateSlotWatch)

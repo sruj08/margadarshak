@@ -1,0 +1,14 @@
+{
+  "agent": "redteam",
+  "cases": 40,
+  "fallback_pct": 0,
+  "invented_numbers": 0,
+  "metrics": {
+    "redteam_pass_pct": 100
+  },
+  "mode": "offline",
+  "passed": true,
+  "rule_id_precision_pct": 0,
+  "schema_valid_pct": 0,
+  "spend_inr": 0
+}

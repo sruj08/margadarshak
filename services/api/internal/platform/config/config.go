@@ -162,6 +162,13 @@ type Config struct {
 	GeminiModelVision       string `env:"GEMINI_MODEL_VISION"`
 	GeminiModelLive         string `env:"GEMINI_MODEL_LIVE"`
 	GeminiModelLiveFallback string `env:"GEMINI_MODEL_LIVE_FALLBACK"`
+	GeminiModelTextLite     string `env:"GEMINI_MODEL_TEXT_LITE"`
+
+	// Sarvam (Dogri speech in, Hindi speech out; M-08). Empty = Dogri voice falls back to text.
+	SarvamAPIKey  string `env:"SARVAM_API_KEY"`
+	SarvamBaseURL string `env:"SARVAM_BASE_URL" envDefault:"https://api.sarvam.ai"`
+	// Voice minutes per user per month on the free plan (VOICE.md §7).
+	VoiceMonthlyCapMin int `env:"MD_VOICE_MONTHLY_CAP_MIN" envDefault:"10"`
 
 	// Observability: none | stdout.
 	TracesExporter string `env:"OTEL_TRACES_EXPORTER" envDefault:"none"`

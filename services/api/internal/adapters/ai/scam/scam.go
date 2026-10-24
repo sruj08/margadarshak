@@ -15,6 +15,7 @@ import (
 	"google.golang.org/genai"
 
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/guard"
 )
 
 // RulesVersion is returned with every verdict.
@@ -81,15 +82,25 @@ func New(ctx context.Context, log *slog.Logger, cfg ai.Config) *Checker {
 	return c
 }
 
+// NewWithAgent is New with an existing agent (tests and evals inject a scripted model).
+func NewWithAgent(log *slog.Logger, a *ai.Structured) *Checker { return &Checker{Log: log, agent: a} }
+
+// Instruction and Schema are exported for tests that build a scripted agent.
+const Instruction = instruction
+
+// Schema returns the explainer's output schema.
+func Schema() *genai.Schema { return outputSchema() }
+
 // AIEnabled reports whether the ADK explainer is active.
 func (c *Checker) AIEnabled() bool { return c.agent != nil }
 
-// Check returns the verdict for pasted text, a URL or both.
-func (c *Checker) Check(ctx context.Context, in Input) Verdict {
+// Check returns the verdict for pasted text, a URL or both. useAI is the caller's AI gate
+// (consent, tenant flag); without it the explanation is the template.
+func (c *Checker) Check(ctx context.Context, in Input, useAI bool) Verdict {
 	v := Evaluate(in)
 	v.ExplanationSource = "template"
 	v.Explanation = templateExplanation(v)
-	if c.agent == nil {
+	if c.agent == nil || !useAI {
 		return v
 	}
 	var out aiAnswer
@@ -299,5 +310,8 @@ var (
 
 func validExplanation(s string) bool {
 	s = strings.TrimSpace(s)
+	if cat, _ := guard.Banned(s); cat != "" || guard.HasDigit(s) || guard.NumberWord(s) != "" {
+		return false
+	}
 	return s != "" && len([]rune(s)) <= 300 && !anyDigit.MatchString(s) && !bannedWords.MatchString(s)
 }

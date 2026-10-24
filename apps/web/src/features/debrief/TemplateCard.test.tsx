@@ -141,4 +141,54 @@ describe("TemplateCard (DEBRIEF_SPEC §9, P2 DoD: the template debrief passes th
       "coach_notes",
     );
   });
+
+  it("a coach card cites only the server's verified rules and shows 'why these numbers?'", () => {
+    const v = nazarVectors[0];
+    if (!v) throw new Error("no vector");
+    const { card } = buildTemplateCard({
+      result: v.expectedResult,
+      history: {},
+      catalogue,
+      locale: "en",
+      now: NOW,
+    });
+    const wire = {
+      debrief_id: "dbf_X",
+      session_id: v.ctx.sid,
+      status: "ai_ready" as const,
+      source: "ai" as const,
+      how_you_did: "ok",
+      where_you_lacked: [
+        { finding_id: "NAZ_LATE_RESPONSE", rule_id: "RR-PED-001", text: "late" },
+        { finding_id: "NAZ_MISSED_HAZARD", rule_id: "RR-UNVERIFIED", text: "missed" },
+      ],
+      what_you_could_have_done: [],
+      next_drill: { drill_id: "DR-NAZ-MOCK" },
+      rules: [
+        {
+          rule_id: "RR-PED-001",
+          text: "Give way to pedestrians.",
+          source_url: "https://example.org",
+          verified_on: "2026-10-22",
+        },
+      ],
+      validator: { passed: true, attempts: 1 },
+    };
+    const coach = coachCard(wire, card);
+    expect(coach?.where_you_lacked[0]?.rule?.verified_on).toBe("2026-10-22");
+    expect(coach?.where_you_lacked[1]?.rule ?? null).toBeNull();
+    if (!coach) throw new Error("no coach card");
+    render(
+      <IntlWrap>
+        <TemplateCard
+          card={coach}
+          findings={v.expectedResult.findings}
+          sid={v.ctx.sid}
+          source="coach"
+        />
+      </IntlWrap>,
+    );
+    expect(screen.getByTestId("debrief-why").textContent).toContain("Why these numbers?");
+    expect(screen.getByTestId("debrief-helpful-yes")).toBeTruthy();
+  });
 });

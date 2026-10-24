@@ -1,0 +1,19 @@
+{
+  "agent": "screen_decoder",
+  "cases": 30,
+  "fallback_pct": 0,
+  "invented_numbers": 0,
+  "metrics": {
+    "classes_exact_pct": 100,
+    "never_invents_violations": 0,
+    "pii_in_output": 0,
+    "remark_verbatim_pct": 100,
+    "top1_pct": 100,
+    "unknown_recall_pct": 100
+  },
+  "mode": "offline",
+  "passed": true,
+  "rule_id_precision_pct": 0,
+  "schema_valid_pct": 0,
+  "spend_inr": 0
+}

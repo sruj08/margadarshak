@@ -1,0 +1,26 @@
+{
+  "agent": "debrief",
+  "cases": 150,
+  "fallback_pct": 0,
+  "invented_numbers": 0,
+  "metrics": {
+    "adversarial_pass_pct": 100,
+    "drill_in_candidates_pct": 100,
+    "dropped_keys_pct": 100,
+    "fallback_pct": 0,
+    "improved_since_last_pct": 100,
+    "invented_numbers": 0,
+    "model_calls_on_template_routes": 0,
+    "must_not_contain_hits": 0,
+    "route_correct_pct": 100,
+    "rule_id_precision_pct": 100,
+    "schema_valid_pct": 100,
+    "top_finding_coverage_pct": 100,
+    "verified_false_cited": 0
+  },
+  "mode": "offline",
+  "passed": true,
+  "rule_id_precision_pct": 100,
+  "schema_valid_pct": 100,
+  "spend_inr": 0
+}

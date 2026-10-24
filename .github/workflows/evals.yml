@@ -1,8 +1,8 @@
 # Margdarshak AI evals gate (D-10): >= 30 cases per agent, run by the Go eval harness
 # (`go test -tags evals ./internal/adapters/ai/evals/...`; ADK for Go has no `adk eval` CLI).
-#   - offline job: validators, provenance guard, template fallback, PII redaction. No model, no secret.
-#     Until the AI layer (P3) exists it checks the eval sets, redaction, consent/family mode and
-#     prompt wording; the model jobs are skipped while internal/adapters/ai/evals is absent.
+#   - offline job: validators, provenance guard, template fallback, PII redaction, the red-team set
+#     (TestRedTeam) and every agent suite against scripted golden/adversarial model answers
+#     (EVAL_MODE=offline). No model, no secret.
 #   - model job:   real Gemini (PAID tier key, D-13) for M-02..M-05 (+ M-06/M-07 nightly).
 # Suites: ai/evals/*.jsonl (debrief_150, decoder_30, tutor_30, voice_nav_30, ...).
 # Gates (from docs/04-ai/AI_EVALS.md and research 08 §5.9):
@@ -133,12 +133,13 @@ jobs:
       fail-fast: false
       max-parallel: 2                # respect Gemini RPM on the eval project
       matrix:
-        agent: [debrief, coach, tutor, screen_decoder]
+        agent: [debrief, coach, tutor, screen_decoder, voice_text]
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_EVALS }}
       GOOGLE_GENAI_USE_VERTEXAI: "false"
       GEMINI_MODEL_DEBRIEF: ${{ vars.GEMINI_MODEL_DEBRIEF || 'gemini-3.1-flash-lite' }}
       GEMINI_MODEL_VISION: ${{ vars.GEMINI_MODEL_VISION || 'gemini-3.8-flash' }}
+      GEMINI_MODEL_TEXT_LITE: ${{ vars.GEMINI_MODEL_TEXT_LITE || 'gemini-3.1-flash-lite' }}
       EVAL_MAX_INR: ${{ github.event.inputs.max_inr || '150' }}
       EVAL_MODE: model
       AI_MODE: live

@@ -283,7 +283,15 @@ export async function getGameSessionReplay(sid: string): Promise<GameSessionRepl
   }
 }
 
-// ---------- API-36 debrief (AI path is P3) ----------
+// ---------- shared transport for the P3 AI surfaces (features/ai/api.ts) ----------
+
+export const API_BASE = BASE.replace(/\/+$/, "");
+export const API_TENANT = TENANT;
+export const apiLocale = (): "en" | "hi" => locale;
+export const isOnline = online;
+export { ensureSession as ensureApiSession, send as sendApi };
+
+// ---------- API-36 debrief ----------
 
 export type DebriefFetch =
   | { kind: "card"; data: DebriefWire }

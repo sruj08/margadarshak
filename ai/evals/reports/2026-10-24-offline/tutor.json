@@ -1,0 +1,20 @@
+{
+  "agent": "tutor",
+  "cases": 30,
+  "fallback_pct": 0,
+  "invented_numbers": 0,
+  "metrics": {
+    "bridge_grounded_pct": 100,
+    "calibration_note_pct": 100,
+    "explanation_id_pct": 100,
+    "glue_digits": 0,
+    "must_not_contain_hits": 0,
+    "no_explanation_model_calls": 0,
+    "rule_id_in_pct": 100
+  },
+  "mode": "offline",
+  "passed": true,
+  "rule_id_precision_pct": 0,
+  "schema_valid_pct": 0,
+  "spend_inr": 0
+}

@@ -7,39 +7,62 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sruj08/margadarshak/services/api/internal/accounts"
-	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/debrief"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/decoder"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/tutor"
+	"github.com/sruj08/margadarshak/services/api/internal/aicards"
 	"github.com/sruj08/margadarshak/services/api/internal/games"
 	"github.com/sruj08/margadarshak/services/api/internal/httpapi/gen"
 )
 
-// aiConsent is the server-side consent gate that runs before any agent (AGENTS.md §7). The
-// principal is the account holder, so a family member's case is gated by the parent's consent.
-func (s *Server) aiConsent(r *http.Request, p *accounts.Principal) bool {
+// aiFeature pairs a tenant feature flag with the consent purpose that unlocks it.
+type aiFeature struct{ flag, purpose string }
+
+var (
+	aiCoachFeature = aiFeature{flag: "ai_coach", purpose: "ai_coach"}
+	aiVoiceFeature = aiFeature{flag: "voice_guide", purpose: "ai_voice"}
+)
+
+// aiGate is the server-side gate that runs before any agent (AGENTS.md §7, D-13 revised): an
+// account holder (adult, or a parent acting in family mode, whose member access learnerFor has
+// already checked), the tenant's feature flag, and the holder's active consent for the purpose.
+// There is no age gate. It returns "" when AI may run, else the fallback reason.
+func (s *Server) aiGate(r *http.Request, f aiFeature) string {
+	p := principalFrom(r.Context())
 	if p == nil || s.deps.Accounts == nil {
-		return false
+		return "no_account"
+	}
+	if t := tenantFrom(r.Context()); t == nil || !t.Feature(f.flag) {
+		return "tenant_flag_off"
 	}
 	list, err := s.deps.Accounts.Consents(r.Context(), p)
 	if err != nil {
 		s.deps.Log.WarnContext(r.Context(), "consent lookup failed; AI off", "err", err)
-		return false
+		return "no_consent"
 	}
 	now := s.now()
 	for _, c := range list {
-		if c.Purpose == "ai_coach" && c.RevokedAt == nil && (c.ExpiresAt == nil || c.ExpiresAt.After(now)) {
-			return true
+		if c.Purpose == f.purpose && c.RevokedAt == nil && (c.ExpiresAt == nil || c.ExpiresAt.After(now)) {
+			return ""
 		}
 	}
-	return false
+	return "no_consent"
 }
 
-func aiLocale(header string) string {
-	if strings.HasPrefix(strings.ToLower(strings.TrimSpace(header)), "hi") {
-		return "hi"
+// aiRefused writes the 403 for AI-only surfaces (decoder, sign snap, voice) that have no template.
+func aiRefused(w http.ResponseWriter, r *http.Request, reason, purpose string) {
+	if reason == "tenant_flag_off" {
+		writeProblem(w, r, Problem{Status: http.StatusForbidden, Code: "FEATURE_DISABLED", Detail: "this feature is switched off for your state"})
+		return
 	}
-	return "en"
+	writeProblem(w, r, Problem{Status: http.StatusForbidden, Code: "CONSENT_REQUIRED", Detail: "grant the " + purpose + " consent to use this"})
+}
+
+// tutorLocale is en, hi or hinglish (Dogri reads the Hindi text).
+func tutorLocale(header string) string {
+	if l := debriefLocale(header); l != "doi" {
+		return l
+	}
+	return "hi"
 }
 
 // GetDebrief is API-36: the template card now, AI-worded when consent allows and the draft passes.
@@ -65,18 +88,33 @@ func (s *Server) GetDebrief(w http.ResponseWriter, r *http.Request, sessionId ge
 		writeProblem(w, r, Problem{Status: http.StatusConflict, Code: "SESSION_NOT_COMPLETED", Detail: "finish the session first"})
 		return
 	}
-	score, found, _ := gamesResultParts(sess.ServerResult, false)
-	in := make([]debrief.Finding, 0, len(found))
-	for _, f := range found {
-		in = append(in, debrief.Finding{ID: f.FindingID, Severity: f.Severity, Critical: f.Critical, DrillIDs: f.DrillIDs, Facts: f.Facts})
-	}
 	locale := ""
 	if params.AcceptLanguage != nil {
 		locale = *params.AcceptLanguage
 	}
-	useAI := s.deps.Debrief.AIEnabled() && s.aiConsent(r, principalFrom(r.Context()))
-	card := s.deps.Debrief.Build(r.Context(), sess.ID.String(), score.Pct, in, aiLocale(locale), useAI)
+	useAI := s.deps.Debrief.AIEnabled() && s.aiGate(r, aiCoachFeature) == ""
+	cards := aicards.Service{DB: s.deps.DB, Gen: s.deps.Debrief, Now: s.now, Log: s.deps.Log}
+	card, err := cards.Debrief(r.Context(), sess, debriefLocale(locale), useAI)
+	if err != nil {
+		s.deps.Log.ErrorContext(r.Context(), "debrief failed", "err", err)
+		internalError(w, r)
+		return
+	}
 	writeJSON(w, http.StatusOK, card)
+}
+
+// debriefLocale maps Accept-Language to en, hi, hinglish (hi-Latn) or doi.
+func debriefLocale(header string) string {
+	h := strings.ToLower(strings.TrimSpace(header))
+	switch {
+	case strings.HasPrefix(h, "hi-latn"), strings.HasPrefix(h, "hinglish"):
+		return "hinglish"
+	case strings.HasPrefix(h, "doi"):
+		return "doi"
+	case strings.HasPrefix(h, "hi"):
+		return "hi"
+	}
+	return "en"
 }
 
 // ExplainAnswer is API-41: reviewed explanation plus optional AI glue.
@@ -95,8 +133,12 @@ func (s *Server) ExplainAnswer(w http.ResponseWriter, r *http.Request, params ge
 	} else if params.AcceptLanguage != nil {
 		locale = *params.AcceptLanguage
 	}
-	useAI := s.deps.Tutor.AIEnabled() && s.aiConsent(r, principalFrom(r.Context()))
-	out, err := s.deps.Tutor.Explain(r.Context(), body.QuestionId, body.VariantId, body.ChosenOptionId, aiLocale(locale), useAI)
+	confidence := 0
+	if body.Confidence != nil {
+		confidence = int(*body.Confidence)
+	}
+	useAI := s.deps.Tutor.AIEnabled() && s.aiGate(r, aiCoachFeature) == ""
+	out, err := s.deps.Tutor.Explain(r.Context(), body.QuestionId, body.VariantId, body.ChosenOptionId, tutorLocale(locale), confidence, useAI)
 	if errors.Is(err, tutor.ErrUnknownItem) {
 		notFound(w, r)
 		return
@@ -115,8 +157,8 @@ func (s *Server) DecodeScreenshot(w http.ResponseWriter, r *http.Request) {
 		serviceMissing(w, r)
 		return
 	}
-	if !s.aiConsent(r, principalFrom(r.Context())) {
-		writeProblem(w, r, Problem{Status: http.StatusForbidden, Code: "CONSENT_REQUIRED", Detail: "grant the ai_coach consent to decode a screenshot"})
+	if reason := s.aiGate(r, aiCoachFeature); reason != "" {
+		aiRefused(w, r, reason, "ai_coach")
 		return
 	}
 	r.Body = http.MaxBytesReader(w, r.Body, decoder.MaxImageBytes+64<<10)
@@ -135,7 +177,12 @@ func (s *Server) DecodeScreenshot(w http.ResponseWriter, r *http.Request) {
 		validation(w, r, "/image", "too_large")
 		return
 	}
-	res, err := s.deps.Decoder.Decode(r.Context(), img)
+	ocr := r.FormValue("ocr_text")
+	if len([]rune(ocr)) > 4000 {
+		validation(w, r, "/ocr_text", "too_long")
+		return
+	}
+	res, err := s.deps.Decoder.Decode(r.Context(), img, ocr)
 	switch {
 	case errors.Is(err, decoder.ErrDisabled):
 		writeProblem(w, r, Problem{Status: http.StatusServiceUnavailable, Code: "ADAPTER_UNAVAILABLE", Retryable: false, Detail: "screenshot decoding is off; pick the stage from the list"})

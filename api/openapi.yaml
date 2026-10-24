@@ -1858,11 +1858,21 @@ paths:
         Max session 10 minutes (Gemini Live connection lifetime); 10 min/user/month on the
         free plan. The agent can navigate and fill non-sensitive fields inside Margdarshak
         only; it never submits, pays or books on Sarathi.
+
+        Authentication is the single-use ticket in the hello frame (browsers cannot set headers on a
+        WebSocket, and cookies are not relied on), so the upgrade itself is anonymous; the tenant
+        comes from `state`. Without a valid ticket in the first frame (5 s) the server sends
+        `error` (`reason_key: voice.ticket_invalid`) and closes. With `lang=doi` the client sends
+        push-to-talk audio and a `stop` frame; the server answers with the Saaras transcript
+        (`transcript_in`, editable), and the confirmed `text` frame runs the turn; the reply is
+        Hindi speech with a reviewed Dogri caption when one exists (VOICE.md §3.3). `text` frames
+        work in every language and are the fallback when live audio is unavailable.
       security:
-        - userBearer: [user]
+        - {}
       parameters:
         - { name: case_id, in: query, required: false, schema: { type: string } }
         - { name: lang, in: query, required: false, schema: { type: string, enum: [hi, en, doi] } }
+        - { name: state, in: query, required: false, schema: { type: string, pattern: '^[A-Z]{2}$' } }
       responses:
         '101': { description: Switching protocols }
         '403': { $ref: '#/components/responses/Forbidden' }
@@ -1874,6 +1884,12 @@ paths:
       tags: [ai]
       operationId: createVoiceTicket
       summary: Short-lived (60 s, single-use) WebSocket ticket for API-40 (cookies are not relied on for WS auth)
+      description: |
+        The AI gate runs here: the tenant's `voice_guide` flag and the account holder's `ai_voice`
+        consent (a parent's account covers a family member; there is no age gate, D-13 revised).
+        403 `CONSENT_REQUIRED` or `FEATURE_DISABLED` otherwise; 429 `VOICE_CAP_REACHED` at the
+        monthly voice minutes (`MD_VOICE_MONTHLY_CAP_MIN`), when the client switches to text.
+        `live` says whether live audio is available now (false = text and Dogri paths only).
       security:
         - userBearer: [user]
       responses:
@@ -1883,11 +1899,13 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [ticket, expires_at]
+                required: [ticket, expires_at, live]
                 properties:
                   ticket: { type: string }
                   expires_at: { type: string, format: date-time }
+                  live: { type: boolean }
         '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
 
   /v1/tutor/explain:
     post:
@@ -1932,6 +1950,7 @@ paths:
               properties:
                 image: { type: string, contentMediaType: image/jpeg, description: '<= 1024 px longest side, <= 1 MB' }
                 case_id: { type: string }
+                ocr_text: { type: string, maxLength: 4000, description: 'Optional on-device OCR text of the same image (after the client blurred personal data). It narrows the catalogue candidates and checks the copied remark; it is never sent to a model.' }
       responses:
         '200':
           description: Decoded result (user must confirm before it changes the case)
@@ -1950,6 +1969,253 @@ paths:
                 confirm_required: true
         '403': { $ref: '#/components/responses/Forbidden' }
         '413': { description: Image too large }
+
+  /v1/games/sessions/{sessionId}/commentary:
+    post:
+      x-api-id: API-74
+      x-proposed: true
+      tags: [ai]
+      operationId: scoreCommentary
+      summary: Nazar commentary mode, record then score (D-12; DEBRIEF_SPEC §10)
+      description: |
+        The learner's spoken commentary over one clip of a completed Nazar session. The audio is
+        transcribed in memory after the clip (never live), the transcript is PII- and
+        injection-screened and discarded, and a deterministic lexicon matcher scores hazard
+        mentions against the curator windows (a mention in [a - 1 s, b] is a hit). The answer never
+        carries the transcript. Gate: tenant `ai_coach` flag and the holder's `ai_voice` consent
+        (403 otherwise); 503 `ADAPTER_UNAVAILABLE` when transcription is off (EC-29: the Kerala score
+        is unaffected).
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [audio, clip_ordinal]
+              properties:
+                audio: { type: string, contentMediaType: audio/webm, description: '<= 2 MB, one clip' }
+                clip_ordinal: { type: integer, minimum: 1, maximum: 40 }
+                lang: { type: string, enum: [hi, en, doi] }
+      responses:
+        '200':
+          description: Commentary score
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CommentaryResult' }
+              example: { session_id: 0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f, clip_ordinal: 3, commentary_pct: 50, hazards: [ { hazard_type: truck_left_turn, hit: true }, { hazard_type: bus_stop_pedestrian, hit: false } ], false_mentions: 0, findings: [ { finding_id: NAZ_COMM_MISSED_MENTION, severity: 0.5, facts: { hazard_type: bus_stop_pedestrian, count: 1 } } ] }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/signs/snap:
+    post:
+      x-api-id: API-75
+      x-proposed: true
+      tags: [ai]
+      operationId: snapSign
+      summary: Road Sign Snap (F-27, M-07) - photo to a catalogue sign; meaning from the catalogue only
+      description: |
+        At confidence 0.75 or more one card (`match`); between 0.2 and 0.75 up to three `choices`;
+        otherwise `not_in_catalogue`. `moving: true` (the client's speed estimate) is refused with
+        409 `RIDING_LOCKED`. Gate: tenant `ai_coach` flag and the holder's `ai_coach` consent. The
+        photo is processed in memory and not stored. 503 when the vision model is off.
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/AcceptLanguage'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image: { type: string, contentMediaType: image/jpeg, description: '<= 1024 px longest side, <= 1 MB' }
+                moving: { type: boolean }
+      responses:
+        '200':
+          description: Sign result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SignSnapResult' }
+              example: { status: match, confidence: 0.92, sign: { sign_id: SIGN-MAN-001, family: MANDATORY, name: Stop, meaning: Stop completely at the stop line and go only when the way is clear., verified: false }, choices: [] }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/me/coach-plan:
+    get:
+      x-api-id: API-76
+      x-proposed: true
+      tags: [ai]
+      operationId: getCoachPlan
+      summary: CoachAgent weekly plan (F-26, M-03) - plan computed in code, AI words it when allowed
+      description: |
+        The drills (due topics, weak topics, a Nazar mock) and the weekly session goal are computed
+        from the learner's review queue and readiness; the CoachAgent writes the headline and an
+        implementation-intention prompt with `{{slot:day}}` and `{{slot:time}}`. Without the AI gate
+        (tenant `ai_coach` flag, holder's `ai_coach` consent) or when the draft fails validation the
+        template plan is returned (`source: template`). A minor family member needs the parent's
+        recorded consent (403 `PARENT_CONSENT_REQUIRED`).
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/FamilyMemberQuery'
+        - $ref: '#/components/parameters/AcceptLanguage'
+      responses:
+        '200':
+          description: Weekly plan
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CoachPlan' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /v1/me/coach-plan/intentions:
+    post:
+      x-api-id: API-76
+      x-proposed: true
+      tags: [ai]
+      operationId: saveCoachIntention
+      summary: Store the learner's implementation intention ("On <day> at <time> I will <drill>")
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/FamilyMemberQuery'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CoachIntention' }
+            example: { day: sat, time: '18:30', drill_id: DR-NAZ-MOCK }
+      responses:
+        '201':
+          description: Stored
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CoachIntention' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/ai/feedback:
+    post:
+      x-api-id: API-77
+      x-proposed: true
+      tags: [ai]
+      operationId: sendAIFeedback
+      summary: Thumbs up or down on an AI answer, with a closed reason (feeds the human review loop)
+      security:
+        - userBearer: [user]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AIFeedback' }
+            example: { agent: debrief, item_id: 0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f, helpful: false, reason: unclear }
+      responses:
+        '204': { description: Stored }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/admin/ai/metrics:
+    get:
+      x-api-id: API-78
+      x-proposed: true
+      tags: [ai]
+      operationId: getAIMetrics
+      summary: LLM observability (MD-307) - calls, failures, fallbacks by reason, latency, tokens, estimated cost, breaker state per agent
+      description: Process-local counters since the last restart; never prompt or answer text.
+      security:
+        - userBearer: [admin]
+      responses:
+        '200':
+          description: Per-agent counters
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [since_restart, agents]
+                properties:
+                  since_restart: { type: boolean, const: true }
+                  agents: { type: array, items: { $ref: '#/components/schemas/AIAgentStats' } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /v1/admin/ai/reviews:
+    get:
+      x-api-id: API-78
+      x-proposed: true
+      tags: [ai]
+      operationId: sampleAIReviews
+      summary: Human review loop (MD-327) - AI-worded debriefs of this tenant the calling rater has not rated (no PII by construction)
+      security:
+        - userBearer: [admin]
+      parameters:
+        - { name: n, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 30, default: 30 } }
+      responses:
+        '200':
+          description: Sample
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [item_id, card]
+                      properties:
+                        item_id: { type: string }
+                        card: { $ref: '#/components/schemas/Debrief' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      x-api-id: API-78
+      x-proposed: true
+      tags: [ai]
+      operationId: rateAIReview
+      summary: A rater scores one AI answer on the rubric (0-2 per axis); the rater comes from the session
+      security:
+        - userBearer: [admin]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AIReviewCreate' }
+            example: { agent: debrief, item_id: '0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f:hi', grounding: 2, tone: 2, usefulness: 1 }
+      responses:
+        '201': { description: Stored }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /v1/admin/ai/reviews/agreement:
+    get:
+      x-api-id: API-78
+      x-proposed: true
+      tags: [ai]
+      operationId: getAIReviewAgreement
+      summary: Inter-rater agreement (quadratic-weighted kappa per axis) over items two raters scored; items whose scores differ by 2 on any axis are listed to become eval cases
+      security:
+        - userBearer: [admin]
+      parameters:
+        - { name: agent, in: query, required: false, schema: { type: string, enum: [debrief, tutor, coach, voice, decoder, signsnap], default: debrief } }
+      responses:
+        '200':
+          description: Agreement
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AIReviewAgreement' }
+        '403': { $ref: '#/components/responses/Forbidden' }
 
   /v1/scam/check:
     post:
@@ -3332,6 +3598,11 @@ paths:
         * `study.export_csv` args `{frozen_at?}` -> `{tenant, files: {"sessions.csv": <csv text>, "sessions_alt.csv": ..., "raters.csv": <csv text or null>}, sha256: {<file>: <hex>}, summary, omitted: [<file names with no rows, e.g. raters.csv before any rater agreement>]}`; `GET /internal/study/exports/{file}` serves the same files individually.
         * `stats.field_study_publish` args `{as_of, numbers, stdout, script_sha256, prereg_hash}` -> `{as_of, published}`: stores what `field-kit/nazar_stats.mjs` printed, unmodified, for API-71.
 
+        Session debrief fan-out (RW-3 `debrief_fanout`, MD-311):
+        * `debrief.backfill` args `{since?, limit?}` -> `{pending, built, ai}`: builds and stores the debrief card of checked sessions
+          (last 7 days by default) whose holder allows AI and that have no stored card; a stored card is never rebuilt, so retries are safe.
+          A provider 429 or timeout leaves the card unstored and answers 503 `ADAPTER_UNAVAILABLE` so the task retries with backoff.
+
         Auth: service bearer (one of the API's `INTERNAL_BEARER_TOKENS`; the workflow service sends it as `INTERNAL_BEARER_TOKEN`) plus the `Margdarshak-Signature` HMAC.
         The step result is returned both under `result` and flattened at the top level (the Workflows client reads the top level).
       security:
@@ -3341,7 +3612,7 @@ paths:
         - name: step
           in: path
           required: true
-          schema: { type: string, enum: [clock.plan_pages, clock.due_page, clock.fire_batch, retention.sweep, stats.nightly, rulepack.reevaluate, user.export_collect, user.delete_purge, sessions.replay_pending, clip.get, clip.open_review, clip.propose_windows, clip.agreement, clip.request_adjudication, clip.blur_audit_check, clip.delete_raw, clip.publish_manifest, clip.recompute_difficulty, clip.register_generated, study.export_csv, stats.field_study_publish] }
+          schema: { type: string, enum: [clock.plan_pages, clock.due_page, clock.fire_batch, retention.sweep, stats.nightly, rulepack.reevaluate, user.export_collect, user.delete_purge, sessions.replay_pending, clip.get, clip.open_review, clip.propose_windows, clip.agreement, clip.request_adjudication, clip.blur_audit_check, clip.delete_raw, clip.publish_manifest, clip.recompute_difficulty, clip.register_generated, study.export_csv, stats.field_study_publish, debrief.backfill] }
         - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
@@ -5744,6 +6015,127 @@ components:
             action_id: { type: string }
         rule_id: { type: string }
         reason_key: { type: string }
+    CommentaryResult:
+      type: object
+      description: API-74. Never carries the transcript.
+      required: [session_id, clip_ordinal, commentary_pct, hazards, false_mentions, findings]
+      properties:
+        session_id: { type: string, format: uuid }
+        clip_ordinal: { type: integer, minimum: 1, maximum: 40 }
+        commentary_pct: { type: number, minimum: 0, maximum: 100, description: 'hazards named in [a - 1 s, b] / hazards; shown separately from the Kerala score' }
+        hazards:
+          type: array
+          maxItems: 2
+          items:
+            type: object
+            required: [hazard_type, hit]
+            properties:
+              hazard_type: { $ref: '#/components/schemas/HazardType' }
+              hit: { type: boolean }
+        false_mentions: { type: integer, minimum: 0 }
+        findings:
+          type: array
+          items:
+            type: object
+            required: [finding_id, severity, facts]
+            properties:
+              finding_id: { type: string, enum: [NAZ_COMM_MISSED_MENTION] }
+              severity: { type: number, minimum: 0, maximum: 1 }
+              facts: { type: object, additionalProperties: true }
+    SignSnapResult:
+      type: object
+      description: API-75. Name and meaning come from content/catalogue/signs.json, never from the model.
+      required: [status, confidence, choices]
+      properties:
+        status: { type: string, enum: [match, choose, not_in_catalogue] }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        sign: { $ref: '#/components/schemas/SnapSign' }
+        choices: { type: array, maxItems: 3, items: { $ref: '#/components/schemas/SnapSign' } }
+    SnapSign:
+      type: object
+      required: [sign_id, family, name, meaning, verified]
+      properties:
+        sign_id: { type: string, pattern: '^SIGN-[A-Z]{3}-\d{3}$' }
+        family: { type: string }
+        name: { type: string }
+        meaning: { type: string }
+        verified: { type: boolean, description: false until the two-person check against IRC:67 }
+    CoachPlan:
+      type: object
+      description: API-76. Numbers (the weekly goal) are code values; the wording has no digits.
+      required: [source, label_key, locale, headline, week_goal_sessions, items, intention_prompt, tone]
+      properties:
+        source: { type: string, enum: [template, ai] }
+        label_key: { type: string, enum: [coach.auto_plan, coach.coach_plan] }
+        locale: { type: string, enum: [en, hi, hinglish] }
+        headline: { type: string, maxLength: 90 }
+        week_goal_sessions: { type: integer, minimum: 1, maximum: 7 }
+        items:
+          type: array
+          maxItems: 6
+          items:
+            type: object
+            required: [drill_id]
+            properties:
+              drill_id: { type: string }
+              why: { type: string }
+              deep_link: { type: string }
+        intention_prompt: { type: string, maxLength: 120, description: 'Contains {{slot:day}} and {{slot:time}} for the UI to fill' }
+        tone: { type: string, enum: [steady, welcome_back, nearly_there] }
+    CoachIntention:
+      type: object
+      required: [day, time, drill_id]
+      properties:
+        day: { type: string, enum: [mon, tue, wed, thu, fri, sat, sun] }
+        time: { type: string, pattern: '^([01]\d|2[0-3]):[0-5]\d$' }
+        drill_id: { type: string, pattern: '^DR-[A-Z0-9-]{2,40}$' }
+        week_of: { type: string, format: date, readOnly: true }
+    AIFeedback:
+      type: object
+      required: [agent, item_id, helpful]
+      properties:
+        agent: { type: string, enum: [debrief, tutor, coach, voice, decoder, signsnap, scam] }
+        item_id: { type: string, maxLength: 80 }
+        helpful: { type: boolean }
+        reason: { type: string, enum: [wrong, unclear, tone, other] }
+    AIAgentStats:
+      type: object
+      required: [agent, model, calls, failures, fallbacks, total_ms, max_ms, in_tokens, out_tokens, est_cost_micro_usd, breaker_open]
+      properties:
+        agent: { type: string }
+        model: { type: string }
+        calls: { type: integer }
+        failures: { type: integer }
+        fallbacks: { type: object, additionalProperties: { type: integer } }
+        total_ms: { type: integer }
+        max_ms: { type: integer }
+        in_tokens: { type: integer }
+        out_tokens: { type: integer }
+        est_cost_micro_usd: { type: integer, description: Estimate from list prices; not a bill }
+        breaker_open: { type: boolean }
+    AIReviewCreate:
+      type: object
+      required: [agent, item_id, grounding, tone, usefulness]
+      properties:
+        agent: { type: string, enum: [debrief, tutor, coach, voice, decoder, signsnap] }
+        item_id: { type: string, maxLength: 80 }
+        grounding: { type: integer, minimum: 0, maximum: 2 }
+        tone: { type: integer, minimum: 0, maximum: 2 }
+        usefulness: { type: integer, minimum: 0, maximum: 2 }
+    AIReviewAgreement:
+      type: object
+      required: [agent, items_double_rated, kappa, disagreements]
+      properties:
+        agent: { type: string }
+        items_double_rated: { type: integer }
+        kappa:
+          type: object
+          description: Quadratic-weighted Cohen's kappa per axis (null below 2 double-rated items)
+          properties:
+            grounding: { type: [number, 'null'] }
+            tone: { type: [number, 'null'] }
+            usefulness: { type: [number, 'null'] }
+        disagreements: { type: array, items: { type: string }, description: Item IDs whose two scores differ by 2 on any axis }
     TutorExplainRequest:
       type: object
       required: [question_id, variant_id, chosen_option_id]
@@ -5752,15 +6144,17 @@ components:
         variant_id: { type: string }
         chosen_option_id: { type: string }
         locale: { type: string, enum: [en, hi, hinglish] }
+        confidence: { type: integer, enum: [50, 75, 100], description: The learner's confidence tap before answering (calibration note) }
     TutorExplanation:
       type: object
       required: [explanation_id, reviewed_text, rule_ids, source]
       properties:
-        explanation_id: { type: string }
+        explanation_id: { type: string, description: The approved explanation, or UNKNOWN when none is approved yet (no model call) }
         reviewed_text: { type: string }
         glue_text: { type: [string, 'null'], description: AI glue linking the user's choice to the reviewed text; no digits }
         rule_ids: { type: array, items: { type: string } }
         source: { type: string, enum: [reviewed_bank, template] }
+        calibration_note: { type: string, enum: [none, sure_and_wrong, unsure_and_right], description: Computed in code from the confidence tap }
         provenance: { $ref: '#/components/schemas/Provenance' }
     ScreenDecode:
       type: object
@@ -5768,7 +6162,7 @@ components:
       properties:
         catalogue_id: { type: string, description: Error-catalogue ID or UNKNOWN }
         confidence: { type: number, minimum: 0, maximum: 1 }
-        doc_kind: { type: string, enum: [sarathi_status, result_slip, ll, other] }
+        doc_kind: { type: string, enum: [sarathi_status, result_slip, ll, error_page, payment, other] }
         stage: { type: string }
         classes:
           type: array

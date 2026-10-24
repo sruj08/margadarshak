@@ -6,20 +6,24 @@ import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { Sheet } from "@margdarshak/ui/components/sheet";
 import { Mic } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { LiveVoiceSheet } from "@/features/voice/LiveVoiceSheet";
 import { Link, useRouter } from "@/i18n/navigation";
 import { INTENT_HREF, INTENTS, type Intent, langOf, routeIntent } from "@/lib/journey/intents";
 import { redact } from "@/lib/redact/redact";
 
 /**
- * Mic placeholder (SCR-003 "Or just tell us", MD-119). The voice guide arrives in P3; until then the
- * mic opens this sheet: it says so plainly, and offers a "tell us" box routed to the same intents.
- * Text is redacted on the device first (EC-20): Aadhaar-like numbers, OTPs and phone numbers are
- * removed, and we say why. Available to every user, including family mode (D-13 revised).
+ * "Or just tell us" (SCR-003). The mic opens the live voice guide (MD-314, API-40). When the
+ * guide is unavailable (no ai_voice consent, the state's flag off, the monthly cap, offline, mock
+ * mode, or the socket fails) the plain sheet below takes over (MD-316): a "tell us" box routed to
+ * the same intents, with a short recorded clip. Text is redacted on the device first (EC-20).
+ * Available to every user, including family mode (D-13 revised).
  */
 export function VoiceButton() {
   const t = useTranslations("voice");
   const [open, setOpen] = useState(false);
+  const [fallback, setFallback] = useState(false);
+  const onUnavailable = useCallback(() => setFallback(true), []);
   return (
     <>
       <button
@@ -36,7 +40,11 @@ export function VoiceButton() {
           <span className="mj-voice__line">{t("ctaLine")}</span>
         </span>
       </button>
-      <VoiceSheet isOpen={open} onOpenChange={setOpen} />
+      {open && !fallback ? (
+        <LiveVoiceSheet isOpen={open} onOpenChange={setOpen} onUnavailable={onUnavailable} />
+      ) : (
+        <VoiceSheet isOpen={open} onOpenChange={setOpen} />
+      )}
     </>
   );
 }

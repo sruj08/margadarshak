@@ -105,6 +105,8 @@ var p2EraseTables = []struct{ name, table string }{
 	{"learn_readiness_deleted", "learn.readiness_snapshots"},
 	{"declarations_deleted", "records.declarations"},
 	{"study_participants_deleted", "study.nazar_participants"},
+	{"ai_feedback_deleted", "ai.feedback"},
+	{"ai_intentions_deleted", "ai.intentions"},
 }
 
 // P2Erase erases the applicant's P2 rows inside tx (API-62, EC-26), for the account and every

@@ -9,6 +9,7 @@ import { formatIsoDate } from "@margdarshak/ui/lib/format";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { drillHref } from "./build-card";
+import { CoachFeedback, WhyNumbers } from "./WhyNumbers";
 
 /** Findings a replay can show: Nazar findings tied to one clip. */
 export function replayable(f: Finding | undefined): boolean {
@@ -151,6 +152,8 @@ export function TemplateCard({
       </section>
 
       {card.improved_since_last ? <p className="mg-note">{t("debrief.improved")}</p> : null}
+      <WhyNumbers findings={findings} />
+      {source === "coach" ? <CoachFeedback sid={sid} /> : null}
       <p className="mg-label mg-label--ink" data-testid="debrief-footer">
         {card.label}
       </p>

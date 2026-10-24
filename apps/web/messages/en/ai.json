@@ -1,0 +1,71 @@
+{
+  "decode": {
+    "title": "What does this screen mean?",
+    "intro": "Upload a screenshot of your Sarathi status or error page. We match it to a list of known screens and tell you the next step.",
+    "privacyTitle": "Hide personal details first",
+    "privacy": "Tap the picture to cover your name, application number, Aadhaar or phone number. Numbers we can read on this phone are covered for you. The picture is not stored.",
+    "pick": "Choose a screenshot",
+    "preview": "This is exactly what will be sent:",
+    "send": "Send this picture",
+    "cancel": "Cancel, send nothing",
+    "working": "Reading the screen…",
+    "result": "This looks like",
+    "confirm": "Does this match your screen?",
+    "yes": "Yes, that's my screen",
+    "no": "No, let me choose",
+    "steps": "Your next steps",
+    "unknown": "We couldn't match this screen. Pick the closest one from the list.",
+    "manual": "Choose your screen from the list",
+    "consent": "Turn on AI help in your privacy settings to read screenshots, or pick your screen from the list.",
+    "off": "Reading screenshots is off right now. Pick your screen from the list.",
+    "scam": "This doesn't look like a Sarathi page. Check it with the scam checker first.",
+    "remark": "The page says"
+  },
+  "snap": {
+    "title": "Road Sign Snap",
+    "intro": "Take a photo of a road sign. We'll find it in our sign list and show what it means.",
+    "take": "Take or choose a photo",
+    "riding": "Stop the vehicle first, then take the photo.",
+    "working": "Looking for the sign…",
+    "match": "This sign is",
+    "choose": "Which of these is it?",
+    "none": "This sign is not in our catalogue yet.",
+    "unverified": "Meaning not yet checked against the standard by two people.",
+    "consent": "Turn on AI help in your privacy settings to identify signs, or browse the sign list.",
+    "off": "Sign recognition is off right now. Browse the sign list instead.",
+    "again": "Try another photo"
+  },
+  "coach": {
+    "title": "Your plan this week",
+    "auto": "Auto plan",
+    "coached": "Coach plan",
+    "goal": "Goal: {count, plural, one {# short session} other {# short sessions}} this week",
+    "intention": "Make it a plan",
+    "day": "Day",
+    "time": "Time",
+    "save": "Save my plan",
+    "saved": "Saved. You can change it any time.",
+    "days": {
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday"
+    },
+    "open": "Open"
+  },
+  "commentary": {
+    "title": "Say it as you ride (commentary)",
+    "consent": "We'll record your voice for this clip, turn it into text, then delete the audio. The text is used only for your debrief.",
+    "start": "Record my commentary",
+    "stop": "Stop and score",
+    "working": "Scoring your commentary…",
+    "score": "You named {hit} of {total} hazards in time.",
+    "hit": "Named in time",
+    "missed": "Not named in time",
+    "off": "Commentary scoring is off right now. Your Nazar score is not affected.",
+    "consentNeeded": "Turn on voice in your privacy settings to use commentary."
+  }
+}

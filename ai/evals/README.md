@@ -15,12 +15,18 @@ All data here is **synthetic or team-produced**.
 | `voice_nav_30.jsonl` | 30 (10 hi · 8 hinglish · 6 en · 6 doi) | VoiceGuideAgent (M-01), text transcripts | Utterance + screen/stage context → expected tool trajectory, confirm turn, refusal IDs, PII expectation |
 | `decoder_30.jsonl` | 30 (5 adversarial) | ScreenDecoderAgent (M-05) | Image reference + synthetic OCR text + candidate catalogue IDs → expected `doc_kind`, `catalogue_id`, stage, classes, dates, route |
 | `tutor_30.jsonl` | 30 (2 adversarial) | TutorAgent (M-04) | LL item + chosen/correct option + reviewed explanations + allowed rules → expected explanation ID, rule ID, calibration note |
+| `coach_30.jsonl` | 30 (8 adversarial drafts) | CoachAgent (M-03) | Due topics + topic mastery + locale → expected drill tiers (computed in code) and route; adversarial cases carry a scripted bad draft that must fall back |
+| `signsnap_30.jsonl` | 30 (18 clear · 6 ambiguous · 6 not a sign) | SignSnap (M-07) | Photo reference + scripted model candidates (offline) → expected status and sign ID. Photos live in R2; model mode skips missing ones |
+| `redteam_30.jsonl` | 42 (RT-01..RT-14, RT-08 in 20 phrasings) | All guards (MD-326) | Attack input + target → expected guard outcome; RT-09 is the HTTP contract test, RT-13 is a live-session manual check |
+| `thresholds.yaml` | — | CI gates | AI_EVALS §3 per agent and metric (min / max) |
+| `reports/<date>-<mode>/` | — | Reports | One summary JSON per agent from `EVAL_REPORT_DIR` |
+
+Run: `cd services/api && EVAL_MODE=offline go test -tags evals ./internal/adapters/ai/evals/ -count=1` (no key; scripted golden and adversarial answers through the real pipelines), or `EVAL_MODE=model` with `GEMINI_API_KEY`.
 
 To come (owners and dates in AI_EVALS §2):
 - `errors_40.jsonl`, `scam_50.jsonl`, `commentary_15.jsonl`;
-- `coach.evalset.json` (generated);
-- `signsnap_30/`, `clips_3/`, `audio/voice_60/` (media is kept out of git and stored in R2 with access control);
-- `fixtures/decoder/*.png` (rendered at H0).
+- `clips_3/`, `audio/voice_60/` (media is kept out of git and stored in R2 with access control);
+- `fixtures/decoder/*.png` and `fixtures/signsnap/*.jpg` (rendered or collected at H0; model mode scores only what exists).
 
 ## Record schemas (abridged)
 

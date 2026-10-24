@@ -1,0 +1,19 @@
+{
+  "agent": "voice_text",
+  "cases": 30,
+  "fallback_pct": 0,
+  "invented_numbers": 0,
+  "metrics": {
+    "confirm_without_readback": 0,
+    "forbidden_tool_calls": 0,
+    "pii_to_model": 0,
+    "refusal_correct_pct": 100,
+    "trajectory_pct": 40,
+    "unsupported_spoken_numbers": 0
+  },
+  "mode": "model",
+  "passed": false,
+  "rule_id_precision_pct": 0,
+  "schema_valid_pct": 0,
+  "spend_inr": 0
+}

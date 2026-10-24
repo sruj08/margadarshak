@@ -47,6 +47,93 @@ func (e A11yMode) Valid() bool {
 	}
 }
 
+// Defines values for AIFeedbackAgent.
+const (
+	AIFeedbackAgentCoach    AIFeedbackAgent = "coach"
+	AIFeedbackAgentDebrief  AIFeedbackAgent = "debrief"
+	AIFeedbackAgentDecoder  AIFeedbackAgent = "decoder"
+	AIFeedbackAgentScam     AIFeedbackAgent = "scam"
+	AIFeedbackAgentSignsnap AIFeedbackAgent = "signsnap"
+	AIFeedbackAgentTutor    AIFeedbackAgent = "tutor"
+	AIFeedbackAgentVoice    AIFeedbackAgent = "voice"
+)
+
+// Valid indicates whether the value is a known member of the AIFeedbackAgent enum.
+func (e AIFeedbackAgent) Valid() bool {
+	switch e {
+	case AIFeedbackAgentCoach:
+		return true
+	case AIFeedbackAgentDebrief:
+		return true
+	case AIFeedbackAgentDecoder:
+		return true
+	case AIFeedbackAgentScam:
+		return true
+	case AIFeedbackAgentSignsnap:
+		return true
+	case AIFeedbackAgentTutor:
+		return true
+	case AIFeedbackAgentVoice:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AIFeedbackReason.
+const (
+	AIFeedbackReasonOther   AIFeedbackReason = "other"
+	AIFeedbackReasonTone    AIFeedbackReason = "tone"
+	AIFeedbackReasonUnclear AIFeedbackReason = "unclear"
+	AIFeedbackReasonWrong   AIFeedbackReason = "wrong"
+)
+
+// Valid indicates whether the value is a known member of the AIFeedbackReason enum.
+func (e AIFeedbackReason) Valid() bool {
+	switch e {
+	case AIFeedbackReasonOther:
+		return true
+	case AIFeedbackReasonTone:
+		return true
+	case AIFeedbackReasonUnclear:
+		return true
+	case AIFeedbackReasonWrong:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AIReviewCreateAgent.
+const (
+	AIReviewCreateAgentCoach    AIReviewCreateAgent = "coach"
+	AIReviewCreateAgentDebrief  AIReviewCreateAgent = "debrief"
+	AIReviewCreateAgentDecoder  AIReviewCreateAgent = "decoder"
+	AIReviewCreateAgentSignsnap AIReviewCreateAgent = "signsnap"
+	AIReviewCreateAgentTutor    AIReviewCreateAgent = "tutor"
+	AIReviewCreateAgentVoice    AIReviewCreateAgent = "voice"
+)
+
+// Valid indicates whether the value is a known member of the AIReviewCreateAgent enum.
+func (e AIReviewCreateAgent) Valid() bool {
+	switch e {
+	case AIReviewCreateAgentCoach:
+		return true
+	case AIReviewCreateAgentDebrief:
+		return true
+	case AIReviewCreateAgentDecoder:
+		return true
+	case AIReviewCreateAgentSignsnap:
+		return true
+	case AIReviewCreateAgentTutor:
+		return true
+	case AIReviewCreateAgentVoice:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AadhaarOfflineVerdictDobPrecision.
 const (
 	AadhaarOfflineVerdictDobPrecisionDay      AadhaarOfflineVerdictDobPrecision = "day"
@@ -1751,6 +1838,132 @@ func (e ClipStatus) Valid() bool {
 	}
 }
 
+// Defines values for CoachIntentionDay.
+const (
+	CoachIntentionDayFri CoachIntentionDay = "fri"
+	CoachIntentionDayMon CoachIntentionDay = "mon"
+	CoachIntentionDaySat CoachIntentionDay = "sat"
+	CoachIntentionDaySun CoachIntentionDay = "sun"
+	CoachIntentionDayThu CoachIntentionDay = "thu"
+	CoachIntentionDayTue CoachIntentionDay = "tue"
+	CoachIntentionDayWed CoachIntentionDay = "wed"
+)
+
+// Valid indicates whether the value is a known member of the CoachIntentionDay enum.
+func (e CoachIntentionDay) Valid() bool {
+	switch e {
+	case CoachIntentionDayFri:
+		return true
+	case CoachIntentionDayMon:
+		return true
+	case CoachIntentionDaySat:
+		return true
+	case CoachIntentionDaySun:
+		return true
+	case CoachIntentionDayThu:
+		return true
+	case CoachIntentionDayTue:
+		return true
+	case CoachIntentionDayWed:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachPlanLabelKey.
+const (
+	CoachAutoPlan  CoachPlanLabelKey = "coach.auto_plan"
+	CoachCoachPlan CoachPlanLabelKey = "coach.coach_plan"
+)
+
+// Valid indicates whether the value is a known member of the CoachPlanLabelKey enum.
+func (e CoachPlanLabelKey) Valid() bool {
+	switch e {
+	case CoachAutoPlan:
+		return true
+	case CoachCoachPlan:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachPlanLocale.
+const (
+	CoachPlanLocaleEn       CoachPlanLocale = "en"
+	CoachPlanLocaleHi       CoachPlanLocale = "hi"
+	CoachPlanLocaleHinglish CoachPlanLocale = "hinglish"
+)
+
+// Valid indicates whether the value is a known member of the CoachPlanLocale enum.
+func (e CoachPlanLocale) Valid() bool {
+	switch e {
+	case CoachPlanLocaleEn:
+		return true
+	case CoachPlanLocaleHi:
+		return true
+	case CoachPlanLocaleHinglish:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachPlanSource.
+const (
+	CoachPlanSourceAi       CoachPlanSource = "ai"
+	CoachPlanSourceTemplate CoachPlanSource = "template"
+)
+
+// Valid indicates whether the value is a known member of the CoachPlanSource enum.
+func (e CoachPlanSource) Valid() bool {
+	switch e {
+	case CoachPlanSourceAi:
+		return true
+	case CoachPlanSourceTemplate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachPlanTone.
+const (
+	NearlyThere CoachPlanTone = "nearly_there"
+	Steady      CoachPlanTone = "steady"
+	WelcomeBack CoachPlanTone = "welcome_back"
+)
+
+// Valid indicates whether the value is a known member of the CoachPlanTone enum.
+func (e CoachPlanTone) Valid() bool {
+	switch e {
+	case NearlyThere:
+		return true
+	case Steady:
+		return true
+	case WelcomeBack:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CommentaryResultFindingsFindingId.
+const (
+	NAZCOMMMISSEDMENTION CommentaryResultFindingsFindingId = "NAZ_COMM_MISSED_MENTION"
+)
+
+// Valid indicates whether the value is a known member of the CommentaryResultFindingsFindingId enum.
+func (e CommentaryResultFindingsFindingId) Valid() bool {
+	switch e {
+	case NAZCOMMMISSEDMENTION:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for Confidence.
 const (
 	ConfidenceHigh   Confidence = "high"
@@ -1966,37 +2179,37 @@ func (e DebriefStatus) Valid() bool {
 
 // Defines values for DebriefValidatorViolations.
 const (
-	DigitInText        DebriefValidatorViolations = "digit_in_text"
-	Language           DebriefValidatorViolations = "language"
-	Length             DebriefValidatorViolations = "length"
-	Tone               DebriefValidatorViolations = "tone"
-	TopFindingMissing  DebriefValidatorViolations = "top_finding_missing"
-	UnknownFinding     DebriefValidatorViolations = "unknown_finding"
-	UnknownPlaceholder DebriefValidatorViolations = "unknown_placeholder"
-	UnknownRule        DebriefValidatorViolations = "unknown_rule"
-	UnverifiedRule     DebriefValidatorViolations = "unverified_rule"
+	DebriefValidatorViolationsDigitInText        DebriefValidatorViolations = "digit_in_text"
+	DebriefValidatorViolationsLanguage           DebriefValidatorViolations = "language"
+	DebriefValidatorViolationsLength             DebriefValidatorViolations = "length"
+	DebriefValidatorViolationsTone               DebriefValidatorViolations = "tone"
+	DebriefValidatorViolationsTopFindingMissing  DebriefValidatorViolations = "top_finding_missing"
+	DebriefValidatorViolationsUnknownFinding     DebriefValidatorViolations = "unknown_finding"
+	DebriefValidatorViolationsUnknownPlaceholder DebriefValidatorViolations = "unknown_placeholder"
+	DebriefValidatorViolationsUnknownRule        DebriefValidatorViolations = "unknown_rule"
+	DebriefValidatorViolationsUnverifiedRule     DebriefValidatorViolations = "unverified_rule"
 )
 
 // Valid indicates whether the value is a known member of the DebriefValidatorViolations enum.
 func (e DebriefValidatorViolations) Valid() bool {
 	switch e {
-	case DigitInText:
+	case DebriefValidatorViolationsDigitInText:
 		return true
-	case Language:
+	case DebriefValidatorViolationsLanguage:
 		return true
-	case Length:
+	case DebriefValidatorViolationsLength:
 		return true
-	case Tone:
+	case DebriefValidatorViolationsTone:
 		return true
-	case TopFindingMissing:
+	case DebriefValidatorViolationsTopFindingMissing:
 		return true
-	case UnknownFinding:
+	case DebriefValidatorViolationsUnknownFinding:
 		return true
-	case UnknownPlaceholder:
+	case DebriefValidatorViolationsUnknownPlaceholder:
 		return true
-	case UnknownRule:
+	case DebriefValidatorViolationsUnknownRule:
 		return true
-	case UnverifiedRule:
+	case DebriefValidatorViolationsUnverifiedRule:
 		return true
 	default:
 		return false
@@ -4675,31 +4888,31 @@ func (e RtoReportCreateSlotReleaseSeenTimeBand) Valid() bool {
 
 // Defines values for RtoReportCreateSlotReleaseSeenWeekday.
 const (
-	Fri RtoReportCreateSlotReleaseSeenWeekday = "fri"
-	Mon RtoReportCreateSlotReleaseSeenWeekday = "mon"
-	Sat RtoReportCreateSlotReleaseSeenWeekday = "sat"
-	Sun RtoReportCreateSlotReleaseSeenWeekday = "sun"
-	Thu RtoReportCreateSlotReleaseSeenWeekday = "thu"
-	Tue RtoReportCreateSlotReleaseSeenWeekday = "tue"
-	Wed RtoReportCreateSlotReleaseSeenWeekday = "wed"
+	RtoReportCreateSlotReleaseSeenWeekdayFri RtoReportCreateSlotReleaseSeenWeekday = "fri"
+	RtoReportCreateSlotReleaseSeenWeekdayMon RtoReportCreateSlotReleaseSeenWeekday = "mon"
+	RtoReportCreateSlotReleaseSeenWeekdaySat RtoReportCreateSlotReleaseSeenWeekday = "sat"
+	RtoReportCreateSlotReleaseSeenWeekdaySun RtoReportCreateSlotReleaseSeenWeekday = "sun"
+	RtoReportCreateSlotReleaseSeenWeekdayThu RtoReportCreateSlotReleaseSeenWeekday = "thu"
+	RtoReportCreateSlotReleaseSeenWeekdayTue RtoReportCreateSlotReleaseSeenWeekday = "tue"
+	RtoReportCreateSlotReleaseSeenWeekdayWed RtoReportCreateSlotReleaseSeenWeekday = "wed"
 )
 
 // Valid indicates whether the value is a known member of the RtoReportCreateSlotReleaseSeenWeekday enum.
 func (e RtoReportCreateSlotReleaseSeenWeekday) Valid() bool {
 	switch e {
-	case Fri:
+	case RtoReportCreateSlotReleaseSeenWeekdayFri:
 		return true
-	case Mon:
+	case RtoReportCreateSlotReleaseSeenWeekdayMon:
 		return true
-	case Sat:
+	case RtoReportCreateSlotReleaseSeenWeekdaySat:
 		return true
-	case Sun:
+	case RtoReportCreateSlotReleaseSeenWeekdaySun:
 		return true
-	case Thu:
+	case RtoReportCreateSlotReleaseSeenWeekdayThu:
 		return true
-	case Tue:
+	case RtoReportCreateSlotReleaseSeenWeekdayTue:
 		return true
-	case Wed:
+	case RtoReportCreateSlotReleaseSeenWeekdayWed:
 		return true
 	default:
 		return false
@@ -4972,8 +5185,10 @@ func (e ScreenDecodeConfirmRequired) Valid() bool {
 
 // Defines values for ScreenDecodeDocKind.
 const (
+	ScreenDecodeDocKindErrorPage     ScreenDecodeDocKind = "error_page"
 	ScreenDecodeDocKindLl            ScreenDecodeDocKind = "ll"
 	ScreenDecodeDocKindOther         ScreenDecodeDocKind = "other"
+	ScreenDecodeDocKindPayment       ScreenDecodeDocKind = "payment"
 	ScreenDecodeDocKindResultSlip    ScreenDecodeDocKind = "result_slip"
 	ScreenDecodeDocKindSarathiStatus ScreenDecodeDocKind = "sarathi_status"
 )
@@ -4981,9 +5196,13 @@ const (
 // Valid indicates whether the value is a known member of the ScreenDecodeDocKind enum.
 func (e ScreenDecodeDocKind) Valid() bool {
 	switch e {
+	case ScreenDecodeDocKindErrorPage:
+		return true
 	case ScreenDecodeDocKindLl:
 		return true
 	case ScreenDecodeDocKindOther:
+		return true
+	case ScreenDecodeDocKindPayment:
 		return true
 	case ScreenDecodeDocKindResultSlip:
 		return true
@@ -5276,6 +5495,27 @@ func (e SignOffRequestCreateSignerKind) Valid() bool {
 	case SignOffRequestCreateSignerKindSchool:
 		return true
 	case SignOffRequestCreateSignerKindSupervisor:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SignSnapResultStatus.
+const (
+	Choose         SignSnapResultStatus = "choose"
+	Match          SignSnapResultStatus = "match"
+	NotInCatalogue SignSnapResultStatus = "not_in_catalogue"
+)
+
+// Valid indicates whether the value is a known member of the SignSnapResultStatus enum.
+func (e SignSnapResultStatus) Valid() bool {
+	switch e {
+	case Choose:
+		return true
+	case Match:
+		return true
+	case NotInCatalogue:
 		return true
 	default:
 		return false
@@ -6002,6 +6242,27 @@ func (e TopicMasteryNodeState) Valid() bool {
 	}
 }
 
+// Defines values for TutorExplainRequestConfidence.
+const (
+	TutorExplainRequestConfidenceN100 TutorExplainRequestConfidence = 100
+	TutorExplainRequestConfidenceN50  TutorExplainRequestConfidence = 50
+	TutorExplainRequestConfidenceN75  TutorExplainRequestConfidence = 75
+)
+
+// Valid indicates whether the value is a known member of the TutorExplainRequestConfidence enum.
+func (e TutorExplainRequestConfidence) Valid() bool {
+	switch e {
+	case TutorExplainRequestConfidenceN100:
+		return true
+	case TutorExplainRequestConfidenceN50:
+		return true
+	case TutorExplainRequestConfidenceN75:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for TutorExplainRequestLocale.
 const (
 	TutorExplainRequestLocaleEn       TutorExplainRequestLocale = "en"
@@ -6017,6 +6278,27 @@ func (e TutorExplainRequestLocale) Valid() bool {
 	case TutorExplainRequestLocaleHi:
 		return true
 	case TutorExplainRequestLocaleHinglish:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TutorExplanationCalibrationNote.
+const (
+	TutorExplanationCalibrationNoteNone           TutorExplanationCalibrationNote = "none"
+	TutorExplanationCalibrationNoteSureAndWrong   TutorExplanationCalibrationNote = "sure_and_wrong"
+	TutorExplanationCalibrationNoteUnsureAndRight TutorExplanationCalibrationNote = "unsure_and_right"
+)
+
+// Valid indicates whether the value is a known member of the TutorExplanationCalibrationNote enum.
+func (e TutorExplanationCalibrationNote) Valid() bool {
+	switch e {
+	case TutorExplanationCalibrationNoteNone:
+		return true
+	case TutorExplanationCalibrationNoteSureAndWrong:
+		return true
+	case TutorExplanationCalibrationNoteUnsureAndRight:
 		return true
 	default:
 		return false
@@ -6347,6 +6629,7 @@ const (
 	RunJobStepParamsStepClockDuePage            RunJobStepParamsStep = "clock.due_page"
 	RunJobStepParamsStepClockFireBatch          RunJobStepParamsStep = "clock.fire_batch"
 	RunJobStepParamsStepClockPlanPages          RunJobStepParamsStep = "clock.plan_pages"
+	RunJobStepParamsStepDebriefBackfill         RunJobStepParamsStep = "debrief.backfill"
 	RunJobStepParamsStepRetentionSweep          RunJobStepParamsStep = "retention.sweep"
 	RunJobStepParamsStepRulepackReevaluate      RunJobStepParamsStep = "rulepack.reevaluate"
 	RunJobStepParamsStepSessionsReplayPending   RunJobStepParamsStep = "sessions.replay_pending"
@@ -6385,6 +6668,8 @@ func (e RunJobStepParamsStep) Valid() bool {
 	case RunJobStepParamsStepClockFireBatch:
 		return true
 	case RunJobStepParamsStepClockPlanPages:
+		return true
+	case RunJobStepParamsStepDebriefBackfill:
 		return true
 	case RunJobStepParamsStepRetentionSweep:
 		return true
@@ -6557,6 +6842,51 @@ func (e PaymentCallbackJSONBodyStatus) Valid() bool {
 	case PaymentCallbackJSONBodyStatusPending:
 		return true
 	case PaymentCallbackJSONBodyStatusSuccess:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for GetAIMetrics200JSONResponseBodySinceRestart.
+const (
+	GetAIMetrics200JSONResponseBodySinceRestartTrue GetAIMetrics200JSONResponseBodySinceRestart = true
+)
+
+// Valid indicates whether the value is a known member of the GetAIMetrics200JSONResponseBodySinceRestart enum.
+func (e GetAIMetrics200JSONResponseBodySinceRestart) Valid() bool {
+	switch e {
+	case GetAIMetrics200JSONResponseBodySinceRestartTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for GetAIReviewAgreementParamsAgent.
+const (
+	GetAIReviewAgreementParamsAgentCoach    GetAIReviewAgreementParamsAgent = "coach"
+	GetAIReviewAgreementParamsAgentDebrief  GetAIReviewAgreementParamsAgent = "debrief"
+	GetAIReviewAgreementParamsAgentDecoder  GetAIReviewAgreementParamsAgent = "decoder"
+	GetAIReviewAgreementParamsAgentSignsnap GetAIReviewAgreementParamsAgent = "signsnap"
+	GetAIReviewAgreementParamsAgentTutor    GetAIReviewAgreementParamsAgent = "tutor"
+	GetAIReviewAgreementParamsAgentVoice    GetAIReviewAgreementParamsAgent = "voice"
+)
+
+// Valid indicates whether the value is a known member of the GetAIReviewAgreementParamsAgent enum.
+func (e GetAIReviewAgreementParamsAgent) Valid() bool {
+	switch e {
+	case GetAIReviewAgreementParamsAgentCoach:
+		return true
+	case GetAIReviewAgreementParamsAgentDebrief:
+		return true
+	case GetAIReviewAgreementParamsAgentDecoder:
+		return true
+	case GetAIReviewAgreementParamsAgentSignsnap:
+		return true
+	case GetAIReviewAgreementParamsAgentTutor:
+		return true
+	case GetAIReviewAgreementParamsAgentVoice:
 		return true
 	default:
 		return false
@@ -6770,6 +7100,27 @@ func (e StartDemoPersonaSessionParamsPersonaId) Valid() bool {
 	}
 }
 
+// Defines values for ScoreCommentaryMultipartBodyLang.
+const (
+	ScoreCommentaryMultipartBodyLangDoi ScoreCommentaryMultipartBodyLang = "doi"
+	ScoreCommentaryMultipartBodyLangEn  ScoreCommentaryMultipartBodyLang = "en"
+	ScoreCommentaryMultipartBodyLangHi  ScoreCommentaryMultipartBodyLang = "hi"
+)
+
+// Valid indicates whether the value is a known member of the ScoreCommentaryMultipartBodyLang enum.
+func (e ScoreCommentaryMultipartBodyLang) Valid() bool {
+	switch e {
+	case ScoreCommentaryMultipartBodyLangDoi:
+		return true
+	case ScoreCommentaryMultipartBodyLangEn:
+		return true
+	case ScoreCommentaryMultipartBodyLangHi:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for GetPracticeRecordParamsFormat.
 const (
 	GetPracticeRecordParamsFormatJson GetPracticeRecordParamsFormat = "json"
@@ -6949,6 +7300,65 @@ func (e OpenVoiceSocketParamsLang) Valid() bool {
 
 // A11yMode game-core A11yMode
 type A11yMode string
+
+// AIAgentStats defines model for AIAgentStats.
+type AIAgentStats struct {
+	Agent       string `json:"agent"`
+	BreakerOpen bool   `json:"breaker_open"`
+	Calls       int    `json:"calls"`
+
+	// EstCostMicroUsd Estimate from list prices; not a bill
+	EstCostMicroUsd int            `json:"est_cost_micro_usd"`
+	Failures        int            `json:"failures"`
+	Fallbacks       map[string]int `json:"fallbacks"`
+	InTokens        int            `json:"in_tokens"`
+	MaxMs           int            `json:"max_ms"`
+	Model           string         `json:"model"`
+	OutTokens       int            `json:"out_tokens"`
+	TotalMs         int            `json:"total_ms"`
+}
+
+// AIFeedback defines model for AIFeedback.
+type AIFeedback struct {
+	Agent   AIFeedbackAgent   `json:"agent"`
+	Helpful bool              `json:"helpful"`
+	ItemId  string            `json:"item_id"`
+	Reason  *AIFeedbackReason `json:"reason,omitempty"`
+}
+
+// AIFeedbackAgent defines model for AIFeedback.Agent.
+type AIFeedbackAgent string
+
+// AIFeedbackReason defines model for AIFeedback.Reason.
+type AIFeedbackReason string
+
+// AIReviewAgreement defines model for AIReviewAgreement.
+type AIReviewAgreement struct {
+	Agent string `json:"agent"`
+
+	// Disagreements Item IDs whose two scores differ by 2 on any axis
+	Disagreements    []string `json:"disagreements"`
+	ItemsDoubleRated int      `json:"items_double_rated"`
+
+	// Kappa Quadratic-weighted Cohen's kappa per axis (null below 2 double-rated items)
+	Kappa struct {
+		Grounding  *float32 `json:"grounding,omitempty"`
+		Tone       *float32 `json:"tone,omitempty"`
+		Usefulness *float32 `json:"usefulness,omitempty"`
+	} `json:"kappa"`
+}
+
+// AIReviewCreate defines model for AIReviewCreate.
+type AIReviewCreate struct {
+	Agent      AIReviewCreateAgent `json:"agent"`
+	Grounding  int                 `json:"grounding"`
+	ItemId     string              `json:"item_id"`
+	Tone       int                 `json:"tone"`
+	Usefulness int                 `json:"usefulness"`
+}
+
+// AIReviewCreateAgent defines model for AIReviewCreate.Agent.
+type AIReviewCreateAgent string
 
 // AadhaarOfflineVerdict defines model for AadhaarOfflineVerdict.
 type AadhaarOfflineVerdict struct {
@@ -8100,6 +8510,70 @@ type ClockSweepRequest struct {
 	SweepId    string       `json:"sweep_id"`
 	Tenants    *[]StateCode `json:"tenants,omitempty"`
 }
+
+// CoachIntention defines model for CoachIntention.
+type CoachIntention struct {
+	Day     CoachIntentionDay   `json:"day"`
+	DrillId string              `json:"drill_id"`
+	Time    string              `json:"time"`
+	WeekOf  *openapi_types.Date `json:"week_of,omitempty"`
+}
+
+// CoachIntentionDay defines model for CoachIntention.Day.
+type CoachIntentionDay string
+
+// CoachPlan API-76. Numbers (the weekly goal) are code values; the wording has no digits.
+type CoachPlan struct {
+	Headline string `json:"headline"`
+
+	// IntentionPrompt Contains {{slot:day}} and {{slot:time}} for the UI to fill
+	IntentionPrompt string `json:"intention_prompt"`
+	Items           []struct {
+		DeepLink *string `json:"deep_link,omitempty"`
+		DrillId  string  `json:"drill_id"`
+		Why      *string `json:"why,omitempty"`
+	} `json:"items"`
+	LabelKey         CoachPlanLabelKey `json:"label_key"`
+	Locale           CoachPlanLocale   `json:"locale"`
+	Source           CoachPlanSource   `json:"source"`
+	Tone             CoachPlanTone     `json:"tone"`
+	WeekGoalSessions int               `json:"week_goal_sessions"`
+}
+
+// CoachPlanLabelKey defines model for CoachPlan.LabelKey.
+type CoachPlanLabelKey string
+
+// CoachPlanLocale defines model for CoachPlan.Locale.
+type CoachPlanLocale string
+
+// CoachPlanSource defines model for CoachPlan.Source.
+type CoachPlanSource string
+
+// CoachPlanTone defines model for CoachPlan.Tone.
+type CoachPlanTone string
+
+// CommentaryResult API-74. Never carries the transcript.
+type CommentaryResult struct {
+	ClipOrdinal int `json:"clip_ordinal"`
+
+	// CommentaryPct hazards named in [a - 1 s, b] / hazards; shown separately from the Kerala score
+	CommentaryPct float32 `json:"commentary_pct"`
+	FalseMentions int     `json:"false_mentions"`
+	Findings      []struct {
+		Facts     map[string]interface{}            `json:"facts"`
+		FindingId CommentaryResultFindingsFindingId `json:"finding_id"`
+		Severity  float32                           `json:"severity"`
+	} `json:"findings"`
+	Hazards []struct {
+		// HazardType Nazar hazard types (NAZAR §3.3), shared by game-core HazardType, clip-pipeline HAZARD_TYPES and content/catalogue/hazard_types.json. `other` is never mock-eligible.
+		HazardType HazardType `json:"hazard_type"`
+		Hit        bool       `json:"hit"`
+	} `json:"hazards"`
+	SessionId openapi_types.UUID `json:"session_id"`
+}
+
+// CommentaryResultFindingsFindingId defines model for CommentaryResult.Findings.FindingId.
+type CommentaryResultFindingsFindingId string
 
 // Confidence defines model for Confidence.
 type Confidence string
@@ -10318,6 +10792,17 @@ type SignOffRequestCreate struct {
 // SignOffRequestCreateSignerKind defines model for SignOffRequestCreate.SignerKind.
 type SignOffRequestCreateSignerKind string
 
+// SignSnapResult API-75. Name and meaning come from content/catalogue/signs.json, never from the model.
+type SignSnapResult struct {
+	Choices    []SnapSign           `json:"choices"`
+	Confidence float32              `json:"confidence"`
+	Sign       *SnapSign            `json:"sign,omitempty"`
+	Status     SignSnapResultStatus `json:"status"`
+}
+
+// SignSnapResultStatus defines model for SignSnapResult.Status.
+type SignSnapResultStatus string
+
 // Slot E-10
 type Slot struct {
 	CapacityBand *SlotCapacityBand  `json:"capacity_band,omitempty"`
@@ -10377,6 +10862,17 @@ type SlotWatchCreate struct {
 
 // SlotWatchCreateKind defines model for SlotWatchCreate.Kind.
 type SlotWatchCreateKind string
+
+// SnapSign defines model for SnapSign.
+type SnapSign struct {
+	Family  string `json:"family"`
+	Meaning string `json:"meaning"`
+	Name    string `json:"name"`
+	SignId  string `json:"sign_id"`
+
+	// Verified false until the two-person check against IRC:67
+	Verified bool `json:"verified"`
+}
 
 // Squad E-23 (GAMIFICATION_ENGINE §8). Members see each other's display name, rank and whether they hit the weekly goal - never scores, calibration or failures.
 type Squad struct {
@@ -10644,17 +11140,27 @@ type TopicMasteryNodeState string
 
 // TutorExplainRequest defines model for TutorExplainRequest.
 type TutorExplainRequest struct {
-	ChosenOptionId string                     `json:"chosen_option_id"`
-	Locale         *TutorExplainRequestLocale `json:"locale,omitempty"`
-	QuestionId     string                     `json:"question_id"`
-	VariantId      string                     `json:"variant_id"`
+	ChosenOptionId string `json:"chosen_option_id"`
+
+	// Confidence The learner's confidence tap before answering (calibration note)
+	Confidence *TutorExplainRequestConfidence `json:"confidence,omitempty"`
+	Locale     *TutorExplainRequestLocale     `json:"locale,omitempty"`
+	QuestionId string                         `json:"question_id"`
+	VariantId  string                         `json:"variant_id"`
 }
+
+// TutorExplainRequestConfidence The learner's confidence tap before answering (calibration note)
+type TutorExplainRequestConfidence int
 
 // TutorExplainRequestLocale defines model for TutorExplainRequest.Locale.
 type TutorExplainRequestLocale string
 
 // TutorExplanation defines model for TutorExplanation.
 type TutorExplanation struct {
+	// CalibrationNote Computed in code from the confidence tap
+	CalibrationNote *TutorExplanationCalibrationNote `json:"calibration_note,omitempty"`
+
+	// ExplanationId The approved explanation
 	ExplanationId string `json:"explanation_id"`
 
 	// GlueText AI glue linking the user's choice to the reviewed text; no digits
@@ -10664,6 +11170,9 @@ type TutorExplanation struct {
 	RuleIds      []string               `json:"rule_ids"`
 	Source       TutorExplanationSource `json:"source"`
 }
+
+// TutorExplanationCalibrationNote Computed in code from the confidence tap
+type TutorExplanationCalibrationNote string
 
 // TutorExplanationSource defines model for TutorExplanation.Source.
 type TutorExplanationSource string
@@ -10959,6 +11468,28 @@ type PaymentCallbackParamsAdapter string
 // PaymentCallbackJSONBodyStatus defines parameters for PaymentCallback.
 type PaymentCallbackJSONBodyStatus string
 
+// GetAIMetrics200JSONResponseBodySinceRestart defines parameters for GetAIMetrics.
+type GetAIMetrics200JSONResponseBodySinceRestart bool
+
+// SampleAIReviewsParams defines parameters for SampleAIReviews.
+type SampleAIReviewsParams struct {
+	N *int `form:"n,omitempty" json:"n,omitempty"`
+}
+
+// RateAIReviewParams defines parameters for RateAIReview.
+type RateAIReviewParams struct {
+	// IdempotencyKey Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
+// GetAIReviewAgreementParams defines parameters for GetAIReviewAgreement.
+type GetAIReviewAgreementParams struct {
+	Agent *GetAIReviewAgreementParamsAgent `form:"agent,omitempty" json:"agent,omitempty"`
+}
+
+// GetAIReviewAgreementParamsAgent defines parameters for GetAIReviewAgreement.
+type GetAIReviewAgreementParamsAgent string
+
 // ListClipsAdminParams defines parameters for ListClipsAdmin.
 type ListClipsAdminParams struct {
 	Status *ClipStatus `form:"status,omitempty" json:"status,omitempty"`
@@ -11053,6 +11584,12 @@ type ApproveRulePackParams struct {
 
 // ApproveRulePackJSONBodyDecision defines parameters for ApproveRulePack.
 type ApproveRulePackJSONBodyDecision string
+
+// SendAIFeedbackParams defines parameters for SendAIFeedback.
+type SendAIFeedbackParams struct {
+	// IdempotencyKey Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
 
 // LogoutJSONBody defines parameters for Logout.
 type LogoutJSONBody struct {
@@ -11180,6 +11717,9 @@ type DecodeScreenshotMultipartBody struct {
 
 	// Image <= 1024 px longest side, <= 1 MB
 	Image string `json:"image"`
+
+	// OcrText Optional on-device OCR text of the same image (after the client blurred personal data). It narrows the catalogue candidates and checks the copied remark; it is never sent to a model.
+	OcrText *string `json:"ocr_text,omitempty"`
 }
 
 // StartDemoPersonaSessionParamsPersonaId defines parameters for StartDemoPersonaSession.
@@ -11191,6 +11731,17 @@ type IngestAnalyticsJSONBody struct {
 	CaseId *string          `json:"case_id,omitempty"`
 	Events []AnalyticsEvent `json:"events"`
 }
+
+// ScoreCommentaryMultipartBody defines parameters for ScoreCommentary.
+type ScoreCommentaryMultipartBody struct {
+	// Audio <= 2 MB, one clip
+	Audio       string                            `json:"audio"`
+	ClipOrdinal int                               `json:"clip_ordinal"`
+	Lang        *ScoreCommentaryMultipartBodyLang `json:"lang,omitempty"`
+}
+
+// ScoreCommentaryMultipartBodyLang defines parameters for ScoreCommentary.
+type ScoreCommentaryMultipartBodyLang string
 
 // CompleteGameSessionParams defines parameters for CompleteGameSession.
 type CompleteGameSessionParams struct {
@@ -11285,6 +11836,22 @@ type GetReviewQueueParams struct {
 type GetAchievementsParams struct {
 	// FamilyMemberId Act for this family member (family mode). A minor needs the account holder's recorded parental consent (403 PARENT_CONSENT_REQUIRED); squads and share cards also need the matching extra.
 	FamilyMemberId *FamilyMemberQuery `form:"family_member_id,omitempty" json:"family_member_id,omitempty"`
+}
+
+// GetCoachPlanParams defines parameters for GetCoachPlan.
+type GetCoachPlanParams struct {
+	// FamilyMemberId Act for this family member (family mode). A minor needs the account holder's recorded parental consent (403 PARENT_CONSENT_REQUIRED); squads and share cards also need the matching extra.
+	FamilyMemberId *FamilyMemberQuery `form:"family_member_id,omitempty" json:"family_member_id,omitempty"`
+	AcceptLanguage *AcceptLanguage    `json:"Accept-Language,omitempty"`
+}
+
+// SaveCoachIntentionParams defines parameters for SaveCoachIntention.
+type SaveCoachIntentionParams struct {
+	// FamilyMemberId Act for this family member (family mode). A minor needs the account holder's recorded parental consent (403 PARENT_CONSENT_REQUIRED); squads and share cards also need the matching extra.
+	FamilyMemberId *FamilyMemberQuery `form:"family_member_id,omitempty" json:"family_member_id,omitempty"`
+
+	// IdempotencyKey Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
 }
 
 // GrantOrRevokeConsentParams defines parameters for GrantOrRevokeConsent.
@@ -11480,6 +12047,18 @@ type GetShareCardParamsLocale string
 // GetShareCardParamsKind defines parameters for GetShareCard.
 type GetShareCardParamsKind string
 
+// SnapSignMultipartBody defines parameters for SnapSign.
+type SnapSignMultipartBody struct {
+	// Image <= 1024 px longest side, <= 1 MB
+	Image  string `json:"image"`
+	Moving *bool  `json:"moving,omitempty"`
+}
+
+// SnapSignParams defines parameters for SnapSign.
+type SnapSignParams struct {
+	AcceptLanguage *AcceptLanguage `json:"Accept-Language,omitempty"`
+}
+
 // CreateSlotWatchParams defines parameters for CreateSlotWatch.
 type CreateSlotWatchParams struct {
 	// IdempotencyKey Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere.
@@ -11540,6 +12119,7 @@ type ExplainAnswerParams struct {
 type OpenVoiceSocketParams struct {
 	CaseId *string                    `form:"case_id,omitempty" json:"case_id,omitempty"`
 	Lang   *OpenVoiceSocketParamsLang `form:"lang,omitempty" json:"lang,omitempty"`
+	State  *string                    `form:"state,omitempty" json:"state,omitempty"`
 }
 
 // OpenVoiceSocketParamsLang defines parameters for OpenVoiceSocket.
@@ -11578,6 +12158,9 @@ type N8nWebhookJSONRequestBody = N8nCallback
 // PaymentCallbackJSONRequestBody defines body for PaymentCallback for application/json ContentType.
 type PaymentCallbackJSONRequestBody PaymentCallbackJSONBody
 
+// RateAIReviewJSONRequestBody defines body for RateAIReview for application/json ContentType.
+type RateAIReviewJSONRequestBody = AIReviewCreate
+
 // RegisterClipJSONRequestBody defines body for RegisterClip for application/json ContentType.
 type RegisterClipJSONRequestBody = ClipRegister
 
@@ -11607,6 +12190,9 @@ type CreateRulePackDraftJSONRequestBody = RulePackDraftCreate
 
 // ApproveRulePackJSONRequestBody defines body for ApproveRulePack for application/json ContentType.
 type ApproveRulePackJSONRequestBody ApproveRulePackJSONBody
+
+// SendAIFeedbackJSONRequestBody defines body for SendAIFeedback for application/json ContentType.
+type SendAIFeedbackJSONRequestBody = AIFeedback
 
 // LogoutJSONRequestBody defines body for Logout for application/json ContentType.
 type LogoutJSONRequestBody LogoutJSONBody
@@ -11644,6 +12230,9 @@ type DecodeScreenshotMultipartRequestBody DecodeScreenshotMultipartBody
 // IngestAnalyticsJSONRequestBody defines body for IngestAnalytics for application/json ContentType.
 type IngestAnalyticsJSONRequestBody IngestAnalyticsJSONBody
 
+// ScoreCommentaryMultipartRequestBody defines body for ScoreCommentary for multipart/form-data ContentType.
+type ScoreCommentaryMultipartRequestBody ScoreCommentaryMultipartBody
+
 // CompleteGameSessionJSONRequestBody defines body for CompleteGameSession for application/json ContentType.
 type CompleteGameSessionJSONRequestBody = GameSessionComplete
 
@@ -11661,6 +12250,9 @@ type SubmitAnswersJSONRequestBody SubmitAnswersJSONBody
 
 // UpdateMeApplicationMergePatchPlusJSONRequestBody defines body for UpdateMe for application/merge-patch+json ContentType.
 type UpdateMeApplicationMergePatchPlusJSONRequestBody = ApplicantPatch
+
+// SaveCoachIntentionJSONRequestBody defines body for SaveCoachIntention for application/json ContentType.
+type SaveCoachIntentionJSONRequestBody = CoachIntention
 
 // GrantOrRevokeConsentJSONRequestBody defines body for GrantOrRevokeConsent for application/json ContentType.
 type GrantOrRevokeConsentJSONRequestBody = ConsentChange
@@ -11700,6 +12292,9 @@ type CreateDeviceSessionJSONRequestBody = DeviceSessionRequest
 
 // CreateShareCardJSONRequestBody defines body for CreateShareCard for application/json ContentType.
 type CreateShareCardJSONRequestBody = ShareCardCreate
+
+// SnapSignMultipartRequestBody defines body for SnapSign for multipart/form-data ContentType.
+type SnapSignMultipartRequestBody SnapSignMultipartBody
 
 // CreateSlotWatchJSONRequestBody defines body for CreateSlotWatch for application/json ContentType.
 type CreateSlotWatchJSONRequestBody = SlotWatchCreate

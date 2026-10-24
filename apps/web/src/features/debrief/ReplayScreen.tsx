@@ -3,6 +3,7 @@
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { CommentaryRecorder } from "@/features/ai/CommentaryRecorder";
 import { getGameSessionReplay } from "@/features/games/api";
 import type { GameSessionReplay } from "@/features/games/api-types";
 import { useGameA11y } from "@/features/games/host/a11y-context";
@@ -188,6 +189,11 @@ function Moment({
       >
         {t("replay.try")}
       </Link>
+      <CommentaryRecorder
+        sid={rec.sid}
+        ordinal={clip.ordinal}
+        enabled={rec.source === "server" && rec.status === "verified"}
+      />
     </section>
   );
 }

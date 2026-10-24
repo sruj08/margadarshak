@@ -46,8 +46,8 @@ func TestContractErrorsAreProblemJSON(t *testing.T) {
 	e := newEnv(t)
 	c := e.deviceClient()
 	assertProblem(t, c.do("GET", "/v1/does-not-exist", nil, nil), http.StatusNotFound, "NOT_FOUND")
-	// API-36 debrief stays a P3 operation (decision D7): still 501 problem+json.
-	assertProblem(t, c.do("GET", "/v1/games/sessions/01a16c33-1923-71fc-b81c-77670c0dd985/debrief", nil, nil), http.StatusNotImplemented, "NOT_IMPLEMENTED")
+	// API-36 is built (P3): an unknown session is a 404 problem+json.
+	assertProblem(t, c.do("GET", "/v1/games/sessions/01a16c33-1923-71fc-b81c-77670c0dd985/debrief", nil, nil), http.StatusNotFound, "NOT_FOUND")
 	assertProblem(t, c.do("POST", "/v1/sessions/device", `{"platform": 7}`, nil), http.StatusUnprocessableEntity, "VALIDATION_FAILED")
 	assertProblem(t, c.do("POST", "/v1/sessions/device", `{not json`, nil), http.StatusBadRequest, "BAD_REQUEST")
 	assertProblem(t, c.do("GET", "/v1/tenants/ZZ", nil, nil), http.StatusNotFound, "")

@@ -2,6 +2,7 @@ package httpapi_test
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"log/slog"
 	"mime/multipart"
@@ -12,19 +13,35 @@ import (
 
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/aitest"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/coach"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/commentary"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/debrief"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/decoder"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/scam"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/signsnap"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/tutor"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/voiceguide"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/speech"
 	"github.com/sruj08/margadarshak/services/api/internal/app"
 )
 
 var quietLog = slog.New(slog.NewTextHandler(io.Discard, nil))
 
-type aiFakes struct{ debrief, tutor, decoder, scam *aitest.Fake }
+type aiFakes struct{ debrief, tutor, decoder, scam, coach, signsnap, voice *aitest.Fake }
 
-// aiOption wires every ADK agent to a scripted model, so the HTTP handlers, the consent gate and
-// the validators run for real without calling Gemini.
+// fakeTranscriber stands in for Gemini audio transcription (commentary).
+type fakeTranscriber struct {
+	segs  []commentary.Segment
+	calls int
+}
+
+func (f *fakeTranscriber) Transcribe(context.Context, []byte, string, string) ([]commentary.Segment, error) {
+	f.calls++
+	return f.segs, nil
+}
+
+// aiOption wires every ADK agent to a scripted model, so the HTTP handlers, the AI gate and the
+// validators run for real without calling Gemini.
 func aiOption(t *testing.T, f *aiFakes) func(*app.Options) {
 	t.Helper()
 	contentDir := app.ContentDir("")
@@ -35,28 +52,71 @@ func aiOption(t *testing.T, f *aiFakes) func(*app.Options) {
 		require.NoError(t, err)
 		ta, err := ai.NewStructuredWithModel(f.tutor, ai.Config{}, "tutor_agent", tutor.Instruction, tutor.Schema())
 		require.NoError(t, err)
-		xa, err := ai.NewStructuredWithModel(f.decoder, ai.Config{}, "screen_decoder_agent", decoder.Instruction, decoder.Schema())
+		dcat, err := decoder.LoadCatalogue(contentDir)
+		require.NoError(t, err)
+		xa, err := ai.NewStructuredWithModel(f.decoder, ai.Config{}, "screen_decoder_agent", decoder.Instruction, decoder.Schema(dcat))
 		require.NoError(t, err)
 		base, err := tutor.New(t.Context(), quietLog, contentDir, ai.Config{})
 		require.NoError(t, err)
+		snap, err := signsnap.Load(contentDir)
+		require.NoError(t, err)
+		sa, err := ai.NewStructuredWithModel(f.signsnap, ai.Config{}, "sign_snap_agent", signsnap.Instruction, snap.Schema())
+		require.NoError(t, err)
+		ch, err := coach.Load(contentDir)
+		require.NoError(t, err)
+		ca, err := ai.NewStructuredWithModel(f.coach, ai.Config{}, "coach_agent", coach.Instruction, coach.Schema())
+		require.NoError(t, err)
+		drills, err := voiceguide.LoadDrills(contentDir)
+		require.NoError(t, err)
+		guide, err := voiceguide.NewWithModels(voiceguide.Config{Rules: map[string]voiceguide.Rule{}, Drills: drills, Log: quietLog}, f.voice, nil)
+		require.NoError(t, err)
 		o.AI = &app.AIAgents{
-			Scam:    scam.New(t.Context(), quietLog, ai.Config{}),
-			Debrief: debrief.NewWithAgent(quietLog, cat, da),
-			Tutor:   tutor.NewWithAgent(base, ta),
-			Decoder: decoder.NewWithAgent(quietLog, xa),
+			Scam:       scam.New(t.Context(), quietLog, ai.Config{}),
+			Debrief:    debrief.NewWithAgent(quietLog, cat, da),
+			Tutor:      tutor.NewWithAgent(base, ta),
+			Decoder:    decoder.NewWithAgent(quietLog, dcat, xa),
+			SignSnap:   snap.WithAgent(quietLog, sa),
+			Coach:      ch.WithAgent(quietLog, ca),
+			Commentary: &fakeTranscriber{segs: []commentary.Segment{{Text: "truck mud raha hai", StartMs: 1000}}},
+			Voice:      guide,
+			Speech:     &speech.Mock{Transcript: "मिगी लाइसेंस बनाना ऐ", Audio: []byte("RIFF")},
 		}
 	}
 }
 
+const coachReply = `{"headline":"A calm week: a Nazar set and your topics.","plan_items":["DR-NAZ-MOCK"],"intention_prompt":"On {{slot:day}} at {{slot:time}} I will play the Nazar set.","tone":"steady"}`
+
 func newAIEnv(t *testing.T) (*p2Env, *aiFakes) {
 	f := &aiFakes{
-		debrief: &aitest.Fake{Replies: []string{`{"how_you_did":"Your score was {{fact:score_pct}}.","points":[{"finding_id":"NAZ_LATE_RESPONSE","lacked":"The truck turn showed {{fact:late_s}} before you tapped.","could":"Look beside the truck earlier."}]}`}},
-		tutor:   &aitest.Fake{Replies: []string{`{"glue_text":"The red octagon asks you to stop, unlike a crossroads sign."}`}},
-		decoder: &aitest.Fake{Replies: []string{`{"catalogue_id":"SAR_STAGE_SCRUTINY","doc_kind":"sarathi_status","confidence":0.9,"remark_raw":"Pending at scrutiny"}`}},
+		debrief:  &aitest.Fake{Replies: []string{`{"how_you_did":"Your score was {{fact:score_pct}}.","points":[{"finding_id":"NAZ_LATE_RESPONSE","lacked":"The truck turn showed {{fact:late_s}} before you tapped.","could":"Look beside the truck earlier."}]}`}},
+		tutor:    &aitest.Fake{Replies: []string{`{"glue_text":"The red octagon asks you to stop, unlike a crossroads sign."}`}},
+		decoder:  &aitest.Fake{Replies: []string{`{"catalogue_id":"STG.UNDER_SCRUTINY","doc_kind":"sarathi_status","confidence":0.9,"remark_raw":"under scrutiny"}`}},
+		coach:    &aitest.Fake{Replies: []string{coachReply}},
+		signsnap: &aitest.Fake{Replies: []string{`{"candidates":[{"sign_id":"SIGN-MAN-001","confidence":0.92}]}`}},
+		voice:    &aitest.Fake{Replies: []string{"CALL:navigate {\"screen_id\":\"SCR_PLAN\"}", "यह रहा प्लान।"}},
 	}
 	e := newP2EnvCfg(t, nil, aiOption(t, f))
 	e.compute.set(func(c *p2Compute) { c.withFindings = true })
 	return e, f
+}
+
+func pngBytes() []byte {
+	return []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89")
+}
+
+// upload posts a multipart form: files is field -> bytes, fields is field -> value.
+func upload(c *client, path string, files map[string][]byte, fields map[string]string) resp {
+	var buf bytes.Buffer
+	mw := multipart.NewWriter(&buf)
+	for k, v := range files {
+		fw, _ := mw.CreateFormFile(k, k+".bin")
+		_, _ = fw.Write(v)
+	}
+	for k, v := range fields {
+		_ = mw.WriteField(k, v)
+	}
+	_ = mw.Close()
+	return c.do("POST", path, buf.Bytes(), map[string]string{"Content-Type": mw.FormDataContentType()})
 }
 
 func TestAPI36_DebriefTemplateWithoutConsentThenAI(t *testing.T) {
@@ -73,6 +133,7 @@ func TestAPI36_DebriefTemplateWithoutConsentThenAI(t *testing.T) {
 	require.Equal(t, "debrief.auto_notes", card["label_key"])
 	require.Contains(t, card["where_you_lacked"].([]any)[0].(map[string]any)["text"], "1.4 s")
 	require.Zero(t, f.debrief.Calls())
+	assertContract(t, "GET", "/v1/games/sessions/{sessionId}/debrief", r)
 
 	// With consent the ADK agent words the card; the validator passes it.
 	c.grant(t, "ai_coach")
@@ -85,6 +146,12 @@ func TestAPI36_DebriefTemplateWithoutConsentThenAI(t *testing.T) {
 	require.Contains(t, card["how_you_did"], "72%")
 	require.Contains(t, card["where_you_lacked"].([]any)[0].(map[string]any)["text"], "1.4 s")
 	require.Equal(t, 1, f.debrief.Calls())
+	assertContract(t, "GET", "/v1/games/sessions/{sessionId}/debrief", r)
+
+	// The card is stored: a reload costs no second model call.
+	r = c.do("GET", "/v1/games/sessions/"+sid+"/debrief", nil, nil)
+	require.Equal(t, "ai", r.json(t)["source"])
+	require.Equal(t, 1, f.debrief.Calls())
 
 	// Revoking the consent turns the model off again.
 	c.revoke(t, "ai_coach")
@@ -96,13 +163,15 @@ func TestAPI36_DebriefTemplateWithoutConsentThenAI(t *testing.T) {
 func TestAPI41_TutorGlueNeedsConsent(t *testing.T) {
 	e, f := newAIEnv(t)
 	c := e.userClient("learner@example.com")
-	body := map[string]any{"question_id": "C-LL1-001", "variant_id": "v1", "chosen_option_id": "b", "locale": "en"}
+	body := map[string]any{"question_id": "C-LL1-001", "variant_id": "v1", "chosen_option_id": "b", "locale": "en", "confidence": 100}
 
 	r := c.do("POST", "/v1/tutor/explain", body, nil)
 	require.Equalf(t, http.StatusOK, r.Status, "%s", r.Body)
 	require.Nil(t, r.json(t)["glue_text"])
 	require.Contains(t, r.json(t)["reviewed_text"], "red octagon")
+	require.Equal(t, "sure_and_wrong", r.json(t)["calibration_note"])
 	require.Zero(t, f.tutor.Calls())
+	assertContract(t, "POST", "/v1/tutor/explain", r)
 
 	c.grant(t, "ai_coach")
 	r = c.do("POST", "/v1/tutor/explain", body, nil)
@@ -116,27 +185,17 @@ func TestAPI41_TutorGlueNeedsConsent(t *testing.T) {
 func TestAPI42_DecodeNeedsConsentAndImage(t *testing.T) {
 	e, f := newAIEnv(t)
 	c := e.userClient("learner@example.com")
-	png := []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89")
-
-	upload := func(data []byte) resp {
-		var buf bytes.Buffer
-		mw := multipart.NewWriter(&buf)
-		fw, err := mw.CreateFormFile("image", "status.png")
-		require.NoError(t, err)
-		_, _ = fw.Write(data)
-		require.NoError(t, mw.Close())
-		return c.do("POST", "/v1/decode/screenshot", buf.Bytes(), map[string]string{"Content-Type": mw.FormDataContentType()})
-	}
-	assertProblem(t, upload(png), http.StatusForbidden, "CONSENT_REQUIRED")
+	assertProblem(t, upload(c, "/v1/decode/screenshot", map[string][]byte{"image": pngBytes()}, nil), http.StatusForbidden, "CONSENT_REQUIRED")
 	require.Zero(t, f.decoder.Calls())
 
 	c.grant(t, "ai_coach")
-	r := upload(png)
+	r := upload(c, "/v1/decode/screenshot", map[string][]byte{"image": pngBytes()}, nil)
 	require.Equalf(t, http.StatusOK, r.Status, "%s", r.Body)
 	out := r.json(t)
-	require.Equal(t, "SAR_STAGE_SCRUTINY", out["catalogue_id"])
+	require.Equal(t, "STG.UNDER_SCRUTINY", out["catalogue_id"])
 	require.Equal(t, true, out["confirm_required"])
-	assertProblem(t, upload([]byte("plain text, not an image")), http.StatusUnprocessableEntity, "VALIDATION_FAILED")
+	assertContract(t, "POST", "/v1/decode/screenshot", r)
+	assertProblem(t, upload(c, "/v1/decode/screenshot", map[string][]byte{"image": []byte("plain text, not an image")}, nil), http.StatusUnprocessableEntity, "VALIDATION_FAILED")
 }
 
 func TestAPI43_ScamCheckRulesDecide(t *testing.T) {

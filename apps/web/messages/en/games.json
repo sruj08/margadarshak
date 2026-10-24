@@ -115,7 +115,15 @@
     "could": "What you could have done",
     "next": "Your next drill",
     "cta": "Start the next drill",
-    "improved": "Something from your last session didn't come up this time."
+    "improved": "Something from your last session didn't come up this time.",
+    "why": "Why these numbers?",
+    "whyLine": "Every number on this card was measured in your session by the app's scoring code. The coach only words it.",
+    "whyMetres": "Distance = seconds late × speed ÷ 3.6 (km/h to metres per second).",
+    "whyNone": "This card has no measured numbers.",
+    "helpful": "Was this helpful?",
+    "helpfulYes": "Yes",
+    "helpfulNo": "No",
+    "thanks": "Thanks for telling us."
   },
   "share": {
     "title": "Share your Nazar Score",

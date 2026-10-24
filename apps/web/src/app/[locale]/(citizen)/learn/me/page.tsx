@@ -2,6 +2,7 @@ import "@/features/learn/learn.css";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { MeTab } from "@/features/achievements/me-tab";
+import { CoachPlanCard } from "@/features/ai/CoachPlanCard";
 import { buildBank } from "@/features/learn/content/bank-build";
 import { moduleIndex } from "@/features/learn/content/curriculum";
 import { routeExists } from "@/features/learn/content/routes";
@@ -22,6 +23,7 @@ export default async function MePage({ params }: { params: Promise<{ locale: str
     <div className="md-page md-stack">
       <LearnNav active="me" />
       <h1 className="md-h1">{t("title")}</h1>
+      <CoachPlanCard />
       <MeTab
         conceptCounts={buildBank(locale).conceptCounts}
         nodeNames={nodeNames}

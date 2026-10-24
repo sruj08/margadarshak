@@ -1,0 +1,18 @@
+{
+  "agent": "coach",
+  "cases": 30,
+  "fallback_pct": 0,
+  "invented_numbers": 0,
+  "metrics": {
+    "drill_order_pct": 100,
+    "nagging_phrases_shown": 0,
+    "plan_in_code_pct": 100,
+    "route_correct_pct": 100,
+    "schema_valid_pct": 100
+  },
+  "mode": "offline",
+  "passed": true,
+  "rule_id_precision_pct": 0,
+  "schema_valid_pct": 100,
+  "spend_inr": 0
+}

@@ -906,6 +906,15 @@ export interface paths {
          *     Max session 10 minutes (Gemini Live connection lifetime); 10 min/user/month on the
          *     free plan. The agent can navigate and fill non-sensitive fields inside Margdarshak
          *     only; it never submits, pays or books on Sarathi.
+         *
+         *     Authentication is the single-use ticket in the hello frame (browsers cannot set headers on a
+         *     WebSocket, and cookies are not relied on), so the upgrade itself is anonymous; the tenant
+         *     comes from `state`. Without a valid ticket in the first frame (5 s) the server sends
+         *     `error` (`reason_key: voice.ticket_invalid`) and closes. With `lang=doi` the client sends
+         *     push-to-talk audio and a `stop` frame; the server answers with the Saaras transcript
+         *     (`transcript_in`, editable), and the confirmed `text` frame runs the turn; the reply is
+         *     Hindi speech with a reviewed Dogri caption when one exists (VOICE.md §3.3). `text` frames
+         *     work in every language and are the fallback when live audio is unavailable.
          */
         get: operations["openVoiceSocket"];
         put?: never;
@@ -925,7 +934,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Short-lived (60 s, single-use) WebSocket ticket for API-40 (cookies are not relied on for WS auth) */
+        /**
+         * Short-lived (60 s, single-use) WebSocket ticket for API-40 (cookies are not relied on for WS auth)
+         * @description The AI gate runs here: the tenant's `voice_guide` flag and the account holder's `ai_voice`
+         *     consent (a parent's account covers a family member; there is no age gate, D-13 revised).
+         *     403 `CONSENT_REQUIRED` or `FEATURE_DISABLED` otherwise; 429 `VOICE_CAP_REACHED` at the
+         *     monthly voice minutes (`MD_VOICE_MONTHLY_CAP_MIN`), when the client switches to text.
+         *     `live` says whether live audio is available now (false = text and Dogri paths only).
+         */
         post: operations["createVoiceTicket"];
         delete?: never;
         options?: never;
@@ -964,6 +980,169 @@ export interface paths {
          * @description The client blurs name regions and Aadhaar-pattern boxes on device before upload. Image is processed in memory and not stored.
          */
         post: operations["decodeScreenshot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/games/sessions/{sessionId}/commentary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Nazar commentary mode, record then score (D-12; DEBRIEF_SPEC §10)
+         * @description The learner's spoken commentary over one clip of a completed Nazar session. The audio is
+         *     transcribed in memory after the clip (never live), the transcript is PII- and
+         *     injection-screened and discarded, and a deterministic lexicon matcher scores hazard
+         *     mentions against the curator windows (a mention in [a - 1 s, b] is a hit). The answer never
+         *     carries the transcript. Gate: tenant `ai_coach` flag and the holder's `ai_voice` consent
+         *     (403 otherwise); 503 `ADAPTER_UNAVAILABLE` when transcription is off (EC-29: the Kerala score
+         *     is unaffected).
+         */
+        post: operations["scoreCommentary"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/signs/snap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Road Sign Snap (F-27, M-07) - photo to a catalogue sign; meaning from the catalogue only
+         * @description At confidence 0.75 or more one card (`match`); between 0.2 and 0.75 up to three `choices`;
+         *     otherwise `not_in_catalogue`. `moving: true` (the client's speed estimate) is refused with
+         *     409 `RIDING_LOCKED`. Gate: tenant `ai_coach` flag and the holder's `ai_coach` consent. The
+         *     photo is processed in memory and not stored. 503 when the vision model is off.
+         */
+        post: operations["snapSign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/coach-plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * CoachAgent weekly plan (F-26, M-03) - plan computed in code, AI words it when allowed
+         * @description The drills (due topics, weak topics, a Nazar mock) and the weekly session goal are computed
+         *     from the learner's review queue and readiness; the CoachAgent writes the headline and an
+         *     implementation-intention prompt with `{{slot:day}}` and `{{slot:time}}`. Without the AI gate
+         *     (tenant `ai_coach` flag, holder's `ai_coach` consent) or when the draft fails validation the
+         *     template plan is returned (`source: template`). A minor family member needs the parent's
+         *     recorded consent (403 `PARENT_CONSENT_REQUIRED`).
+         */
+        get: operations["getCoachPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/coach-plan/intentions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Store the learner's implementation intention ("On <day> at <time> I will <drill>") */
+        post: operations["saveCoachIntention"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ai/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Thumbs up or down on an AI answer, with a closed reason (feeds the human review loop) */
+        post: operations["sendAIFeedback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ai/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * LLM observability (MD-307) - calls, failures, fallbacks by reason, latency, tokens, estimated cost, breaker state per agent
+         * @description Process-local counters since the last restart; never prompt or answer text.
+         */
+        get: operations["getAIMetrics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ai/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Human review loop (MD-327) - AI-worded debriefs of this tenant the calling rater has not rated (no PII by construction) */
+        get: operations["sampleAIReviews"];
+        put?: never;
+        /** A rater scores one AI answer on the rubric (0-2 per axis); the rater comes from the session */
+        post: operations["rateAIReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ai/reviews/agreement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Inter-rater agreement (quadratic-weighted kappa per axis) over items two raters scored; items whose scores differ by 2 on any axis are listed to become eval cases */
+        get: operations["getAIReviewAgreement"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1839,6 +2018,11 @@ export interface paths {
          *     Field study (RW-4 `nightly_stats`):
          *     * `study.export_csv` args `{frozen_at?}` -> `{tenant, files: {"sessions.csv": <csv text>, "sessions_alt.csv": ..., "raters.csv": <csv text or null>}, sha256: {<file>: <hex>}, summary, omitted: [<file names with no rows, e.g. raters.csv before any rater agreement>]}`; `GET /internal/study/exports/{file}` serves the same files individually.
          *     * `stats.field_study_publish` args `{as_of, numbers, stdout, script_sha256, prereg_hash}` -> `{as_of, published}`: stores what `field-kit/nazar_stats.mjs` printed, unmodified, for API-71.
+         *
+         *     Session debrief fan-out (RW-3 `debrief_fanout`, MD-311):
+         *     * `debrief.backfill` args `{since?, limit?}` -> `{pending, built, ai}`: builds and stores the debrief card of checked sessions
+         *       (last 7 days by default) whose holder allows AI and that have no stored card; a stored card is never rebuilt, so retries are safe.
+         *       A provider 429 or timeout leaves the card unstored and answers 503 `ADAPTER_UNAVAILABLE` so the task retries with backoff.
          *
          *     Auth: service bearer (one of the API's `INTERNAL_BEARER_TOKENS`; the workflow service sends it as `INTERNAL_BEARER_TOKEN`) plus the `Margdarshak-Signature` HMAC.
          *     The step result is returned both under `result` and flattened at the top level (the Workflows client reads the top level).
@@ -3971,14 +4155,129 @@ export interface components {
             rule_id?: string;
             reason_key?: string;
         };
+        /** @description API-74. Never carries the transcript. */
+        CommentaryResult: {
+            /** Format: uuid */
+            session_id: string;
+            clip_ordinal: number;
+            /** @description hazards named in [a - 1 s, b] / hazards; shown separately from the Kerala score */
+            commentary_pct: number;
+            hazards: {
+                hazard_type: components["schemas"]["HazardType"];
+                hit: boolean;
+            }[];
+            false_mentions: number;
+            findings: {
+                /** @enum {string} */
+                finding_id: "NAZ_COMM_MISSED_MENTION";
+                severity: number;
+                facts: {
+                    [key: string]: unknown;
+                };
+            }[];
+        };
+        /** @description API-75. Name and meaning come from content/catalogue/signs.json, never from the model. */
+        SignSnapResult: {
+            /** @enum {string} */
+            status: "match" | "choose" | "not_in_catalogue";
+            confidence: number;
+            sign?: components["schemas"]["SnapSign"];
+            choices: components["schemas"]["SnapSign"][];
+        };
+        SnapSign: {
+            sign_id: string;
+            family: string;
+            name: string;
+            meaning: string;
+            /** @description false until the two-person check against IRC:67 */
+            verified: boolean;
+        };
+        /** @description API-76. Numbers (the weekly goal) are code values; the wording has no digits. */
+        CoachPlan: {
+            /** @enum {string} */
+            source: "template" | "ai";
+            /** @enum {string} */
+            label_key: "coach.auto_plan" | "coach.coach_plan";
+            /** @enum {string} */
+            locale: "en" | "hi" | "hinglish";
+            headline: string;
+            week_goal_sessions: number;
+            items: {
+                drill_id: string;
+                why?: string;
+                deep_link?: string;
+            }[];
+            /** @description Contains {{slot:day}} and {{slot:time}} for the UI to fill */
+            intention_prompt: string;
+            /** @enum {string} */
+            tone: "steady" | "welcome_back" | "nearly_there";
+        };
+        CoachIntention: {
+            /** @enum {string} */
+            day: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+            time: string;
+            drill_id: string;
+            /** Format: date */
+            readonly week_of?: string;
+        };
+        AIFeedback: {
+            /** @enum {string} */
+            agent: "debrief" | "tutor" | "coach" | "voice" | "decoder" | "signsnap" | "scam";
+            item_id: string;
+            helpful: boolean;
+            /** @enum {string} */
+            reason?: "wrong" | "unclear" | "tone" | "other";
+        };
+        AIAgentStats: {
+            agent: string;
+            model: string;
+            calls: number;
+            failures: number;
+            fallbacks: {
+                [key: string]: number;
+            };
+            total_ms: number;
+            max_ms: number;
+            in_tokens: number;
+            out_tokens: number;
+            /** @description Estimate from list prices; not a bill */
+            est_cost_micro_usd: number;
+            breaker_open: boolean;
+        };
+        AIReviewCreate: {
+            /** @enum {string} */
+            agent: "debrief" | "tutor" | "coach" | "voice" | "decoder" | "signsnap";
+            item_id: string;
+            grounding: number;
+            tone: number;
+            usefulness: number;
+        };
+        AIReviewAgreement: {
+            agent: string;
+            items_double_rated: number;
+            /** @description Quadratic-weighted Cohen's kappa per axis (null below 2 double-rated items) */
+            kappa: {
+                grounding?: number | null;
+                tone?: number | null;
+                usefulness?: number | null;
+            };
+            /** @description Item IDs whose two scores differ by 2 on any axis */
+            disagreements: string[];
+        };
         TutorExplainRequest: {
             question_id: string;
             variant_id: string;
             chosen_option_id: string;
             /** @enum {string} */
             locale?: "en" | "hi" | "hinglish";
+            /**
+             * @description The learner's confidence tap before answering (calibration note)
+             * @enum {integer}
+             */
+            confidence?: 50 | 75 | 100;
         };
         TutorExplanation: {
+            /** @description The approved explanation */
             explanation_id: string;
             reviewed_text: string;
             /** @description AI glue linking the user's choice to the reviewed text; no digits */
@@ -3986,6 +4285,11 @@ export interface components {
             rule_ids: string[];
             /** @enum {string} */
             source: "reviewed_bank" | "template";
+            /**
+             * @description Computed in code from the confidence tap
+             * @enum {string}
+             */
+            calibration_note?: "none" | "sure_and_wrong" | "unsure_and_right";
             provenance?: components["schemas"]["Provenance"];
         };
         ScreenDecode: {
@@ -3993,7 +4297,7 @@ export interface components {
             catalogue_id: string;
             confidence: number;
             /** @enum {string} */
-            doc_kind?: "sarathi_status" | "result_slip" | "ll" | "other";
+            doc_kind?: "sarathi_status" | "result_slip" | "ll" | "error_page" | "payment" | "other";
             stage?: string;
             classes?: {
                 class_code?: components["schemas"]["VehicleClassCode"];
@@ -8266,6 +8570,7 @@ export interface operations {
             query?: {
                 case_id?: string;
                 lang?: "hi" | "en" | "doi";
+                state?: string;
             };
             header?: never;
             path?: never;
@@ -8309,10 +8614,12 @@ export interface operations {
                         ticket: string;
                         /** Format: date-time */
                         expires_at: string;
+                        live: boolean;
                     };
                 };
             };
             403: components["responses"]["Forbidden"];
+            429: components["responses"]["TooManyRequests"];
         };
     };
     explainAnswer: {
@@ -8363,6 +8670,8 @@ export interface operations {
                     /** @description <= 1024 px longest side, <= 1 MB */
                     image: string;
                     case_id?: string;
+                    /** @description Optional on-device OCR text of the same image (after the client blurred personal data). It narrows the catalogue candidates and checks the copied remark; it is never sent to a model. */
+                    ocr_text?: string;
                 };
             };
         };
@@ -8408,6 +8717,329 @@ export interface operations {
                 };
                 content?: never;
             };
+        };
+    };
+    scoreCommentary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["SessionId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @description <= 2 MB, one clip */
+                    audio: string;
+                    clip_ordinal: number;
+                    /** @enum {string} */
+                    lang?: "hi" | "en" | "doi";
+                };
+            };
+        };
+        responses: {
+            /** @description Commentary score */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "session_id": "0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f",
+                     *       "clip_ordinal": 3,
+                     *       "commentary_pct": 50,
+                     *       "hazards": [
+                     *         {
+                     *           "hazard_type": "truck_left_turn",
+                     *           "hit": true
+                     *         },
+                     *         {
+                     *           "hazard_type": "bus_stop_pedestrian",
+                     *           "hit": false
+                     *         }
+                     *       ],
+                     *       "false_mentions": 0,
+                     *       "findings": [
+                     *         {
+                     *           "finding_id": "NAZ_COMM_MISSED_MENTION",
+                     *           "severity": 0.5,
+                     *           "facts": {
+                     *             "hazard_type": "bus_stop_pedestrian",
+                     *             "count": 1
+                     *           }
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CommentaryResult"];
+                };
+            };
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["Unprocessable"];
+        };
+    };
+    snapSign: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: components["parameters"]["AcceptLanguage"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @description <= 1024 px longest side, <= 1 MB */
+                    image: string;
+                    moving?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Sign result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "status": "match",
+                     *       "confidence": 0.92,
+                     *       "sign": {
+                     *         "sign_id": "SIGN-MAN-001",
+                     *         "family": "MANDATORY",
+                     *         "name": "Stop",
+                     *         "meaning": "Stop completely at the stop line and go only when the way is clear.",
+                     *         "verified": false
+                     *       },
+                     *       "choices": []
+                     *     }
+                     */
+                    "application/json": components["schemas"]["SignSnapResult"];
+                };
+            };
+            403: components["responses"]["Forbidden"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["Unprocessable"];
+        };
+    };
+    getCoachPlan: {
+        parameters: {
+            query?: {
+                /** @description Act for this family member (family mode). A minor needs the account holder's recorded parental consent (403 PARENT_CONSENT_REQUIRED); squads and share cards also need the matching extra. */
+                family_member_id?: components["parameters"]["FamilyMemberQuery"];
+            };
+            header?: {
+                "Accept-Language"?: components["parameters"]["AcceptLanguage"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Weekly plan */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CoachPlan"];
+                };
+            };
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    saveCoachIntention: {
+        parameters: {
+            query?: {
+                /** @description Act for this family member (family mode). A minor needs the account holder's recorded parental consent (403 PARENT_CONSENT_REQUIRED); squads and share cards also need the matching extra. */
+                family_member_id?: components["parameters"]["FamilyMemberQuery"];
+            };
+            header?: {
+                /** @description Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere. */
+                "Idempotency-Key"?: components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                /**
+                 * @example {
+                 *       "day": "sat",
+                 *       "time": "18:30",
+                 *       "drill_id": "DR-NAZ-MOCK"
+                 *     }
+                 */
+                "application/json": components["schemas"]["CoachIntention"];
+            };
+        };
+        responses: {
+            /** @description Stored */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CoachIntention"];
+                };
+            };
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Unprocessable"];
+        };
+    };
+    sendAIFeedback: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere. */
+                "Idempotency-Key"?: components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                /**
+                 * @example {
+                 *       "agent": "debrief",
+                 *       "item_id": "0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f",
+                 *       "helpful": false,
+                 *       "reason": "unclear"
+                 *     }
+                 */
+                "application/json": components["schemas"]["AIFeedback"];
+            };
+        };
+        responses: {
+            /** @description Stored */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            422: components["responses"]["Unprocessable"];
+        };
+    };
+    getAIMetrics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Per-agent counters */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        since_restart: true;
+                        agents: components["schemas"]["AIAgentStats"][];
+                    };
+                };
+            };
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    sampleAIReviews: {
+        parameters: {
+            query?: {
+                n?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sample */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            item_id: string;
+                            card: components["schemas"]["Debrief"];
+                        }[];
+                    };
+                };
+            };
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    rateAIReview: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Client-generated key (UUIDv7 recommended). Required for API-04, API-15, API-35, API-45, API-51 and internal endpoints; optional elsewhere. */
+                "Idempotency-Key"?: components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                /**
+                 * @example {
+                 *       "agent": "debrief",
+                 *       "item_id": "0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f:hi",
+                 *       "grounding": 2,
+                 *       "tone": 2,
+                 *       "usefulness": 1
+                 *     }
+                 */
+                "application/json": components["schemas"]["AIReviewCreate"];
+            };
+        };
+        responses: {
+            /** @description Stored */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            403: components["responses"]["Forbidden"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["Unprocessable"];
+        };
+    };
+    getAIReviewAgreement: {
+        parameters: {
+            query?: {
+                agent?: "debrief" | "tutor" | "coach" | "voice" | "decoder" | "signsnap";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Agreement */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIReviewAgreement"];
+                };
+            };
+            403: components["responses"]["Forbidden"];
         };
     };
     checkScam: {
@@ -10444,7 +11076,7 @@ export interface operations {
                 "Idempotency-Key"?: components["parameters"]["IdempotencyKey"];
             };
             path: {
-                step: "clock.plan_pages" | "clock.due_page" | "clock.fire_batch" | "retention.sweep" | "stats.nightly" | "rulepack.reevaluate" | "user.export_collect" | "user.delete_purge" | "sessions.replay_pending" | "clip.get" | "clip.open_review" | "clip.propose_windows" | "clip.agreement" | "clip.request_adjudication" | "clip.blur_audit_check" | "clip.delete_raw" | "clip.publish_manifest" | "clip.recompute_difficulty" | "clip.register_generated" | "study.export_csv" | "stats.field_study_publish";
+                step: "clock.plan_pages" | "clock.due_page" | "clock.fire_batch" | "retention.sweep" | "stats.nightly" | "rulepack.reevaluate" | "user.export_collect" | "user.delete_purge" | "sessions.replay_pending" | "clip.get" | "clip.open_review" | "clip.propose_windows" | "clip.agreement" | "clip.request_adjudication" | "clip.blur_audit_check" | "clip.delete_raw" | "clip.publish_manifest" | "clip.recompute_difficulty" | "clip.register_generated" | "study.export_csv" | "stats.field_study_publish" | "debrief.backfill";
             };
             cookie?: never;
         };

@@ -24,10 +24,15 @@ import (
 
 	"github.com/sruj08/margadarshak/services/api/internal/accounts"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/coach"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/commentary"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/debrief"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/decoder"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/scam"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/signsnap"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/tutor"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/voiceguide"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/speech"
 	"github.com/sruj08/margadarshak/services/api/internal/analytics"
 	"github.com/sruj08/margadarshak/services/api/internal/cases"
 	"github.com/sruj08/margadarshak/services/api/internal/clips"
@@ -119,14 +124,24 @@ type Deps struct {
 	Debrief *debrief.Generator
 	Tutor   *tutor.Tutor
 	Decoder *decoder.Decoder
+	// P3 agents: commentary transcription (API-74), Sign Snap (API-75), the weekly coach plan
+	// (API-76) and the voice guide (API-40) with its Dogri speech port. Nil answers 503.
+	Commentary commentary.Transcriber
+	SignSnap   *signsnap.Snapper
+	Coach      *coach.Coach
+	Voice      *voiceguide.Guide
+	Speech     speech.Port
+	// VoiceCapMin is the monthly voice minutes per account (MD_VOICE_MONTHLY_CAP_MIN; 0 = 10).
+	VoiceCapMin int
 }
 
 // Server implements gen.ServerInterface. Operations it does not override come from
 // gen.Unimplemented (501, converted to problem+json).
 type Server struct {
 	gen.Unimplemented
-	deps Deps
-	root http.Handler
+	deps  Deps
+	root  http.Handler
+	voice *voiceState
 }
 
 // New builds the HTTP handler.
@@ -134,7 +149,7 @@ func New(d Deps) http.Handler {
 	if d.Limiter == nil {
 		d.Limiter = ratelimit.NewMemory()
 	}
-	s := &Server{deps: d}
+	s := &Server{deps: d, voice: newVoiceState()}
 	r := chi.NewRouter()
 	r.Use(withRequestID, recoverer(d.Log),
 		func(next http.Handler) http.Handler { return otelhttp.NewHandler(next, "api") },

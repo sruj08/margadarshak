@@ -365,6 +365,183 @@
         ],
         "type": "string"
       },
+      "AIAgentStats": {
+        "properties": {
+          "agent": {
+            "type": "string"
+          },
+          "breaker_open": {
+            "type": "boolean"
+          },
+          "calls": {
+            "type": "integer"
+          },
+          "est_cost_micro_usd": {
+            "description": "Estimate from list prices; not a bill",
+            "type": "integer"
+          },
+          "failures": {
+            "type": "integer"
+          },
+          "fallbacks": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object"
+          },
+          "in_tokens": {
+            "type": "integer"
+          },
+          "max_ms": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "out_tokens": {
+            "type": "integer"
+          },
+          "total_ms": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "agent",
+          "model",
+          "calls",
+          "failures",
+          "fallbacks",
+          "total_ms",
+          "max_ms",
+          "in_tokens",
+          "out_tokens",
+          "est_cost_micro_usd",
+          "breaker_open"
+        ],
+        "type": "object"
+      },
+      "AIFeedback": {
+        "properties": {
+          "agent": {
+            "enum": [
+              "debrief",
+              "tutor",
+              "coach",
+              "voice",
+              "decoder",
+              "signsnap",
+              "scam"
+            ],
+            "type": "string"
+          },
+          "helpful": {
+            "type": "boolean"
+          },
+          "item_id": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "reason": {
+            "enum": [
+              "wrong",
+              "unclear",
+              "tone",
+              "other"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent",
+          "item_id",
+          "helpful"
+        ],
+        "type": "object"
+      },
+      "AIReviewAgreement": {
+        "properties": {
+          "agent": {
+            "type": "string"
+          },
+          "disagreements": {
+            "description": "Item IDs whose two scores differ by 2 on any axis",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "items_double_rated": {
+            "type": "integer"
+          },
+          "kappa": {
+            "description": "Quadratic-weighted Cohen's kappa per axis (null below 2 double-rated items)",
+            "properties": {
+              "grounding": {
+                "nullable": true,
+                "type": "number"
+              },
+              "tone": {
+                "nullable": true,
+                "type": "number"
+              },
+              "usefulness": {
+                "nullable": true,
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "agent",
+          "items_double_rated",
+          "kappa",
+          "disagreements"
+        ],
+        "type": "object"
+      },
+      "AIReviewCreate": {
+        "properties": {
+          "agent": {
+            "enum": [
+              "debrief",
+              "tutor",
+              "coach",
+              "voice",
+              "decoder",
+              "signsnap"
+            ],
+            "type": "string"
+          },
+          "grounding": {
+            "maximum": 2,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "item_id": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "tone": {
+            "maximum": 2,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "usefulness": {
+            "maximum": 2,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "agent",
+          "item_id",
+          "grounding",
+          "tone",
+          "usefulness"
+        ],
+        "type": "object"
+      },
       "AadhaarOfflineVerdict": {
         "properties": {
           "address_state_matches": {
@@ -3457,6 +3634,202 @@
         "required": [
           "sweep_id",
           "as_of"
+        ],
+        "type": "object"
+      },
+      "CoachIntention": {
+        "properties": {
+          "day": {
+            "enum": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri",
+              "sat",
+              "sun"
+            ],
+            "type": "string"
+          },
+          "drill_id": {
+            "pattern": "^DR-[A-Z0-9-]{2,40}$",
+            "type": "string"
+          },
+          "time": {
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "type": "string"
+          },
+          "week_of": {
+            "format": "date",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "time",
+          "drill_id"
+        ],
+        "type": "object"
+      },
+      "CoachPlan": {
+        "description": "API-76. Numbers (the weekly goal) are code values; the wording has no digits.",
+        "properties": {
+          "headline": {
+            "maxLength": 90,
+            "type": "string"
+          },
+          "intention_prompt": {
+            "description": "Contains {{slot:day}} and {{slot:time}} for the UI to fill",
+            "maxLength": 120,
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "properties": {
+                "deep_link": {
+                  "type": "string"
+                },
+                "drill_id": {
+                  "type": "string"
+                },
+                "why": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "drill_id"
+              ],
+              "type": "object"
+            },
+            "maxItems": 6,
+            "type": "array"
+          },
+          "label_key": {
+            "enum": [
+              "coach.auto_plan",
+              "coach.coach_plan"
+            ],
+            "type": "string"
+          },
+          "locale": {
+            "enum": [
+              "en",
+              "hi",
+              "hinglish"
+            ],
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "template",
+              "ai"
+            ],
+            "type": "string"
+          },
+          "tone": {
+            "enum": [
+              "steady",
+              "welcome_back",
+              "nearly_there"
+            ],
+            "type": "string"
+          },
+          "week_goal_sessions": {
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "source",
+          "label_key",
+          "locale",
+          "headline",
+          "week_goal_sessions",
+          "items",
+          "intention_prompt",
+          "tone"
+        ],
+        "type": "object"
+      },
+      "CommentaryResult": {
+        "description": "API-74. Never carries the transcript.",
+        "properties": {
+          "clip_ordinal": {
+            "maximum": 40,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "commentary_pct": {
+            "description": "hazards named in [a - 1 s, b] / hazards; shown separately from the Kerala score",
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          "false_mentions": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "findings": {
+            "items": {
+              "properties": {
+                "facts": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "finding_id": {
+                  "enum": [
+                    "NAZ_COMM_MISSED_MENTION"
+                  ],
+                  "type": "string"
+                },
+                "severity": {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "finding_id",
+                "severity",
+                "facts"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "hazards": {
+            "items": {
+              "properties": {
+                "hazard_type": {
+                  "$ref": "#/components/schemas/HazardType"
+                },
+                "hit": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "hazard_type",
+                "hit"
+              ],
+              "type": "object"
+            },
+            "maxItems": 2,
+            "type": "array"
+          },
+          "session_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "clip_ordinal",
+          "commentary_pct",
+          "hazards",
+          "false_mentions",
+          "findings"
         ],
         "type": "object"
       },
@@ -8885,6 +9258,8 @@
               "sarathi_status",
               "result_slip",
               "ll",
+              "error_page",
+              "payment",
               "other"
             ],
             "type": "string"
@@ -9537,6 +9912,40 @@
         ],
         "type": "object"
       },
+      "SignSnapResult": {
+        "description": "API-75. Name and meaning come from content/catalogue/signs.json, never from the model.",
+        "properties": {
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/SnapSign"
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "confidence": {
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "sign": {
+            "$ref": "#/components/schemas/SnapSign"
+          },
+          "status": {
+            "enum": [
+              "match",
+              "choose",
+              "not_in_catalogue"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "confidence",
+          "choices"
+        ],
+        "type": "object"
+      },
       "Slot": {
         "description": "E-10",
         "properties": {
@@ -9667,6 +10076,35 @@
           "office_ids",
           "kind",
           "channels"
+        ],
+        "type": "object"
+      },
+      "SnapSign": {
+        "properties": {
+          "family": {
+            "type": "string"
+          },
+          "meaning": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sign_id": {
+            "pattern": "^SIGN-[A-Z]{3}-\\d{3}$",
+            "type": "string"
+          },
+          "verified": {
+            "description": "false until the two-person check against IRC:67",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sign_id",
+          "family",
+          "name",
+          "meaning",
+          "verified"
         ],
         "type": "object"
       },
@@ -10333,6 +10771,15 @@
           "chosen_option_id": {
             "type": "string"
           },
+          "confidence": {
+            "description": "The learner's confidence tap before answering (calibration note)",
+            "enum": [
+              50,
+              75,
+              100
+            ],
+            "type": "integer"
+          },
           "locale": {
             "enum": [
               "en",
@@ -10357,7 +10804,18 @@
       },
       "TutorExplanation": {
         "properties": {
+          "calibration_note": {
+            "description": "Computed in code from the confidence tap",
+            "enum": [
+              "none",
+              "sure_and_wrong",
+              "unsure_and_right"
+            ],
+            "type": "string"
+          },
           "explanation_id": {
+            "description": "The approved explanation",
+            "or UNKNOWN when none is approved yet (no model call)": null,
             "type": "string"
           },
           "glue_text": {
@@ -11019,7 +11477,7 @@
     },
     "/internal/job-steps/{step}": {
       "post": {
-        "description": "Workflows tasks never hold business logic and never query Postgres directly. Each durable\ntask calls the steps it needs here (case_clock_sweep: clock.plan_pages then clock_batch -\u003e\nclock.fire_batch); steps are idempotent by their inputs so a Workflows retry is safe.\n\n* `clock.plan_pages` args `{sweep_id, tenants, as_of, after, limit}` -\u003e `{as_of, events: [{case_id, type, due_on}], next_cursor}`.\n  `as_of` is the server's IST date (a caller date later than the server date is ignored, EC-15).\n* `clock.fire_batch` args `{sweep_id, as_of, page, event_keys[]}` -\u003e `{fired, skipped_opt_out, failed, already_fired}`\n  (plus `deferred_quiet_hours`, `deferred_daily_cap`, `skipped_cancelled`, `not_due`), idempotent per event key `caseId:type:dueOn`.\n  A batch with a retryable delivery failure answers 503 after committing the rest, so the task retries only what was not delivered.\n\nClip pipeline (clip-pipeline `CLIP_INGEST_STEPS` / `CLIP_FINALIZE_STEPS`; idempotency key `clipId:step:version[:r\u003cround\u003e]`):\n* `clip.get` args `{clip_id, version}` -\u003e `{clip}` (clip.json, server-only fields included; never sent to clients).\n* `clip.propose_windows` args `{clip_id, version}` -\u003e `{proposals: [], skipped: true}`. A stub in P2 (D8): no unaudited frame goes to a model.\n* `clip.open_review` args `{clip_id, version}` -\u003e `{status}`: moves the clip to `proposed` and posts the signed `md/clip-ready` envelope to n8n W08.\n* `clip.agreement` args `{clip_id, version, round}` -\u003e `{accepted, needs_third_rater, reasons, final_hazards}` from the two stored ratings (compute service `/clip/agreement`); accepted moves the clip to `rated`.\n* `clip.request_adjudication` args `{clip_id, version, round}` -\u003e `{status}`: moves the clip to `adjudication` and notifies the curators; the run ends.\n* `clip.blur_audit_check` args `{clip_id, version}` -\u003e `{passed, issues}` against the stored audit and the published rendition's sha256.\n* `clip.delete_raw` args `{clip_id, version}` -\u003e `{object_keys, deleted_at, on_time, deadline}` (RawDeletionRecord, audit-logged; MD-218).\n* `clip.publish_manifest` args `{clip_id, version}` -\u003e `{status, bank_digest, client_digest}`: publishes the clip and the manifests.\n* `clip.recompute_difficulty` args `{clip_id, version}` -\u003e `{difficulty: {curator, empirical, n_takers}}`.\n* `clip.register_generated` (clip_generate, ADR-0013) args `{scene_id, scene_revision, batch_id, raw_key, raw_sha256, raw_bytes, duration_ms, facts, generation, flash, ...}` -\u003e `{clip_id, version, status, replayed}`:\n  records the generated video on the ai_generated clip of that scene revision and batch (the one generateClip created, or a new one); idempotent per `sceneId:revision:batchId`.\n  For ai_generated clips `clip.blur_audit_check` checks the synthetic review instead, and `clip.delete_raw` is a logged no-op (no raw footage).\n\nField study (RW-4 `nightly_stats`):\n* `study.export_csv` args `{frozen_at?}` -\u003e `{tenant, files: {\"sessions.csv\": \u003ccsv text\u003e, \"sessions_alt.csv\": ..., \"raters.csv\": \u003ccsv text or null\u003e}, sha256: {\u003cfile\u003e: \u003chex\u003e}, summary, omitted: [\u003cfile names with no rows, e.g. raters.csv before any rater agreement\u003e]}`; `GET /internal/study/exports/{file}` serves the same files individually.\n* `stats.field_study_publish` args `{as_of, numbers, stdout, script_sha256, prereg_hash}` -\u003e `{as_of, published}`: stores what `field-kit/nazar_stats.mjs` printed, unmodified, for API-71.\n\nAuth: service bearer (one of the API's `INTERNAL_BEARER_TOKENS`; the workflow service sends it as `INTERNAL_BEARER_TOKEN`) plus the `Margdarshak-Signature` HMAC.\nThe step result is returned both under `result` and flattened at the top level (the Workflows client reads the top level).\n",
+        "description": "Workflows tasks never hold business logic and never query Postgres directly. Each durable\ntask calls the steps it needs here (case_clock_sweep: clock.plan_pages then clock_batch -\u003e\nclock.fire_batch); steps are idempotent by their inputs so a Workflows retry is safe.\n\n* `clock.plan_pages` args `{sweep_id, tenants, as_of, after, limit}` -\u003e `{as_of, events: [{case_id, type, due_on}], next_cursor}`.\n  `as_of` is the server's IST date (a caller date later than the server date is ignored, EC-15).\n* `clock.fire_batch` args `{sweep_id, as_of, page, event_keys[]}` -\u003e `{fired, skipped_opt_out, failed, already_fired}`\n  (plus `deferred_quiet_hours`, `deferred_daily_cap`, `skipped_cancelled`, `not_due`), idempotent per event key `caseId:type:dueOn`.\n  A batch with a retryable delivery failure answers 503 after committing the rest, so the task retries only what was not delivered.\n\nClip pipeline (clip-pipeline `CLIP_INGEST_STEPS` / `CLIP_FINALIZE_STEPS`; idempotency key `clipId:step:version[:r\u003cround\u003e]`):\n* `clip.get` args `{clip_id, version}` -\u003e `{clip}` (clip.json, server-only fields included; never sent to clients).\n* `clip.propose_windows` args `{clip_id, version}` -\u003e `{proposals: [], skipped: true}`. A stub in P2 (D8): no unaudited frame goes to a model.\n* `clip.open_review` args `{clip_id, version}` -\u003e `{status}`: moves the clip to `proposed` and posts the signed `md/clip-ready` envelope to n8n W08.\n* `clip.agreement` args `{clip_id, version, round}` -\u003e `{accepted, needs_third_rater, reasons, final_hazards}` from the two stored ratings (compute service `/clip/agreement`); accepted moves the clip to `rated`.\n* `clip.request_adjudication` args `{clip_id, version, round}` -\u003e `{status}`: moves the clip to `adjudication` and notifies the curators; the run ends.\n* `clip.blur_audit_check` args `{clip_id, version}` -\u003e `{passed, issues}` against the stored audit and the published rendition's sha256.\n* `clip.delete_raw` args `{clip_id, version}` -\u003e `{object_keys, deleted_at, on_time, deadline}` (RawDeletionRecord, audit-logged; MD-218).\n* `clip.publish_manifest` args `{clip_id, version}` -\u003e `{status, bank_digest, client_digest}`: publishes the clip and the manifests.\n* `clip.recompute_difficulty` args `{clip_id, version}` -\u003e `{difficulty: {curator, empirical, n_takers}}`.\n* `clip.register_generated` (clip_generate, ADR-0013) args `{scene_id, scene_revision, batch_id, raw_key, raw_sha256, raw_bytes, duration_ms, facts, generation, flash, ...}` -\u003e `{clip_id, version, status, replayed}`:\n  records the generated video on the ai_generated clip of that scene revision and batch (the one generateClip created, or a new one); idempotent per `sceneId:revision:batchId`.\n  For ai_generated clips `clip.blur_audit_check` checks the synthetic review instead, and `clip.delete_raw` is a logged no-op (no raw footage).\n\nField study (RW-4 `nightly_stats`):\n* `study.export_csv` args `{frozen_at?}` -\u003e `{tenant, files: {\"sessions.csv\": \u003ccsv text\u003e, \"sessions_alt.csv\": ..., \"raters.csv\": \u003ccsv text or null\u003e}, sha256: {\u003cfile\u003e: \u003chex\u003e}, summary, omitted: [\u003cfile names with no rows, e.g. raters.csv before any rater agreement\u003e]}`; `GET /internal/study/exports/{file}` serves the same files individually.\n* `stats.field_study_publish` args `{as_of, numbers, stdout, script_sha256, prereg_hash}` -\u003e `{as_of, published}`: stores what `field-kit/nazar_stats.mjs` printed, unmodified, for API-71.\n\nSession debrief fan-out (RW-3 `debrief_fanout`, MD-311):\n* `debrief.backfill` args `{since?, limit?}` -\u003e `{pending, built, ai}`: builds and stores the debrief card of checked sessions\n  (last 7 days by default) whose holder allows AI and that have no stored card; a stored card is never rebuilt, so retries are safe.\n  A provider 429 or timeout leaves the card unstored and answers 503 `ADAPTER_UNAVAILABLE` so the task retries with backoff.\n\nAuth: service bearer (one of the API's `INTERNAL_BEARER_TOKENS`; the workflow service sends it as `INTERNAL_BEARER_TOKEN`) plus the `Margdarshak-Signature` HMAC.\nThe step result is returned both under `result` and flattened at the top level (the Workflows client reads the top level).\n",
         "operationId": "runJobStep",
         "parameters": [
           {
@@ -11048,7 +11506,8 @@
                 "clip.recompute_difficulty",
                 "clip.register_generated",
                 "study.export_csv",
-                "stats.field_study_publish"
+                "stats.field_study_publish",
+                "debrief.backfill"
               ],
               "type": "string"
             }
@@ -11814,6 +12273,231 @@
           "platform"
         ],
         "x-api-id": "API-24",
+        "x-proposed": true
+      }
+    },
+    "/v1/admin/ai/metrics": {
+      "get": {
+        "description": "Process-local counters since the last restart; never prompt or answer text.",
+        "operationId": "getAIMetrics",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "agents": {
+                      "items": {
+                        "$ref": "#/components/schemas/AIAgentStats"
+                      },
+                      "type": "array"
+                    },
+                    "since_restart": {
+                      "enum": [
+                        true
+                      ],
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "since_restart",
+                    "agents"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Per-agent counters"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "admin"
+            ]
+          }
+        ],
+        "summary": "LLM observability (MD-307) - calls, failures, fallbacks by reason, latency, tokens, estimated cost, breaker state per agent",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-78",
+        "x-proposed": true
+      }
+    },
+    "/v1/admin/ai/reviews": {
+      "get": {
+        "operationId": "sampleAIReviews",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "n",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 30,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "properties": {
+                          "card": {
+                            "$ref": "#/components/schemas/Debrief"
+                          },
+                          "item_id": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "item_id",
+                          "card"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Sample"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "admin"
+            ]
+          }
+        ],
+        "summary": "Human review loop (MD-327) - AI-worded debriefs of this tenant the calling rater has not rated (no PII by construction)",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-78",
+        "x-proposed": true
+      },
+      "post": {
+        "operationId": "rateAIReview",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "agent": "debrief",
+                "grounding": 2,
+                "item_id": "0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f:hi",
+                "tone": 2,
+                "usefulness": 1
+              },
+              "schema": {
+                "$ref": "#/components/schemas/AIReviewCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Stored"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "admin"
+            ]
+          }
+        ],
+        "summary": "A rater scores one AI answer on the rubric (0-2 per axis); the rater comes from the session",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-78",
+        "x-proposed": true
+      }
+    },
+    "/v1/admin/ai/reviews/agreement": {
+      "get": {
+        "operationId": "getAIReviewAgreement",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "default": "debrief",
+              "enum": [
+                "debrief",
+                "tutor",
+                "coach",
+                "voice",
+                "decoder",
+                "signsnap"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIReviewAgreement"
+                }
+              }
+            },
+            "description": "Agreement"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "admin"
+            ]
+          }
+        ],
+        "summary": "Inter-rater agreement (quadratic-weighted kappa per axis) over items two raters scored; items whose scores differ by 2 on any axis are listed to become eval cases",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-78",
         "x-proposed": true
       }
     },
@@ -13034,6 +13718,53 @@
           "ecosystem"
         ],
         "x-api-id": "API-54"
+      }
+    },
+    "/v1/ai/feedback": {
+      "post": {
+        "operationId": "sendAIFeedback",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "agent": "debrief",
+                "helpful": false,
+                "item_id": "0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f",
+                "reason": "unclear"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/AIFeedback"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Stored"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "user"
+            ]
+          }
+        ],
+        "summary": "Thumbs up or down on an AI answer, with a closed reason (feeds the human review loop)",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-77",
+        "x-proposed": true
       }
     },
     "/v1/auth/logout": {
@@ -14491,6 +15222,11 @@
                   "image": {
                     "description": "\u003c= 1024 px longest side, \u003c= 1 MB",
                     "type": "string"
+                  },
+                  "ocr_text": {
+                    "description": "Optional on-device OCR text of the same image (after the client blurred personal data). It narrows the catalogue candidates and checks the copied remark; it is never sent to a model.",
+                    "maxLength": 4000,
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -14706,6 +15442,113 @@
           "privacy"
         ],
         "x-api-id": "API-63"
+      }
+    },
+    "/v1/games/sessions/{sessionId}/commentary": {
+      "post": {
+        "description": "The learner's spoken commentary over one clip of a completed Nazar session. The audio is\ntranscribed in memory after the clip (never live), the transcript is PII- and\ninjection-screened and discarded, and a deterministic lexicon matcher scores hazard\nmentions against the curator windows (a mention in [a - 1 s, b] is a hit). The answer never\ncarries the transcript. Gate: tenant `ai_coach` flag and the holder's `ai_voice` consent\n(403 otherwise); 503 `ADAPTER_UNAVAILABLE` when transcription is off (EC-29: the Kerala score\nis unaffected).\n",
+        "operationId": "scoreCommentary",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "audio": {
+                    "description": "\u003c= 2 MB, one clip",
+                    "type": "string"
+                  },
+                  "clip_ordinal": {
+                    "maximum": 40,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "lang": {
+                    "enum": [
+                      "hi",
+                      "en",
+                      "doi"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "audio",
+                  "clip_ordinal"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "clip_ordinal": 3,
+                  "commentary_pct": 50,
+                  "false_mentions": 0,
+                  "findings": [
+                    {
+                      "facts": {
+                        "count": 1,
+                        "hazard_type": "bus_stop_pedestrian"
+                      },
+                      "finding_id": "NAZ_COMM_MISSED_MENTION",
+                      "severity": 0.5
+                    }
+                  ],
+                  "hazards": [
+                    {
+                      "hazard_type": "truck_left_turn",
+                      "hit": true
+                    },
+                    {
+                      "hazard_type": "bus_stop_pedestrian",
+                      "hit": false
+                    }
+                  ],
+                  "session_id": "0192f7a8-6b1c-7d2e-9f30-4a5b6c7d8e9f"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CommentaryResult"
+                }
+              }
+            },
+            "description": "Commentary score"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "user"
+            ]
+          }
+        ],
+        "summary": "Nazar commentary mode, record then score (D-12; DEBRIEF_SPEC §10)",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-74",
+        "x-proposed": true
       }
     },
     "/v1/games/sessions/{sessionId}/complete": {
@@ -16269,6 +17112,107 @@
           "games"
         ],
         "x-api-id": "API-38"
+      }
+    },
+    "/v1/me/coach-plan": {
+      "get": {
+        "description": "The drills (due topics, weak topics, a Nazar mock) and the weekly session goal are computed\nfrom the learner's review queue and readiness; the CoachAgent writes the headline and an\nimplementation-intention prompt with `{{slot:day}}` and `{{slot:time}}`. Without the AI gate\n(tenant `ai_coach` flag, holder's `ai_coach` consent) or when the draft fails validation the\ntemplate plan is returned (`source: template`). A minor family member needs the parent's\nrecorded consent (403 `PARENT_CONSENT_REQUIRED`).\n",
+        "operationId": "getCoachPlan",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/FamilyMemberQuery"
+          },
+          {
+            "$ref": "#/components/parameters/AcceptLanguage"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoachPlan"
+                }
+              }
+            },
+            "description": "Weekly plan"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "user"
+            ]
+          }
+        ],
+        "summary": "CoachAgent weekly plan (F-26, M-03) - plan computed in code, AI words it when allowed",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-76",
+        "x-proposed": true
+      }
+    },
+    "/v1/me/coach-plan/intentions": {
+      "post": {
+        "operationId": "saveCoachIntention",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/FamilyMemberQuery"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "day": "sat",
+                "drill_id": "DR-NAZ-MOCK",
+                "time": "18:30"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CoachIntention"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoachIntention"
+                }
+              }
+            },
+            "description": "Stored"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "user"
+            ]
+          }
+        ],
+        "summary": "Store the learner's implementation intention (\"On \u003cday\u003e at \u003ctime\u003e I will \u003cdrill\u003e\")",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-76",
+        "x-proposed": true
       }
     },
     "/v1/me/consents": {
@@ -18668,6 +19612,85 @@
         "x-proposed": true
       }
     },
+    "/v1/signs/snap": {
+      "post": {
+        "description": "At confidence 0.75 or more one card (`match`); between 0.2 and 0.75 up to three `choices`;\notherwise `not_in_catalogue`. `moving: true` (the client's speed estimate) is refused with\n409 `RIDING_LOCKED`. Gate: tenant `ai_coach` flag and the holder's `ai_coach` consent. The\nphoto is processed in memory and not stored. 503 when the vision model is off.\n",
+        "operationId": "snapSign",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AcceptLanguage"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "image": {
+                    "description": "\u003c= 1024 px longest side, \u003c= 1 MB",
+                    "type": "string"
+                  },
+                  "moving": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "image"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "choices": [],
+                  "confidence": 0.92,
+                  "sign": {
+                    "family": "MANDATORY",
+                    "meaning": "Stop completely at the stop line and go only when the way is clear.",
+                    "name": "Stop",
+                    "sign_id": "SIGN-MAN-001",
+                    "verified": false
+                  },
+                  "status": "match"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/SignSnapResult"
+                }
+              }
+            },
+            "description": "Sign result"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "user"
+            ]
+          }
+        ],
+        "summary": "Road Sign Snap (F-27, M-07) - photo to a catalogue sign; meaning from the catalogue only",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-75",
+        "x-proposed": true
+      }
+    },
     "/v1/slot-watches": {
       "post": {
         "operationId": "createSlotWatch",
@@ -19381,7 +20404,7 @@
     },
     "/v1/voice": {
       "get": {
-        "description": "Get a ticket from `POST /v1/voice/ticket`, open the socket, and send\n`{type: \"hello\", v: 1, locale, screen, caseId?, token: \u003cticket\u003e}` as the first frame. Client frames: `VoiceClientMessage` (JSON control) and binary 16-bit PCM 16 kHz mono\naudio. Server frames: `VoiceServerMessage` (JSON) and binary 24 kHz PCM audio.\nMax session 10 minutes (Gemini Live connection lifetime); 10 min/user/month on the\nfree plan. The agent can navigate and fill non-sensitive fields inside Margdarshak\nonly; it never submits, pays or books on Sarathi.\n",
+        "description": "Get a ticket from `POST /v1/voice/ticket`, open the socket, and send\n`{type: \"hello\", v: 1, locale, screen, caseId?, token: \u003cticket\u003e}` as the first frame. Client frames: `VoiceClientMessage` (JSON control) and binary 16-bit PCM 16 kHz mono\naudio. Server frames: `VoiceServerMessage` (JSON) and binary 24 kHz PCM audio.\nMax session 10 minutes (Gemini Live connection lifetime); 10 min/user/month on the\nfree plan. The agent can navigate and fill non-sensitive fields inside Margdarshak\nonly; it never submits, pays or books on Sarathi.\n\nAuthentication is the single-use ticket in the hello frame (browsers cannot set headers on a\nWebSocket, and cookies are not relied on), so the upgrade itself is anonymous; the tenant\ncomes from `state`. Without a valid ticket in the first frame (5 s) the server sends\n`error` (`reason_key: voice.ticket_invalid`) and closes. With `lang=doi` the client sends\npush-to-talk audio and a `stop` frame; the server answers with the Saaras transcript\n(`transcript_in`, editable), and the confirmed `text` frame runs the turn; the reply is\nHindi speech with a reviewed Dogri caption when one exists (VOICE.md §3.3). `text` frames\nwork in every language and are the fallback when live audio is unavailable.\n",
         "operationId": "openVoiceSocket",
         "parameters": [
           {
@@ -19404,6 +20427,15 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -19418,11 +20450,7 @@
           }
         },
         "security": [
-          {
-            "userBearer": [
-              "user"
-            ]
-          }
+          {}
         ],
         "summary": "WebSocket upgrade for the ADK live voice guide (available to everyone; consent ai_voice)",
         "tags": [
@@ -19433,6 +20461,7 @@
     },
     "/v1/voice/ticket": {
       "post": {
+        "description": "The AI gate runs here: the tenant's `voice_guide` flag and the account holder's `ai_voice`\nconsent (a parent's account covers a family member; there is no age gate, D-13 revised).\n403 `CONSENT_REQUIRED` or `FEATURE_DISABLED` otherwise; 429 `VOICE_CAP_REACHED` at the\nmonthly voice minutes (`MD_VOICE_MONTHLY_CAP_MIN`), when the client switches to text.\n`live` says whether live audio is available now (false = text and Dogri paths only).\n",
         "operationId": "createVoiceTicket",
         "responses": {
           "201": {
@@ -19444,13 +20473,17 @@
                       "format": "date-time",
                       "type": "string"
                     },
+                    "live": {
+                      "type": "boolean"
+                    },
                     "ticket": {
                       "type": "string"
                     }
                   },
                   "required": [
                     "ticket",
-                    "expires_at"
+                    "expires_at",
+                    "live"
                   ],
                   "type": "object"
                 }
@@ -19460,6 +20493,9 @@
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
           }
         },
         "security": [

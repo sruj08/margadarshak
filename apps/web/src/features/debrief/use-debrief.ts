@@ -11,12 +11,27 @@ export type DebriefSource = "template" | "coach";
 export function coachCard(wire: DebriefWire, template: DebriefCard): DebriefCard | null {
   if (wire.source !== "ai" || wire.status !== "ai_ready" || !wire.validator.passed) return null;
   const locale = template.locale === "en" ? "en" : "hi";
-  const point = (p: DebriefWire["where_you_lacked"][number]) => ({
-    findingId: p.finding_id,
-    ruleId: p.rule_id,
-    text: p.text,
-    rule: template.where_you_lacked.find((x) => x.ruleId === p.rule_id)?.rule ?? null,
-  });
+  // The server lists only verified, AI-citable rules (DEBRIEF_SPEC §3); anything else gets no chip.
+  const cited = new Map(
+    (wire.rules ?? []).filter((r) => r.rule_id).map((r) => [r.rule_id as string, r]),
+  );
+  const point = (p: DebriefWire["where_you_lacked"][number]) => {
+    const r = cited.get(p.rule_id);
+    return {
+      findingId: p.finding_id,
+      ruleId: p.rule_id,
+      text: p.text,
+      rule: r
+        ? {
+            id: p.rule_id,
+            text: r.text ?? "",
+            source_title: r.source_url ?? p.rule_id,
+            source_url: r.source_url ?? null,
+            verified_on: r.verified_on ?? null,
+          }
+        : (template.where_you_lacked.find((x) => x.ruleId === p.rule_id)?.rule ?? null),
+    };
+  };
   return {
     ...template,
     kind: "coach_notes",
@@ -38,7 +53,7 @@ export function coachCard(wire: DebriefWire, template: DebriefCard): DebriefCard
 
 /**
  * Template first (FRONTEND §8.4): the template card ("Auto notes") is on screen at once. API-36 is
- * asked once; a validated coach card replaces it in place. 501 (the AI path is P3), 404, 202,
+ * asked once; a validated coach card ("Coach notes") replaces it in place. No consent, 404, 202,
  * offline, mock mode or a failed validation all keep the template, with no error shown (EC-29).
  */
 export function useDebrief(

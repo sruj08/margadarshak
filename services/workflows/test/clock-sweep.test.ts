@@ -103,6 +103,7 @@ describe("task registration", () => {
         TASK_HEALTH,
         "nightly_stats",
         "replay_pending_sessions",
+        "debrief_backfill",
         "clip_ingest",
         "clip_finalize",
         "clip_generate",

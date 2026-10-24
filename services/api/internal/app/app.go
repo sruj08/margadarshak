@@ -5,19 +5,24 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/sruj08/margadarshak/services/api/internal/accounts"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters"
 	adnotify "github.com/sruj08/margadarshak/services/api/internal/adapters/notify"
+	"github.com/sruj08/margadarshak/services/api/internal/aicards"
 	"github.com/sruj08/margadarshak/services/api/internal/analytics"
 	"github.com/sruj08/margadarshak/services/api/internal/cases"
 	clocksvc "github.com/sruj08/margadarshak/services/api/internal/clock"
 	"github.com/sruj08/margadarshak/services/api/internal/dsr"
+	"github.com/sruj08/margadarshak/services/api/internal/games"
 	"github.com/sruj08/margadarshak/services/api/internal/httpapi"
 	"github.com/sruj08/margadarshak/services/api/internal/jobs"
 	"github.com/sruj08/margadarshak/services/api/internal/lab"
@@ -197,6 +202,27 @@ func New(cfg *config.Config, db *store.DB, log *slog.Logger, opt Options) (*App,
 	for k, f := range a.P2.p2Steps() {
 		steps[k] = f
 	}
+	agents := opt.AI
+	if agents == nil {
+		built := newAIAgents(context.Background(), cfg, log, ContentDir(cfg.ContentDir), a.readDebrief(func() *AIAgents { return agents }))
+		agents = &built
+	}
+	if agents.Debrief != nil && a.P2.Games != nil {
+		cards := &aicards.Service{DB: db, Gen: agents.Debrief, Now: clock.Now, Log: log}
+		steps["debrief.backfill"] = func(ctx context.Context, args map[string]any) (map[string]any, error) {
+			days, limit := 7, 50
+			if v, ok := args["limit"].(float64); ok && v >= 1 && v <= 500 {
+				limit = int(v)
+			}
+			since := clock.Now().AddDate(0, 0, -days)
+			if v, ok := args["since"].(string); ok {
+				if t, err := time.Parse(time.RFC3339, v); err == nil {
+					since = t
+				}
+			}
+			return cards.Backfill(ctx, a.P2.Games.Session, since, limit)
+		}
+	}
 	runner := opt.Runner
 	if runner == nil {
 		extra := map[string]jobs.TaskFunc{
@@ -205,6 +231,9 @@ func New(cfg *config.Config, db *store.DB, log *slog.Logger, opt Options) (*App,
 		}
 		for k, t := range p2Tasks(steps) {
 			extra[k] = t
+		}
+		if f, ok := steps["debrief.backfill"]; ok {
+			extra["debrief_backfill"] = jobs.TaskFromStep(f)
 		}
 		tasks := jobs.Tasks(extra)
 		runner, err = NewRunner(cfg, tasks)
@@ -217,11 +246,6 @@ func New(cfg *config.Config, db *store.DB, log *slog.Logger, opt Options) (*App,
 	if cfg.ScoreVerifierHP != "" {
 		hp := cfg.ScoreVerifierHP
 		pings["score_verifier"] = func(ctx context.Context) error { return httpPing(ctx, "http://"+hp+"/healthz") }
-	}
-	agents := opt.AI
-	if agents == nil {
-		built := newAIAgents(context.Background(), cfg, log, ContentDir(cfg.ContentDir))
-		agents = &built
 	}
 	a.Handler = httpapi.New(httpapi.Deps{
 		Log: log, DB: db, Clock: clock, Tenants: a.Tenants, Accounts: a.Accounts, Jobs: a.Jobs, Notify: a.Notify, Registry: a.Registry,
@@ -236,8 +260,40 @@ func New(cfg *config.Config, db *store.DB, log *slog.Logger, opt Options) (*App,
 		StudyStore: a.P2.StudyStore, Staircase: a.P2.Staircase, MockMedia: a.P2.MockMedia, ObjectStore: a.P2.ObjectStore,
 		WebBaseURLShare: cfg.WebBaseURL, N8NResumeToken: cfg.N8NResumeAuthToken,
 		Scam: agents.Scam, Debrief: agents.Debrief, Tutor: agents.Tutor, Decoder: agents.Decoder,
+		Commentary: agents.Commentary, SignSnap: agents.SignSnap, Coach: agents.Coach, Voice: agents.Voice, Speech: agents.Speech,
+		VoiceCapMin: cfg.VoiceMonthlyCapMin,
 	})
 	return a, nil
+}
+
+// readDebrief backs the voice guide's read_debrief tool: the caller's own checked session, as the
+// template card's text (no extra model call). userID is "<tenant>:<applicant uuid>".
+func (a *App) readDebrief(agents func() *AIAgents) func(ctx context.Context, userID, sessionID string) (string, error) {
+	return func(ctx context.Context, userID, sessionID string) (string, error) {
+		tenantID, applicant, _ := strings.Cut(userID, ":")
+		sid, err := uuid.Parse(sessionID)
+		ag := agents()
+		if err != nil || a.P2.Games == nil || ag == nil || ag.Debrief == nil {
+			return "", errors.New("app: debrief unavailable")
+		}
+		sess, err := a.P2.Games.Session(ctx, tenantID, sid)
+		if err != nil {
+			return "", fmt.Errorf("app: debrief session: %w", err)
+		}
+		if sess.Subject.ApplicantID.String() != applicant || sess.Status != games.StatusChecked {
+			return "", errors.New("app: debrief not found")
+		}
+		cards := &aicards.Service{DB: a.DB, Gen: ag.Debrief, Now: a.Clock.Now, Log: slog.Default()}
+		card, err := cards.Debrief(ctx, sess, "hi", false)
+		if err != nil {
+			return "", err
+		}
+		parts := []string{card.HowYouDid}
+		for i := range card.WhereYouLacked {
+			parts = append(parts, card.WhereYouLacked[i].Text, card.WhatYouCouldHaveDone[i].Text)
+		}
+		return strings.Join(parts, " "), nil
+	}
 }
 
 // SeedDeps returns the seed dependencies wired to the journey services (cmd/seed, persona switcher).

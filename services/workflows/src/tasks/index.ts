@@ -11,6 +11,7 @@ import { type ClipGenerateTasks, defineClipGenerateTasks } from "./clip-generate
 import { type ClipIngestTasks, defineClipIngestTasks } from "./clip-ingest.ts";
 import type { BlurDetector, CommandRunner, ObjectStore } from "./clip-media.ts";
 import { type ClockTasks, defineClockTasks } from "./clock-sweep.ts";
+import { type DebriefSummary, defineDebriefFanoutTask } from "./debrief-fanout.ts";
 import { defineHealthTask, type HealthReport } from "./health.ts";
 import { defineNightlyStatsTask, type NightlyStatsSummary } from "./nightly-stats.ts";
 import { defineReplayPendingTask, type ReplaySummary } from "./replay-pending.ts";
@@ -35,6 +36,8 @@ export interface Tasks extends ClockTasks, ClipIngestTasks, ClipFinalizeTasks, C
   readonly replayPendingSessions: TaskDef<unknown[], ReplaySummary>;
   /** P2 RW-4: field-study statistics from the pre-registered nazar_stats.mjs, started through API-67. */
   readonly nightlyStats: TaskDef<unknown[], NightlyStatsSummary>;
+  /** P3 RW-3: session-debrief fan-out, started through API-67 (`debrief_backfill`). */
+  readonly debriefBackfill: TaskDef<unknown[], DebriefSummary>;
 }
 
 export function jsonLog(msg: string, attrs: Record<string, unknown>): void {
@@ -61,6 +64,7 @@ export function defineTasks(define: DefineTask, deps: TaskDeps = {}): Tasks {
     log,
   });
   const nightlyStats = defineNightlyStatsTask(define, { api: getApi, config: getConfig, log });
+  const debriefBackfill = defineDebriefFanoutTask(define, { api: getApi, config: getConfig, log });
   const clipDeps: ClipDeps = {
     api: getApi,
     config: getConfig,
@@ -84,5 +88,5 @@ export function defineTasks(define: DefineTask, deps: TaskDeps = {}): Tasks {
     },
     ingest.clipIngestSteps,
   );
-  return { ...clock, health, replayPendingSessions, nightlyStats, ...ingest, ...finalize, ...generate };
+  return { ...clock, health, replayPendingSessions, nightlyStats, debriefBackfill, ...ingest, ...finalize, ...generate };
 }

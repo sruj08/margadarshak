@@ -4,7 +4,9 @@ package aitest
 
 import (
 	"context"
+	"encoding/json"
 	"iter"
+	"strings"
 	"sync"
 
 	"google.golang.org/genai"
@@ -43,6 +45,24 @@ func (f *Fake) LastPrompt() string {
 	return s
 }
 
+// LastInstruction returns the system instruction of the last request.
+func (f *Fake) LastInstruction() string {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if len(f.Requests) == 0 {
+		return ""
+	}
+	req := f.Requests[len(f.Requests)-1]
+	if req.Config == nil || req.Config.SystemInstruction == nil {
+		return ""
+	}
+	var s string
+	for _, p := range req.Config.SystemInstruction.Parts {
+		s += p.Text
+	}
+	return s
+}
+
 // GenerateContent implements model.LLM.
 func (f *Fake) GenerateContent(_ context.Context, req *model.LLMRequest, _ bool) iter.Seq2[*model.LLMResponse, error] {
 	f.mu.Lock()
@@ -53,11 +73,18 @@ func (f *Fake) GenerateContent(_ context.Context, req *model.LLMRequest, _ bool)
 		reply = f.Replies[min(i, len(f.Replies)-1)]
 	}
 	f.mu.Unlock()
+	content := genai.NewContentFromText(reply, genai.RoleModel)
+	// "CALL:name {json args}" lines script function calls (one per line) instead of text.
+	if strings.HasPrefix(reply, "CALL:") {
+		content = &genai.Content{Role: genai.RoleModel}
+		for _, line := range strings.Split(reply, "\n") {
+			name, args, _ := strings.Cut(strings.TrimPrefix(strings.TrimSpace(line), "CALL:"), " ")
+			var m map[string]any
+			_ = json.Unmarshal([]byte(args), &m)
+			content.Parts = append(content.Parts, &genai.Part{FunctionCall: &genai.FunctionCall{Name: name, Args: m}})
+		}
+	}
 	return func(yield func(*model.LLMResponse, error) bool) {
-		yield(&model.LLMResponse{
-			Content:      genai.NewContentFromText(reply, genai.RoleModel),
-			TurnComplete: true,
-			ModelVersion: "fake-model",
-		}, nil)
+		yield(&model.LLMResponse{Content: content, TurnComplete: true, ModelVersion: "fake-model"}, nil)
 	}
 }
