@@ -30,6 +30,7 @@
     "go": "Start the mock"
   },
   "play": {
+    "sim3d": "Simulated 3D practice scene",
     "placeholder": "Placeholder clip: no real video yet. Timing and scoring work as with a real clip.",
     "tapHint": "Tap anywhere when you see a hazard developing.",
     "zoneLabel": "Clip. Tap, or press any key, when you see a hazard developing.",

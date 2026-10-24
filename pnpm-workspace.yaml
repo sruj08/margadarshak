@@ -50,6 +50,8 @@ catalog:
   "@serwist/window": 9.5.13
   serwist: 9.5.13
   phaser: 4.2.1
+  three: 0.186.1
+  "@types/three": 0.186.0
   "@mediapipe/tasks-vision": 1.1.1
   "@rive-app/react-canvas-lite": 4.37.1
   "@lottiefiles/dotlottie-react": 0.20.0

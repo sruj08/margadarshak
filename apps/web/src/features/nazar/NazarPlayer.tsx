@@ -3,7 +3,7 @@
 import type { HazardType, NazarClip } from "@margdarshak/game-core/schema";
 import { Button } from "@margdarshak/ui/components/button";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { WebGameModule, WebGameProps } from "@/features/games/types";
 import { AiSceneChip } from "./AiSceneChip";
 import { Calibration } from "./calibration";
@@ -15,6 +15,10 @@ import { type ClipMedia, placeholderMedia, supportsRvfc, videoMedia } from "./me
 import { type ClipOrigin, clipOrigin } from "./origin";
 import { PlaceholderClip } from "./PlaceholderClip";
 import { preloadAll, waitPlayable } from "./preload";
+import type { ScenePlan } from "./scene3d/choreo";
+import { plansForSession } from "./scene3d/resolve";
+import { prewarmRich, RICH } from "./scene3d/rich/rich";
+import { Scene3D, sceneAvailable } from "./scene3d/Scene3D";
 import { isTapKey, type Ring, tapPoint } from "./taps";
 
 type Phase =
@@ -52,6 +56,7 @@ export function NazarPlayer(props: WebGameProps) {
   const [rings, setRings] = useState<Ring[]>([]);
   const [voidNote, setVoidNote] = useState<"hidden" | "stalled" | null>(null);
   const [clipUrl, setClipUrl] = useState<string | null>(null);
+  const [sceneFailed, setSceneFailed] = useState(false);
 
   const phaseRef = useRef<Phase>(phase);
   const setPhase = useCallback((p: Phase) => {
@@ -66,6 +71,9 @@ export function NazarPlayer(props: WebGameProps) {
   const freezeRef = useRef<{ points: FreezePoint[]; next: number }>({ points: [], next: 0 });
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const ringId = useRef(0);
+  // Simulated 3D scenes (NAZAR §17): one plan per clip, drawn from media time in mtRef.
+  const plansRef = useRef<ScenePlan[] | null>(null);
+  const mtRef = useRef(0);
   const propsRef = useRef(props);
   propsRef.current = props;
 
@@ -74,6 +82,8 @@ export function NazarPlayer(props: WebGameProps) {
   const durationOf = useCallback(
     (i: number): number => {
       const c = deviceClips[i];
+      const plan = plansRef.current?.[i];
+      if (plan) return plan.durationMs;
       if (c) return c.durationMs;
       const v = videoRef.current;
       if (v && Number.isFinite(v.duration)) return Math.round(v.duration * 1000);
@@ -143,7 +153,9 @@ export function NazarPlayer(props: WebGameProps) {
 
   const onFrame = useCallback(
     (i: number, ms: number) => {
-      setMt(ms);
+      mtRef.current = ms;
+      // The 3D scene reads mtRef itself; re-rendering the whole player every frame is for the timeline only.
+      if (!plansRef.current) setMt(ms);
       const p = phaseRef.current;
       if (p.k !== "clip" || p.i !== i) return;
       const f = freezeRef.current;
@@ -162,6 +174,7 @@ export function NazarPlayer(props: WebGameProps) {
       setVoidNote(null);
       tapsRef.current = [];
       setRings([]);
+      mtRef.current = 0;
       setMt(0);
       freezeRef.current = {
         points: mode === "learn" ? freezePoints(session.items[i]?.reveal) : [],
@@ -209,6 +222,12 @@ export function NazarPlayer(props: WebGameProps) {
         blobsRef.current = await preloadAll(list, {
           onProgress: (p) => propsRef.current.reportProgress({ ...p, unit: "bytes" }),
         });
+        if (session.media === "placeholder" && sceneAvailable())
+          plansRef.current = await plansForSession(session.items, deviceClips);
+        for (const plan of plansRef.current ?? []) {
+          const theme = RICH[plan.row.id];
+          if (theme) prewarmRich(theme);
+        }
         if (session.media === "video")
           urlsRef.current = blobsRef.current.map((b) => URL.createObjectURL(b));
       },
@@ -317,6 +336,9 @@ export function NazarPlayer(props: WebGameProps) {
           mt={mt}
           origin={originOf(p.i)}
           reducedMotion={a11y.reducedMotion}
+          plan={sceneFailed ? null : (plansRef.current?.[p.i] ?? null)}
+          mtRef={mtRef}
+          onSceneFail={() => setSceneFailed(true)}
           rings={rings}
           hint={hintText}
           label={t("play.zoneLabel")}
@@ -391,6 +413,9 @@ function TapSurface({
   mt,
   origin,
   reducedMotion,
+  plan,
+  mtRef,
+  onSceneFail,
   rings,
   hint,
   label,
@@ -400,6 +425,9 @@ function TapSurface({
   mt: number;
   origin: ClipOrigin | null;
   reducedMotion: boolean;
+  plan: ScenePlan | null;
+  mtRef: MutableRefObject<number>;
+  onSceneFail: () => void;
   rings: readonly Ring[];
   hint: string | null;
   label: string;
@@ -407,7 +435,11 @@ function TapSurface({
 }) {
   return (
     <div className={`mg-tapwrap${media === "video" ? " mg-tapwrap--over" : ""}`}>
-      {media === "placeholder" ? <PlaceholderClip mt={mt} reducedMotion={reducedMotion} /> : null}
+      {media === "placeholder" && plan ? (
+        <Scene3D plan={plan} mtRef={mtRef} reducedMotion={reducedMotion} onFail={onSceneFail} />
+      ) : media === "placeholder" ? (
+        <PlaceholderClip mt={mt} reducedMotion={reducedMotion} />
+      ) : null}
       {origin === "ai_generated" ? <AiSceneChip variant="overlay" /> : null}
       {rings.map((r) => (
         <span
