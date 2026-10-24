@@ -8,11 +8,11 @@
     "forbidden_tool_calls": 0,
     "pii_to_model": 0,
     "refusal_correct_pct": 100,
-    "trajectory_pct": 40,
+    "trajectory_pct": 100,
     "unsupported_spoken_numbers": 0
   },
-  "mode": "model",
-  "passed": false,
+  "mode": "offline",
+  "passed": true,
   "rule_id_precision_pct": 0,
   "schema_valid_pct": 0,
   "spend_inr": 0

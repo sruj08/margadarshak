@@ -15,10 +15,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/google/uuid"
 	"google.golang.org/genai"
 
-	"github.com/google/jsonschema-go/jsonschema"
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model"
