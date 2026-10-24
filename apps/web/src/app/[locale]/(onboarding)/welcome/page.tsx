@@ -1,3 +1,5 @@
+import { AnimatedContent } from "@margdarshak/ui/components/animated-content";
+import { SplitText } from "@margdarshak/ui/components/split-text";
 import { StatusGlyph } from "@margdarshak/ui/components/status-glyph";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -26,23 +28,25 @@ export default async function WelcomePage({ params }: { params: Promise<{ locale
         <div className="md-hero__glow" aria-hidden="true" />
         <BrandMark name={tb("name")} locale={locale} />
         <h1 id="welcome-h1" className="md-display">
-          {tm("tagline")}
+          <SplitText text={tm("tagline")} delay={45} duration={0.6} splitType="words" />
         </h1>
         <h2 className="md-h3">{t("title")}</h2>
-        <ul className="md-promises">
-          <li>
-            <StatusGlyph kind="done" size={24} />
-            <span>{t("promise1")}</span>
-          </li>
-          <li>
-            <StatusGlyph kind="done" size={24} />
-            <span>{t("promise2")}</span>
-          </li>
-          <li>
-            <StatusGlyph kind="done" size={24} />
-            <span>{t("promise3")}</span>
-          </li>
-        </ul>
+        <AnimatedContent delay={0.08} distance={14} duration={0.5}>
+          <ul className="md-promises">
+            <li>
+              <StatusGlyph kind="done" size={24} />
+              <span>{t("promise1")}</span>
+            </li>
+            <li>
+              <StatusGlyph kind="done" size={24} />
+              <span>{t("promise2")}</span>
+            </li>
+            <li>
+              <StatusGlyph kind="done" size={24} />
+              <span>{t("promise3")}</span>
+            </li>
+          </ul>
+        </AnimatedContent>
         <WelcomeAck label={t("cta")} locale={locale} />
         <p className="md-footer__notice">{t("simulated")}</p>
         <p>

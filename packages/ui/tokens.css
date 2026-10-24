@@ -105,21 +105,167 @@
   --md-topic-night: #d2dff9;
   --md-topic-first-aid: #f9d5e1;
 
-  /* Light as colour: gradients (text never sits on the hot spot) */
+  /* Light as colour: Indian Tricolour (Tiranga) atmospheric gradients & Indian cultural textures
+     (Kesari saffron crown -> warm ivory + Ashoka Chakra 24-spoke indigo bridge -> Vasudha emerald-jade base;
+     paired with Khadi silk warp/weft grain, Rajasthani Jaali diamond lattice, and Stepwell/Chakra geometry). */
   --md-glow-dawn:
-    radial-gradient(60% 80% at 50% 0%, rgb(255 176 83 / 0.4) 0%, transparent 70%),
-    radial-gradient(50% 70% at 85% 10%, rgb(249 115 12 / 0.2) 0%, transparent 70%),
-    radial-gradient(60% 60% at 10% 30%, rgb(165 187 252 / 0.33) 0%, transparent 70%);
+    radial-gradient(
+      52% 46% at 24% 22%,
+      rgb(255 136 24 / 0.56) 0%,
+      rgb(254 177 43 / 0.28) 45%,
+      transparent 84%
+    ),
+    radial-gradient(
+      48% 44% at 50% 48%,
+      rgb(255 253 248 / 0.86) 0%,
+      rgb(255 253 248 / 0.38) 50%,
+      transparent 86%
+    ),
+    radial-gradient(
+      42% 40% at 49% 49%,
+      rgb(64 88 232 / 0.3) 0%,
+      rgb(154 176 252 / 0.14) 50%,
+      transparent 84%
+    ),
+    radial-gradient(
+      52% 46% at 76% 76%,
+      rgb(19 148 76 / 0.46) 0%,
+      rgb(82 196 130 / 0.2) 46%,
+      transparent 85%
+    );
+  --md-canvas-canopy:
+    radial-gradient(
+      58% 44% at 12% 8%,
+      rgb(255 142 32 / 0.15) 0%,
+      rgb(254 184 68 / 0.06) 46%,
+      transparent 82%
+    ),
+    radial-gradient(
+      52% 42% at 50% 42%,
+      rgb(68 92 232 / 0.075) 0%,
+      transparent 76%
+    ),
+    radial-gradient(
+      58% 46% at 88% 88%,
+      rgb(19 148 76 / 0.13) 0%,
+      rgb(82 196 130 / 0.05) 46%,
+      transparent 82%
+    );
   --md-glow-night: radial-gradient(70% 80% at 78% 45%, #3a3ad6, #1c1c8f 45%, #0d0d52);
-  --md-glow-opacity: 0.4;
+  --md-glow-opacity: 0.68;
+  --md-card-glow:
+    radial-gradient(
+      100% 90% at 0% 0%,
+      rgb(255 140 28 / 0.145) 0%,
+      rgb(254 186 79 / 0.058) 44%,
+      transparent 76%
+    ),
+    radial-gradient(
+      76% 76% at 50% 50%,
+      rgb(255 253 248 / 0.56) 0%,
+      rgb(136 162 250 / 0.085) 40%,
+      transparent 72%
+    ),
+    radial-gradient(
+      100% 90% at 100% 100%,
+      rgb(19 148 76 / 0.125) 0%,
+      rgb(88 198 134 / 0.048) 44%,
+      transparent 76%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 48.5%,
+      rgb(180 120 48 / 0.022) 49.5%,
+      rgb(180 120 48 / 0.022) 50.5%,
+      transparent 51.5%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48.5%,
+      rgb(33 52 140 / 0.02) 49.5%,
+      rgb(33 52 140 / 0.02) 50.5%,
+      transparent 51.5%
+    );
+  --md-card-glow-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+  --md-spotlight-glow:
+    radial-gradient(
+      380px circle at var(--mouse-x, 50%) var(--mouse-y, 0%),
+      rgb(255 144 36 / 0.14) 0%,
+      rgb(96 124 244 / 0.085) 38%,
+      rgb(19 148 76 / 0.08) 64%,
+      transparent 84%
+    );
+  --md-tricolour-hairline: linear-gradient(
+    90deg,
+    var(--md-hairline) 0%,
+    rgb(255 138 24 / 0.52) 18%,
+    rgb(254 184 68 / 0.34) 34%,
+    rgb(255 253 248 / 0.92) 45%,
+    rgb(51 51 204 / 0.48) 50%,
+    rgb(255 253 248 / 0.92) 55%,
+    rgb(72 188 122 / 0.32) 66%,
+    rgb(19 148 76 / 0.5) 82%,
+    var(--md-hairline) 100%
+  );
+  --md-tricolour-progress: linear-gradient(
+    90deg,
+    #d96b08 0%,
+    #3333cc 50%,
+    #0f7a42 100%
+  );
+  /* Ashoka Chakra 24-spoke (360deg / 15deg = 24 spokes) + 3D beveled concentric rim watermark */
+  --md-texture-chakra:
+    radial-gradient(
+      closest-side,
+      rgb(255 253 248 / 0.9) 0%,
+      rgb(51 51 204 / 0.18) 8%,
+      rgb(217 119 6 / 0.16) 14%,
+      rgb(51 51 204 / 0.22) 18%,
+      transparent 19%,
+      transparent 87%,
+      rgb(51 51 204 / 0.2) 88%,
+      rgb(217 119 6 / 0.18) 92%,
+      rgb(51 51 204 / 0.24) 96%,
+      rgb(19 148 76 / 0.14) 98.5%,
+      transparent 99.5%
+    ),
+    repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      rgb(51 51 204 / 0.12) 0deg 1.1deg,
+      rgb(217 119 6 / 0.08) 1.1deg 1.9deg,
+      transparent 1.9deg 15deg
+    );
+  /* Stepwell (Baori) / Rangoli concentric corner motif */
+  --md-texture-baori:
+    radial-gradient(
+      circle at 100% 100%,
+      transparent 0 18px,
+      rgb(255 140 28 / 0.075) 18px 19.5px,
+      transparent 19.5px 32px,
+      rgb(51 51 204 / 0.065) 32px 33.5px,
+      transparent 33.5px 46px,
+      rgb(19 148 76 / 0.07) 46px 47.5px,
+      transparent 47.5px
+    );
   --md-dot-grid: radial-gradient(circle, #d1d5db 1px, transparent 1px);
+  /* Indian Khadi & Chanderi silk warp/weft weave + organic Tiranga fiber flecks */
+  --md-paper-grain:
+    radial-gradient(circle at 16% 20%, rgb(196 81 0 / 0.028) 0.85px, transparent 1.2px),
+    radial-gradient(circle at 50% 50%, rgb(43 43 184 / 0.026) 0.85px, transparent 1.2px),
+    radial-gradient(circle at 84% 78%, rgb(15 106 59 / 0.025) 0.85px, transparent 1.2px),
+    linear-gradient(0deg, rgb(140 96 42 / 0.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(33 33 90 / 0.012) 1px, transparent 1px);
+  --md-paper-grain-size: 24px 24px, 24px 24px, 24px 24px, 12px 12px, 12px 12px;
 
-  /* Elevation: hairline first */
-  --md-e0: 0 0 0 1px var(--md-hairline);
-  --md-e1: 0 1px 2px rgb(33 33 90 / 0.05), 0 14px 36px -12px rgb(33 33 145 / 0.16);
-  --md-e2: 0 0 40px rgb(0 0 0 / 0.06), 0 0 0 1px var(--md-hairline);
-  --md-e3: 0 28px 64px -28px rgb(33 33 145 / 0.2);
-  --md-inset-button: inset 0 1px 0 rgb(255 255 255 / 0.4), inset 0 -2px 0 rgb(0 0 0 / 0.2);
+  /* Elevation & Materials: Sarvam indigo-tinted ambient + key light shadows + specular pill glow */
+  --md-surface-glass: rgb(252 252 250 / 0.84);
+  --md-overlay-glass: rgb(255 255 255 / 0.96);
+  --md-e0: 0 0 0 1px var(--md-hairline), 0 1px 2px rgb(33 33 90 / 0.04);
+  --md-e1: 0 0 0 1px var(--md-hairline), 0 1px 2px rgb(33 33 90 / 0.05), 0 14px 36px -12px rgb(33 33 145 / 0.16);
+  --md-e2: 0 0 40px rgb(0 0 0 / 0.06), 0 0 0 1px var(--md-hairline), 0 18px 42px -14px rgb(33 33 145 / 0.14);
+  --md-e3: 0 0 0 1px var(--md-hairline), 0 28px 64px -28px rgb(33 33 145 / 0.22);
+  --md-inset-button: inset 0 0 12px rgb(255 255 255 / 0.32), inset 0 1px 0 rgb(255 255 255 / 0.42), 0 1px 2px rgb(33 33 145 / 0.16);
+  --md-inset-button-secondary: inset 0 0 10px rgb(255 255 255 / 0.65), inset 0 1px 0 rgb(255 255 255 / 0.8), 0 1px 2px rgb(33 33 90 / 0.06);
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -181,14 +327,144 @@
   --md-topic-survival: #26150c;
   --md-topic-night: #12142a;
   --md-topic-first-aid: #2a1420;
-  --md-glow-opacity: 0.18;
+  --md-glow-dawn:
+    radial-gradient(
+      52% 46% at 24% 22%,
+      rgb(255 148 42 / 0.42) 0%,
+      rgb(255 184 107 / 0.18) 46%,
+      transparent 84%
+    ),
+    radial-gradient(
+      44% 42% at 50% 48%,
+      rgb(143 163 242 / 0.36) 0%,
+      rgb(143 163 242 / 0.14) 50%,
+      transparent 86%
+    ),
+    radial-gradient(
+      52% 46% at 76% 76%,
+      rgb(56 178 112 / 0.36) 0%,
+      rgb(168 214 138 / 0.14) 46%,
+      transparent 85%
+    );
+  --md-canvas-canopy:
+    radial-gradient(
+      58% 44% at 12% 8%,
+      rgb(255 148 42 / 0.1) 0%,
+      transparent 80%
+    ),
+    radial-gradient(
+      52% 42% at 50% 42%,
+      rgb(143 163 242 / 0.07) 0%,
+      transparent 76%
+    ),
+    radial-gradient(
+      58% 46% at 88% 88%,
+      rgb(56 178 112 / 0.09) 0%,
+      transparent 80%
+    );
+  --md-glow-opacity: 0.38;
+  --md-card-glow:
+    radial-gradient(
+      100% 90% at 0% 0%,
+      rgb(255 148 42 / 0.11) 0%,
+      transparent 74%
+    ),
+    radial-gradient(
+      76% 76% at 50% 50%,
+      rgb(143 163 242 / 0.085) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      100% 90% at 100% 100%,
+      rgb(56 178 112 / 0.1) 0%,
+      transparent 74%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 48.5%,
+      rgb(255 184 107 / 0.024) 49.5%,
+      rgb(255 184 107 / 0.024) 50.5%,
+      transparent 51.5%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48.5%,
+      rgb(143 163 242 / 0.024) 49.5%,
+      rgb(143 163 242 / 0.024) 50.5%,
+      transparent 51.5%
+    );
+  --md-spotlight-glow:
+    radial-gradient(
+      380px circle at var(--mouse-x, 50%) var(--mouse-y, 0%),
+      rgb(255 148 42 / 0.12) 0%,
+      rgb(143 163 242 / 0.09) 38%,
+      rgb(56 178 112 / 0.085) 64%,
+      transparent 84%
+    );
+  --md-tricolour-hairline: linear-gradient(
+    90deg,
+    var(--md-hairline) 0%,
+    rgb(255 148 42 / 0.44) 20%,
+    rgb(255 255 255 / 0.24) 44%,
+    rgb(143 163 242 / 0.48) 50%,
+    rgb(255 255 255 / 0.24) 56%,
+    rgb(56 178 112 / 0.42) 80%,
+    var(--md-hairline) 100%
+  );
+  --md-tricolour-progress: linear-gradient(
+    90deg,
+    #ff942a 0%,
+    #8fa3f2 50%,
+    #58c686 100%
+  );
+  --md-texture-chakra:
+    radial-gradient(
+      closest-side,
+      rgb(18 20 38 / 0.9) 0%,
+      rgb(143 163 242 / 0.22) 8%,
+      rgb(255 148 42 / 0.18) 14%,
+      rgb(143 163 242 / 0.24) 18%,
+      transparent 19%,
+      transparent 87%,
+      rgb(143 163 242 / 0.22) 88%,
+      rgb(255 148 42 / 0.18) 92%,
+      rgb(143 163 242 / 0.26) 96%,
+      rgb(56 178 112 / 0.16) 98.5%,
+      transparent 99.5%
+    ),
+    repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      rgb(143 163 242 / 0.14) 0deg 1.1deg,
+      rgb(255 148 42 / 0.09) 1.1deg 1.9deg,
+      transparent 1.9deg 15deg
+    );
+  --md-texture-baori:
+    radial-gradient(
+      circle at 100% 100%,
+      transparent 0 18px,
+      rgb(255 148 42 / 0.08) 18px 19.5px,
+      transparent 19.5px 32px,
+      rgb(143 163 242 / 0.075) 32px 33.5px,
+      transparent 33.5px 46px,
+      rgb(56 178 112 / 0.075) 46px 47.5px,
+      transparent 47.5px
+    );
   --md-dot-grid: radial-gradient(circle, #2c2c33 1px, transparent 1px);
-  /* Dark mode: shadows become 1px light rings */
-  --md-e0: 0 0 0 1px var(--md-hairline);
-  --md-e1: 0 0 0 1px rgb(255 255 255 / 0.06);
-  --md-e2: 0 0 0 1px rgb(255 255 255 / 0.06);
-  --md-e3: 0 0 0 1px rgb(255 255 255 / 0.08), 0 28px 64px -28px rgb(0 0 0 / 0.75);
-  --md-inset-button: inset 0 1px 0 rgb(255 255 255 / 0.25);
+  --md-paper-grain:
+    radial-gradient(circle at 16% 20%, rgb(255 153 51 / 0.025) 0.85px, transparent 1.2px),
+    radial-gradient(circle at 50% 50%, rgb(143 163 242 / 0.025) 0.85px, transparent 1.2px),
+    radial-gradient(circle at 84% 78%, rgb(72 187 120 / 0.024) 0.85px, transparent 1.2px),
+    linear-gradient(0deg, rgb(255 255 255 / 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.01) 1px, transparent 1px);
+  /* Dark mode: specular top-edge highlight + crisp 1px outer ring */
+  --md-surface-glass: rgb(18 18 23 / 0.82);
+  --md-overlay-glass: rgb(27 27 32 / 0.96);
+  --md-e0: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 1px var(--md-hairline);
+  --md-e1: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 0 0 1px rgb(255 255 255 / 0.07), 0 8px 24px -6px rgb(0 0 0 / 0.5);
+  --md-e2: inset 0 1px 0 rgb(255 255 255 / 0.09), 0 0 0 1px rgb(255 255 255 / 0.08), 0 16px 36px -8px rgb(0 0 0 / 0.65);
+  --md-e3: inset 0 1px 0 rgb(255 255 255 / 0.11), 0 0 0 1px rgb(255 255 255 / 0.1), 0 28px 64px -16px rgb(0 0 0 / 0.8);
+  --md-inset-button: inset 0 0 12px rgb(255 255 255 / 0.22), inset 0 1px 0 rgb(255 255 255 / 0.28), 0 1px 2px rgb(0 0 0 / 0.4);
+  --md-inset-button-secondary: inset 0 0 10px rgb(255 255 255 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.1), 0 1px 2px rgb(0 0 0 / 0.35);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -247,13 +523,141 @@
     --md-topic-survival: #26150c;
     --md-topic-night: #12142a;
     --md-topic-first-aid: #2a1420;
-    --md-glow-opacity: 0.18;
+    --md-glow-dawn:
+      radial-gradient(
+        52% 46% at 24% 22%,
+        rgb(255 148 42 / 0.42) 0%,
+        rgb(255 184 107 / 0.18) 46%,
+        transparent 84%
+      ),
+      radial-gradient(
+        44% 42% at 50% 48%,
+        rgb(143 163 242 / 0.36) 0%,
+        rgb(143 163 242 / 0.14) 50%,
+        transparent 86%
+      ),
+      radial-gradient(
+        52% 46% at 76% 76%,
+        rgb(56 178 112 / 0.36) 0%,
+        rgb(168 214 138 / 0.14) 46%,
+        transparent 85%
+      );
+    --md-canvas-canopy:
+      radial-gradient(
+        58% 44% at 12% 8%,
+        rgb(255 148 42 / 0.1) 0%,
+        transparent 80%
+      ),
+      radial-gradient(
+        52% 42% at 50% 42%,
+        rgb(143 163 242 / 0.07) 0%,
+        transparent 76%
+      ),
+      radial-gradient(
+        58% 46% at 88% 88%,
+        rgb(56 178 112 / 0.09) 0%,
+        transparent 80%
+      );
+    --md-glow-opacity: 0.38;
+    --md-card-glow:
+      radial-gradient(
+        100% 90% at 0% 0%,
+        rgb(255 148 42 / 0.11) 0%,
+        transparent 74%
+      ),
+      radial-gradient(
+        76% 76% at 50% 50%,
+        rgb(143 163 242 / 0.085) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        100% 90% at 100% 100%,
+        rgb(56 178 112 / 0.1) 0%,
+        transparent 74%
+      ),
+      linear-gradient(
+        45deg,
+        transparent 48.5%,
+        rgb(255 184 107 / 0.024) 49.5%,
+        rgb(255 184 107 / 0.024) 50.5%,
+        transparent 51.5%
+      ),
+      linear-gradient(
+        -45deg,
+        transparent 48.5%,
+        rgb(143 163 242 / 0.024) 49.5%,
+        rgb(143 163 242 / 0.024) 50.5%,
+        transparent 51.5%
+      );
+    --md-spotlight-glow:
+      radial-gradient(
+        380px circle at var(--mouse-x, 50%) var(--mouse-y, 0%),
+        rgb(255 148 42 / 0.12) 0%,
+        rgb(143 163 242 / 0.09) 38%,
+        rgb(56 178 112 / 0.085) 64%,
+        transparent 84%
+      );
+    --md-tricolour-hairline: linear-gradient(
+      90deg,
+      var(--md-hairline) 0%,
+      rgb(255 148 42 / 0.44) 20%,
+      rgb(255 255 255 / 0.24) 44%,
+      rgb(143 163 242 / 0.48) 50%,
+      rgb(255 255 255 / 0.24) 56%,
+      rgb(56 178 112 / 0.42) 80%,
+      var(--md-hairline) 100%
+    );
+    --md-tricolour-progress: linear-gradient(
+      90deg,
+      #ff942a 0%,
+      #8fa3f2 50%,
+      #58c686 100%
+    );
+    --md-texture-chakra:
+      radial-gradient(
+        closest-side,
+        transparent 0%,
+        transparent 16%,
+        rgb(143 163 242 / 0.12) 16.5%,
+        rgb(143 163 242 / 0.12) 18%,
+        transparent 18.5%,
+        transparent 66%,
+        rgb(255 148 42 / 0.1) 66.5%,
+        rgb(143 163 242 / 0.12) 68%,
+        rgb(56 178 112 / 0.1) 69.5%,
+        transparent 70.5%
+      ),
+      repeating-conic-gradient(
+        from 0deg at 50% 50%,
+        rgb(143 163 242 / 0.09) 0deg 1.4deg,
+        transparent 1.4deg 15deg
+      );
+    --md-texture-baori:
+      radial-gradient(
+        circle at 100% 100%,
+        transparent 0 18px,
+        rgb(255 148 42 / 0.08) 18px 19.5px,
+        transparent 19.5px 32px,
+        rgb(143 163 242 / 0.075) 32px 33.5px,
+        transparent 33.5px 46px,
+        rgb(56 178 112 / 0.075) 46px 47.5px,
+        transparent 47.5px
+      );
     --md-dot-grid: radial-gradient(circle, #2c2c33 1px, transparent 1px);
-    --md-e0: 0 0 0 1px var(--md-hairline);
-    --md-e1: 0 0 0 1px rgb(255 255 255 / 0.06);
-    --md-e2: 0 0 0 1px rgb(255 255 255 / 0.06);
-    --md-e3: 0 0 0 1px rgb(255 255 255 / 0.08), 0 28px 64px -28px rgb(0 0 0 / 0.75);
-    --md-inset-button: inset 0 1px 0 rgb(255 255 255 / 0.25);
+    --md-paper-grain:
+      radial-gradient(circle at 16% 20%, rgb(255 153 51 / 0.025) 0.85px, transparent 1.2px),
+      radial-gradient(circle at 50% 50%, rgb(143 163 242 / 0.025) 0.85px, transparent 1.2px),
+      radial-gradient(circle at 84% 78%, rgb(72 187 120 / 0.024) 0.85px, transparent 1.2px),
+      linear-gradient(0deg, rgb(255 255 255 / 0.012) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.01) 1px, transparent 1px);
+    --md-surface-glass: rgb(18 18 23 / 0.82);
+    --md-overlay-glass: rgb(27 27 32 / 0.96);
+    --md-e0: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 1px var(--md-hairline);
+    --md-e1: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 0 0 1px rgb(255 255 255 / 0.07), 0 8px 24px -6px rgb(0 0 0 / 0.5);
+    --md-e2: inset 0 1px 0 rgb(255 255 255 / 0.09), 0 0 0 1px rgb(255 255 255 / 0.08), 0 16px 36px -8px rgb(0 0 0 / 0.65);
+    --md-e3: inset 0 1px 0 rgb(255 255 255 / 0.11), 0 0 0 1px rgb(255 255 255 / 0.1), 0 28px 64px -16px rgb(0 0 0 / 0.8);
+    --md-inset-button: inset 0 0 12px rgb(255 255 255 / 0.22), inset 0 1px 0 rgb(255 255 255 / 0.28), 0 1px 2px rgb(0 0 0 / 0.4);
+    --md-inset-button-secondary: inset 0 0 10px rgb(255 255 255 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.1), 0 1px 2px rgb(0 0 0 / 0.35);
   }
 }
 
@@ -270,10 +674,12 @@
 
   /* Line heights per script (body). Overridden by lang blocks in section 4. */
   --md-lh-body: 1.5556;          /* 28/18 */
-  --md-lh-heading: 1.2;
-  --md-lh-display: 1.1;
-  --md-tracking-display: -0.01em;
-  --md-tracking-heading: -0.005em;
+  --md-lh-heading: 1.18;
+  --md-lh-display: 1.08;
+  --md-leading-display-indic: 1.35;
+  --md-tracking-display: -0.022em;
+  --md-tracking-heading: -0.014em;
+  --md-tracking-subhead: -0.008em;
 
   /* Type scale: Minor Third 1.2, 18px body floor */
   --md-text-display: 2.5rem;     /* 40 */
@@ -286,7 +692,7 @@
   --md-text-caption: 0.875rem;   /* 14, meta only */
   --md-text-score: 3.5rem;       /* 56, DM Mono tabular */
 
-  /* Spacing (base 4, UX4G) */
+  /* Spacing (base 4, UX4G + Apple rhythm) */
   --md-space-1: 4px;  --md-space-2: 8px;  --md-space-3: 12px; --md-space-4: 16px;
   --md-space-5: 20px; --md-space-6: 24px; --md-space-8: 32px; --md-space-10: 40px;
   --md-space-12: 48px; --md-space-16: 64px; --md-space-20: 80px;
@@ -294,15 +700,16 @@
   --md-card-pad: var(--md-space-5);
   --md-section-gap: var(--md-space-10);
 
-  /* Radius: 1:1 with UX4G none/xs/sm/md/lg/xl/2xl/full. Nested: inner = outer - padding */
+  /* Radius: Apple concentric geometry (inner = outer - padding) */
   --md-r-none: 0;
-  --md-r-xs: 2px;
-  --md-r-sm: 4px;
-  --md-r-md: 8px;      /* inputs */
-  --md-r-lg: 12px;     /* chips, small cards */
-  --md-r-xl: 16px;     /* cards */
-  --md-r-2xl: 24px;    /* sheets, hero cards */
+  --md-r-xs: 4px;
+  --md-r-sm: 6px;
+  --md-r-md: 10px;     /* inputs, inner rows */
+  --md-r-lg: 14px;     /* chips, nested cards, inner wells */
+  --md-r-xl: 18px;     /* primary cards */
+  --md-r-2xl: 24px;    /* sheets, hero cards, modals */
   --md-r-full: 999px;  /* buttons, pills, orb */
+  --md-r-card-inner: calc(var(--md-r-xl) - 6px);
 
   /* Sizes */
   --md-target-min: 48px;
@@ -318,20 +725,24 @@
   --md-focus-width: 3px;
   --md-focus-offset: 2px;
 
-  /* Motion */
-  --md-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  /* Motion (Apple fluid critically-damped curves + immediate press response) */
+  --md-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --md-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --md-ease-reveal: cubic-bezier(0.25, 1, 0.5, 1);
   --md-ease-nav: cubic-bezier(0.22, 1, 0.36, 1);
-  --md-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --md-ease-exit: cubic-bezier(0.32, 0, 0.67, 0);
+  --md-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
   --md-ease-spring-reward: cubic-bezier(0.34, 1.56, 0.64, 1); /* game rewards ONLY */
-  --md-dur-instant: 80ms;
+  --md-dur-instant: 90ms;
   --md-dur-fast: 160ms;
   --md-dur-base: 240ms;
-  --md-dur-slow: 400ms;
-  --md-dur-reveal: 700ms;
+  --md-dur-slow: 380ms;
+  --md-dur-reveal: 640ms;
   --md-dur-reward-max: 1200ms;
   --md-shift: 16px;               /* shared-axis page slide distance */
+  --md-press-scale: 0.97;
+  --md-press-scale-subtle: 0.985;
+  --md-backdrop-blur: saturate(180%) blur(20px);
 
   /* Layers */
   --md-z-sticky: 10; --md-z-tabbar: 20; --md-z-orb: 30; --md-z-sheet: 40;
@@ -347,9 +758,10 @@
   --md-font-display: var(--font-tiro-devanagari, "Tiro Devanagari Hindi"), var(--font-mukta, "Mukta"), serif;
   --md-lh-body: 1.65;
   --md-lh-heading: 1.4;
-  --md-lh-display: 1.35;
+  --md-lh-display: var(--md-leading-display-indic, 1.35);
   --md-tracking-display: 0;
   --md-tracking-heading: 0;
+  --md-tracking-subhead: 0;
 }
 :lang(pa) {
   --md-font-sans: var(--font-mukta-mahee, "Mukta Mahee"), var(--font-figtree, "Figtree"), "Noto Sans Gurmukhi", sans-serif;
@@ -359,6 +771,7 @@
   --md-lh-display: 1.35;
   --md-tracking-display: 0;
   --md-tracking-heading: 0;
+  --md-tracking-subhead: 0;
 }
 :lang(ur), :lang(ks) {
   --md-font-sans: var(--font-nastaliq, "Noto Nastaliq Urdu"), var(--font-figtree, "Figtree"), serif;
@@ -368,6 +781,7 @@
   --md-lh-display: 2;
   --md-tracking-display: 0;
   --md-tracking-heading: 0;
+  --md-tracking-subhead: 0;
 }
 :lang(ta) {
   --md-font-sans: var(--font-mukta-malar, "Mukta Malar"), var(--font-figtree, "Figtree"), "Noto Sans Tamil", sans-serif;
@@ -377,6 +791,7 @@
   --md-lh-display: 1.4;
   --md-tracking-display: 0;
   --md-tracking-heading: 0;
+  --md-tracking-subhead: 0;
 }
 :lang(gu) {
   --md-font-sans: var(--font-mukta-vaani, "Mukta Vaani"), var(--font-figtree, "Figtree"), "Noto Sans Gujarati", sans-serif;
@@ -386,6 +801,7 @@
   --md-lh-display: 1.35;
   --md-tracking-display: 0;
   --md-tracking-heading: 0;
+  --md-tracking-subhead: 0;
 }
 :lang(bn), :lang(as) {
   --md-font-sans: "Hind Siliguri", "Noto Sans Bengali", var(--font-figtree, "Figtree"), sans-serif;
@@ -393,11 +809,12 @@
   --md-lh-heading: 1.4;
   --md-tracking-display: 0;
   --md-tracking-heading: 0;
+  --md-tracking-subhead: 0;
 }
-:lang(te) { --md-font-sans: "Noto Sans Telugu", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; }
-:lang(kn) { --md-font-sans: "Noto Sans Kannada", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; }
-:lang(ml) { --md-font-sans: "Noto Sans Malayalam", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; }
-:lang(or) { --md-font-sans: "Noto Sans Oriya", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; }
+:lang(te) { --md-font-sans: "Noto Sans Telugu", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; --md-tracking-subhead: 0; }
+:lang(kn) { --md-font-sans: "Noto Sans Kannada", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; --md-tracking-subhead: 0; }
+:lang(ml) { --md-font-sans: "Noto Sans Malayalam", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; --md-tracking-subhead: 0; }
+:lang(or) { --md-font-sans: "Noto Sans Oriya", var(--font-figtree, "Figtree"), sans-serif; --md-lh-body: 1.75; --md-tracking-display: 0; --md-tracking-heading: 0; --md-tracking-subhead: 0; }
 
 /* Lite mode swaps Nastaliq for Naskh: far smaller files and a shorter line box */
 [data-lite="true"]:lang(ur), [data-lite="true"]:lang(ks),
@@ -448,11 +865,11 @@
   --focus: var(--md-focus);
   --link: var(--md-primary);
   --backdrop: var(--md-scrim);
-  --radius: 0.75rem;                          /* 12px base; --field-radius = 1.5x = 18px is overridden below */
+  --radius: 0.875rem;                         /* 14px base concentric scale */
   --field-radius: var(--md-r-md);
   --ring-offset-width: var(--md-focus-offset);
   --disabled-opacity: 0.5;
-  --surface-shadow: none;                     /* hairline first */
+  --surface-shadow: var(--md-e0);
   --overlay-shadow: var(--md-e2);
   --tooltip-delay: 600ms;                     /* HeroUI default 1500ms is too slow for low-literacy users */
 }
@@ -507,6 +924,7 @@
 [data-mode="sunlight"] {
   color-scheme: light;
   --md-bg: #ffffff; --md-surface: #ffffff; --md-surface-2: #f5f5f5; --md-surface-3: #ebebeb;
+  --md-surface-glass: #ffffff; --md-overlay-glass: #ffffff;
   --md-ink: #000000; --md-ink-2: #1f1f1f; --md-ink-3: #3d3d3d;    /* 21.00 / - / 10.86 */
   --md-primary: #1a1aa6; --md-primary-fill: #1a1aa6;               /* 12.05 (SUN-03) */
   --md-primary-fill-hover: #212191; --md-primary-fill-pressed: #11115b;
@@ -514,6 +932,7 @@
   --md-hairline: #bdbdbd; --md-border: #8c8c8c;
   --md-danger: #8a130e; --md-success: #2b4f12;                     /* 9.63 / 9.42 */
   --md-glow-opacity: 0; --md-e1: 0 0 0 2px #000; --md-e2: 0 0 0 2px #000; --md-e3: 0 0 0 2px #000;
+  --md-paper-grain: none;
   --md-text-body: 1.25rem;                                         /* 20px outdoors */
 }
 
@@ -521,13 +940,27 @@
 [data-lite="true"] {
   --md-glow-opacity: 0;
   --md-glow-dawn: none;
+  --md-canvas-canopy: none;
   --md-glow-night: linear-gradient(#1c1c8f, #1c1c8f);
+  --md-card-glow: none;
+  --md-spotlight-glow: none;
+  --md-tricolour-hairline: none;
+  --md-tricolour-progress: var(--md-primary-fill);
+  --md-texture-chakra: none;
+  --md-texture-baori: none;
   --md-dot-grid: none;
+  --md-paper-grain: none;
+  --md-surface-glass: var(--md-bg);
+  --md-overlay-glass: var(--md-overlay);
+  --md-e0: 0 0 0 1px var(--md-border);
   --md-e1: 0 0 0 1px var(--md-border);
   --md-e2: 0 0 0 1px var(--md-border);
   --md-e3: 0 0 0 1px var(--md-border);
   --md-inset-button: none;
+  --md-inset-button-secondary: none;
   --md-dur-reveal: 0ms;
+  --md-press-scale: 1;
+  --md-press-scale-subtle: 1;
   --overlay-shadow: 0 0 0 1px var(--md-border);
 }
 [data-lite="true"] * {
@@ -556,6 +989,14 @@
   --md-amber: #ffab27;                 /* UX4G warning-500, fill behind ink only */
   --md-info: #0b6e6e;                  /* derived, 6.05 */
   --md-glow-dawn: none;                /* government shell: no brand light */
+  --md-canvas-canopy: none;
+  --md-card-glow: none;
+  --md-spotlight-glow: none;
+  --md-tricolour-hairline: none;
+  --md-tricolour-progress: var(--md-primary-fill);
+  --md-texture-chakra: none;
+  --md-texture-baori: none;
+  --md-paper-grain: none;
   --md-glow-opacity: 0;
   /* UX4G aliases for any UX4G component dropped into the page */
   --ux4g-font-family-base: var(--md-font-sans);
@@ -592,7 +1033,14 @@
 
 /* Reduced motion: opacity-only, no spatial movement, no loops */
 @media (prefers-reduced-motion: reduce) {
-  :root { --md-shift: 0px; --md-dur-reveal: 0ms; --md-dur-slow: 160ms; --md-ease-spring-reward: var(--md-ease-standard); }
+  :root {
+    --md-shift: 0px;
+    --md-dur-reveal: 0ms;
+    --md-dur-slow: 160ms;
+    --md-press-scale: 1;
+    --md-press-scale-subtle: 1;
+    --md-ease-spring-reward: var(--md-ease-standard);
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -600,7 +1048,14 @@
     scroll-behavior: auto !important;
   }
 }
-[data-motion="reduced"] { --md-shift: 0px; --md-dur-reveal: 0ms; --md-dur-slow: 160ms; --md-ease-spring-reward: var(--md-ease-standard); }
+[data-motion="reduced"] {
+  --md-shift: 0px;
+  --md-dur-reveal: 0ms;
+  --md-dur-slow: 160ms;
+  --md-press-scale: 1;
+  --md-press-scale-subtle: 1;
+  --md-ease-spring-reward: var(--md-ease-standard);
+}
 [data-motion="reduced"] *, [data-motion="reduced"] *::before, [data-motion="reduced"] *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
@@ -608,8 +1063,16 @@
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  :root { --md-glow-opacity: 0; }
-  .md-nav-layer, .md-sheet { background: var(--md-bg) !important; backdrop-filter: none !important; }
+  :root {
+    --md-glow-opacity: 0;
+    --md-surface-glass: var(--md-bg);
+    --md-overlay-glass: var(--md-overlay);
+  }
+  .md-nav-layer, .md-sheet, .md-topbar, .md-tabbar {
+    background: var(--md-bg) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 /* Windows High Contrast / forced colours: keep focus and state visible with system colours */
@@ -741,8 +1204,11 @@ html {
   color: var(--md-ink);
   font-family: var(--md-font-sans);
   font-size: 100%;                       /* never fix px on html: respects user font scaling */
+  font-optical-sizing: auto;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 body {
   font-size: var(--md-text-body);
@@ -751,7 +1217,13 @@ body {
   font-feature-settings: "kern" 1;
   text-rendering: optimizeLegibility;
 }
-:where(h1, h2, h3, .md-display) { font-weight: 600; line-height: var(--md-lh-heading); letter-spacing: var(--md-tracking-heading); text-wrap: balance; }
+:where(h1, h2, h3, .md-display) {
+  font-weight: 600;
+  line-height: var(--md-lh-heading);
+  letter-spacing: var(--md-tracking-heading);
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
 :where(p, li) { text-wrap: pretty; }
 :where(.md-num, [data-numeric]) { font-variant-numeric: tabular-nums lining-nums; }
 :where([dir="rtl"]) { text-align: start; }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Input, Label, TextArea } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
@@ -376,11 +377,11 @@ export function QuestionPage({ questionId }: { questionId: string }) {
           <div className="mj-screen" style={{ gap: 14 }}>
             {(q.fields ?? []).map((f) => (
               <div key={f.id} className="mj-input-group">
-                <label htmlFor={`f-${f.id}`} className="md-field__label">
+                <Label htmlFor={`f-${f.id}`} className="md-field__label">
                   {tq(`f.${f.id}`)}
-                </label>
+                </Label>
                 {f.id === "home" ? (
-                  <textarea
+                  <TextArea
                     id={`f-${f.id}`}
                     className="mj-input"
                     value={texts[f.id] ?? ""}
@@ -389,7 +390,7 @@ export function QuestionPage({ questionId }: { questionId: string }) {
                     onChange={(e) => setTexts((x) => ({ ...x, [f.id]: e.target.value }))}
                   />
                 ) : (
-                  <input
+                  <Input
                     id={`f-${f.id}`}
                     className="mj-input"
                     value={texts[f.id] ?? ""}

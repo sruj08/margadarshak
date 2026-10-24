@@ -1,5 +1,6 @@
 "use client";
 
+import { Description, Label, TextArea } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
@@ -81,9 +82,11 @@ export function NearMissStep({
         </>
       ) : (
         <>
-          <label className="st-field" htmlFor={`${id}-text`}>
-            <span className="st-label">{t("nearMiss.label")}</span>
-            <textarea
+          <div className="st-field">
+            <Label htmlFor={`${id}-text`} className="st-label">
+              {t("nearMiss.label")}
+            </Label>
+            <TextArea
               id={`${id}-text`}
               className="st-textarea"
               rows={3}
@@ -94,10 +97,10 @@ export function NearMissStep({
               onChange={(e) => setText(e.currentTarget.value)}
               data-testid="near-miss-text"
             />
-          </label>
-          <p id={`${id}-hint`} className="st-hint">
+          </div>
+          <Description id={`${id}-hint`} className="st-hint">
             {t("nearMiss.hint")}
-          </p>
+          </Description>
           <p id={`${id}-count`} className="st-hint" aria-live="polite">
             {t("nearMiss.count", { n: text.length, max: NEAR_MISS_MAX })}
           </p>

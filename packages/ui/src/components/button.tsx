@@ -24,7 +24,7 @@ export function Button({ variant = "secondary", size = "md", className, ...rest 
     <HeroButton
       variant={variant}
       size={size === "lg" ? "lg" : "md"}
-      className={cx("md-button", `md-button--${size}`, className)}
+      className={cx("md-button", `md-button--${variant}`, `md-button--${size}`, className)}
       {...rest}
     />
   );

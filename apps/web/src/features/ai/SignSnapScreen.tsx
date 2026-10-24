@@ -1,5 +1,6 @@
 "use client";
 
+import { Input, Label } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { useTranslations } from "next-intl";
@@ -63,14 +64,15 @@ export function SignSnapScreen() {
     <div className="md-page md-stack" data-testid="snap-screen">
       <h1 className="md-h1">{t("title")}</h1>
       <p>{t("intro")}</p>
-      <label className="md-field__label" htmlFor="snap-file">
+      <Label className="md-field__label" htmlFor="snap-file">
         {t("take")}
-      </label>
-      <input
+      </Label>
+      <Input
         id="snap-file"
         type="file"
         accept="image/*"
         capture="environment"
+        className="mj-input"
         onChange={(e) => void snap(e.target.files?.[0])}
         data-testid="snap-file"
       />

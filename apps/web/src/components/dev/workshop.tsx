@@ -1,9 +1,11 @@
 "use client";
 
 import { Banner } from "@margdarshak/ui/components/banner";
+import { BlurText } from "@margdarshak/ui/components/blur-text";
 import { Button } from "@margdarshak/ui/components/button";
 import { Card } from "@margdarshak/ui/components/card";
 import { Chip } from "@margdarshak/ui/components/chip";
+import { CountUp } from "@margdarshak/ui/components/count-up";
 import { DateField } from "@margdarshak/ui/components/date-field";
 import { EmptyState } from "@margdarshak/ui/components/empty-state";
 import { LanguagePicker } from "@margdarshak/ui/components/language-picker";
@@ -11,9 +13,12 @@ import { PictureCardGroup } from "@margdarshak/ui/components/picture-card";
 import { ProgressBar, Stepper } from "@margdarshak/ui/components/progress";
 import { QuestionScreen } from "@margdarshak/ui/components/question-screen";
 import { Sheet } from "@margdarshak/ui/components/sheet";
+import { ShinyText } from "@margdarshak/ui/components/shiny-text";
 import { SimulatedChip } from "@margdarshak/ui/components/simulated-chip";
 import { Skeleton, SkeletonText } from "@margdarshak/ui/components/skeleton";
 import { SourceChip } from "@margdarshak/ui/components/source-chip";
+import { SplitText } from "@margdarshak/ui/components/split-text";
+import { SpotlightCard } from "@margdarshak/ui/components/spotlight-card";
 import { StatusGlyph, type StatusKind } from "@margdarshak/ui/components/status-glyph";
 import { notify } from "@margdarshak/ui/components/toast";
 import { VerbTile } from "@margdarshak/ui/components/verb-tile";
@@ -116,15 +121,27 @@ export function Workshop({ locale, copy }: { locale: string; copy: Copy }) {
         <h2 id="ws-type" className="md-h2">
           Typography and scripts
         </h2>
-        <p className="md-display">Get your driving licence, step by step.</p>
+        <p className="md-display">
+          <SplitText text="Get your driving licence, step by step." delay={50} duration={0.6} />
+        </p>
         <p lang="hi" className="md-h2">
-          ड्राइविंग लाइसेंस, एक-एक कदम करके।
+          <SplitText text="ड्राइविंग लाइसेंस, एक-एक कदम करके।" delay={60} duration={0.6} />
         </p>
         <p lang="en">
-          Your learner's licence expires on 14 March 2027. Book your driving test by 10 February.
+          <BlurText
+            text="Your learner's licence expires on 14 March 2027. Book your driving test by 10 February."
+            delay={35}
+            duration={0.5}
+          />
         </p>
         <p lang="hi">आपका लर्नर लाइसेंस 14 मार्च 2027 को समाप्त होगा। ड्राइविंग टेस्ट 10 फ़रवरी तक बुक करें।</p>
         <p lang="hi">क्षेत्रीय परिवहन कार्यालय · द्वितीय · श्रृंखला · ज़िम्मेदारी</p>
+        <SpotlightCard className="md-card md-card--default" style={{ padding: 16 }}>
+          <p className="md-caption">
+            <ShinyText text="React Bits · GSAP SplitText & CountUp" /> ·{" "}
+            <CountUp to={180} duration={0.6} /> days validity
+          </p>
+        </SpotlightCard>
       </section>
 
       <section className="md-workshop__section" aria-labelledby="ws-buttons">

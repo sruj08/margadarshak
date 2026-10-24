@@ -92,11 +92,11 @@ export function CheckRow({
         </Checkbox.Control>
         <span className="mj-choice__text">
           <span className="mj-choice__label">{children}</span>
+          {description ? (
+            <Description className="mj-choice__desc mj-check__desc">{description}</Description>
+          ) : null}
         </span>
       </Checkbox.Content>
-      {description ? (
-        <Description className="mj-choice__desc mj-check__desc">{description}</Description>
-      ) : null}
     </Checkbox>
   );
 }

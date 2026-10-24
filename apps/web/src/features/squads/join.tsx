@@ -1,7 +1,8 @@
 "use client";
 
+import { Description, Input, Label } from "@heroui/react";
 import { featureAccess } from "@margdarshak/gamification";
-import { buttonClassName } from "@margdarshak/ui/components/button-class";
+import { Button } from "@margdarshak/ui/components/button";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import { isOffline, joinSquad, LearnApiError } from "@/features/learn/api";
@@ -89,10 +90,10 @@ export function Join({ token }: { token: string }) {
     <form className="md-stack" onSubmit={(e) => void submit(e)} data-testid="join-squad">
       <OfflineBanner />
       <p>{t("joinLine")}</p>
-      <label htmlFor={`${id}-d`} className="font-semibold">
+      <Label htmlFor={`${id}-d`} className="font-semibold">
         {t("displayLabel")}
-      </label>
-      <input
+      </Label>
+      <Input
         id={`${id}-d`}
         className="ml-input"
         value={display}
@@ -100,18 +101,15 @@ export function Join({ token }: { token: string }) {
         autoComplete="nickname"
         onChange={(e) => setDisplay(e.target.value)}
       />
-      <p className="ml-small">{t("displayHint")}</p>
+      <Description className="ml-small">{t("displayHint")}</Description>
       {problem ? (
         <p className="ml-feedback" data-tone="warn" role="alert">
           {problem}
         </p>
       ) : null}
-      <button
-        type="submit"
-        className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
-      >
+      <Button type="submit" variant="primary" size="lg" fullWidth>
         {t("join")}
-      </button>
+      </Button>
       <p className="ml-small">{t("how")}</p>
     </form>
   );

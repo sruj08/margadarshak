@@ -1,5 +1,6 @@
 "use client";
 
+import { Input, Label } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -69,11 +70,12 @@ export function CoachPlanCard({ familyMemberId }: { familyMemberId?: string }) {
         >
           <h3 className="md-h4">{t("intention")}</h3>
           <p>{prompt}</p>
-          <label className="md-field__label" htmlFor="coach-day">
+          <Label className="md-field__label" htmlFor="coach-day">
             {t("day")}
-          </label>
+          </Label>
           <select
             id="coach-day"
+            className="mj-input"
             value={day}
             onChange={(e) => setDay(e.target.value as (typeof DAYS)[number])}
           >
@@ -83,11 +85,12 @@ export function CoachPlanCard({ familyMemberId }: { familyMemberId?: string }) {
               </option>
             ))}
           </select>
-          <label className="md-field__label" htmlFor="coach-time">
+          <Label className="md-field__label" htmlFor="coach-time">
             {t("time")}
-          </label>
-          <input
+          </Label>
+          <Input
             id="coach-time"
+            className="mj-input"
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}

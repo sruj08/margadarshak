@@ -1,5 +1,6 @@
 "use client";
 
+import { Description, Input, Label } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
@@ -248,10 +249,10 @@ export function ApplicationNumber() {
         <p className="mj-sub">{t("sub")}</p>
       </header>
       <div className="mj-input-group">
-        <label htmlFor="app-no" className="md-field__label">
+        <Label htmlFor="app-no" className="md-field__label">
           {t("label")}
-        </label>
-        <input
+        </Label>
+        <Input
           id="app-no"
           className="mj-input mj-num"
           inputMode="numeric"
@@ -260,9 +261,9 @@ export function ApplicationNumber() {
           onChange={(e) => setValue(e.target.value.replace(/[^\d ]/g, ""))}
           aria-describedby="app-no-hint"
         />
-        <p id="app-no-hint" className="md-field__hint">
+        <Description id="app-no-hint" className="md-field__hint">
           {t("hint")}
-        </p>
+        </Description>
       </div>
       <div className="mj-actions">
         <Button

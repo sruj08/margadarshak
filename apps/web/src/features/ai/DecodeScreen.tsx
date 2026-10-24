@@ -1,5 +1,6 @@
 "use client";
 
+import { Fieldset, Input, Label } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { useTranslations } from "next-intl";
@@ -104,13 +105,14 @@ export function DecodeScreen() {
       <Banner tone="info" title={t("privacyTitle")}>
         {t("privacy")}
       </Banner>
-      <label className="md-field__label" htmlFor="decode-file">
+      <Label className="md-field__label" htmlFor="decode-file">
         {t("pick")}
-      </label>
-      <input
+      </Label>
+      <Input
         id="decode-file"
         type="file"
         accept="image/*"
+        className="mj-input"
         onChange={(e) => void pick(e.target.files?.[0])}
         data-testid="decode-file"
       />
@@ -177,14 +179,14 @@ export function DecodeScreen() {
       ) : null}
 
       {manual && !chosen ? (
-        <fieldset data-testid="decode-manual">
-          <legend>{t("manual")}</legend>
+        <Fieldset className="mj-input-group" data-testid="decode-manual">
+          <Fieldset.Legend className="md-field__label">{t("manual")}</Fieldset.Legend>
           {SCREENS.map((s) => (
             <Button key={s.id} variant="secondary" onPress={() => setChosen(s.id)}>
               {s.label}
             </Button>
           ))}
-        </fieldset>
+        </Fieldset>
       ) : null}
 
       {chosen ? (

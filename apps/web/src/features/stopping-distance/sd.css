@@ -1,13 +1,15 @@
-/* Stopping Distance (workstream E). Tokens only, plus Okabe-Ito pattern colours in the SVG. */
+/* Stopping Distance (workstream E).
+ * Apple Design: spring curves, tactile brake/stepper feedback, concentric radii.
+ * Tokens only, plus Okabe-Ito pattern colours in the SVG. */
 .sd-game{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:var(--md-space-3) var(--md-gutter) var(--md-space-6)}
 .sd-round{display:flex;flex-direction:column;gap:var(--md-space-3);width:100%;max-width:520px;margin:0 auto;flex:1}
 .sd-round__kicker{font-size:var(--md-text-caption);color:var(--md-on-road-2);margin:0}
-.sd-round__title{font-size:var(--md-text-h3);font-weight:600;margin:0;line-height:var(--md-lh-heading)}
+.sd-round__title{font-size:var(--md-text-h3);font-weight:600;margin:0;line-height:var(--md-lh-heading);letter-spacing:var(--md-tracking-heading)}
 .sd-round__at{margin:0;font-family:var(--md-font-num);color:var(--md-on-road)}
 .sd-round__hint{margin:0;font-size:var(--md-text-caption);color:var(--md-on-road-2)}
 .sd-strip{width:100%;height:auto;color:var(--md-on-road);display:block}
 .sd-strip--moving .sd-strip__dashes{animation:sd-dash .5s linear infinite}
-.sd-strip--animate .sd-strip__seg{transform-box:fill-box;transform-origin:left center;animation:sd-grow var(--md-dur-reveal,1.2s) var(--md-ease-standard) both}
+.sd-strip--animate .sd-strip__seg{transform-box:fill-box;transform-origin:left center;animation:sd-grow var(--md-dur-reveal,1.2s) var(--md-ease-spring) both}
 .sd-strip--animate .sd-strip__seg--late{animation-delay:.6s}
 .sd-game--still .sd-strip__dashes,.sd-game--still .sd-strip__seg{animation:none!important}
 @media (prefers-reduced-motion:reduce){.sd-strip__dashes,.sd-strip__seg{animation:none!important}}
@@ -19,13 +21,15 @@
 .sd-stepper__value{font-family:var(--md-font-num);font-size:var(--md-text-h2);font-variant-numeric:tabular-nums;text-align:right}
 .sd-stepper__range{grid-column:1/-1;width:100%;height:48px;accent-color:var(--md-amber)}
 .sd-stepper__btns{grid-column:1/-1;display:flex;gap:var(--md-space-2)}
-.sd-stepper__btn,.sd-option{flex:1;min-height:56px;min-width:56px;border-radius:var(--md-r-lg);border:2px solid var(--md-on-road-3);background:var(--md-road-2);color:var(--md-on-road);font:inherit;font-family:var(--md-font-num);font-size:var(--md-text-body-lg);cursor:pointer}
+.sd-stepper__btn,.sd-option{flex:1;min-height:56px;min-width:56px;border-radius:var(--md-r-lg);border:2px solid var(--md-on-road-3);background:var(--md-road-2);color:var(--md-on-road);font:inherit;font-family:var(--md-font-num);font-size:var(--md-text-body-lg);cursor:pointer;transition:transform var(--md-dur-fast) var(--md-ease-spring),border-color var(--md-dur-fast) var(--md-ease-standard),box-shadow var(--md-dur-fast) var(--md-ease-spring)}
+.sd-stepper__btn:active,.sd-option:active{transform:scale(var(--md-press-scale))}
 .sd-options{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:var(--md-space-2)}
 .sd-options .sd-stepper__label{width:100%}
 .sd-option--on{border-color:var(--md-amber);box-shadow:inset 0 0 0 2px var(--md-amber)}
 .sd-option--on::before{content:"✓ "}
 .sd-stepper__btn:focus-visible,.sd-option:focus-visible,.sd-brake:focus-visible{outline:var(--md-focus-width) solid var(--md-focus);outline-offset:2px}
-.sd-brake{width:100%;min-height:72px;border:0;border-radius:var(--md-r-xl);background:var(--md-amber);color:var(--md-on-amber);font:inherit;font-size:var(--md-text-h2);font-weight:700;letter-spacing:.04em;cursor:pointer;touch-action:manipulation}
+.sd-brake{width:100%;min-height:72px;border:0;border-radius:var(--md-r-xl);background:var(--md-amber);color:var(--md-on-amber);box-shadow:var(--md-inset-button),var(--md-e1);font:inherit;font-size:var(--md-text-h2);font-weight:700;letter-spacing:.04em;cursor:pointer;touch-action:manipulation;transition:transform var(--md-dur-fast) var(--md-ease-spring),box-shadow var(--md-dur-fast) var(--md-ease-spring)}
+.sd-brake:active{transform:scale(var(--md-press-scale))}
 .sd-status{margin:0;font-size:var(--md-text-body-lg);min-height:1.5em}
 .sd-reveal{display:flex;flex-direction:column;gap:var(--md-space-2);margin-top:auto}
 .sd-line{margin:0;font-size:var(--md-text-body)}

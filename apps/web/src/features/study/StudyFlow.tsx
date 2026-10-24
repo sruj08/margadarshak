@@ -1,5 +1,6 @@
 "use client";
 
+import { Fieldset } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useLocale, useTranslations } from "next-intl";
@@ -394,8 +395,8 @@ function BandsStep({
     value: V | null,
     set: (v: V) => void,
   ) => (
-    <fieldset className="st-fieldset" data-testid={`band-${name}`}>
-      <legend className="st-label">{legend}</legend>
+    <Fieldset className="st-fieldset" data-testid={`band-${name}`}>
+      <Fieldset.Legend className="st-label">{legend}</Fieldset.Legend>
       {values.map((v) => (
         <label key={v} className="st-choice">
           <input
@@ -409,7 +410,7 @@ function BandsStep({
           <span>{label(v)}</span>
         </label>
       ))}
-    </fieldset>
+    </Fieldset>
   );
 
   return (

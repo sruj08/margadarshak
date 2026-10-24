@@ -1,5 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
 import { cx } from "../lib/cx";
+import { SpotlightOverlay } from "./spotlight-card";
 
 /**
  * VerbTile (C-02, F-01): pictogram, a verb label of at most four words and a one-line hint. The whole
@@ -25,9 +26,15 @@ export function VerbTile({
   linkAs: LinkComponent,
   className,
 }: VerbTileProps) {
-  const cls = cx("md-verb-tile", highlight && "md-verb-tile--highlight", className);
+  const cls = cx(
+    "md-verb-tile",
+    "rb-card-spotlight",
+    highlight && "md-verb-tile--highlight",
+    className,
+  );
   const body = (
     <>
+      <SpotlightOverlay />
       <span className="md-verb-tile__icon" aria-hidden="true">
         {icon}
       </span>

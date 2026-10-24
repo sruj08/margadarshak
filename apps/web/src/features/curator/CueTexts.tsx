@@ -1,5 +1,6 @@
 "use client";
 
+import { Input, Label } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
@@ -143,9 +144,12 @@ export function CueTexts({
                 const k = `${h.hazard_id}.${lang}`;
                 const e = errors[k];
                 return (
-                  <label key={lang} className="cu-field">
-                    <span className="cu-label">{t(`cues.${lang}`)}</span>
-                    <input
+                  <div key={lang} className="cu-field">
+                    <Label className="cu-label" htmlFor={`${id}-cue-${h.hazard_id}-${lang}`}>
+                      {t(`cues.${lang}`)}
+                    </Label>
+                    <Input
+                      id={`${id}-cue-${h.hazard_id}-${lang}`}
                       className="cu-input"
                       lang={lang}
                       maxLength={160}
@@ -165,7 +169,7 @@ export function CueTexts({
                         {t(`cues.errors.${e}`)}
                       </span>
                     ) : null}
-                  </label>
+                  </div>
                 );
               })}
             </li>

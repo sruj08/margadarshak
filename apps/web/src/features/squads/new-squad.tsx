@@ -1,7 +1,8 @@
 "use client";
 
+import { Description, Button as HeroButton, Input, Label } from "@heroui/react";
 import { featureAccess } from "@margdarshak/gamification";
-import { buttonClassName } from "@margdarshak/ui/components/button-class";
+import { Button } from "@margdarshak/ui/components/button";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import { createSquad, isNoAccount, isOffline, LearnApiError } from "@/features/learn/api";
@@ -65,27 +66,26 @@ export function NewSquad() {
   return (
     <form className="md-stack" onSubmit={(e) => void submit(e)} data-testid="new-squad">
       <OfflineBanner />
-      <label htmlFor={`${id}-n`} className="font-semibold">
+      <Label htmlFor={`${id}-n`} className="font-semibold">
         {t("nameLabel")}
-      </label>
-      <input
+      </Label>
+      <Input
         id={`${id}-n`}
         className="ml-input"
         value={name}
         maxLength={40}
         onChange={(e) => setName(e.target.value)}
       />
-      <button
-        type="button"
+      <HeroButton
         className="ml-link-btn"
-        onClick={() => setName(suggestName(Math.floor(Math.random() * 1000)))}
+        onPress={() => setName(suggestName(Math.floor(Math.random() * 1000)))}
       >
         {t("another")}
-      </button>
-      <label htmlFor={`${id}-d`} className="font-semibold">
+      </HeroButton>
+      <Label htmlFor={`${id}-d`} className="font-semibold">
         {t("displayLabel")}
-      </label>
-      <input
+      </Label>
+      <Input
         id={`${id}-d`}
         className="ml-input"
         value={display}
@@ -93,19 +93,15 @@ export function NewSquad() {
         autoComplete="nickname"
         onChange={(e) => setDisplay(e.target.value)}
       />
-      <p className="ml-small">{t("displayHint")}</p>
+      <Description className="ml-small">{t("displayHint")}</Description>
       {problem ? (
         <p className="ml-feedback" data-tone="warn" role="alert">
           {problem}
         </p>
       ) : null}
-      <button
-        type="submit"
-        disabled={busy}
-        className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
-      >
+      <Button type="submit" isDisabled={busy} variant="primary" size="lg" fullWidth>
         {t("create")}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -4,5 +4,5 @@
 .sims-runs__bar{display:block;height:14px;border-radius:var(--md-r-sm);background:var(--md-surface-2)}
 .sims-runs__bar+.sims-runs__bar{width:60%}
 .sims-runs__list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--md-space-2)}
-.sims-runs__error{display:flex;flex-wrap:wrap;gap:var(--md-space-2);align-items:center;border:1px solid var(--md-warning-border);background:var(--md-warning-soft);color:var(--md-warning-ink);border-radius:var(--md-r-md);padding:var(--md-space-2) var(--md-space-3)}
+.sims-runs__error{display:flex;flex-wrap:wrap;gap:var(--md-space-2);align-items:center;border:1px solid var(--md-warning-border);background:var(--md-warning-soft);color:var(--md-warning-ink);border-radius:var(--md-r-lg);padding:var(--md-space-3) var(--md-space-4)}
 .sims-runs__error p{margin:0}

@@ -22,6 +22,7 @@ export function buttonClassName({
   return cx(
     buttonVariants({ variant, size: size === "lg" ? "lg" : "md", fullWidth }),
     "md-button",
+    `md-button--${variant}`,
     `md-button--${size}`,
     className,
   );

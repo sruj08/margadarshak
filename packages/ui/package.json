@@ -9,6 +9,7 @@
     "*.css"
   ],
   "exports": {
+    ".": "./src/index.ts",
     "./tokens.css": "./tokens.css",
     "./tokens.json": "./tokens.json",
     "./components.css": "./src/components.css",
@@ -22,8 +23,10 @@
     "clean": "node -e \"require('node:fs').rmSync('coverage',{recursive:true,force:true})\""
   },
   "dependencies": {
+    "@gsap/react": "catalog:",
     "@heroui/react": "catalog:",
     "@heroui/styles": "catalog:",
+    "gsap": "catalog:",
     "lucide-react": "catalog:",
     "motion": "catalog:",
     "tailwind-variants": "catalog:"

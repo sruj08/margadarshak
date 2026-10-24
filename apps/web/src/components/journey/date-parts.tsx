@@ -1,5 +1,6 @@
 "use client";
 
+import { Description, Fieldset, Input, Label } from "@heroui/react";
 import { useId } from "react";
 
 /**
@@ -56,10 +57,10 @@ export function DateParts({
     [hint ? hintId : null, error ? errId : null].filter(Boolean).join(" ") || undefined;
   const box = (key: keyof DateValue, label: string, width: string, max: number, ac: string) => (
     <div className="mj-input-group" style={{ width }}>
-      <label htmlFor={`${id}-${key}`} className="md-field__label">
+      <Label htmlFor={`${id}-${key}`} className="md-field__label">
         {label}
-      </label>
-      <input
+      </Label>
+      <Input
         id={`${id}-${key}`}
         className="mj-input mj-num"
         inputMode="numeric"
@@ -76,14 +77,14 @@ export function DateParts({
     </div>
   );
   return (
-    <fieldset className="mj-input-group" style={{ border: 0, padding: 0, margin: 0 }}>
-      <legend className="md-field__label" style={{ marginBottom: 6 }}>
+    <Fieldset className="mj-input-group" style={{ border: 0, padding: 0, margin: 0 }}>
+      <Fieldset.Legend className="md-field__label" style={{ marginBottom: 6 }}>
         {legend}
-      </legend>
+      </Fieldset.Legend>
       {hint ? (
-        <p id={hintId} className="md-field__hint" style={{ marginBottom: 6 }}>
+        <Description id={hintId} className="md-field__hint" style={{ marginBottom: 6 }}>
           {hint}
-        </p>
+        </Description>
       ) : null}
       {error ? (
         <p id={errId} className="mj-error">
@@ -95,6 +96,6 @@ export function DateParts({
         {yearOnly ? null : box("m", labels.month, "4.5rem", 2, "bday-month")}
         {box("y", labels.year, "6.5rem", 4, "bday-year")}
       </div>
-    </fieldset>
+    </Fieldset>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Input, Label } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
@@ -169,9 +170,12 @@ export function RegisterForm() {
             void submit();
           }}
         >
-          <label className="cu-field">
-            <span className="cu-label">{t("register.rawKey")}</span>
-            <input
+          <div className="cu-field">
+            <Label className="cu-label" htmlFor={`${id}-raw`}>
+              {t("register.rawKey")}
+            </Label>
+            <Input
+              id={`${id}-raw`}
               className="cu-input"
               value={form.raw_object_key}
               maxLength={256}
@@ -181,10 +185,13 @@ export function RegisterForm() {
             />
             <span className="cu-hint">{t("register.rawKeyHint")}</span>
             {errFor("rawKey")}
-          </label>
-          <label className="cu-field">
-            <span className="cu-label">{t("register.state")}</span>
-            <input
+          </div>
+          <div className="cu-field">
+            <Label className="cu-label" htmlFor={`${id}-state`}>
+              {t("register.state")}
+            </Label>
+            <Input
+              id={`${id}-state`}
               className="cu-input"
               value={form.state}
               maxLength={3}
@@ -194,10 +201,13 @@ export function RegisterForm() {
               {...invalid("state")}
             />
             {errFor("state")}
-          </label>
-          <label className="cu-field">
-            <span className="cu-label">{t("register.city")}</span>
-            <input
+          </div>
+          <div className="cu-field">
+            <Label className="cu-label" htmlFor={`${id}-city`}>
+              {t("register.city")}
+            </Label>
+            <Input
+              id={`${id}-city`}
               className="cu-input"
               value={form.city}
               maxLength={60}
@@ -208,7 +218,7 @@ export function RegisterForm() {
             />
             <span className="cu-hint">{t("register.cityHint")}</span>
             {errFor("city")}
-          </label>
+          </div>
           {select(
             "filmed_by",
             t("register.filmedBy"),
@@ -228,9 +238,12 @@ export function RegisterForm() {
           {select("pov", t("register.pov"), POVS, (v) =>
             t(`options.pov.${v as (typeof POVS)[number]}`),
           )}
-          <label className="cu-field">
-            <span className="cu-label">{t("register.month")}</span>
-            <input
+          <div className="cu-field">
+            <Label className="cu-label" htmlFor={`${id}-month`}>
+              {t("register.month")}
+            </Label>
+            <Input
+              id={`${id}-month`}
               className="cu-input"
               type="month"
               value={form.captured_month}
@@ -239,13 +252,16 @@ export function RegisterForm() {
               {...invalid("month")}
             />
             {errFor("month")}
-          </label>
+          </div>
           {select("speed_source", t("register.speedSource"), SPEED_SOURCES, (v) =>
             t(`options.speedSource.${v as (typeof SPEED_SOURCES)[number]}`),
           )}
-          <label className="cu-field">
-            <span className="cu-label">{t("register.duration")}</span>
-            <input
+          <div className="cu-field">
+            <Label className="cu-label" htmlFor={`${id}-duration`}>
+              {t("register.duration")}
+            </Label>
+            <Input
+              id={`${id}-duration`}
               className="cu-input"
               inputMode="decimal"
               value={durationText}
@@ -255,11 +271,14 @@ export function RegisterForm() {
             />
             <span className="cu-hint">{t("register.durationHint")}</span>
             {errFor("duration")}
-          </label>
+          </div>
           {form.speed_source !== "not_logged" ? (
-            <label className="cu-field">
-              <span className="cu-label">{t("register.speed")}</span>
-              <input
+            <div className="cu-field">
+              <Label className="cu-label" htmlFor={`${id}-speed`}>
+                {t("register.speed")}
+              </Label>
+              <Input
+                id={`${id}-speed`}
                 className="cu-input"
                 inputMode="decimal"
                 value={speedText}
@@ -268,11 +287,14 @@ export function RegisterForm() {
                 {...invalid("speed")}
               />
               {errFor("speed")}
-            </label>
+            </div>
           ) : null}
-          <label className="cu-field">
-            <span className="cu-label">{t("register.consent")}</span>
-            <input
+          <div className="cu-field">
+            <Label className="cu-label" htmlFor={`${id}-consent`}>
+              {t("register.consent")}
+            </Label>
+            <Input
+              id={`${id}-consent`}
               className="cu-input"
               value={form.contributor_consent_id}
               autoComplete="off"
@@ -281,7 +303,7 @@ export function RegisterForm() {
               {...invalid("consent")}
             />
             {errFor("consent")}
-          </label>
+          </div>
           <p className="cu-hint">{t("register.licence")}</p>
           {err ? (
             <p role="alert" className="cu-error">

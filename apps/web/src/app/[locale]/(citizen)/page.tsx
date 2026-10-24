@@ -1,10 +1,15 @@
 import "@/components/journey/journey.css";
+import { AnimatedContent } from "@margdarshak/ui/components/animated-content";
+import { BlurText } from "@margdarshak/ui/components/blur-text";
+import { SplitText } from "@margdarshak/ui/components/split-text";
 import { VerbTile } from "@margdarshak/ui/components/verb-tile";
 import { ArrowRight, FileSearch, GraduationCap, RefreshCw, Scooter } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import type { CSSProperties } from "react";
+import { AshokaChakra } from "@/components/home/ashoka-chakra";
 import { HomeBody } from "@/components/home/home-body";
+import { IndianDrivingLicenceCard } from "@/components/home/indian-driving-licence-card";
 import { TrustLine } from "@/components/home/trust-line";
 import { VoiceButton } from "@/components/home/voice-sheet";
 import { Link } from "@/i18n/navigation";
@@ -56,15 +61,27 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <div className="md-page md-page--wide">
       <HomeBody>
         <div className="md-home" data-screen="SCR-003">
-          <section className="md-hero" aria-labelledby="home-h1">
+          {/* Reading order: headline, ask, the four verbs, licence card, then the quiet extras. */}
+          <section className="md-hero md-home__hero" aria-labelledby="home-h1">
             <div className="md-hero__glow" aria-hidden="true" />
+            <AshokaChakra />
             <h1 id="home-h1" className="md-display">
-              {t("h1")}
+              <SplitText text={t("h1")} delay={45} duration={0.6} splitType="words" />
             </h1>
-            <p className="md-hero__sub">{t("sub")}</p>
+            <p className="md-hero__sub">
+              <BlurText text={t("sub")} delay={35} duration={0.5} />
+            </p>
           </section>
 
-          <ul className="md-tiles" aria-label={t("tilesLabel")} data-testid="verb-tiles">
+          <AnimatedContent delay={0.08} distance={12} duration={0.45} className="md-home__ask">
+            <VoiceButton />
+          </AnimatedContent>
+
+          <ul
+            className="md-tiles md-home__tiles"
+            aria-label={t("tilesLabel")}
+            data-testid="verb-tiles"
+          >
             {tiles.map((tile, i) => (
               <li key={tile.href} className="md-rise" style={{ "--i": i } as CSSProperties}>
                 <VerbTile
@@ -78,16 +95,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             ))}
           </ul>
 
-          <div>
-            <VoiceButton />
+          <div className="md-home__card">
+            <IndianDrivingLicenceCard />
+          </div>
+
+          <AnimatedContent delay={0.12} distance={14} duration={0.5} className="md-home__more">
             <TrustLine />
             <p className="md-all-services">
-              <Link href="/services" className="md-link">
-                {t("all")}
+              <Link href="/services" className="md-link md-all-services__card">
+                <span>{t("all")}</span>
                 <ArrowRight aria-hidden="true" size={18} strokeWidth={1.75} />
               </Link>
             </p>
-          </div>
+          </AnimatedContent>
         </div>
       </HomeBody>
     </div>

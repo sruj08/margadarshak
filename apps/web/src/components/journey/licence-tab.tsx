@@ -5,7 +5,9 @@ import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { EmptyState } from "@margdarshak/ui/components/empty-state";
 import { Sheet } from "@margdarshak/ui/components/sheet";
+import { ShinyText } from "@margdarshak/ui/components/shiny-text";
 import { Skeleton } from "@margdarshak/ui/components/skeleton";
+import { SplitText } from "@margdarshak/ui/components/split-text";
 import { notify } from "@margdarshak/ui/components/toast";
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,6 +21,7 @@ import { stageView } from "@/lib/journey/stage";
 import { recordScreen } from "@/lib/journey/trial-log";
 import { CaseCountdown } from "./case-clock";
 import { ChoiceCards } from "./choices";
+import { CustomLicenceStudio } from "./custom-licence-studio";
 import { DateParts, type DateValue, fromIso, toIso } from "./date-parts";
 import { ParcelTracker } from "./parcel-tracker";
 import { useFmt } from "./rule-source";
@@ -82,6 +85,7 @@ export function LicenceTab() {
     return (
       <div className="mj-screen" data-screen="SCR-070">
         <h1 className="mj-title">{tl("title")}</h1>
+        <CustomLicenceStudio activeCase={active} cachedCase={cached} />
         <EmptyState
           title={tl("emptyTitle")}
           line={tl("emptyLine")}
@@ -135,11 +139,17 @@ export function LicenceTab() {
       <header className="mj-head">
         <div className="mj-glow" aria-hidden="true" />
         <p className="mj-eyebrow">
-          {classes} · {tc(`state.${cached.tenant}` as "state.JK")}
+          <ShinyText>
+            {classes} · {tc(`state.${cached.tenant}` as "state.JK")}
+          </ShinyText>
         </p>
-        <h1 className="mj-title">{tl("title")}</h1>
+        <h1 className="mj-title">
+          <SplitText text={tl("title")} delay={40} duration={0.55} splitType="words" />
+        </h1>
         <p className="mj-muted">{th(`now.${view.display}` as "now.PLAN")}</p>
       </header>
+
+      <CustomLicenceStudio activeCase={active} cachedCase={cached} />
 
       <div className="mj-two">
         <section className="mj-card" aria-labelledby="lt-road">

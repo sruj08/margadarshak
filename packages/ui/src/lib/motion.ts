@@ -1,17 +1,25 @@
 /**
- * Motion presets (DESIGN_SYSTEM §8). Durations in seconds for Motion; the CSS twins live in tokens.css.
+ * Motion presets (DESIGN_SYSTEM §8 + Apple Fluid Motion). Durations in seconds for Motion; the CSS twins live in tokens.css.
  * Rules: UI changes <= 240 ms, animate transform + opacity only, reduced motion = opacity only.
  */
 
 export type Bezier = [number, number, number, number];
 
 export const ease: Record<"standard" | "outExpo" | "reveal" | "nav" | "exit", Bezier> = {
-  standard: [0.2, 0, 0, 1],
+  standard: [0.22, 1, 0.36, 1],
   outExpo: [0.16, 1, 0.3, 1],
   reveal: [0.25, 1, 0.5, 1],
   nav: [0.22, 1, 0.36, 1],
-  exit: [0.4, 0, 1, 1],
+  exit: [0.32, 0, 0.67, 0],
 };
+
+/** Apple-style critically damped spring presets for physical UI motion. */
+export const spring = {
+  snappy: { type: "spring" as const, bounce: 0, duration: 0.28 },
+  default: { type: "spring" as const, bounce: 0, duration: 0.36 },
+  gentle: { type: "spring" as const, bounce: 0.1, duration: 0.48 },
+  reward: { type: "spring" as const, bounce: 0.25, duration: 0.55 },
+} as const;
 
 export const duration = {
   instant: 0.08,

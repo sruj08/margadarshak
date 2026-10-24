@@ -1,6 +1,8 @@
 "use client";
 
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
+import { SplitText } from "@margdarshak/ui/components/split-text";
+import { SpotlightOverlay } from "@margdarshak/ui/components/spotlight-card";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
@@ -80,9 +82,10 @@ export function LearnHub({
         </p>
       ) : null}
 
-      <section className="ml-card" aria-labelledby="hub-review">
+      <section className="ml-card rb-card-spotlight" aria-labelledby="hub-review">
+        <SpotlightOverlay />
         <h2 id="hub-review" className="md-h2">
-          {t("reviewTitle")}
+          <SplitText text={t("reviewTitle")} delay={35} duration={0.5} splitType="words" />
         </h2>
         {queue === null ? (
           <LoadingState rows={1} />

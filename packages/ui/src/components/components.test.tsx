@@ -1,11 +1,22 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Banner } from "./banner";
-import { EmptyState } from "./empty-state";
-import { Stepper } from "./progress";
-import { isSimulatedMode, SimulatedChip } from "./simulated-chip";
-import { SourceChip } from "./source-chip";
-import { VerbTile } from "./verb-tile";
+import {
+  AnimatedContent,
+  Banner,
+  BlurText,
+  Button,
+  buttonClassName,
+  CountUp,
+  EmptyState,
+  isSimulatedMode,
+  ShinyText,
+  SimulatedChip,
+  SourceChip,
+  SplitText,
+  SpotlightCard,
+  Stepper,
+  VerbTile,
+} from "../index";
 
 describe("SimulatedChip (MD-045)", () => {
   const labels = {
@@ -97,5 +108,45 @@ describe("VerbTile and EmptyState", () => {
     );
     expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("Your road starts here.");
     expect(container.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+  });
+});
+
+describe("Button", () => {
+  it("emits md-button--secondary class on secondary buttons", () => {
+    expect(buttonClassName({ variant: "secondary" })).toContain("md-button--secondary");
+    const { container } = render(<Button variant="secondary">Secondary</Button>);
+    expect(container.querySelector(".md-button--secondary")).toBeTruthy();
+  });
+});
+
+describe("React Bits primitives (SplitText, BlurText, ShinyText, SpotlightCard, CountUp)", () => {
+  it("SplitText preserves exact textContent for Latin chars and Indic words", () => {
+    const { container, rerender } = render(
+      <SplitText text="Hello, you!" delay={100} duration={0.6} />,
+    );
+    expect(container.textContent).toBe("Hello, you!");
+    expect(container.querySelectorAll(".rb-split-unit").length).toBeGreaterThan(2);
+
+    const hindi = "बिना दलाल के ड्राइविंग लाइसेंस।";
+    rerender(<SplitText text={hindi} delay={60} duration={0.6} />);
+    expect(container.textContent).toBe(hindi);
+    // Indic scripts automatically switch to word-level units so matras never fracture
+    expect(container.querySelectorAll(".rb-split-unit")).toHaveLength(5);
+  });
+
+  it("BlurText, ShinyText, SpotlightCard, AnimatedContent, and CountUp render cleanly", () => {
+    const { container } = render(
+      <AnimatedContent>
+        <SpotlightCard>
+          <ShinyText text="Verified source" />
+          <BlurText text="Step by step guidance." />
+          <CountUp to={42} />
+        </SpotlightCard>
+      </AnimatedContent>,
+    );
+    expect(container.textContent).toContain("Verified source");
+    expect(container.textContent).toContain("Step by step guidance.");
+    expect(container.textContent).toContain("42");
+    expect(container.querySelector(".rb-card-spotlight")).toBeTruthy();
   });
 });

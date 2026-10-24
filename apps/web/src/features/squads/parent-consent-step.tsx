@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
@@ -51,17 +52,18 @@ export function ParentConsentStep({
             />
             <span>{t("confirm", { who })}</span>
           </label>
-          <button
-            type="button"
-            className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
-            disabled={!checked}
-            onClick={() => {
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            isDisabled={!checked}
+            onPress={() => {
               recordSquadConsent(profile.memberId, true);
               onDone();
             }}
           >
             {t("allow")}
-          </button>
+          </Button>
         </>
       )}
       <Link href="/learn/me" className="md-link">

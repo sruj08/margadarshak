@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -48,13 +49,9 @@ export function BookAnyway({
             <Link href={href} className={buttonClassName({ variant: "secondary" })}>
               {t("confirmYes")}
             </Link>
-            <button
-              type="button"
-              className={buttonClassName({ variant: "secondary" })}
-              onClick={() => setAsking(false)}
-            >
+            <Button variant="secondary" onPress={() => setAsking(false)}>
               {t("confirmNo")}
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}

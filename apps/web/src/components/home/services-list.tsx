@@ -1,7 +1,9 @@
 "use client";
 
 import { SearchField } from "@heroui/react";
+import { BlurText } from "@margdarshak/ui/components/blur-text";
 import { Chip } from "@margdarshak/ui/components/chip";
+import { SplitText } from "@margdarshak/ui/components/split-text";
 import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
@@ -35,8 +37,12 @@ export function ServicesList() {
   return (
     <div className="mj-screen" data-screen="SCR-004">
       <header className="mj-head">
-        <h1 className="mj-title">{t("h1")}</h1>
-        <p className="mj-sub">{t("sub")}</p>
+        <h1 className="mj-title">
+          <SplitText text={t("h1")} delay={40} duration={0.55} splitType="words" />
+        </h1>
+        <p className="mj-sub">
+          <BlurText text={t("sub")} delay={30} duration={0.45} />
+        </p>
       </header>
       <SearchField value={q} onChange={setQ} aria-label={t("search")} className="mj-search">
         <SearchField.Group

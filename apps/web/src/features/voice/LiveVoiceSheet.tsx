@@ -1,5 +1,6 @@
 "use client";
 
+import { Input, Label } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { Sheet } from "@margdarshak/ui/components/sheet";
@@ -64,7 +65,7 @@ export function LiveVoiceSheet({
     >
       <div className="mj-screen" style={{ gap: 12 }} data-screen="SCR-005" data-testid="voice-live">
         <div className={`mj-voice__orb mj-voice__orb--${v.phase}`} aria-hidden="true">
-          <Mic size={32} strokeWidth={1.75} />
+          <Mic size={26} strokeWidth={1.75} />
         </div>
         {v.phase === "live" ? (
           <details className="mj-chip" data-testid="voice-mic-chip">
@@ -147,10 +148,10 @@ export function LiveVoiceSheet({
             setText("");
           }}
         >
-          <label htmlFor="voice-text" className="md-field__label">
+          <Label htmlFor="voice-text" className="md-field__label">
             {t("live.typeHere")}
-          </label>
-          <input
+          </Label>
+          <Input
             id="voice-text"
             className="mj-input"
             value={text}

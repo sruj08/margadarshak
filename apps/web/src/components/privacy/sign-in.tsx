@@ -1,5 +1,6 @@
 "use client";
 
+import { Description, Input, Label } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
@@ -175,10 +176,10 @@ export function SignIn() {
             </div>
           ) : null}
           <div className="mj-input-group">
-            <label htmlFor="signin-email" className="md-field__label">
+            <Label htmlFor="signin-email" className="md-field__label">
               {t("emailLabel")}
-            </label>
-            <input
+            </Label>
+            <Input
               id="signin-email"
               className="mj-input"
               type="email"
@@ -190,9 +191,9 @@ export function SignIn() {
               onChange={(e) => setEmail(e.target.value)}
               data-testid="signin-email"
             />
-            <p id="signin-email-hint" className="md-field__hint">
+            <Description id="signin-email-hint" className="md-field__hint">
               {t("emailHint")}
-            </p>
+            </Description>
           </div>
           <div className="mj-actions">
             <Button

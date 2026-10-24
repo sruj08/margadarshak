@@ -1,5 +1,6 @@
 "use client";
 
+import { Button as HeroButton, Input, Label } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
@@ -26,12 +27,7 @@ export function VoiceButton() {
   const onUnavailable = useCallback(() => setFallback(true), []);
   return (
     <>
-      <button
-        type="button"
-        className="mj-voice"
-        onClick={() => setOpen(true)}
-        data-testid="voice-open"
-      >
+      <HeroButton className="mj-voice" onPress={() => setOpen(true)} data-testid="voice-open">
         <span className="mj-voice__orb" aria-hidden="true">
           <Mic size={24} strokeWidth={1.75} />
         </span>
@@ -39,7 +35,7 @@ export function VoiceButton() {
           <span className="mj-voice__title">{t("cta")}</span>
           <span className="mj-voice__line">{t("ctaLine")}</span>
         </span>
-      </button>
+      </HeroButton>
       {open && !fallback ? (
         <LiveVoiceSheet isOpen={open} onOpenChange={setOpen} onUnavailable={onUnavailable} />
       ) : (
@@ -240,10 +236,10 @@ export function VoiceSheet({
           }}
         >
           <div className="mj-input-group">
-            <label htmlFor="tell-us" className="md-field__label">
+            <Label htmlFor="tell-us" className="md-field__label">
               {t("tellUs")}
-            </label>
-            <input
+            </Label>
+            <Input
               id="tell-us"
               className="mj-input"
               value={text}

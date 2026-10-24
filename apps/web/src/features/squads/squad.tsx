@@ -1,6 +1,8 @@
 "use client";
 
+import { Button as HeroButton } from "@heroui/react";
 import { featureAccess } from "@margdarshak/gamification";
+import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
@@ -103,13 +105,9 @@ export function SquadCard({ squad, onLeave }: { squad: SquadT; onLeave?: () => v
       </ul>
       <p className="ml-small">{t("how")}</p>
       {link && spots > 0 ? (
-        <button
-          type="button"
-          className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
-          onClick={() => void share()}
-        >
+        <Button variant="primary" size="lg" fullWidth onPress={() => void share()}>
           {t("invite", { k: spots })}
-        </button>
+        </Button>
       ) : null}
       {copied ? (
         <p role="status" className="ml-small">
@@ -117,9 +115,9 @@ export function SquadCard({ squad, onLeave }: { squad: SquadT; onLeave?: () => v
         </p>
       ) : null}
       {onLeave ? (
-        <button type="button" className="ml-link-btn" onClick={onLeave}>
+        <HeroButton className="ml-link-btn" onPress={onLeave}>
           {t("leave")}
-        </button>
+        </HeroButton>
       ) : null}
     </section>
   );

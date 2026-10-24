@@ -6,9 +6,12 @@ import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { Chip } from "@margdarshak/ui/components/chip";
+import { CountUp } from "@margdarshak/ui/components/count-up";
 import { EmptyState } from "@margdarshak/ui/components/empty-state";
 import { Sheet } from "@margdarshak/ui/components/sheet";
+import { ShinyText } from "@margdarshak/ui/components/shiny-text";
 import { Skeleton } from "@margdarshak/ui/components/skeleton";
+import { SplitText } from "@margdarshak/ui/components/split-text";
 import { StatusGlyph } from "@margdarshak/ui/components/status-glyph";
 import { notify } from "@margdarshak/ui/components/toast";
 import { ChevronRight, Share2 } from "lucide-react";
@@ -219,9 +222,13 @@ function PlanCard({ record }: { record: PlanRecord }) {
       <header className="mj-head">
         <div className="mj-glow" aria-hidden="true" />
         <p className="mj-eyebrow">
-          {names} · {tc(`state.${plan.state}` as "state.JK")}
+          <ShinyText>
+            {names} · {tc(`state.${plan.state}` as "state.JK")}
+          </ShinyText>
         </p>
-        <h1 className="mj-title">{t("h1")}</h1>
+        <h1 className="mj-title">
+          <SplitText text={t("h1")} delay={40} duration={0.55} splitType="words" />
+        </h1>
         <div className="mj-chips">
           {record.source === "server" ? (
             <span data-testid="plan-saved">
@@ -316,7 +323,7 @@ function PlanCard({ record }: { record: PlanRecord }) {
               <div>
                 <dt>{t("steps")}</dt>
                 <dd className="mj-num" data-testid="fact-steps">
-                  {plan.steps.length}
+                  <CountUp to={plan.steps.length} duration={0.5} />
                 </dd>
               </div>
               <div>

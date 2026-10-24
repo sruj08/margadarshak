@@ -1,7 +1,6 @@
 /**
- * IL-01 "dawn road" (DESIGN_SYSTEM §7): a road vanishing towards sunrise. Flat shapes, no outlines,
- * one sky glow, at most six colours, all from tokens so it follows light/dark/high-contrast.
- * Decorative: always aria-hidden.
+ * IL-01 "dawn road" (DESIGN_SYSTEM §7): a road vanishing towards the hills at sunrise.
+ * Uses token colours so it adapts across light, dark, and high-contrast modes.
  */
 export function DawnRoad({ className, title }: { className?: string; title?: string }) {
   return (
@@ -14,15 +13,15 @@ export function DawnRoad({ className, title }: { className?: string; title?: str
       focusable="false"
     >
       <defs>
-        <radialGradient id="md-dawn-sun" cx="50%" cy="78%" r="55%">
-          <stop offset="0%" stopColor="var(--md-nazar)" stopOpacity="0.95" />
-          <stop offset="45%" stopColor="var(--md-ember)" stopOpacity="0.28" />
+        <radialGradient id="md-dawn-sun" cx="50%" cy="74%" r="58%">
+          <stop offset="0%" stopColor="var(--md-nazar)" stopOpacity="0.96" />
+          <stop offset="42%" stopColor="var(--md-ember)" stopOpacity="0.32" />
           <stop offset="100%" stopColor="var(--md-peri)" stopOpacity="0" />
         </radialGradient>
       </defs>
       <rect width="240" height="150" rx="20" fill="var(--md-mist)" />
       <rect width="240" height="150" rx="20" fill="url(#md-dawn-sun)" />
-      <circle cx="120" cy="86" r="17" fill="var(--md-ember)" opacity="0.85" />
+      <circle cx="120" cy="86" r="17" fill="var(--md-nazar)" />
       <path
         d="M0 92 C 50 78, 80 84, 120 88 C 160 84, 200 76, 240 90 V150 H0Z"
         fill="var(--md-topic-night)"

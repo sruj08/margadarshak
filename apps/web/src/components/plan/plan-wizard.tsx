@@ -10,7 +10,7 @@ import { StatusGlyph } from "@margdarshak/ui/components/status-glyph";
 import { ArrowLeft } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChoiceCards } from "@/components/journey/choices";
+import { CheckRow, ChoiceCards } from "@/components/journey/choices";
 import {
   DateParts,
   type DateValue,
@@ -299,21 +299,16 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
             }
           }}
         />
-        <label className="mj-check-row" style={{ alignItems: "center" }}>
-          <input
-            type="checkbox"
-            checked={yearOnly}
-            onChange={(e) => {
-              setYearOnly(e.target.checked);
-              setBand(null);
-            }}
-            style={{ width: 22, height: 22, accentColor: "var(--md-primary-fill)" }}
-          />
-          <span className="mj-choice__text">
-            <span className="mj-choice__label">{t("yearOnly")}</span>
-            <span className="mj-choice__desc">{t("yearOnlyDesc")}</span>
-          </span>
-        </label>
+        <CheckRow
+          checked={yearOnly}
+          onChange={(v) => {
+            setYearOnly(v);
+            setBand(null);
+          }}
+          description={t("yearOnlyDesc")}
+        >
+          {t("yearOnly")}
+        </CheckRow>
         <p className="md-sr-only" aria-live="polite">
           {announce}
         </p>

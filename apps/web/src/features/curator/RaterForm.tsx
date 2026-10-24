@@ -1,5 +1,6 @@
 "use client";
 
+import { Fieldset, Input, Label } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
@@ -287,8 +288,8 @@ function RaterForm({
         onFrame={setFrame}
         bands={bands}
       />
-      <fieldset className="cu-fieldset">
-        <legend className="cu-label">{t("rate.type")}</legend>
+      <Fieldset className="cu-fieldset">
+        <Fieldset.Legend className="cu-label">{t("rate.type")}</Fieldset.Legend>
         {(["windows", "quiet", "reject"] as const).map((m) => (
           <label key={m} className="cu-choice">
             <input
@@ -307,7 +308,7 @@ function RaterForm({
             </span>
           </label>
         ))}
-      </fieldset>
+      </Fieldset>
       {mode === "windows" ? (
         <ol className="cu-marks">
           {drafts.map((d, i) => {
@@ -337,9 +338,12 @@ function RaterForm({
                   {t("rate.typeDefinition", { text: hazardDefinition(d.hazard_type) })}
                 </p>
                 <div className="cu-pair">
-                  <label className="cu-field">
-                    <span className="cu-label">{t("rate.onset")}</span>
-                    <input
+                  <div className="cu-field">
+                    <Label className="cu-label" htmlFor={`${id}-mark-${i}-a`}>
+                      {t("rate.onset")}
+                    </Label>
+                    <Input
+                      id={`${id}-mark-${i}-a`}
                       className="cu-input"
                       inputMode="decimal"
                       value={d.a}
@@ -348,7 +352,7 @@ function RaterForm({
                       aria-describedby={errs.length > 0 ? errId : undefined}
                       data-testid={`mark-${i}-a`}
                     />
-                  </label>
+                  </div>
                   <Button
                     variant="ghost"
                     onPress={() => update(d.key, { a: secondsText(frameToMs(frame)) })}
@@ -357,9 +361,12 @@ function RaterForm({
                   </Button>
                 </div>
                 <div className="cu-pair">
-                  <label className="cu-field">
-                    <span className="cu-label">{t("rate.end")}</span>
-                    <input
+                  <div className="cu-field">
+                    <Label className="cu-label" htmlFor={`${id}-mark-${i}-b`}>
+                      {t("rate.end")}
+                    </Label>
+                    <Input
+                      id={`${id}-mark-${i}-b`}
                       className="cu-input"
                       inputMode="decimal"
                       value={d.b}
@@ -368,7 +375,7 @@ function RaterForm({
                       aria-describedby={errs.length > 0 ? errId : undefined}
                       data-testid={`mark-${i}-b`}
                     />
-                  </label>
+                  </div>
                   <Button
                     variant="ghost"
                     onPress={() => update(d.key, { b: secondsText(frameToMs(frame)) })}
@@ -376,9 +383,12 @@ function RaterForm({
                     {t("rate.setEnd")}
                   </Button>
                 </div>
-                <label className="cu-field">
-                  <span className="cu-label">{t("rate.cue")}</span>
-                  <input
+                <div className="cu-field">
+                  <Label className="cu-label" htmlFor={`${id}-mark-${i}-cue`}>
+                    {t("rate.cue")}
+                  </Label>
+                  <Input
+                    id={`${id}-mark-${i}-cue`}
                     className="cu-input"
                     maxLength={160}
                     value={d.cue}
@@ -386,7 +396,7 @@ function RaterForm({
                     data-testid={`mark-${i}-cue`}
                   />
                   <span className="cu-hint">{t("rate.cueHint")}</span>
-                </label>
+                </div>
                 <label className="cu-choice">
                   <input
                     type="checkbox"

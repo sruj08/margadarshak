@@ -4,6 +4,7 @@ import { Banner } from "@margdarshak/ui/components/banner";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { Chip } from "@margdarshak/ui/components/chip";
 import { Skeleton } from "@margdarshak/ui/components/skeleton";
+import { SplitText } from "@margdarshak/ui/components/split-text";
 import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
@@ -117,7 +118,12 @@ export function StageHome({ active, extra }: { active: ActiveCase; extra?: React
         </p>
       ) : null}
       <h1 id="stage-h1" className="mj-stage__h1" data-testid="stage-h1">
-        {t(`${view.key}.h1` as "PLAN.h1", values)}
+        <SplitText
+          text={t(`${view.key}.h1` as "PLAN.h1", values)}
+          delay={35}
+          duration={0.55}
+          splitType="words"
+        />
       </h1>
       {view.clock ? (
         <CaseCountdown

@@ -16,6 +16,7 @@
     "size:first-load": "node scripts/first-load.mjs"
   },
   "dependencies": {
+    "@gsap/react": "catalog:",
     "@heroui/react": "catalog:",
     "@heroui/styles": "catalog:",
     "@margdarshak/api-client": "workspace:*",
@@ -26,6 +27,7 @@
     "@margdarshak/ui": "workspace:*",
     "@serwist/turbopack": "catalog:",
     "@serwist/window": "catalog:",
+    "gsap": "catalog:",
     "lucide-react": "catalog:",
     "motion": "catalog:",
     "next": "catalog:",

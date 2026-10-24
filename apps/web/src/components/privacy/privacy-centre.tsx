@@ -1,6 +1,6 @@
 "use client";
 
-import { Disclosure, Switch } from "@heroui/react";
+import { Disclosure, Input, Label, Switch } from "@heroui/react";
 import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { Sheet } from "@margdarshak/ui/components/sheet";
@@ -392,10 +392,10 @@ export function PrivacyCentre() {
         }
       >
         <div className="mj-input-group">
-          <label htmlFor="del-word" className="md-field__label">
+          <Label htmlFor="del-word" className="md-field__label">
             {t("typeWord", { word: confirmWord })}
-          </label>
-          <input
+          </Label>
+          <Input
             id="del-word"
             className="mj-input"
             value={word}
