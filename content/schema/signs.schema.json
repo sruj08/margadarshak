@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://margdarshak.example/content/schema/signs.schema.json",
+  "title": "Sign catalogue (IRC:67 families, SIGN-<cat>-<nnn>)",
+  "description": "content/catalogue/signs.json. Alt text describes shape and symbol, never the meaning.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "file_kind": {
+      "type": "string",
+      "const": "signs"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}\\.\\d+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "published"]
+    },
+    "licence": {
+      "type": "string",
+      "const": "CC-BY-4.0"
+    },
+    "attribution": {
+      "type": "string",
+      "const": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "signs": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sign_id": {
+            "type": "string",
+            "pattern": "^SIGN-(MAN|CAU|INF|MRK|SIG)-\\d{3}$"
+          },
+          "family": {
+            "type": "string",
+            "enum": ["MANDATORY", "CAUTIONARY", "INFORMATORY", "MARKINGS", "SIGNALS"]
+          },
+          "subfamily": {
+            "type": "string",
+            "enum": [
+              "stop",
+              "give_way",
+              "prohibitory",
+              "compulsory",
+              "limit",
+              "warning",
+              "facility",
+              "route",
+              "marking",
+              "signal"
+            ]
+          },
+          "shape": {
+            "type": "string",
+            "enum": [
+              "octagon",
+              "inverted_triangle",
+              "circle",
+              "triangle",
+              "rectangle",
+              "road_marking",
+              "signal_head"
+            ]
+          },
+          "colour_scheme": {
+            "type": "string",
+            "enum": [
+              "red_octagon_white_text",
+              "white_inverted_triangle_red_border",
+              "red_disc_white_bar",
+              "white_disc_red_border",
+              "blue_disc_white_symbol",
+              "white_triangle_red_border",
+              "blue_rectangle_white_panel",
+              "white_road_marking",
+              "signal_lamp"
+            ]
+          },
+          "colours": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["red", "white", "blue", "black", "yellow", "amber", "green"]
+            }
+          },
+          "symbol_class": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "alt": {
+            "type": "object",
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hi": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": ["en", "hi"],
+            "additionalProperties": false
+          },
+          "name": {
+            "type": "object",
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hi": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": ["en", "hi"],
+            "additionalProperties": false
+          },
+          "meaning": {
+            "type": "object",
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hi": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": ["en", "hi"],
+            "additionalProperties": false
+          },
+          "mirror_of": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^SIGN-(MAN|CAU|INF|MRK|SIG)-\\d{3}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "standard": {
+            "type": "string",
+            "enum": ["IRC:67", "IRC:35", "MV Act Schedule", "signals"]
+          },
+          "sources": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 3
+                },
+                "url": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^https?:\\/\\/[^\\s]+$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "grade": {
+                  "type": "string",
+                  "enum": ["OBS", "P", "P-state", "S", "MK", "unknown"]
+                },
+                "pin_status": {
+                  "type": "string",
+                  "enum": ["pinned", "to_pin", "not_applicable"]
+                },
+                "checked_on": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "note": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "url", "grade", "pin_status", "checked_on"],
+              "additionalProperties": false
+            }
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "check_note": {
+            "type": "string"
+          },
+          "asset": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^(signs|illustrations)\\/[A-Z0-9-]+\\.svg$"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["to_draw", "drawn", "reviewed"]
+              }
+            },
+            "required": ["path", "status"],
+            "additionalProperties": false
+          },
+          "review_status": {
+            "type": "string",
+            "enum": ["draft", "in_review", "approved"]
+          },
+          "hi_review_status": {
+            "type": "string",
+            "enum": ["pending_native_review", "approved"]
+          }
+        },
+        "required": [
+          "sign_id",
+          "family",
+          "subfamily",
+          "shape",
+          "colour_scheme",
+          "colours",
+          "symbol_class",
+          "alt",
+          "name",
+          "meaning",
+          "mirror_of",
+          "standard",
+          "sources",
+          "verified",
+          "asset",
+          "review_status",
+          "hi_review_status"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["file_kind", "version", "status", "licence", "attribution", "signs"],
+  "additionalProperties": false
+}

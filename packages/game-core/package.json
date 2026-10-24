@@ -1,0 +1,86 @@
+{
+  "name": "@margdarshak/game-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Game SDK contract (Zod schemas), deterministic simulation kernel and one pure scorer per game. Runs byte-for-byte the same in the browser and in the Node score verifier (D-11: the server replay score wins).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "margdarshak-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schema": {
+      "margdarshak-source": "./src/schema/index.ts",
+      "types": "./dist/schema/index.d.ts",
+      "default": "./dist/schema/index.js"
+    },
+    "./sim": {
+      "margdarshak-source": "./src/sim/index.ts",
+      "types": "./dist/sim/index.d.ts",
+      "default": "./dist/sim/index.js"
+    },
+    "./scoring": {
+      "margdarshak-source": "./src/scoring/index.ts",
+      "types": "./dist/scoring/index.d.ts",
+      "default": "./dist/scoring/index.js"
+    },
+    "./integrity": {
+      "margdarshak-source": "./src/integrity/index.ts",
+      "types": "./dist/integrity/index.d.ts",
+      "default": "./dist/integrity/index.js"
+    },
+    "./learning": {
+      "margdarshak-source": "./src/learning/index.ts",
+      "types": "./dist/learning/index.d.ts",
+      "default": "./dist/learning/index.js"
+    },
+    "./sdk": {
+      "margdarshak-source": "./src/sdk/index.ts",
+      "types": "./dist/sdk/index.d.ts",
+      "default": "./dist/sdk/index.js"
+    },
+    "./sdk/browser": {
+      "margdarshak-source": "./src/sdk/browser/index.ts",
+      "types": "./dist/sdk/browser/index.d.ts",
+      "default": "./dist/sdk/browser/index.js"
+    },
+    "./fixtures": {
+      "margdarshak-source": "./src/fixtures/index.ts",
+      "types": "./dist/fixtures/index.d.ts",
+      "default": "./dist/fixtures/index.js"
+    },
+    "./debrief": {
+      "margdarshak-source": "./src/debrief/index.ts",
+      "types": "./dist/debrief/index.d.ts",
+      "default": "./dist/debrief/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "schema"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "test": "node --test --experimental-strip-types \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "schemas": "node --experimental-strip-types scripts/write-schemas.ts",
+    "fixtures:expected": "node --experimental-strip-types scripts/write-expected.ts",
+    "fixtures:golden": "node --experimental-strip-types scripts/export-golden.ts",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M4",
+  "track": "B_road_safety",
+  "title": {
+    "en": "The no-zone: trucks and buses",
+    "hi": "नो-ज़ोन: ट्रक और बस"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "2W",
+  "deep_content_classes": ["MCWOG", "MCWG"],
+  "available_to": "all",
+  "phase_1_2_depth": "Deep",
+  "skill_id": "SK-M4",
+  "game_ids": ["blind_spot", "nazar"],
+  "drill_ids": [
+    "DR-BS-PLACE",
+    "DR-BS-RIDE",
+    "DR-BS-RIDE-LEFTTURN",
+    "DR-BS-MIRROR",
+    "DR-NAZ-OCCL-TRUCK_LEFT_TURN"
+  ],
+  "rule_ids": ["RR-HVY-001", "RR-HVY-002", "RR-HVY-003"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M4-1",
+      "text": {
+        "en": "Name the four no-zones around a truck: front, rear and both sides, the left side being the largest for a right-hand-drive cab.",
+        "hi": "ट्रक के चारों नो-ज़ोन बताएँ: आगे, पीछे और दोनों किनारे, जिनमें दाईं ओर ड्राइवर वाले केबिन के लिए बायाँ सबसे बड़ा है।"
+      }
+    },
+    {
+      "id": "LO-M4-2",
+      "text": {
+        "en": "Place a two-wheeler outside all four.",
+        "hi": "दोपहिया को चारों से बाहर रखें।"
+      }
+    },
+    {
+      "id": "LO-M4-3",
+      "text": {
+        "en": "Apply the mirror rule: if you can't see the driver in the mirror, the driver can't see you.",
+        "hi": "शीशे का नियम लागू करें: अगर आपको शीशे में ड्राइवर नहीं दिखता, तो ड्राइवर भी आपको नहीं देख सकता।"
+      }
+    },
+    {
+      "id": "LO-M4-4",
+      "text": {
+        "en": "Don't linger beside a truck; hold back when it indicates left.",
+        "hi": "ट्रक के बगल में देर तक न रहें; बायाँ इंडिकेटर दे तो पीछे रुके रहें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M4-1",
+      "title": {
+        "en": "Where a truck driver can't see",
+        "hi": "जहाँ ट्रक ड्राइवर देख नहीं पाता"
+      }
+    },
+    {
+      "id": "LS-M4-2",
+      "title": {
+        "en": "The mirror rule",
+        "hi": "शीशे का नियम"
+      }
+    },
+    {
+      "id": "LS-M4-3",
+      "title": {
+        "en": "Left turns and buses at stops",
+        "hi": "बाएँ मोड़ और स्टॉप पर बसें"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M4-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Trucks and buses killed 18,556 two-wheeler riders in 2023 (truck 14,229; bus 4,327).",
+        "hi": "2023 में ट्रक और बसों से 18,556 दोपहिया सवारों की मौत हुई (ट्रक 14,229; बस 4,327)।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 4.5 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M4-2",
+      "kind": "practice",
+      "text": {
+        "en": "A truck has four no-zones: in front, behind and along both sides; the left side is the largest. Zones are illustrative and vary by vehicle and mirrors.",
+        "hi": "ट्रक के चार नो-ज़ोन होते हैं: आगे, पीछे और दोनों किनारे; बायाँ सबसे बड़ा है। ज़ोन सिर्फ़ समझाने के लिए हैं और वाहन व शीशों के हिसाब से बदलते हैं।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M4 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-HVY-001"
+    },
+    {
+      "id": "KF-M4-3",
+      "kind": "practice",
+      "text": {
+        "en": "When a large vehicle indicates or turns left, hold back behind it.",
+        "hi": "जब बड़ा वाहन बायाँ इंडिकेटर दे या बाएँ मुड़े, तो उसके पीछे रुके रहें।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M4/M5 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-HVY-003"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M4-1",
+      "myth": {
+        "en": "Riding alongside a truck is fine if you are quick about it.",
+        "hi": "जल्दी निकल जाएँ तो ट्रक के बगल में चलना ठीक है।"
+      },
+      "correction": {
+        "en": "Beside a truck you are in its biggest no-zone; drop back or pass with a clear gap.",
+        "hi": "ट्रक के बगल में आप उसके सबसे बड़े नो-ज़ोन में होते हैं; पीछे रहें या पूरे फ़ासले के साथ आगे निकलें।"
+      },
+      "rule_id": "RR-HVY-001"
+    },
+    {
+      "id": "MC-M4-2",
+      "myth": {
+        "en": "A truck driver can always see a two-wheeler.",
+        "hi": "ट्रक ड्राइवर दोपहिया को हमेशा देख सकता है।"
+      },
+      "correction": {
+        "en": "Large parts of the road around a truck are hidden from its driver.",
+        "hi": "ट्रक के आस-पास सड़क का बड़ा हिस्सा ड्राइवर से छिपा रहता है।"
+      },
+      "rule_id": "RR-HVY-001"
+    }
+  ],
+  "concepts": {
+    "target": 6,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G3 ≥ 85 twice, at least 2 days apart (No-Zone Navigator badge), and FSRS mastery ≥ 0.8.",
+      "hi": "कम से कम 2 दिन के अंतर पर दो बार G3 ≥ 85 (नो-ज़ोन नेविगेटर बैज), और FSRS महारत ≥ 0.8।"
+    },
+    "readiness": "road",
+    "item_refs": []
+  },
+  "review": {
+    "needs": [
+      "Geometry review: zone shapes are illustrative, labelled 'zones vary by vehicle and mirrors'",
+      "A truck driver interview if possible"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

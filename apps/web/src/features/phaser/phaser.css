@@ -1,0 +1,10 @@
+/* Phaser mount (workstream E). Tokens only. */
+.ph-mount{position:relative;width:100%;display:flex;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;overscroll-behavior:none}
+.ph-mount__canvas{width:100%;max-width:520px;aspect-ratio:var(--ph-ratio,360/420)}
+.ph-mount__canvas canvas{display:block;margin:0 auto}
+.ph-mount__overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--md-space-3);padding:var(--md-space-4);text-align:center;background:color-mix(in srgb,var(--md-road) 90%,transparent);color:var(--md-on-road)}
+.ph-btn{min-height:56px;min-width:220px;border-radius:var(--md-r-xl);border:0;font:inherit;font-weight:600;cursor:pointer}
+.ph-btn--primary{background:var(--md-amber);color:var(--md-on-amber)}
+.ph-btn:focus-visible{outline:var(--md-focus-width) solid var(--md-focus);outline-offset:2px}
+.ph-spike{display:flex;flex-direction:column;gap:var(--md-space-3);background:var(--md-road);color:var(--md-on-road);padding:var(--md-space-3);border-radius:var(--md-r-lg)}
+.ph-spike__out{font-family:var(--md-font-num);font-size:var(--md-text-caption);white-space:pre-wrap;overflow-x:auto;max-width:100%}

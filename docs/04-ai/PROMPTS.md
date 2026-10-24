@@ -11,16 +11,16 @@ The prompt files live in `ai/prompts/`. Each starts with a YAML front-matter blo
 
 | Prompt ID | Version | Agent / model | File | Output schema | Eval set (gate) | Owner | Status |
 |---|---|---|---|---|---|---|---|
-| `PRM-DEBRIEF` | 1.0.0 | M-02 DebriefAgent / `MD_MODEL_DEBRIEF` | `ai/prompts/debrief_agent.md` | `DebriefDraft` | `debrief_150.jsonl` | AI lead | draft, needs eval |
-| `PRM-COACH` | 1.0.0 | M-03 CoachAgent / `MD_MODEL_COACH` | `ai/prompts/coach_agent.md` | `CoachDraft` | `coach.evalset.json` (30, generated) | AI lead | draft |
-| `PRM-TUTOR` | 1.0.0 | M-04 TutorAgent / `MD_MODEL_TUTOR` | `ai/prompts/tutor_agent.md` | `TutorDraft` | `tutor_30.jsonl` | Learning lead | draft |
-| `PRM-VOICE` | 1.0.0 | M-01 VoiceGuideAgent / `MD_MODEL_VOICE_LIVE` (+ text mode) | `ai/prompts/voice_guide_agent.md` | tools (no schema) | `voice_nav_30.jsonl` | AI lead | draft |
-| `PRM-DECODER` | 1.0.0 | M-05 ScreenDecoderAgent / `MD_MODEL_VISION` | `ai/prompts/screen_decoder_agent.md` | `DecoderDraft` | `decoder_30.jsonl` | AI lead | draft |
-| `PRM-CLIPPROP` | 1.0.0 | M-06 ClipWindowProposer / `MD_MODEL_VIDEO` | `ai/prompts/clip_window_proposer.md` | `ClipProposal` | 3 hand-labelled clips (recall ≥ 80%) | Pipeline lead | draft |
-| `PRM-SIGNSNAP` | 1.0.0 | M-07 SignSnap / `MD_MODEL_VISION` | `ai/prompts/sign_snap.md` | `SignDraft` | `signsnap_30` (collect at H0) | Learning lead | draft |
+| `PRM-DEBRIEF` | 1.0.0 | M-02 DebriefAgent / `GEMINI_MODEL_DEBRIEF` | `ai/prompts/debrief_agent.md` | `DebriefDraft` | `debrief_150.jsonl` | AI lead | draft, needs eval |
+| `PRM-COACH` | 1.0.0 | M-03 CoachAgent / `GEMINI_MODEL_COACH` | `ai/prompts/coach_agent.md` | `CoachDraft` | `coach.evalset.json` (30, generated) | AI lead | draft |
+| `PRM-TUTOR` | 1.0.0 | M-04 TutorAgent / `GEMINI_MODEL_TUTOR` | `ai/prompts/tutor_agent.md` | `TutorDraft` | `tutor_30.jsonl` | Learning lead | draft |
+| `PRM-VOICE` | 1.0.0 | M-01 VoiceGuideAgent / `GEMINI_MODEL_LIVE` (+ text mode) | `ai/prompts/voice_guide_agent.md` | tools (no schema) | `voice_nav_30.jsonl` | AI lead | draft |
+| `PRM-DECODER` | 1.0.0 | M-05 ScreenDecoderAgent / `GEMINI_MODEL_VISION` | `ai/prompts/screen_decoder_agent.md` | `DecoderDraft` | `decoder_30.jsonl` | AI lead | draft |
+| `PRM-CLIPPROP` | 1.0.0 | M-06 ClipWindowProposer / `GEMINI_MODEL_VIDEO` | `ai/prompts/clip_window_proposer.md` | `ClipProposal` | 3 hand-labelled clips (recall ≥ 80%) | Pipeline lead | draft |
+| `PRM-SIGNSNAP` | 1.0.0 | M-07 SignSnap / `GEMINI_MODEL_VISION` | `ai/prompts/sign_snap.md` | `SignDraft` | `signsnap_30` (collect at H0) | Learning lead | draft |
 | `PRM-SCAM` | 0.1.0 | Scam explainer (no M-ID; see AGENTS §9) | inline in `services/api/ai/scam.py` (to be extracted) | `ScamFlags` | 50 messages (04 §3.7) | AI lead | planned |
 | `PRM-COMMENTARY` | 0.1.0 | Commentary classifier (no M-ID) | inline (to be extracted) | `MentionList` | 15 scripted commentaries | AI lead | planned |
-| `PRM-JUDGE` | 1.0.0 | Jailbreak judge (P4) / `MD_MODEL_TEXT_LITE` | `services/api/ai/judge.md` | `JudgeVerdict` | 40 injection strings in `debrief_150` + `voice_nav_30` | AI lead | draft |
+| `PRM-JUDGE` | 1.0.0 | Jailbreak judge (P4) / `GEMINI_MODEL_TEXT_LITE` | `services/api/ai/judge.md` | `JudgeVerdict` | 40 injection strings in `debrief_150` + `voice_nav_30` | AI lead | draft |
 
 ### 1.1 Front-matter format
 
@@ -29,7 +29,7 @@ The prompt files live in `ai/prompts/`. Each starts with a YAML front-matter blo
 id: PRM-DEBRIEF
 version: 1.0.0
 agent: DebriefAgent
-model_env: MD_MODEL_DEBRIEF
+model_env: GEMINI_MODEL_DEBRIEF
 output_schema: margdarshak_ai.schemas.DebriefDraft
 state_inputs: [facts, allowed_rule_ids, drill_candidates, locale, prev_finding_ids]
 temperature: 0.3
@@ -380,7 +380,6 @@ The `number_words` rule has an allow-list for idioms that aren't quantities ("ek
 - Predictions about a specific RTO's or examiner's behaviour; names of officials, examiners or agents (D-14 Live Intel rules).
 - Encouragement to use the phone while riding (MV Act s.184).
 - Speed, stunt or skid praise (D-11).
-- Any content for under-18 users (no AI at all).
 - Claims that Margdarshak can submit, pay or book on Sarathi.
 
 ---

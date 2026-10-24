@@ -1,0 +1,160 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M20",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Under-18 and the law",
+    "hi": "18 से कम उम्र और क़ानून"
+  },
+  "priority": "P2",
+  "priority_tenants": null,
+  "vehicle_scope": "2W",
+  "deep_content_classes": ["MCWOG", "MCWG"],
+  "available_to": "all",
+  "phase_1_2_depth": "Static card (F-17 minor-riding awareness)",
+  "skill_id": "SK-M20",
+  "game_ids": [],
+  "drill_ids": [],
+  "rule_ids": ["RR-U18-001"],
+  "rulepack_rows": ["ELIG-GUARDIAN-CONSENT", "ELIG-U18-ALTERNATIVE-MC50"],
+  "learning_objectives": [
+    {
+      "id": "LO-M20-1",
+      "text": {
+        "en": "(For adults and parents) Know that letting a minor ride makes the guardian or owner liable.",
+        "hi": "(बड़ों और माता-पिता के लिए) जानें कि नाबालिग को गाड़ी चलाने देने पर अभिभावक या मालिक ज़िम्मेदार होते हैं।"
+      }
+    },
+    {
+      "id": "LO-M20-2",
+      "text": {
+        "en": "(For 16–17s) Know the up-to-50 cc gearless path with guardian consent, and that most scooters are bigger than 50 cc.",
+        "hi": "(16–17 साल वालों के लिए) अभिभावक की सहमति से 50 cc तक बिना गियर वाला रास्ता जानें, और यह कि ज़्यादातर स्कूटर 50 cc से बड़े होते हैं।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M20-1",
+      "title": {
+        "en": "Protect the younger ones in your family",
+        "hi": "परिवार के छोटों की हिफ़ाज़त"
+      }
+    },
+    {
+      "id": "LS-M20-2",
+      "title": {
+        "en": "A plain-language card for 16–17s",
+        "hi": "16–17 साल वालों के लिए आसान भाषा का कार्ड"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M20-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Under-18 deaths were 9,489 (5.5%) in 2023 and 10,117 in 2024 (+6.6%); 33,827 accidents in 2023 involved a driver with no licence.",
+        "hi": "18 से कम उम्र वालों की मौतें 2023 में 9,489 (5.5%) और 2024 में 10,117 (+6.6%) थीं; 2023 में 33,827 हादसों में चलाने वाले के पास लाइसेंस नहीं था।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Tables 4.2, 3.2 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "MoRTH, Road Accidents in India 2024 (RAI24), Table 4.2 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M20-2",
+      "kind": "law",
+      "text": {
+        "en": "The guardian or owner can be held liable for an offence by a juvenile; penalty details render only once verified.",
+        "hi": "नाबालिग के अपराध के लिए अभिभावक या मालिक को ज़िम्मेदार ठहराया जा सकता है; जुर्माने का ब्योरा पक्का होने के बाद ही दिखाया जाता है।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.199A (not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-U18-001"
+    },
+    {
+      "id": "KF-M20-3",
+      "kind": "format",
+      "text": {
+        "en": "At 16–17 only the gearless up-to-50 cc licence is possible, with a parent's or guardian's consent.",
+        "hi": "16–17 साल में सिर्फ़ 50 cc तक बिना गियर का लाइसेंस मिल सकता है, माता-पिता या अभिभावक की सहमति से।"
+      },
+      "sources": [
+        {
+          "title": "rulepacks ELIG-GUARDIAN-CONSENT: Delhi Transport class table; MV Act 1988 s.4(2) [MK]",
+          "url": "https://transport.delhi.gov.in/hi/node/3079",
+          "grade": "P-state",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "high",
+      "verified": false,
+      "rulepack_row": "ELIG-GUARDIAN-CONSENT"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M20-1",
+      "myth": {
+        "en": "It's fine for a 15-year-old to ride around the colony.",
+        "hi": "15 साल का बच्चा कॉलोनी में चला ले तो ठीक है।"
+      },
+      "correction": {
+        "en": "A public road is a public road; the guardian or owner can be held responsible.",
+        "hi": "सड़क सार्वजनिक है तो सार्वजनिक ही है; अभिभावक या मालिक को ज़िम्मेदार ठहराया जा सकता है।"
+      },
+      "rule_id": "RR-U18-001"
+    }
+  ],
+  "concepts": {
+    "target": 3,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Quiz for everyone; parents and 16–17s (family mode) get their own scenario cards.",
+      "hi": "सबके लिए क्विज़; माता-पिता और 16–17 साल वालों (फ़ैमिली मोड) के लिए अलग परिदृश्य कार्ड।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Legal check of MV Act s.199A", "Tone review (never shaming)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

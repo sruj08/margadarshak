@@ -1,0 +1,133 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M17",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Reading the road surface",
+    "hi": "सड़क की सतह पढ़ना"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Not built",
+  "skill_id": "SK-M17",
+  "game_ids": [],
+  "drill_ids": ["DR-NAZ-OCCL-SURFACE_HAZARD"],
+  "rule_ids": ["RR-SRF-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M17-1",
+      "text": {
+        "en": "Scan 10–12 seconds ahead.",
+        "hi": "10–12 सेकंड आगे तक देखें।"
+      }
+    },
+    {
+      "id": "LO-M17-2",
+      "text": {
+        "en": "Brake before the pothole, not in it.",
+        "hi": "गड्ढे से पहले ब्रेक लगाएँ, गड्ढे में नहीं।"
+      }
+    },
+    {
+      "id": "LO-M17-3",
+      "text": {
+        "en": "Ride bridges and culverts aware they narrow; watch for unmarked speed breakers.",
+        "hi": "पुल और पुलिया पर याद रखें कि वे संकरे होते हैं; बिना निशान वाले स्पीड ब्रेकर का ध्यान रखें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M17-1",
+      "title": {
+        "en": "Spot the surface",
+        "hi": "सतह पहचानें"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M17-1",
+      "kind": "evidence",
+      "text": {
+        "en": "In 2023 potholes were linked to 2,161 deaths (+16.4%), culverts 4,271 (+23%), bridges 6,552 and road works 3,904.",
+        "hi": "2023 में गड्ढों से 2,161 मौतें (+16.4%), पुलियों से 4,271 (+23%), पुलों से 6,552 और सड़क के काम वाली जगहों से 3,904 जुड़ी थीं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.5 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M17-2",
+      "kind": "practice",
+      "text": {
+        "en": "Scan well ahead; brake before a pothole, not in it.",
+        "hi": "दूर तक आगे देखें; गड्ढे से पहले ब्रेक लगाएँ, गड्ढे में नहीं।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M17 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-SRF-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M17-1",
+      "myth": {
+        "en": "Braking hard inside a pothole is the right move.",
+        "hi": "गड्ढे के अंदर ज़ोर से ब्रेक लगाना सही है।"
+      },
+      "correction": {
+        "en": "Brake before it and roll through it upright; braking inside it can upset the bike.",
+        "hi": "गड्ढे से पहले ब्रेक लगाएँ और सीधे रहते हुए निकलें; अंदर ब्रेक लगाने से बाइक बिगड़ सकती है।"
+      },
+      "rule_id": "RR-SRF-001"
+    }
+  ],
+  "concepts": {
+    "target": 4,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Timed photo quiz ≥ 80%.",
+      "hi": "समय वाली फ़ोटो क्विज़ ≥ 80%।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Photo consent and blur audit"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

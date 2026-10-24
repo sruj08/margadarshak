@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "string",
+  "enum": [
+    "no_audio",
+    "colour_safe",
+    "one_hand",
+    "reduced_motion",
+    "tap_only",
+    "screen_reader_alt",
+    "large_text",
+    "safe_luminance"
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/A11yMode.json",
+  "title": "A11yMode"
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "findingId": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "severity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "critical": {
+      "type": "boolean"
+    },
+    "ruleIds": {
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 32
+      }
+    },
+    "skillId": {
+      "type": "string",
+      "maxLength": 24
+    },
+    "drillIds": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 48
+      }
+    },
+    "facts": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,23}$"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "string",
+            "maxLength": 32
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    "itemRef": {
+      "type": "string",
+      "maxLength": 64
+    }
+  },
+  "required": ["findingId", "severity", "critical", "ruleIds", "skillId", "drillIds", "facts"],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/Finding.json",
+  "title": "Finding"
+}

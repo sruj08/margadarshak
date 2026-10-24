@@ -95,7 +95,7 @@ Fake "apply online" apps with 1M+ installs (Q109–Q110), fake e-challan APKs (~
 | Speed, stunt or skid scenarios; gore; public speed leaderboards | Skid training raised crashes (+12%, Elvik); fear appeals backfire | D-11 |
 | Money, prizes, entry fees in games | Online Gaming Act 2025 | D-11 |
 | "10+ languages" | Claim only what ships: English + Hindi in full, Dogri voice-in | D-21 |
-| AI for under-18 users | Gemini terms 18+; DPDP children | D-13 |
+| A child holding their own account | The account holder is always an adult; a learner under 18 uses the full product, AI included, inside a parent's account (family mode) with verifiable parental consent; residual risk R-13 (legal lead) | D-13 revised |
 | Rental marketplace for test vehicles | Insurance, payment and liability | §1 row 14 |
 | Insurer pricing on Practice Record | Not validated; one roadmap line only | D-10 row 10, D-23 |
 | Any "official" or "integrated with Sarathi" wording, the State Emblem, gov-style domains | Impersonation | D-01, D-19 |
@@ -131,7 +131,7 @@ Detail in [PERSONAS.md](PERSONAS.md).
 | P-04 | **Helper** (sibling or CSC/cyber-café operator) | Fill forms correctly with recorded consent; leave no data on shared PCs |
 | P-05 | **Driving-school owner** (Kerala/J&K) | HPT compliance logs for inspection; better first-attempt pass rates; leads |
 | P-06 | **RTO officer / Transport Commissioner** | Fewer counter queries and re-tests; see where cases stall; adopt something auditable |
-| P-07 | **Rahul**, 17 (edge) | Know the ≤ 50 cc legal path; rules-only, no AI, no telemetry |
+| P-07 | **Rahul**, 17 (edge) | Know the ≤ 50 cc legal path; full product incl. AI in family mode (parent's account, parent's consent) |
 
 ---
 
@@ -141,7 +141,7 @@ Detail in [PERSONAS.md](PERSONAS.md).
 | Release | Phase | What ships | Data | Hosting |
 |---|---|---|---|---|
 | **R0 Hackathon (MVP)** | Phase 1–2 (Oct 2026) | All Must features working end to end on mocks; three deep slices; Nazar field study; clip pipeline on Render Workflows; n8n messaging edge | Synthetic cases; field-study data anonymous and 18+ | Render Singapore (stated in README), Cloudflare R2 for blurred clips |
-| **R1 Pilot (v1)** | Phase 3 (Nov 2026–Mar 2027) | Should features to "thin+" depth: Live Intel with real reports, school Pro beta, console beta on pilot data, DigiLocker requester onboarding started, paid Gemini tier, WhatsApp approved templates | Real users 18+ (minors rules-only), consent artefacts | India-region object store; India copy of logs (CERT-In) |
+| **R1 Pilot (v1)** | Phase 3 (Nov 2026–Mar 2027) | Should features to "thin+" depth: Live Intel with real reports, school Pro beta, console beta on pilot data, DigiLocker requester onboarding started, paid Gemini tier, WhatsApp approved templates | Adult account holders; learners under 18 in family mode with parental consent; consent artefacts | India-region object store; India copy of logs (CERT-In) |
 | **R2 State adoption (v2)** | Phase 4–5 (2027–2028+) | Mode B adapters with a state, tenant theming, rule-pack studio in state hands, console on adapter data, Bhashini, SMS after DLT | State data under MoU; Sarathi stays system of record | NIC or MeitY-empanelled Indian cloud; Vertex AI India region [unverified: asia-south1 availability; owner Tech lead; 2026-11-15] |
 
 ### 5.2 Depth contract for R0 (D-04)
@@ -149,7 +149,7 @@ Detail in [PERSONAS.md](PERSONAS.md).
 |---|---|---|---|
 | **Deep-A** | S0–S2 | F-01, F-02, F-03, F-04, F-05, F-06, F-07 (Mode A) | Real rules engine over `fees.json` + `rules/JK.json` with sources; every EC-01..EC-06, EC-09..EC-11 rule row; guided 6-screen flow with autosave/resume; photo/signature fixer on device; check-answers; copy-pack hand-off |
 | **Deep-B** | S4 (+S3 sim) | F-23, F-24 (4 deep games), F-25, F-26 (core), F-22, F-57 | Clip bank with two-rater windows; server replay scoring; Kerala-format mock; AI debrief with provenance validator and template fallback; ≥ 30-case eval per agent; field study live |
-| **Deep-C** | All | F-08, F-09, F-53, F-30 (one scripted Hindi flow), F-54 (core), F-55, F-56 | Journey state machine with persona switcher; journey sweeper Workflow triggered by n8n Schedule; WhatsApp test number + email; age gate; consent artefacts; analytics schema enforcement; adapters with contract tests |
+| **Deep-C** | All | F-08, F-09, F-53, F-30 (one scripted Hindi flow), F-54 (core), F-55, F-56 | Journey state machine with persona switcher; journey sweeper Workflow triggered by n8n Schedule; WhatsApp test number + email; family mode and parental consent; consent artefacts; analytics schema enforcement; adapters with contract tests |
 | **Thin** | S5–S9, Eco | F-10–F-17, F-20, F-21, F-27, F-28, F-31–F-33, F-40–F-42, F-50–F-52, F-58 | Works end to end on mocks, honest labels, no lorem ipsum |
 
 ---
@@ -183,7 +183,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
   - FR-01.3 The trust line renders the one-class fee and card fee from API-03 (no rupee literal in UI strings or prompts; a CI grep fails on `₹` followed by digits in `/messages/*` and `/prompts/*`).
   - FR-01.4 First-launch non-affiliation notice and a persistent footer on every route; no State Emblem, Parivahan logo, "official" wording or gov-style domain (e2e test checks the footer on all routes).
   - FR-01.5 "All services" groups: Citizen, Vehicle owner, Driving school, Dealer / manufacturer, Government staff; external services open on parivahan.gov.in with an external-link icon.
-  - FR-01.6 Mic appears only for 18+ sessions; for others tiles say "Tap to start".
+  - FR-01.6 Mic appears for every user once mic consent is given (in family mode the parent consents); until then tiles say "Tap to start".
   - FR-01.7 No red alarm imagery, hacker stock photos or death statistics above the fold.
 - **Priority.** Must. **R0 depth.** Deep-C.
 - **Edge cases.** EC-19 (Lite render), EC-05 (mic hidden).
@@ -201,7 +201,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
   - FR-02.5 Earliest licence date = LL issue + 30 days (rule), expressed relative until an LL date exists.
   - FR-02.6 Max RTO visits computed from the state's LL test mode (online/CSC/RTO) and the applicant's path.
   - FR-02.7 "Send to WhatsApp" requires an explicit opt-in tick for that one message; a "Copy link" alternative stores nothing.
-  - FR-02.8 Plans for under-18 users create no account, no analytics event and no server-side history beyond the stateless API call.
+  - FR-02.8 A plan for a learner under 18 can be saved as a family member's case in the parent's account (family mode); its data is never used for behavioural tracking, profiling or targeted ads (DPDP s.9(3), D-13 revised).
 - **Priority.** Must. **R0 depth.** Deep-A.
 - **Edge cases.** EC-01, EC-02, EC-03, EC-04, EC-05, EC-06, EC-10, EC-21 (via F-03, F-04).
 - **Dependencies.** F-42 rule packs, F-53 (WhatsApp), API-01–API-04.
@@ -359,7 +359,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 - **Priority.** Should (surface). **R0 depth.** Thin. **Edge cases.** EC-12, EC-16.
 
 ### F-17 Family and Helper mode
-- **Description.** Manage a parent's case; cyber-café helper with recorded consent; "clear this device"; minor-riding (s.199A) awareness for parents.
+- **Description.** Manage a parent's case or a 16–17-year-old's case (family mode); cyber-café helper with recorded consent; "clear this device"; minor-riding (s.199A) awareness for parents.
 - **Personas.** P-03, P-04, P-01. **Stories.** US-025, US-040, US-205–US-209.
 - **Acceptance criteria.**
   - FR-17.1 HelperLink (E-29) requires a ConsentArtefact (E-15) with purpose, scope, duration; all helper actions appear in the applicant's history.
@@ -377,7 +377,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
   - FR-20.2 One FSRS card per concept; ts-fsrs pinned 5.x; scheduling works offline.
   - FR-20.3 Variants: ≥ 3 variants per LL concept in the MVP bank; answer keys never shipped to the client before answering.
   - FR-20.4 Deep content only for MCWOG/MCWG/LMV; other classes show "learning content coming" (D-05).
-  - FR-20.5 Under-18: static lessons, FSRS state stored on device only.
+  - FR-20.5 Family mode: a minor's lessons and FSRS state sync to the parent's account like any other case.
 - **Priority.** Must. **R0 depth.** Deep-A (LL topics), Thin (survival text).
 
 ### F-21 Test Readiness Score
@@ -396,7 +396,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 - **Acceptance criteria.**
   - FR-22.1 Format from `rules/<STATE>.json` with source: J&K 10 questions, 6 to pass [S: Kashmir Life]; fallback "15/9 (common default, unverified)" with an amber label.
   - FR-22.2 Guided first run with skippable coach marks.
-  - FR-22.3 Works offline after one load; for minors, results stay on the device.
+  - FR-22.3 Works offline after one load; results sync when back online (a minor's results go to the parent's account).
   - FR-22.4 No liveness check and no face match (council §1 row 4).
 - **Priority.** Must. **R0 depth.** Deep-B (as the 4th deep game per 08 §3.11). **Edge cases.** EC-10, EC-19.
 
@@ -414,7 +414,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
   - FR-23.8 Two-rater onset mean; |Δ| > 1.0 s returns for adjudication.
   - FR-23.9 Screen-reader alternative (audio-described lessons and still-frame mode) labelled "a substitute, not the same skill".
   - FR-23.10 Copy: "practice and familiarisation, not certification"; "Kerala's announced format", never "the Kerala test"; status from `kl_hpt_status` (EC-28).
-  - FR-23.11 18+ only in the hackathon (field study and AI debrief); minors see a static hazard lesson.
+  - FR-23.11 Available to every user, AI debrief included; a learner under 18 plays in family mode. The field study recruits 18+ participants only (study consent).
 - **Priority.** Must (hero). **R0 depth.** Deep-B. **Edge cases.** EC-18, EC-19, EC-28.
 - **Dependencies.** Render Workflows, R2 storage, MediaPipe/YuNet + plate detector (M-09), M-06, F-25, F-57.
 - **Backup trigger.** < 12 usable blurred clips by Fri 12:00 → 6-clip mock scaled to /100, and the journey test carries the evidence ([field kit §9](../../../field-kit/NAZAR-FIELD-KIT.md)).
@@ -434,15 +434,15 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 
 ### F-25 AI Debrief
 - **Description.** After every session: how you did · where you lacked · what you could have done · your next drill. Code computes every number; Gemini only narrates, choosing IDs from allowlists (D-09). Commentary mode is recorded, then scored (D-12).
-- **Personas.** P-01 (18+). **Stories.** US-073, US-086, US-100–US-103, US-112.
+- **Personas.** P-01, P-07. **Stories.** US-073, US-086, US-100–US-103, US-112.
 - **Acceptance criteria.**
   - FR-25.1 ADK graph: deterministic findings → one LLM node (M-02 Flash-Lite) → provenance validator → render.
   - FR-25.2 Output schema enums are built per request from the findings; the model writes glue text with **no digits**; any digit not from findings → reject → template.
   - FR-25.3 Template debrief renders first; AI narration replaces it when valid; p95 total ≤ 4 s on 4G; Gemini 429/timeout (3 s) → template (EC-29).
   - FR-25.4 Eval set ≥ 30 cases for M-02 and M-03 in CI (`adk eval`), 0 invented numbers, shown in the demo.
   - FR-25.5 Commentary: record → transcribe (Gemini or Saaras for Dogri) → deterministic matcher vs annotated hazards → debrief; audio discarded after transcription unless the user opts in for 30 days.
-  - FR-25.6 Under-18: template only, on device.
-  - FR-25.7 Cost target ≈ ₹0.11 per debrief ([08 §5.8](../../../research/ps1-deep/08-game-ai-n8n.md)); paid tier for real users (D-13).
+  - FR-25.6 Available to every user; a minor's debrief runs in family mode under the parent's consent, with the same validator and template fallback.
+  - FR-25.7 Cost target ≈ ₹0.11 per debrief ([08 §5.8](../../../research/ps1-deep/08-game-ai-n8n.md)); paid tier for real users (D-13 revised).
 - **Priority.** Must. **R0 depth.** Deep-B. **Edge cases.** EC-05, EC-20, EC-29.
 
 ### F-26 Gamification engine
@@ -452,7 +452,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
   - FR-26.1 XP = base × quality (floored 0.3); ×0.5 after 45 min/day, ×0.2 after 90 min; no XP for opening, sharing or inviting.
   - FR-26.2 Ranks Gali → Mohalla → Shehar → Highway → Ghat need XP **and** skill-tree nodes.
   - FR-26.3 Weekly goal 2–6 sessions, freeze tokens (max 2), repair by goal + 2, silent on break, archived on DL test day.
-  - FR-26.4 Squads 3–5, invite-only, 18+ only (D-13); squad score = mean(Nazar Score × (1 − Brier)).
+  - FR-26.4 Squads 3–5, invite-only; a minor's profile joins only with the parent's consent (D-13 revised); squad score = mean(Nazar Score × (1 − Brier)).
   - FR-26.5 Badges with criteria visible before starting; Khud Licence and Pehli Baar Pass honour-framed.
   - FR-26.6 Share cards on Margdarshak's own domain; "verified sessions: n"; percentile only after ≥ 200 verified mocks; server-rendered from recomputed scores.
   - FR-26.7 CI design-lint covering the 13 CCPA patterns; no loot boxes or variable-ratio XP; no money or prizes (Online Gaming Act 2025).
@@ -460,7 +460,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 
 ### F-27 Road Sign Snap
 - **Description.** Point the camera at a sign → meaning + add it to your deck.
-- **Stories.** US-059. **Acceptance.** FR-27.1 M-07 proposes a sign ID confirmed against the sign catalogue; low confidence → "pick from these 3"; 18+ only. **Priority.** Could. **R0 depth.** Roadmap (optional demo).
+- **Stories.** US-059. **Acceptance.** FR-27.1 M-07 proposes a sign ID confirmed against the sign catalogue; low confidence → "pick from these 3". **Priority.** Could. **R0 depth.** Roadmap (optional demo).
 
 ### F-28 Practice Record
 - **Description.** Practice hours, Nazar score, modules done, supervisor sign-offs; QR verifiable. Renamed from "competence passport" (D-14).
@@ -469,7 +469,7 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 
 ### F-30 Voice Guide
 - **Description.** ADK live mode + Gemini Live (Hindi/English); Sarvam Saaras for Dogri speech in. Navigates and fills fields inside Margdarshak. Never submits, pays or books on Sarathi. Answers carry a rule-ID source chip.
-- **Personas.** P-03, P-01 (18+). **Stories.** US-005, US-104–US-108, US-114.
+- **Personas.** P-03, P-01, P-07. **Stories.** US-005, US-104–US-108, US-114.
 - **Acceptance criteria.**
   - FR-30.1 Closed action enum `{navigate, fill_field, read_screen, explain_rule, open_help}`; no book/pay/submit action exists.
   - FR-30.2 Rule answers only from verified rule IDs; "I don't know that for your RTO yet" allowed.
@@ -482,10 +482,10 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 - **Stories.** US-058, US-106. **Acceptance.** FR-31.1 M-04 explains only from reviewed explanations for the concept answered wrong; cites rule ID; FR-31.2 AI down → show the reviewed text. **Priority.** Should. **R0 depth.** Thin.
 
 ### F-32 Sarathi screen/status decoder
-- **Stories.** US-109, US-110. **Acceptance.** FR-32.1 M-05 matches screenshots to the verified error catalogue; FR-32.2 "unknown" allowed below threshold; FR-32.3 on-device masking of detectable personal fields before upload; FR-32.4 18+ only. **Priority.** Should. **R0 depth.** Thin.
+- **Stories.** US-109, US-110. **Acceptance.** FR-32.1 M-05 matches screenshots to the verified error catalogue; FR-32.2 "unknown" allowed below threshold; FR-32.3 on-device masking of detectable personal fields before upload; FR-32.4 available to every user (family mode for minors). **Priority.** Should. **R0 depth.** Thin.
 
 ### F-33 Scam checker
-- **Stories.** US-111, US-194. **Acceptance.** FR-33.1 Rules decide (domain/sender allowlist, VK-MORTH-style sender IDs, any `.apk` = do not open); FR-33.2 AI only explains (18+); FR-33.3 no verdict says "safe". **Priority.** Should. **R0 depth.** Thin.
+- **Stories.** US-111, US-194. **Acceptance.** FR-33.1 Rules decide (domain/sender allowlist, VK-MORTH-style sender IDs, any `.apk` = do not open); FR-33.2 AI only explains; FR-33.3 no verdict says "safe". **Priority.** Should. **R0 depth.** Thin.
 
 ### F-40 Driving-school portal
 - **Description.** Listing; Pro tier with learner progress, hazard-training logs for RTO inspections, practice sign-off, parent updates, test-vehicle hire, remedial-training referrals.
@@ -520,11 +520,11 @@ Format per feature: **Description · Personas · Stories · Acceptance criteria 
 - **Stories.** US-014, US-220–US-223, US-227, US-228. **Acceptance.** FR-53.1 per-channel opt-in, off by default; FR-53.2 templates only; FR-53.3 STOP → consent withdrawn ≤ 1 min (EC-30); FR-53.4 ≤ 1/day, quiet hours; FR-53.5 `ff_sms_channel` false blocks SMS code paths. **Priority.** Must. **R0 depth.** Deep-C (WhatsApp test number + email). **Risk.** Meta test number reaches ~5 allow-listed recipients [HUNCH; owner Tech lead; pre-register testers 2026-10-23].
 
 ### F-54 Privacy centre
-- **Description.** Consent records (DEPA-style artefacts), export, delete, grievance officer; minor gating.
-- **Stories.** US-108, US-113, US-270–US-276, US-278. **Acceptance.** FR-54.1 purpose-bound consent artefacts with revoke; FR-54.2 export ≤ 24 h; FR-54.3 delete mid-case cancels jobs first, then deletes, keeps only anonymised aggregates (EC-26); FR-54.4 grievance officer page; FR-54.5 under-18 rules-only enforced server-side; FR-54.6 no Aadhaar/OTP/biometric fields (lint); FR-54.7 anonymous device session → optional account. Wording "built to DPDP Rules", never "DPDP-compliant". **Priority.** Must. **R0 depth.** Deep-C.
+- **Description.** Consent records (DEPA-style artefacts), export, delete, grievance officer; family mode with parental consent.
+- **Stories.** US-108, US-113, US-270–US-276, US-278. **Acceptance.** FR-54.1 purpose-bound consent artefacts with revoke; FR-54.2 export ≤ 24 h; FR-54.3 delete mid-case cancels jobs first, then deletes, keeps only anonymised aggregates (EC-26); FR-54.4 grievance officer page; FR-54.5 family mode: a minor's case lives in the parent's account and parental consent (DPDP s.9(1), Rule 10) is enforced server-side; FR-54.6 no Aadhaar/OTP/biometric fields (lint); FR-54.7 anonymous device session → optional account. Wording "built to DPDP Rules", never "DPDP-compliant". **Priority.** Must. **R0 depth.** Deep-C.
 
 ### F-55 Privacy-preserving analytics
-- **Stories.** US-277. **Acceptance.** FR-55.1 allowlisted per-event schemas at API-63; FR-55.2 IP dropped at ingress, daily-rotating session IDs; FR-55.3 no events from under-18 sessions; FR-55.4 console/public stats only via k ≥ 5 aggregates. **Priority.** Must. **R0 depth.** Deep-C. Taxonomy in [METRICS §7](METRICS.md#7-analytics-event-taxonomy).
+- **Stories.** US-277. **Acceptance.** FR-55.1 allowlisted per-event schemas at API-63; FR-55.2 IP dropped at ingress, daily-rotating session IDs; FR-55.3 events from a minor's profile are never used for behavioural tracking, profiling or targeted ads (s.9(3)); FR-55.4 console/public stats only via k ≥ 5 aggregates. **Priority.** Must. **R0 depth.** Deep-C. Taxonomy in [METRICS §7](METRICS.md#7-analytics-event-taxonomy).
 
 ### F-56 Government adapter layer
 - **Description.** SarathiAdapter, DigiLockerAdapter, AadhaarOfflineAdapter (offline QR/XML only), BhashiniAdapter, PaymentAdapter, NotificationAdapter, SlotAdapter, each with mock and real implementations passing the same contract tests.
@@ -548,7 +548,7 @@ Every edge case needs a rule row or screen state **and** a test. Test IDs follow
 | EC-02 | Aadhaar address ≠ residence | F-04 | Rule `id.address_mismatch` | Two-option trade-off row | US-017 |
 | EC-03 | Blank S/o / D/o line | F-04 | Rule `id.relation_blank` | Blocker row with news source | US-018 |
 | EC-04 | Turning 40 mid-journey | F-04, F-09 | Rule `med.form1a_age40` + clock re-check | Warning before DL test | US-019 |
-| EC-05 | Age 16–17, ≤ 50 cc only | F-02, F-04, F-54 | Rule `age.mc50_guardian` + age gate | Minor plan; AI/telemetry off | US-020, US-274 |
+| EC-05 | Age 16–17, ≤ 50 cc only | F-02, F-04, F-54 | Rule `age.mc50_guardian` + family mode | Minor's plan in the parent's account; full features incl. AI; parental consent | US-020, US-274 |
 | EC-06 | Transport classes under 20 | F-04 | Rule `age.transport_20` + `transport.lmv_prereq` (verify) | Class shown not eligible | US-021 |
 | EC-07 | LL expires while waiting; new app number breaks slot | F-09, F-13 | Collision formula | Red-amber banner | US-143, US-169 |
 | EC-08 | 3+ fails, 7-day gap, remedial training | F-13 | Rule `dl.retest_gap` (verify), `dl.remedial_s9_5` | Retest plan + support | US-168, US-171 |
@@ -648,7 +648,7 @@ Every edge case needs a rule row or screen state **and** a test. Test IDs follow
 ## 10. AI requirements (summary; detail in [04-ai](../04-ai/MODELS.md))
 | Model | Feature | Must | Must not |
 |---|---|---|---|
-| M-01 VoiceGuideAgent | F-30 | Closed action enum; rule-ID answers; 18+ | Submit, pay, book; answer fees from memory |
+| M-01 VoiceGuideAgent | F-30 | Closed action enum; rule-ID answers | Submit, pay, book; answer fees from memory |
 | M-02 DebriefAgent | F-25 | IDs from per-request allowlists; no digits; validator; template fallback | Compute or state any number |
 | M-03 CoachAgent | F-25 | Wording of a code-computed plan | Change the plan |
 | M-04 TutorAgent | F-31 | Explain from reviewed bank | Generate new rules |
@@ -714,7 +714,7 @@ No AI in: eligibility, fees, timelines, scores, scam verdicts, golden hour, clas
 - [ ] Lite < 300 KB; axe 0 serious/critical; TalkBack pass on Deep-A.
 - [ ] Footer and first-launch disclaimer on every route; wording-ban lint green; no emblem/logo; domain without "parivahan", "sarathi" or "gov".
 - [ ] No rupee literal in UI/prompts; fees computed and sourced.
-- [ ] Under-18 path verified: no AI, no telemetry, no streaks, no squads.
+- [ ] Family mode verified: a minor's case in the parent's account gets every feature incl. AI; parental consent recorded; no behavioural tracking or targeted ads; squads and share cards need the parent's consent.
 - [ ] README states Render Singapore + synthetic data; instance pre-warmed; p95 numbers captured for the deck.
 - [ ] Public repo, live URL, ≤ 5-minute video, deck (submission constraints, PROJECT_BRIEF §14).
 - [ ] Each architecture module has a named owner who can explain it (D-24).

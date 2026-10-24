@@ -1,0 +1,422 @@
+{
+  "metaTitle": "Clip admin",
+  "brand": "Clip admin",
+  "nav": {
+    "label": "Clip admin",
+    "board": "Board",
+    "register": "Register a clip",
+    "generate": "Generate a clip"
+  },
+  "gate": {
+    "checking": "Checking your admin access…",
+    "title": "Admin access only",
+    "line": "These screens are for the clip team (curators and raters). Only a clip-team demo persona has admin access; a signed-in account does not.",
+    "mockTitle": "Mock mode: choose a demo pseudonym",
+    "mockLine": "Pseudonyms only, never names. With the real API, the server checks the admin scope on every call.",
+    "actAs": "Act as {pseudonym} ({roles})",
+    "roles": {
+      "curator": "curator",
+      "rater": "rater"
+    },
+    "personaTitle": "Demo: act as a clip-team persona",
+    "personaLine": "Synthetic personas with pseudonyms only, never names. The server checks the admin scope on every call.",
+    "personaFailed": "Could not start that persona session. It is only available on the demo tenant.",
+    "home": "Back to home"
+  },
+  "mock": {
+    "banner": "Mock mode: synthetic clips with placeholder media, kept only in this browser. Nothing here is real footage.",
+    "persona": "Acting as {pseudonym}",
+    "switch": "Switch pseudonym",
+    "reset": "Reset the mock board",
+    "source": "The admin API is not live yet, so this screen shows mock data from this browser.",
+    "ingest": "Finish ingest (mock)",
+    "ingestLine": "In production the clip_ingest workflow transcodes, blurs and flash-checks the upload. In mock mode this button stands in for it."
+  },
+  "states": {
+    "loading": "Loading…",
+    "errorTitle": "Something went wrong. Nothing you saved is lost.",
+    "retry": "Try again",
+    "offlineTitle": "You're offline",
+    "offlineBody": "The clip admin needs a connection. Nothing you saved is lost.",
+    "notFound": "There is no clip with this ID.",
+    "forbidden": "Your account can't open this clip.",
+    "back": "Back to the board"
+  },
+  "status": {
+    "raw": "Uploaded",
+    "transcoded": "Transcoded",
+    "blurred": "Blurred",
+    "audited": "Blur audited",
+    "proposed": "Waiting for raters",
+    "rated": "Rated",
+    "adjudication": "Needs adjudication",
+    "published": "Published",
+    "retired": "Retired"
+  },
+  "problem": {
+    "CLIP_INVALID_TRANSITION": "The clip is not at this step any more. Reload to see where it is.",
+    "RATING_ALREADY_SUBMITTED": "You have already rated this version of the clip.",
+    "ADJUDICATOR_IS_RATER": "You rated this clip, so someone else has to adjudicate it.",
+    "BLUR_AUDIT_FAILED": "The blur audit did not pass.",
+    "PROHIBITED_FIELD": "A text contains personal data (a name, phone number, plate or exact place). Describe what is visible instead.",
+    "VALIDATION_FAILED": "Some values are not valid. Check the highlighted fields.",
+    "FORBIDDEN": "Your account can't do this step.",
+    "UNAUTHENTICATED": "Sign in again to continue.",
+    "other": "The server refused the request ({status})."
+  },
+  "board": {
+    "h1": "Clip pipeline",
+    "lead": "AI-generated clips take a synthetic review; filmed clips take blur and a 100% blur audit. Every clip then needs two blind raters, agreement and a person to publish. AI never publishes.",
+    "usable": "Published: {n} · target {target} · backup trigger below {trigger}",
+    "filter": "Filter by status",
+    "all": "All",
+    "count": "{n, plural, =0 {No clips} one {# clip} other {# clips}}",
+    "empty": "No clips with this status",
+    "emptyLine": "Register a clip to start the pipeline.",
+    "ratings": "Ratings {n} of 2",
+    "auditNone": "Blur audit not done",
+    "auditPassed": "Blur audit passed",
+    "auditFailed": "Blur audit: {n} missed",
+    "seconds": "{s} s",
+    "open": "Open {id}",
+    "action": {
+      "ingest": "Waiting for ingest",
+      "audit": "Blur audit",
+      "rate": "Rate",
+      "adjudicate": "Adjudicate",
+      "cues": "Write cue texts",
+      "publish": "Publish",
+      "none": "Open",
+      "review": "Synthetic review"
+    }
+  },
+  "overview": {
+    "facts": "Clip facts",
+    "city": "City",
+    "road": "Road type",
+    "month": "Captured",
+    "speed": "Speed estimate",
+    "speedValue": "{kmh} km/h (estimated)",
+    "speedMissing": "Not logged",
+    "duration": "Length",
+    "version": "Version",
+    "runs": "Workflow runs",
+    "noRuns": "No workflow runs yet.",
+    "rawDeleted": "Raw footage deleted",
+    "steps": "Steps",
+    "hazards": "Final hazard windows",
+    "noHazards": "No final windows yet."
+  },
+  "register": {
+    "h1": "Register a clip",
+    "lead": "Coarse metadata only: a city, never a street, pin code or coordinates; the month, never a date (NAZAR §4).",
+    "rawKey": "Upload object key",
+    "rawKeyHint": "The key of the raw upload in the private bucket.",
+    "state": "State code",
+    "city": "City",
+    "cityHint": "Letters only, for example Jammu.",
+    "filmedBy": "Filmed by",
+    "filmed": {
+      "passenger": "A passenger",
+      "fixed_mount": "A fixed mount"
+    },
+    "filmedNote": "Never the rider.",
+    "road": "Road type",
+    "time": "Time of day",
+    "weather": "Weather",
+    "pov": "Point of view",
+    "month": "Month captured",
+    "speed": "Speed estimate (km/h)",
+    "speedSource": "Speed source",
+    "consent": "Contributor consent ID",
+    "licence": "Licence: CC-BY 4.0 for the blurred clip",
+    "submit": "Register and start ingest",
+    "done": "Registered as {id}. The ingest workflow has started.",
+    "openClip": "Open {id}",
+    "errors": {
+      "rawKey": "Enter the upload key.",
+      "state": "Two or three capital letters, for example JK.",
+      "city": "Letters only, 2 to 60 characters. No street or pin code.",
+      "month": "Pick a month.",
+      "speed": "A number from 0 to 150, or choose “not logged”.",
+      "consent": "Enter the contributor consent ID.",
+      "duration": "Enter the length in seconds, from 1 to 600."
+    },
+    "duration": "Length of the upload (seconds)",
+    "durationHint": "Only clips of 20 to 60 seconds can be published."
+  },
+  "options": {
+    "road": {
+      "urban_arterial": "Urban main road",
+      "market_street": "Market street",
+      "residential_lane": "Residential lane",
+      "school_zone": "School zone",
+      "highway": "Highway",
+      "hill_road": "Hill road",
+      "rural_road": "Rural road"
+    },
+    "time": {
+      "dawn": "Dawn",
+      "day": "Day",
+      "dusk": "Dusk",
+      "night": "Night"
+    },
+    "weather": {
+      "clear": "Clear",
+      "overcast": "Overcast",
+      "haze": "Haze",
+      "rain": "Rain",
+      "fog": "Fog"
+    },
+    "pov": {
+      "2W": "Two-wheeler",
+      "4W": "Four-wheeler"
+    },
+    "speedSource": {
+      "rider_log": "Rider's log",
+      "speedometer": "Speedometer",
+      "passenger_estimate": "Passenger's estimate",
+      "not_logged": "Not logged"
+    }
+  },
+  "scrubber": {
+    "label": "Clip timeline",
+    "placeholder": "Placeholder clip (mock mode): no real footage yet",
+    "frame": "Frame",
+    "time": "{time} / {total} · frame {frame} of {frames}",
+    "back10": "Back 10 frames",
+    "back1": "Back 1 frame",
+    "fwd1": "Forward 1 frame",
+    "fwd10": "Forward 10 frames",
+    "play": "Play",
+    "pause": "Pause",
+    "speed": "Speed",
+    "keys": "Keys: , and . step one frame, Space plays or pauses."
+  },
+  "audit": {
+    "h1": "Blur audit · {id}",
+    "lead": "Check every frame for a visible face, a legible number plate or other personal information (phone numbers on shop fronts, name boards). Publish needs 100% of frames checked and 0 misses.",
+    "rendition": "Rendition checked",
+    "noRendition": "There is no rendition to audit yet.",
+    "progress": "Frames checked: {checked} of {total} ({pct}%)",
+    "progressLabel": "Frames checked",
+    "playHint": "Play at 4× or step through: every frame shown counts as checked.",
+    "missFace": "Missed face",
+    "missPlate": "Missed plate",
+    "missOther": "Other personal info",
+    "missNote": "Note (optional, no names)",
+    "misses": "Misses ({n})",
+    "noMisses": "No misses marked.",
+    "remove": "Remove",
+    "missAt": "Frame {frame} · {kind}",
+    "kind": {
+      "face": "face",
+      "plate": "plate",
+      "other_pii": "other personal info"
+    },
+    "save": "Save audit",
+    "incomplete": "{n} frames not checked yet. You can save a partial audit, but it will not pass.",
+    "passed": "Audit passed: every frame checked, no misses.",
+    "failed": "Audit saved but not passed.",
+    "reblur": "The missed frames go back to blur as manual masks. The re-blurred clip needs a new audit.",
+    "current": "Last audit: {checked} of {total} frames, {misses} missed, by {auditor}",
+    "aiSkip": "AI-generated clips skip the blur audit: there is no real footage to blur. Use the synthetic review instead.",
+    "toReview": "Open the synthetic review"
+  },
+  "rate": {
+    "modeWindows": "Mark hazard windows",
+    "h1": "Rate · {id}",
+    "blind": "You can't see the other rater's window until you save.",
+    "definitions": "Definitions",
+    "defHazard": "Hazard: a road user or condition that would make a careful rider change speed or direction to avoid a conflict.",
+    "defOnset": "Onset: the first frame at which a careful rider could see that this hazard is developing, not the first frame the object is visible.",
+    "defEnd": "End: the last frame at which braking or moving over would still comfortably avoid the conflict.",
+    "defQuiet": "Quiet clip: no hazard by the definition above.",
+    "hazard": "Hazard {n}",
+    "type": "Type",
+    "typeDefinition": "Definition: {text}",
+    "onset": "Onset (seconds)",
+    "end": "End (seconds)",
+    "setOnset": "Set onset to this frame",
+    "setEnd": "Set end to this frame",
+    "cue": "One-line cue (optional)",
+    "cueHint": "What a rider could see, for example “feet at the bus front”. No names or places.",
+    "occlusion": "The hazard starts hidden behind something",
+    "add": "Add a hazard",
+    "remove": "Remove hazard {n}",
+    "max": "Mark at most 10. More than 2 sends the clip to adjudication.",
+    "quiet": "Quiet clip: no hazard",
+    "reject": "Reject the clip as unusable",
+    "save": "Save my window",
+    "saved": "Saved. The other rater's marks show here once both of you have saved.",
+    "yours": "Your rating",
+    "both": "Both ratings",
+    "raterMarks": "{rater}",
+    "markLine": "{type}: {a} to {b}",
+    "rejected": "Rejected as unusable",
+    "quietLine": "No hazard marked",
+    "closed": "This clip is not open for rating ({status}).",
+    "notRater": "Your pseudonym does not have the rater role.",
+    "proposals": "AI proposal (not used for scoring)",
+    "errors": {
+      "order": "The end must be after the onset.",
+      "range": "Both times must be inside the clip.",
+      "cue_long": "Keep the cue to 160 characters.",
+      "cue_pii": "The cue contains personal data. Describe what is visible instead.",
+      "none": "Mark at least one hazard, or choose quiet clip or reject."
+    }
+  },
+  "agreement": {
+    "h2": "Agreement",
+    "accepted": "The raters agree. Final windows are the mean of the two marks.",
+    "refused": "The raters disagree, so the clip needs adjudication.",
+    "metrics": "Matched {matched} · median Δonset {onset} · median Δend {end}",
+    "pairLine": "{type}: Δonset {onset} s, Δend {end} s, overlap {iou}",
+    "reason": {
+      "unmatched_hazard": "A hazard was marked by only one rater",
+      "type_mismatch": "The raters chose different hazard types",
+      "onset_delta": "The onsets are more than 0.5 s apart",
+      "end_delta": "The ends are more than 1.0 s apart",
+      "too_many_hazards": "More than 2 hazards were marked",
+      "unconfirmed_proposal": "An AI proposal was not confirmed by a rater"
+    }
+  },
+  "adjudicate": {
+    "h1": "Adjudicate · {id}",
+    "lead": "Rule on every cluster. A hazard needs your own mark: the final window is the median of the three marks, or the mean of two for a hazard only one rater marked.",
+    "notOpen": "This clip is not waiting for adjudication ({status}).",
+    "isRater": "You rated this clip, so someone else has to adjudicate it.",
+    "cluster": "Cluster {id}",
+    "kind": {
+      "pair": "Both raters",
+      "only_a": "Only rater A",
+      "only_b": "Only rater B",
+      "proposal_only": "AI proposal only"
+    },
+    "verdict": "Your ruling",
+    "isHazard": "It is a hazard",
+    "notHazard": "Not a hazard",
+    "reason": "Reason",
+    "reasons": {
+      "type_resolved": "Hazard type resolved",
+      "window_resolved": "Window resolved",
+      "presence_resolved": "Presence resolved",
+      "proposal_checked": "AI proposal checked",
+      "too_many_hazards": "Too many hazards",
+      "other": "Other"
+    },
+    "save": "Save the ruling",
+    "done": "Adjudication saved. The clip is rated.",
+    "issues": {
+      "missing_decision": "Rule on every cluster.",
+      "missing_mark": "A hazard needs your own mark.",
+      "bad_mark": "One of your marks is not valid."
+    }
+  },
+  "cues": {
+    "h1": "Cue texts · {id}",
+    "lead": "One line per hazard in English and Hindi, shown to learners in the replay. Write from the raters' cues; no names or places.",
+    "notRated": "Cue texts are written once the clip is rated ({status}).",
+    "raterCues": "Raters' cues: {cues}",
+    "noRaterCues": "The raters wrote no cue.",
+    "en": "English cue",
+    "hi": "Hindi cue",
+    "difficulty": "Curator difficulty (1–5)",
+    "difficultyHint": "1: single hazard, unoccluded, slow, daylight · 3: occlusion, distractor or two hazards far apart · 5: subtle cues, poor light, busy scene.",
+    "pick": "Choose",
+    "save": "Save cue texts",
+    "saved": "Cue texts saved.",
+    "errors": {
+      "required": "Write both lines, up to 160 characters each.",
+      "pii": "This line contains personal data."
+    }
+  },
+  "publish": {
+    "h1": "Publish · {id}",
+    "lead": "A person publishes, never AI. Every check must pass.",
+    "checks": "Checks",
+    "check": {
+      "status": "The clip is rated",
+      "two_ratings": "Two independent ratings are stored",
+      "agreement": "The raters agree, or an adjudication resolved every hazard",
+      "blur_audit": "Blur audit: 100% of frames checked, 0 misses, on the bytes to publish",
+      "flash_check": "Photosensitivity check passed (no more than 3 flashes a second)",
+      "cue_texts": "Every hazard has a cue in English and Hindi",
+      "duration": "The clip is 20 to 60 seconds long",
+      "speed": "A speed estimate is logged",
+      "difficulty": "Curator difficulty (1–5) is set",
+      "licence": "Licence CC-BY 4.0 is recorded",
+      "synthetic_review": "Synthetic review: every check ticked by a reviewer, with a timestamp",
+      "missing_rendition": "Both renditions (360p and 480p) are stored"
+    },
+    "ok": "Passed",
+    "missing": "Not yet",
+    "fix": {
+      "status": "Finish the earlier steps first.",
+      "two_ratings": "Both raters need to save their windows.",
+      "agreement": "Adjudicate the clip.",
+      "blur_audit": "Complete the blur audit.",
+      "flash_check": "The ingest workflow has to pass the flash check.",
+      "cue_texts": "Write the cue texts.",
+      "duration": "Re-cut the clip to 20–60 seconds (a new version).",
+      "speed": "A clip without a logged speed cannot be published.",
+      "difficulty": "Set the curator difficulty on the cue texts step.",
+      "licence": "Record the CC-BY 4.0 licence.",
+      "synthetic_review": "Complete the synthetic review.",
+      "missing_rendition": "The ingest workflow has to store the 360p and 480p renditions."
+    },
+    "go": "Publish",
+    "blocked": "Publish stays off until every check passes.",
+    "refused": "The server refused to publish: {reason}",
+    "done": "Published. The clip joins the manifest; raw footage is deleted after the audit.",
+    "already": "This clip is already published."
+  },
+  "steps": {
+    "audit": "Blur audit",
+    "rate": "Rate",
+    "adjudicate": "Adjudicate",
+    "cues": "Cue texts",
+    "publish": "Publish",
+    "review": "Synthetic review"
+  },
+  "origin": {
+    "ai_generated": "AI-generated",
+    "filmed": "Filmed"
+  },
+  "review": {
+    "h1": "Synthetic review · {id}",
+    "lead": "For AI-generated clips instead of the blur audit. Watch the whole clip and tick each check only if it holds for every frame.",
+    "filmed": "This clip was filmed, so it needs the 100% blur audit instead.",
+    "closed": "No clip to review in this status ({status}).",
+    "check": {
+      "no_real_likeness": "No real person's likeness (no recognisable face or public figure)",
+      "no_readable_plates": "No readable number plates",
+      "no_real_brands": "No real brands, logos or shop names",
+      "no_collision_or_injury": "No collision and no injury shown",
+      "hazard_visible": "The hazard is clearly visible as it develops"
+    },
+    "note": "Note (optional, no names)",
+    "save": "Save review",
+    "passed": "Review passed: {reviewer}, {time}.",
+    "failed": "Review saved but not passed: every check must be ticked.",
+    "current": "Last review: {reviewer}, {time} ({state}).",
+    "statePassed": "passed",
+    "stateFailed": "not passed"
+  },
+  "generate": {
+    "h1": "Generate a clip",
+    "lead": "AI-generated practice scenes (Gemini video generation). A generated clip still needs the synthetic review, two blind raters and agreement before it can be published.",
+    "scenes": "Scene",
+    "scenesMock": "Sample scenes (mock): content/nazar/scenes.json is not in the repo yet.",
+    "noScenes": "No scenes yet.",
+    "sceneMeta": "{hazard} · about {s} s",
+    "batch": "Batch ID",
+    "batchHint": "Groups clips generated together, for example batch-2026-10-24.",
+    "batchError": "Letters, digits and hyphens, 3 to 40 characters.",
+    "pick": "Choose a scene.",
+    "start": "Start generation",
+    "started": "Generation started as {id}. The job runs in the background.",
+    "open": "Open {id}",
+    "queued": "Generation started (run {run}). The clip appears on the board once the workflow registers it."
+  }
+}

@@ -21,7 +21,7 @@
 | 10 | Web push | NotificationPort | real (VAPID) | same | — | no |
 | 11 | SMS (mGov / NIC / DLT) | NotificationPort | **not used** (roadmap until TRAI DLT) | DLT entity, headers and templates; mGov in government mode | Nestiq / state | no |
 | 12 | Slots | SlotPort | **mock** (seeded, `sample_data`) + crowd intel relay | NIC slot read API after adoption | state + NIC | no |
-| 13 | **Render Workflows** | JobRunnerPort | **real** (headline sponsor tech) | Temporal on the state cloud | team | yes |
+| 13 | **Render Workflows** | `JobRunner` port | **real** (headline sponsor tech) | Temporal on the state cloud | team | yes |
 | 14 | **n8n** | edge | **real** (Pro) | self-host or replace with a notifier service | team | yes |
 | 15 | **Gemini API / ADK** | AgentRuntimePort, NarratorPort | **real** (paid tier before any real user) | Vertex AI `asia-south1` | team | partly (template fallback) |
 | 16 | **Sarvam** (Saaras v3, Bulbul v3) | SpeechPort | real (Dogri voice-in, Hindi read-out) | same or Bhashini | team | no |
@@ -108,13 +108,15 @@
 
 ## 3. Platform and vendor integrations
 
-### 3.1 Render Workflows (sponsor; JobRunnerPort)
-- **Facts (B-sponsors §1):** public beta since 7 Apr 2026; per-run instances; chaining via `ctx.run()`; fan-out with `asyncio.gather`; retries with exponential backoff (default 3); timeouts 30 s–24 h; runs over limits are queued; tasks reach other Render services on the private network but cannot receive inbound connections; **no cron, no documented sleep, no completion webhook**; Blueprint support since 16 Sep 2026; pricing `flex` $0.20/CPU-h + $0.05/GB-h (≈ $0.40/h cap), no charge when idle; root runs via API 50/min on Hobby.
-- **SDK:** PyPI `render-sdk` 1.4.0 (2026-10-22), a shim for the renamed `render` 1.4.0 distribution, "early access"; `Workflows()`, `@app.task`, `Retry(...)`, `RenderAsync().workflows.start_task("<slug>/<task>", args)`, `get_task_run`, `task_run_events`.
-- **Setup:** `render login` → `render workflows init` (Python) → `render workflows dev -- uv run python -m margdarshak_workflows` (local task server :8120, CLI ≥ 2.12.0, `RENDER_USE_LOCAL_DEV=true`) → create the Workflow service (dashboard or Blueprint) → set `RENDER_API_KEY` and `WORKFLOW_SLUG` on `mg-api`.
+### 3.1 Render Workflows (sponsor; `JobRunner` port)
+- **Facts (B-sponsors §1):** public beta since 7 Apr 2026; per-run instances; chaining via `ctx.run()`; fan-out with `Promise.all` over `ctx.run()`; retries with exponential backoff (default 3); timeouts 30 s–24 h; runs over limits are queued; tasks reach other Render services on the private network but cannot receive inbound connections; **no cron, no documented sleep, no completion webhook**; Blueprint support since 16 Sep 2026; pricing `flex` $0.20/CPU-h + $0.05/GB-h (≈ $0.40/h cap), no charge when idle; root runs via API 50/min on Hobby.
+- **SDK (tasks):** npm `@renderinc/sdk` **1.4.0**, TypeScript, in `services/workflows` (`@margdarshak/workflows`): `task({ name, retry: { maxRetries, waitDurationMs, backoffScaling }, timeoutSeconds, plan }, fn)`, `ctx.run(subtask, ...args)`; the task server starts automatically inside a Workflow service.
+- **Starting runs (Go API):** there is no Go SDK, so `internal/jobs` calls Render's REST API directly: `POST https://api.render.com/v1/task-runs` with `Authorization: Bearer $RENDER_API_KEY` and `{"task": "<WORKFLOW_SLUG>/<task>", "input": [...], "idempotencyKey": "…"}` → `202` TaskRun; `GET /v1/task-runs/{taskRunId}` for status (`pending`, `running`, `succeeded`, `failed`, `canceled`, …); `DELETE` to cancel; SSE at `/v1/task-runs/events`. Endpoint shapes read from the SDK's generated schema (`@renderinc/sdk` 1.4.0, 2026-10-23).
+- **Business steps:** each task calls the Go API over the private network with HMAC (`POST /internal/job-steps/{step}`, proposed); the workflows service holds no `DATABASE_URL`.
+- **Setup:** `render login` → `render workflows dev -- pnpm --filter @margdarshak/workflows start` (local task server `http://localhost:8120`, CLI ≥ 2.12.0; the API uses it with `RENDER_USE_LOCAL_DEV=true`) → create the Workflow service (runtime `node`; dashboard or Blueprint) → set `RENDER_API_KEY`, `WORKFLOW_SLUG` and `JOB_RUNNER=render_workflows` on `mg-api`.
 - **Tasks:** `clip_ingest` (headline, visible retry), `clip_finalize`, `case_clock_sweep` + `clock_batch`, `session_debrief`, `debrief_backfill`, `nightly_stats`, `rulepack_reevaluate`, `user_export`, `user_delete`, `replay_pending_sessions`.
-- **Design consequences:** n8n Schedule → API-65/API-67 → JobRunnerPort (no cron); the two-rater wait lives in n8n W08 between `clip_ingest` and `clip_finalize` (no sleep); the API polls run status into `ops.job_runs` (no webhook).
-- **Failure handling:** automatic retries; `InlineJobRunner` degraded mode; idempotent tasks.
+- **Design consequences:** n8n Schedule → API-65/API-67 → `JobRunner` port (no cron); the two-rater wait lives in n8n W08 between `clip_ingest` and `clip_finalize` (no sleep); the API polls run status into `ops.job_runs` (no webhook).
+- **Failure handling:** automatic retries; `JOB_RUNNER=inline` degraded mode (Go step handlers in a goroutine); idempotent job steps.
 - **Cost:** a few dollars for the event; every participant has $50 in Render credits.
 
 ### 3.2 n8n (sponsor; the edge)
@@ -132,22 +134,23 @@
 - **Templates:** `plan_card_v1`, `ll_day25_v1`, `ll_unlock_v1`, `ll_expiry_v1`, `test_eve_v1`, `retest_plan_v1` (no outcome words in the preview), `approval_chase_v1`, `parent_card_v1`, `slot_reported_v1`.
 - **Cost:** per-message template pricing applies for production [unverified rates; owner Business lead, before launch].
 
-### 3.4 Google Gemini API and ADK (AI layer)
-- **Access:** API key (Google AI Studio) for the hackathon; **paid tier before any real-user field test** because free-tier inputs may be human-reviewed ([Gemini API terms](https://ai.google.dev/gemini-api/terms)); users must be 18+ and clients "likely to be accessed by" under-18s are restricted → AI only for adult sessions (D-13; legal question logged, R-13). Gemini data may be cached in any country, so the AI notice discloses cross-border processing (brief §11).
+### 3.4 Google Gemini API and ADK for Go (AI layer)
+- **SDKs:** Google ADK for Go `google.golang.org/adk` **v1.9.0** (`Runner.Run`, `Runner.RunLive` for voice) and the Go Gemini SDK `google.golang.org/genai` **v1.76.0** (`genai.NewClient`, `client.Live.Connect`), in-process in the Go API; the offline clip-window proposer in the TS `clip_ingest` task uses `@google/genai`.
+- **Access:** API key (Google AI Studio) for the hackathon; **paid tier before any real-user field test** because free-tier inputs may be human-reviewed ([Gemini API terms](https://ai.google.dev/gemini-api/terms)); the terms require users to be 18+ and restrict clients "likely to be accessed by" under-18s, so the **account holder is always an adult**; a learner aged 16–17 uses AI only inside the parent's account in family mode, with the parent's verifiable consent and no behavioural tracking or ads (D-13 revised; the legal question stays logged as R-13). Gemini data may be cached in any country, so the AI notice discloses cross-border processing (brief §11).
 - **Models (env-pinned):** `gemini-3.1-flash-lite` (narration, tutor, coach), `gemini-3.8-flash` / `gemini-3.6-flash` (vision/video), `gemini-3.8-live` with `gemini-2.5-flash-native-audio-preview-12-2025` fallback (voice) — IDs and prices from `04` §1.5–1.7.
-- **Safety:** set safety settings explicitly (`block_medium_and_above`; default off on 2.5+); structured output with per-request enums; Gemini ignores `minLength/maxLength`, so code validates lengths.
+- **Safety:** set safety settings explicitly (`BLOCK_MEDIUM_AND_ABOVE` in `genai.GenerateContentConfig.SafetySettings`; default off on 2.5+); structured output with per-request enums; Gemini ignores `minLength/maxLength`, so code validates lengths.
 - **Production:** Vertex AI `asia-south1` (Mumbai) with enterprise terms; Bhashini where coverage allows.
 - **Cost:** ≈ $0.0012 (₹0.10) per debrief; voice ≈ $0.023/min (≈ ₹2/min, the dominant cost; capped 10 min/user/month on the free plan) (`08` §5.8, `04` §5).
 - **Failure handling:** template-first UI; circuit breaker at > 20% fallback over 5 min; n8n W12 alert.
 
 ### 3.5 Sarvam (Saaras v3, Bulbul v3)
 - **Saaras v3 speech-to-text** lists `doi-IN` and `ks-IN` ([Sarvam STT](https://www.sarvam.ai/apis/speech-to-text.md)); used for Dogri voice-in (M-08). **Bulbul v3 TTS** covers 11 languages, no Dogri or Kashmiri; ₹30 per 10k characters ([Sarvam TTS](https://www.sarvam.ai/apis/text-to-speech.md)); used for Hindi read-outs.
-- **Access:** API key (`SARVAM_API_KEY`), SDK `sarvamai` 0.1.37. Sarvam is a **disclosed processor** in the privacy notice. Audio is streamed, not stored.
+- **Access:** API key (`SARVAM_API_KEY`), called over REST from the Go API (`net/http`; Sarvam publishes no official Go SDK). Sarvam is a **disclosed processor** in the privacy notice. Audio is streamed, not stored.
 - **Cost:** Saaras ≈ ₹30/hour (aggregator figure, **[unverified]**, owner AI lead, H+6).
 
 ### 3.6 Cloudflare R2 (object storage)
 - **Buckets:** `mg-raw` (private; raw clips, bystander faces present → C3 until blurred; deleted 7 days after publish), `mg-media` (public; blurred clips, CC-BY 4.0, Range requests), `mg-private` (replays, exports; signed URLs ≤ 24 h).
-- **Access:** S3 API via boto3 with an access key scoped per bucket.
+- **Access:** S3 API via the AWS SDK for Go v2 (`github.com/aws/aws-sdk-go-v2/service/s3`) in the API and the AWS SDK for JavaScript in the Workflows tasks, with an access key scoped per bucket.
 - **Cost:** $0.015/GB-month, Class A $4.50/M, Class B $0.36/M, **free egress**, free tier 10 GB-month ([R2 pricing](https://developers.cloudflare.com/r2/pricing/), fetched 2026-10-23). 100 clips × 2 renditions × ~3 MB ≈ 0.6 GB → within the free tier.
 - **Production:** S3-compatible object store in India (CSP or MinIO).
 

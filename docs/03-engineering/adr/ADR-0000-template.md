@@ -8,7 +8,7 @@ Format: MADR 3.x (Markdown Architectural Decision Records), trimmed.
 What forces are at play (technical, legal, product, hackathon constraints)? Which directive (D-xx), feature (F-xx), edge case (EC-xx) or risk (R-xx) makes this a decision? Cite research files and URLs.
 
 ## Decision drivers
-- driver 1 (e.g. "D-17 one Python backend")
+- driver 1 (e.g. "D-17 revised: Go API, TypeScript everywhere else")
 - driver 2
 
 ## Considered options

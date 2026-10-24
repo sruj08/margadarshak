@@ -1,7 +1,9 @@
 # Margdarshak deploy pipeline (docs/05-ops/DEPLOYMENT.md)
 #   Track A, hackathon (Render, Singapore, synthetic data):
 #     main green on ci + evals -> trigger Render deploys (API first; its preDeployCommand runs
-#     Alembic) -> wait for "live" -> smoke tests -> warm-up -> tag release.
+#     goose migrations via `/app/api migrate up`) -> wait for "live" -> smoke tests -> warm-up.
+#   Services: api (Go 1.27, Docker, distroless), score-verifier (Node), workflows (Render
+#     Workflows, Node runtime, TypeScript tasks with @renderinc/sdk), web (Next.js).
 #   Track B, production for a state tenant (Docker + Helm on MeghRaj/NIC or a MeitY-empanelled
 #     CSP, India region): build -> sign (cosign keyless) -> SBOM attest -> push to GHCR ->
 #     mirror into the state registry -> helm upgrade --atomic from a self-hosted runner INSIDE the
@@ -123,13 +125,13 @@ jobs:
           EOS
           chmod +x /tmp/render_deploy.sh
       # Order matters for zero downtime (expand/contract migrations, DEPLOYMENT.md §6):
-      # 1) score-verifier (backward compatible replays) 2) API (runs Alembic in preDeployCommand)
-      # 3) workflows (tasks read the new schema) 4) web (calls the new API).
+      # 1) score-verifier (backward compatible replays) 2) API (runs goose migrations in preDeployCommand)
+      # 3) workflows (TS tasks call the new API job steps) 4) web (calls the new API).
       - name: Deploy score-verifier
         run: /tmp/render_deploy.sh "$SVC_VERIFIER" score-verifier
-      - name: Deploy API (+ Alembic upgrade head via preDeployCommand)
+      - name: Deploy API (+ goose migrate up via preDeployCommand /app/api migrate up)
         run: /tmp/render_deploy.sh "$SVC_API" api
-      - name: Deploy Render Workflows service
+      - name: Deploy Render Workflows service (Node runtime, TypeScript tasks)
         # [unverified, owner Ops lead, H0] that POST /services/{id}/deploys accepts a workflow
         # service id. Fallback: `render workflows` CLI or autoDeployTrigger: checksPass on it.
         run: /tmp/render_deploy.sh "$SVC_WORKFLOWS" workflows
@@ -141,30 +143,44 @@ jobs:
           API_URL: ${{ vars.API_URL }}
         run: |
           set -euo pipefail
-          curl -fsS "${API_URL}/v1/health" | tee /tmp/health.json
-          jq -e '.status == "ok" and .db == "ok" and .kv == "ok"' /tmp/health.json
-          jq -e --arg sha "$SHA" '.build_sha == $sha' /tmp/health.json
-          # API-01: 3-tap plan, no auth. Fee total must come from fees.json (one class LL+test+DL test+DL = 700, card 200)
-          curl -fsS -X POST "${API_URL}/v1/plans" -H 'Content-Type: application/json' \
-            -d '{"dob":"2007-05-01","vehicles":["MCWG"],"state":"JK"}' | tee /tmp/plan.json
-          jq -e '.fees.total_without_card.amount_inr == 700 and .fees.smart_card.amount_inr == 200' /tmp/plan.json
-          curl -fsS "${WEB_URL}/" -o /tmp/home.html
-          grep -q "Not affiliated with MoRTH" /tmp/home.html
-          curl -fsS "${API_URL}/v1/stats/public" > /dev/null
-      - name: Workflows smoke (start a no-op task and wait for it)
+          # API-64 deep health: Postgres (and Key Value when configured) answer within 300 ms.
+          curl -fsS "${API_URL}/v1/health?deep=true" -H 'X-Tenant: JK' | tee /tmp/health.json
+          jq -e '(.status == "ok" or .status == "degraded") and .ok == true and .checks.postgres.status == "ok"' /tmp/health.json
+          commit=$(jq -r '.commit // ""' /tmp/health.json)
+          case "$SHA" in "$commit"*) echo "API runs ${commit}" ;; *) echo "::warning::API reports commit '${commit}', deployed ${SHA}" ;; esac
+          # API-01: 3-tap plan, no auth. Integer paise from rulepacks/fees.json (CMVR r.32): one class
+          # = 70000 (LL 15000 + LL test 5000 + DL test 30000 + DL 20000), smart card 20000, total 90000.
+          curl -fsS -X POST "${API_URL}/v1/plans" -H 'Content-Type: application/json' -H 'X-Tenant: JK' \
+            -d '{"state":"JK","dob":"2007-05-01","dob_precision":"day","vehicles":["bike_gear"]}' | tee /tmp/plan.json
+          jq -e '(.plan_id | startswith("pln_")) and .fees.subtotal_govt_fee_paise == 70000 and .fees.smart_card_paise == 20000 and .fees.total_paise == 90000' /tmp/plan.json
+          # Every page carries the non-affiliation footer (the home redirects new devices to the language picker).
+          curl -fsSL "${WEB_URL}/en/help" -o /tmp/help.html
+          grep -q "Not affiliated with MoRTH" /tmp/help.html
+          curl -fsS "${API_URL}/v1/stats/public" -H 'X-Tenant: JK' > /dev/null
+      - name: Case-clock smoke (API-65 dry run, signed like n8n W1 - bearer + Margdarshak-Signature HMAC)
         env:
           API_URL: ${{ vars.API_URL }}
-          OPS_TOKEN: ${{ secrets.OPS_SMOKE_TOKEN }}
+          INTERNAL_BEARER_TOKEN: ${{ secrets.INTERNAL_BEARER_TOKEN }}
+          INTERNAL_HMAC_SECRET: ${{ secrets.INTERNAL_HMAC_SECRET }}
         run: |
-          curl -fsS -X POST "${API_URL}/internal/ops/smoke-task" -H "Authorization: Bearer ${OPS_TOKEN}" | tee /tmp/task.json
-          jq -e '.status == "completed"' /tmp/task.json
+          set -euo pipefail
+          if [ -z "${INTERNAL_BEARER_TOKEN}" ] || [ -z "${INTERNAL_HMAC_SECRET}" ]; then
+            echo "::warning::INTERNAL_BEARER_TOKEN / INTERNAL_HMAC_SECRET secrets not set; skipping the signed sweep smoke"; exit 0
+          fi
+          body=$(jq -cn --arg id "deploy-smoke-${SHA:0:12}" --arg t "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '{sweep_id:$id, as_of:$t, tenants:["JK"], dry_run:true}')
+          ts=$(date +%s)
+          sig=$(printf '%s.%s' "$ts" "$body" | openssl dgst -sha256 -hmac "$INTERNAL_HMAC_SECRET" -hex | sed 's/^.* //')
+          curl -fsS -X POST "${API_URL}/internal/clock/sweep" -H 'Content-Type: application/json' -H 'X-Tenant: JK' \
+            -H "Authorization: Bearer ${INTERNAL_BEARER_TOKEN}" -H "Margdarshak-Signature: t=${ts},v1=${sig}" \
+            -H "Idempotency-Key: deploy-smoke-${SHA}" -d "$body" | tee /tmp/sweep.json
+          jq -e '.job == "case_clock_sweep" and (.run_id | length > 0)' /tmp/sweep.json
       - name: Warm-up (avoid cold paths before judging, R-11)
         env:
           WEB_URL: ${{ vars.WEB_URL }}
           API_URL: ${{ vars.API_URL }}
         run: |
-          for p in / /plan /practice/nazar /learn /track /lite; do curl -fsS -o /dev/null -w "%{http_code} %{time_total}s ${p}\n" "${WEB_URL}${p}" || true; done
-          for p in /v1/health /v1/rules/JK/classes /v1/rules/JK/fees /v1/nazar/clips; do curl -fsS -o /dev/null -w "%{http_code} %{time_total}s ${p}\n" "${API_URL}${p}" || true; done
+          for p in /en/language /en/plan /en/learn /en/licence /en/help /hi/plan; do curl -fsSL -o /dev/null -w "%{http_code} %{time_total}s ${p}\n" "${WEB_URL}${p}" || true; done
+          for p in /v1/health /v1/rules/JK/classes /v1/rules/JK/fees /v1/rules/JK/ll-format /v1/demo/personas; do curl -fsS -o /dev/null -H 'X-Tenant: JK' -w "%{http_code} %{time_total}s ${p}\n" "${API_URL}${p}" || true; done
       - name: Record the release
         if: success()
         run: |
@@ -258,6 +274,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.gate.outputs.sha }}
+      - name: Require the Helm chart (Track B is design-only until P6 builds infra/helm/margdarshak)
+        run: |
+          test -f infra/helm/margdarshak/Chart.yaml || { echo "::error::infra/helm/margdarshak is not built yet (P6); see infra/helm/README.md"; exit 1; }
       - uses: sigstore/cosign-installer@v3
       - uses: azure/setup-helm@v4
         with:
@@ -295,7 +314,7 @@ jobs:
           helm diff upgrade margdarshak infra/helm/margdarshak -n "$KUBE_NAMESPACE" \
             -f infra/helm/margdarshak/values.yaml -f "infra/helm/tenants/values-${TENANT}.yaml" \
             --set global.imageRegistry="$STATE_REGISTRY" --set global.imageTag="${{ needs.gate.outputs.sha }}" || true
-      - name: helm upgrade --atomic (pre-upgrade hook runs Alembic as a Job; rolling update maxUnavailable 0)
+      - name: helm upgrade --atomic (pre-upgrade hook Job runs /app/api migrate up; rolling update maxUnavailable 0)
         run: |
           helm upgrade --install margdarshak infra/helm/margdarshak \
             -n "$KUBE_NAMESPACE" --create-namespace \

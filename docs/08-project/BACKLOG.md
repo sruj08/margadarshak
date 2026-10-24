@@ -3,7 +3,7 @@
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) · [TEAM](TEAM.md) · [FIELD_STUDY](FIELD_STUDY.md) · [GLOSSARY](GLOSSARY.md) · [PRD](../01-product/PRD.md) · [Architecture](../03-engineering/ARCHITECTURE.md) · [API spec](../03-engineering/API_SPEC.md) · [AI evals](../04-ai/AI_EVALS.md) · [Risk register](../06-security-compliance/RISK_REGISTER.md)
 > Inputs: `war-room/margdarshak-verification.md` (directives D-01..D-25), `research/ps1-deep/07-govt-plug-and-play.md`, `research/ps1-deep/08-game-ai-n8n.md`, `field-kit/NAZAR-FIELD-KIT.md`.
 
-This file is the **single source of ticket IDs** (MD-xxx). The [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) task tables are generated from it, and `scripts/gh_import_backlog.py` turns it into GitHub Issues. If the plan and this file disagree, this file wins and the plan is regenerated.
+This file is the **single source of ticket IDs** (MD-xxx). The [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) task tables are generated from it, and `scripts/gh_import_backlog.mjs` turns it into GitHub Issues. If the plan and this file disagree, this file wins and the plan is regenerated.
 
 ---
 
@@ -27,7 +27,7 @@ This file is the **single source of ticket IDs** (MD-xxx). The [IMPLEMENTATION_P
 1. Acceptance criteria are testable and name the screen state, rule row or endpoint.
 2. Every dependency is Done, or the ticket says which mock stands in for it.
 3. Any rupee amount, day count or age comes from a rule-pack row (never a literal in code, copy or prompt: D-06, D-10).
-4. If it touches users under 18, AI, consent, money, identity or a government system, the ticket names the directive it obeys (D-07, D-09, D-13).
+4. If it touches users under 18, AI, consent, money, identity or a government system, the ticket names the directive it obeys (D-07, D-09, D-13 revised).
 
 ### 0.3 Definition of Done (every ticket)
 1. Code merged to `main` behind green CI: lint, typecheck, unit, contract (adapters), e2e smoke, axe (no serious/critical), bundle budget, wording-ban lint (MD-004), secret scan.
@@ -484,11 +484,14 @@ Goal: one Python backend, one Postgres, durable jobs behind an interface, observ
   - [ ] Magic link single-use, 15-minute expiry.
   - [ ] Brute-force protection on link requests (rate limit test).
 
-### MD-049 · Age band and minor gating service
+### MD-049 · Age band, family mode and parental consent service
 - **Meta:** phase=P0 · epic=EP-06 · owner=BE · estimate=S · depends=MD-047 · refs=D-13, P-07, EC-05, VG-7
-- **Description:** DOB or age band → `u18` | `adult`; `u18` sets server-side flags: no AI, no telemetry beyond rules use, no streaks, no squads, no WhatsApp marketing, no account history. Every API that serves those features checks the flag server-side.
+- **Description:** DOB or age band → `minor` | `adult` for the learner on a case. Accounts are held only by adults. A learner under 18 exists only as a family member's case inside a parent's (adult) account (family mode, D-13 revised), created with a verifiable parental-consent artefact (DPDP s.9(1), Rule 10; `acting_for` = parent). Every feature, including every AI feature, works for that case. Server-side flags on a minor's case: no behavioural tracking, profiling or targeted ads (s.9(3)); analytics stay in the allowlisted, aggregate-only taxonomy; squads and share cards stay off until the parent consents; no marketing messages. The server checks these flags; the client cannot set them.
 - **Acceptance:**
-  - [ ] Contract test: each gated endpoint returns 403 `minor_gated` for `u18`.
+  - [ ] Contract test: a minor's case can be created only inside an adult account with an active parental-consent artefact; otherwise 403 `PARENT_CONSENT_REQUIRED`.
+  - [ ] Contract test: AI routes (API-36, API-40..API-43) and the voice socket serve a minor's case like any other case once the parent's AI consent is active.
+  - [ ] Contract test: squad join and share-card endpoints return 403 `PARENT_CONSENT_REQUIRED` for a minor's profile until the parent consents.
+  - [ ] Events from a minor's case are never used for profiling or ads (the event allowlist has no profiling fields; test).
   - [ ] The flag cannot be changed client-side (tamper test).
 
 ### MD-050 · Append-only audit log
@@ -565,7 +568,7 @@ Goal: in 3 taps and no login, a person sees eligible classes, steps, maximum RTO
 
 ### MD-103 · Plan card
 - **Meta:** phase=P1 · epic=EP-07 · owner=FE+PD · estimate=M · depends=MD-101, MD-102 · refs=F-02, D-05, D-06
-- **Description:** "Your licence plan": eligible classes (picture + plain name + code), steps S2–S7 as a strip, maximum RTO visits, earliest licence date (from today, server time), fee table from FeeQuote, documents with "why", warnings (Form 1A at 40+, address mismatch, relation line, under-18 rules), "verify at your RTO" for low-confidence rows, and "Start my application" as the single primary action.
+- **Description:** "Your licence plan": eligible classes (picture + plain name + code), steps S2–S7 as a strip, maximum RTO visits, earliest licence date (from today, server time), fee table from FeeQuote, documents with "why", warnings (Form 1A at 40+, address mismatch, relation line, under-18 rules: ≤ 50 cc at 16–17 with guardian consent, case held in a parent's account), "verify at your RTO" for low-confidence rows, and "Start my application" as the single primary action.
 - **Acceptance:**
   - [ ] Every number on the card has a SourceChip.
   - [ ] Personas P-01, P-02, P-03, P-07 render the expected card (snapshot + golden).
@@ -794,7 +797,7 @@ Goal: purpose-bound consent records, export and delete, and analytics with no PI
 
 ### MD-135 · Privacy notice and consent copy (en/hi)
 - **Meta:** phase=P1 · epic=EP-11 · owner=PD · estimate=M · depends=— · refs=F-54, D-18, D-19
-- **Description:** Notice text using the "built to DPDP Rules" wording, per-purpose consent text in plain yes/no language, the children's data position (under 18 = rules-only), and Sarvam and Google listed as disclosed processors.
+- **Description:** Notice text using the "built to DPDP Rules" wording, per-purpose consent text in plain yes/no language, the children's data position (under 18 = family mode inside a parent's account with verifiable parental consent; no behavioural tracking or targeted ads on a child's data; D-13 revised), and Sarvam and Google listed as disclosed processors.
 - **Acceptance:**
   - [ ] Reviewed against PRIVACY.md and passes the wording lint.
   - [ ] First layer uses short sentences with no legalese (PD readability check).
@@ -832,7 +835,7 @@ Goal: an unbranded research replica of the observed Sarathi LL sequence, for the
 - **Meta:** phase=P1 · epic=EP-17a · owner=FE · estimate=M · depends=MD-139, MD-110 · refs=API-70, F-57
 - **Description:** API-70 logs per trial: start/end, screens visited, back-navigations, validation errors, selections; exports `journey_sessions.csv` with the exact columns of FIELD_STUDY §3.6 for both systems.
 - **Acceptance:**
-  - [ ] A dry run with two team members produces a CSV that `analysis/journey_stats.py` (MD-627) reads without error.
+  - [ ] A dry run with two team members produces a CSV that `analysis/journey_stats.mjs` (MD-627) reads without error.
 
 ---
 
@@ -1062,11 +1065,11 @@ Goal: mechanics that deliver retrieval, spacing and calibration; status from ant
 - **Acceptance:**
   - [ ] No push or sad copy on a broken streak (test on notification intents).
 
-### MD-233 · Squads (co-op, adults)
+### MD-233 · Squads (co-op)
 - **Meta:** phase=P2 · epic=EP-16 · owner=BE+FE · estimate=M · depends=MD-226 · refs=F-26, API-39, E-23, D-13
-- **Description:** 3–5 friends by invite link; squad score = mean(Nazar Score × (1 − Brier)); weekly squad goal; duels on the same seed showing anticipation and calibration, never raw reaction speed. Under-18 users cannot join (D-13).
+- **Description:** 3–5 friends by invite link; squad score = mean(Nazar Score × (1 − Brier)); weekly squad goal; duels on the same seed showing anticipation and calibration, never raw reaction speed. A minor's profile in family mode can join only after the parent consents (D-13 revised).
 - **Acceptance:**
-  - [ ] `u18` invite acceptance returns `minor_gated`.
+  - [ ] Invite acceptance for a minor's profile without the parent's squad consent returns 403 `PARENT_CONSENT_REQUIRED`; with it, the join succeeds.
 
 ### MD-234 · Badges (9)
 - **Meta:** phase=P2 · epic=EP-16 · owner=BE+FE · estimate=S · depends=MD-230 · refs=F-26, E-22
@@ -1080,11 +1083,11 @@ Goal: mechanics that deliver retrieval, spacing and calibration; status from ant
 - **Acceptance:**
   - [ ] CI check fails on a pre-ticked checkbox, an un-sourced countdown or an APK link (fixtures).
 
-### MD-236 · Under-18 gating across learning and games
+### MD-236 · Family mode across learning and games
 - **Meta:** phase=P2 · epic=EP-16 · owner=BE · estimate=S · depends=MD-049 · refs=D-13, P-07, EC-05
-- **Description:** For `u18`: rules-only learning (static lessons, LL simulator without telemetry beyond the session), no streaks, squads, share cards, AI or WhatsApp marketing.
+- **Description:** For a minor's case in family mode (D-13 revised): the full learning and games product (lessons, LL simulator, Nazar, streaks, AI debrief and tutor) under the parent's consent; share cards and squads only after the parent consents; no behavioural tracking, profiling or targeted ads; no marketing messages.
 - **Acceptance:**
-  - [ ] Rahul persona e2e shows no gated feature anywhere.
+  - [ ] Rahul persona e2e (family mode in a parent's account) reaches every learning, game and AI feature; share and squad prompts ask for the parent's consent first.
 
 ## EP-17b · Nazar study and evidence plumbing (P2)
 Goal: the field number on the slide, collected ethically and pre-registered (F-57, D-22, FIELD_STUDY §4).
@@ -1097,13 +1100,13 @@ Goal: the field number on the slide, collected ethically and pre-registered (F-5
 
 ### MD-238 · Study cohort, pseudonymous IDs and CSV export
 - **Meta:** phase=P2 · epic=EP-17b · owner=BE · estimate=S · depends=MD-237 · refs=F-57, API-70
-- **Description:** Cohort tag `field_test`; pseudonymous participant code; export `sessions.csv` and `raters.csv` with the exact columns `analysis/nazar_stats.py` expects (anon_id, ll_score, hpt_score, pre_mean, post_mean, median_late_s, speed_kmh, total_s, max_taps_per_s, age_ok, retake_of; clip_id, rater_a_onset_s, rater_b_onset_s).
+- **Description:** Cohort tag `field_test`; pseudonymous participant code; export `sessions.csv` and `raters.csv` with the exact columns `analysis/nazar_stats.mjs` expects (anon_id, ll_score, hpt_score, pre_mean, post_mean, median_late_s, speed_kmh, total_s, max_taps_per_s, age_ok, retake_of; clip_id, rater_a_onset_s, rater_b_onset_s).
 - **Acceptance:**
-  - [ ] `python analysis/nazar_stats.py sessions.csv raters.csv` runs on the export without edits.
+  - [ ] `node analysis/nazar_stats.mjs sessions.csv raters.csv` runs on the export without edits.
 
 ### MD-239 · RW-4 Field-study stats job and public counters
 - **Meta:** phase=P2 · epic=EP-17b · owner=BE · estimate=M · depends=MD-238, MD-052 · refs=RW-4, API-71, D-22
-- **Description:** A Render Workflow that recomputes the pre-registered statistics (same code path as `nazar_stats.py`) hourly during the study and nightly after; API-71 serves live counters for judges (N, % below 60 with CI, r with CI) labelled "convenience sample, pre-registered at <hash>".
+- **Description:** A Render Workflow that recomputes the pre-registered statistics (same code path as `nazar_stats.mjs`) hourly during the study and nightly after; API-71 serves live counters for judges (N, % below 60 with CI, r with CI) labelled "convenience sample, pre-registered at <hash>".
 - **Acceptance:**
   - [ ] Counters match a manual run of the script on the same export.
 
@@ -1120,8 +1123,8 @@ Goal: the field number on the slide, collected ethically and pre-registered (F-5
   - [ ] Commit timestamp earlier than the first `field_test` session timestamp (checked by script).
 
 ### MD-242 · Template debrief (no AI) for every finding
-- **Meta:** phase=P2 · epic=EP-17b · owner=PD+FE · estimate=M · depends=MD-201 · refs=F-25, EC-29, D-09, D-13
-- **Description:** Reviewed en/hi templates per `finding_id` with `{{fact:*}}` placeholders, assembled into the 4-part card (how you did, where you lacked, what you could have done, next drill). Labelled "Auto notes". This is the debrief for under-18 users, offline, and whenever AI fails; DebriefAgent (MD-308) builds on it.
+- **Meta:** phase=P2 · epic=EP-17b · owner=PD+FE · estimate=M · depends=MD-201 · refs=F-25, EC-29, D-09
+- **Description:** Reviewed en/hi templates per `finding_id` with `{{fact:*}}` placeholders, assembled into the 4-part card (how you did, where you lacked, what you could have done, next drill). Labelled "Auto notes". This is the debrief offline, whenever AI fails, and when the AI consent purpose is off; DebriefAgent (MD-308) builds on it.
 - **Acceptance:**
   - [ ] Every finding ID in 08 §3.12 has an en and hi template.
   - [ ] Template output passes the same validator as the AI (MD-304).
@@ -1140,11 +1143,12 @@ Goal: Google ADK on the one Python backend, with gates, PII protection, number p
   - [ ] Changing a model ID needs no code change (test with two IDs).
   - [ ] Billing account and paid-tier status recorded in TEAM.md decision log before the field study.
 
-### MD-302 · AI gate: verified adult, consent, tenant flag
+### MD-302 · AI gate: adult account holder, consent, tenant flag
 - **Meta:** phase=P3 · epic=EP-18 · owner=BE · estimate=S · depends=MD-049, MD-133, MD-301 · refs=D-13, R-04, EC-05
-- **Description:** Every AI endpoint and the voice socket check, server-side: age band `adult` from a DOB ≥ 18, consent purpose "AI coach" active, tenant flag `ai_coach` on. Otherwise the deterministic template path is used and the UI says why in neutral words.
+- **Description:** Every AI endpoint and the voice socket check, server-side: the request comes from an adult account holder (a minor's case in family mode is covered by the parent's account and the parent's consent, D-13 revised), consent purpose "AI coach" active, tenant flag `ai_coach` on. Otherwise the deterministic template path is used and the UI says why in neutral words.
 - **Acceptance:**
   - [ ] Contract tests for each of the three failing conditions on every AI route (API-36, API-40..API-43).
+  - [ ] A minor's case in family mode with the parent's AI consent gets the AI path (contract test).
 
 ### MD-303 · PII plugin and pre-send redaction
 - **Meta:** phase=P3 · epic=EP-18 · owner=BE · estimate=S · depends=MD-138, MD-301 · refs=EC-20, D-07
@@ -1282,7 +1286,7 @@ Goal: at least 30 eval cases per agent, run in CI, shown in the demo (D-10).
 
 ### MD-322 · VoiceGuideAgent evals (≥ 30)
 - **Meta:** phase=P3 · epic=EP-22 · owner=BE · estimate=M · depends=MD-313 · refs=M-01, D-10
-- **Description:** Intent routing, field-fill confirmation, refusal to pay/submit/book, rule-ID answers, under-18 refusal, Hinglish code-mixing.
+- **Description:** Intent routing, field-fill confirmation, refusal to pay/submit/book, rule-ID answers, a minor's family-mode case served normally, Hinglish code-mixing.
 - **Acceptance:**
   - [ ] ≥ 30 cases; 100% refusal correctness on pay/submit/book.
 
@@ -1306,7 +1310,7 @@ Goal: at least 30 eval cases per agent, run in CI, shown in the demo (D-10).
 
 ### MD-326 · Red-team set
 - **Meta:** phase=P3 · epic=EP-22 · owner=BE+PD · estimate=M · depends=MD-321 · refs=R-04, EC-20, D-10
-- **Description:** Prompt injection via commentary speech, voice and screenshots; Aadhaar/OTP leakage attempts; fee and date invention; "tell me the answer key"; minor pretending to be adult; facts keys named like instructions; `verified:false` rules in facts.
+- **Description:** Prompt injection via commentary speech, voice and screenshots; Aadhaar/OTP leakage attempts; fee and date invention; "tell me the answer key"; a minor trying to open their own account outside family mode; facts keys named like instructions; `verified:false` rules in facts.
 - **Acceptance:**
   - [ ] All red-team cases pass; new incidents become cases within one day.
 
@@ -1526,11 +1530,12 @@ Goal: the first months after licensing, which carry the highest crash risk, get 
 - **Acceptance:**
   - [ ] Golden cases for renewal at −30 days, +6 months and +13 months.
 
-### MD-431 · Family mode (manage a parent's case)
+### MD-431 · Family mode (a parent's case or a minor family member's case)
 - **Meta:** phase=P4 · epic=EP-28 · owner=BE+FE · estimate=M · depends=MD-133, MD-109 · refs=F-17, P-03, E-29
-- **Description:** An adult manages another adult's case with that person's recorded consent; the parent sees and can revoke; Form 1A and renewal paths for Mohan-ji.
+- **Description:** An adult manages another adult's case with that person's recorded consent; the parent sees and can revoke; Form 1A and renewal paths for Mohan-ji. The same mode holds a minor family member's case: a parent keeps a 16–17-year-old's case in their own account with verifiable parental consent (D-13 revised; built on MD-049).
 - **Acceptance:**
   - [ ] Revocation removes access immediately (EC-25 link).
+  - [ ] A minor's case in family mode reaches every feature, including AI (link MD-236).
 
 ### MD-432 · Helper mode (cyber café/CSC)
 - **Meta:** phase=P4 · epic=EP-28 · owner=BE+FE · estimate=M · depends=MD-431 · refs=F-17, P-04, EC-14, EC-25
@@ -1598,9 +1603,9 @@ Goal: the first paying buyer: schools that must now give hazard training (Kerala
 
 ### MD-505 · n8n W5 weekly parent card
 - **Meta:** phase=P5 · epic=EP-30 · owner=BE · estimate=S · depends=MD-431 · refs=W5, F-17
-- **Description:** Sunday 10:00, only for adult learners who opted in to share with a named parent: backend-rendered card (progress, next date, the government fee compared with the agent quote the learner entered) → WhatsApp image template.
+- **Description:** Sunday 10:00, only for adult learners who opted in to share with a named parent, or for a parent's own family-mode case of a minor: backend-rendered card (progress, next date, the government fee compared with the agent quote the learner entered) → WhatsApp image template.
 - **Acceptance:**
-  - [ ] No card for users without the consent purpose; minors excluded.
+  - [ ] No card for users without the consent purpose; for a minor's family-mode case the card goes only to the account-holding parent.
 
 ### MD-506 · School onboarding and verification
 - **Meta:** phase=P5 · epic=EP-30 · owner=PD · estimate=M · depends=MD-501 · refs=F-40
@@ -1803,7 +1808,7 @@ Goal: decision views for officers: where applications stall, why people fail, wh
 
 ### MD-618 · Gemini terms memo (gap G8)
 - **Meta:** phase=P6 · epic=EP-37 · owner=PD · estimate=XS · depends=— · refs=D-13, R-13
-- **Description:** 18+ requirement, the "likely to be accessed by" under-18 question logged as an open risk, paid tier only, Vertex enterprise terms for production.
+- **Description:** Account holders are adults; learners under 18 use family mode (D-13 revised). R-13 (legal lead): confirm the Gemini/Vertex position on services likely accessed by under-18s with Google, or add a provider that permits minors, before public launch. Paid tier only; Vertex enterprise terms for production.
 - **Acceptance:**
   - [ ] Memo committed; risk register updated.
 
@@ -1859,7 +1864,7 @@ Goal: decision views for officers: where applications stall, why people fail, wh
 
 ### MD-627 · Analysis and data freeze
 - **Meta:** phase=P6 · epic=EP-38 · owner=BE · estimate=M · depends=MD-238, MD-140 · refs=D-22
-- **Description:** Freeze exports; run `analysis/nazar_stats.py` unchanged except logged bug fixes; write `analysis/journey_stats.py` (Wilcoxon, exact McNemar, SUS with paired t CI, Wilson CIs) before the journey data exists and commit it with the hypotheses.
+- **Description:** Freeze exports; run `analysis/nazar_stats.mjs` unchanged except logged bug fixes; write `analysis/journey_stats.mjs` (Wilcoxon, exact McNemar, SUS with paired t CI, Wilson CIs) before the journey data exists and commit it with the hypotheses.
 - **Acceptance:**
   - [ ] Outputs saved with the script hashes; deviations listed in `analysis/DEVIATIONS.md`.
 
@@ -2050,7 +2055,7 @@ Goal: each edge case has a rule row or a screen state, and a test (D-20). The ph
 
 ### MD-801 · EC-01 Aadhaar shows only the year of birth
 - **Meta:** phase=P1 · epic=EP-43 · owner=BE+AG · estimate=S · depends=MD-106 · refs=EC-01, F-04
-- **Description:** Aadhaar stores year-only DOBs as 1 January, so the age gate can be off by up to a year. Rule row asks for a DOB document; the plan shows the eligibility date as "from {date} if your DOB document confirms it".
+- **Description:** Aadhaar stores year-only DOBs as 1 January, so the eligibility age check can be off by up to a year. Rule row asks for a DOB document; the plan shows the eligibility date as "from {date} if your DOB document confirms it".
 - **Acceptance:**
   - [ ] Golden: 17 years 11 months by the 1 Jan date but 18 by the document → correct message.
 
@@ -2074,9 +2079,9 @@ Goal: each edge case has a rule row or a screen state, and a test (D-20). The ph
 
 ### MD-805 · EC-05 Age 16–17: ≤ 50 cc only
 - **Meta:** phase=P1 · epic=EP-43 · owner=BE+FE · estimate=S · depends=MD-049, MD-105 · refs=EC-05, P-07, D-13
-- **Description:** Only MC50CC with guardian consent; plain statement that most scooters exceed 50 cc; rules-only experience (no AI, telemetry, streaks).
+- **Description:** Only MC50CC with guardian consent; plain statement that most scooters exceed 50 cc; the case lives in family mode in the parent's account, with the full product including AI (D-13 revised).
 - **Acceptance:**
-  - [ ] Rahul persona: plan card correct and no gated feature reachable.
+  - [ ] Rahul persona: plan card correct; the case sits in the parent's account and every feature, including AI, is reachable.
 
 ### MD-806 · EC-06 Transport classes under 20
 - **Meta:** phase=P1 · epic=EP-43 · owner=BE+AG · estimate=XS · depends=MD-105 · refs=EC-06
@@ -2230,7 +2235,7 @@ Goal: each edge case has a rule row or a screen state, and a test (D-20). The ph
 
 ---
 
-## 11. Coverage matrix (checked by `scripts/gh_import_backlog.py --check`)
+## 11. Coverage matrix (checked by `scripts/gh_import_backlog.mjs --check`)
 
 | ID family | Covered by |
 |---|---|

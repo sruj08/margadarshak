@@ -1,0 +1,103 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "DL",
+  "name": "Delhi overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: verify at your RTO. Online LL at home (Aadhaar) or at the RTO; 13 automated test tracks (~24 parameters, ~50% fail).",
+  "rules": [
+    {
+      "id": "DL-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.dl.ll.test_mode",
+      "condition": true,
+      "output": { "value": { "onlineAvailable": true, "where": ["home_online", "rto"] } },
+      "text": {
+        "en": "In Delhi the LL test is online at home with Aadhaar, or at the RTO without Aadhaar."
+      },
+      "source": {
+        "title": "Delhi Transport, Learner's Licence page",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DL-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.dl.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": true,
+          "tracks": ["automated driving test track (13 in Delhi, ~24 parameters)"]
+        }
+      },
+      "text": {
+        "en": "Delhi tests run on automated tracks with sensors and cameras checking about 24 parameters."
+      },
+      "source": {
+        "title": "Business Today, 26 Dec 2022: Delhi driving tests fully automated",
+        "url": "https://www.businesstoday.in/auto/story/driving-licence-tests-in-delhi-to-become-completely-automated-by-jan-end-357714-2022-12-26"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DL-NTC-ADTT-FAIL-RATE",
+      "kind": "notice",
+      "textKey": "notice.dl.adtt_fail_rate",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "About half of applicants fail Delhi's automated track at the start. Practise the track layout before your test day."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Business Today, Dec 2022 (Transport Minister: ~50% failure)",
+        "url": "https://www.businesstoday.in/auto/story/driving-licence-tests-in-delhi-to-become-completely-automated-by-jan-end-357714-2022-12-26"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DL-DOC-EDU-TRANSPORT",
+      "kind": "document",
+      "overrides": "DOC-EDU-TRANSPORT",
+      "textKey": "doc.dl.education_transport",
+      "condition": { "fact": "anyTransport" },
+      "output": { "docId": "education_proof_transport", "required": false, "stage": "LL" },
+      "text": {
+        "en": "Delhi still lists an 8th-pass certificate and one year on an LMV licence for transport classes; this may be out of date. Verify at your RTO."
+      },
+      "source": {
+        "title": "Delhi Transport class table (transport: 8th pass, 1 year LMV)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ]
+}

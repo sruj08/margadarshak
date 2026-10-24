@@ -22,7 +22,7 @@
 ### 1.1 Object types (semantic layer)
 | ID | Object | Key properties | PII class | Primary key / identity |
 |---|---|---|---|---|
-| E-01 | Applicant | age_band, language, flags (minor, helper), district | Pseudonymous | `applicant_id` (UUID), no name required |
+| E-01 | Applicant | age_band, language, flags (helper), district; a case may belong to a family member (family mode) | Pseudonymous | `applicant_id` (UUID), no name required |
 | E-02 | Case | type (LL, DL, add_class, renewal, duplicate, address, IDP), tenant, stage S0–S9, path (Aadhaar / non-Aadhaar), key dates | Pseudonymous | `case_id` |
 | E-03 | ClassSelection | class code (MC50CC, MCWOG, MCWG, LMV-NT, transport classes), eligibility result, source rule IDs | None | (`case_id`, class) |
 | E-04 | LearnerLicenceMirror | issue/expiry dates, classes, source (user-entered / adapter) | Sensitive: LL number hashed + last 4 | `ll_mirror_id` |
@@ -115,13 +115,13 @@ classDiagram
 | Action | Actor | Validation (deterministic) | Writes | API |
 |---|---|---|---|---|
 | `CreatePlan` | Anyone (no login) | Age/class/state rules from the rule pack | Plan (ephemeral) | API-01 |
-| `StartCase` | Applicant (18+, or rules-only for 16–17) | Eligibility; minor gating (D-13) | Case, TimelineEvent | API-10 |
+| `StartCase` | Applicant (adult account holder; a 16–17-year-old's case in family mode) | Eligibility; parental consent for a minor's case (D-13 revised) | Case, TimelineEvent | API-10 |
 | `RunBlockerCheck` | System | EC-01..EC-20 rule rows | DocumentCheck, warnings | API-13 |
 | `RecordStatus` (ll_issued, slot_booked, test_failed, test_passed, approved, card_received) | Applicant or adapter | State machine transition allowed? Server time (EC-15) | TimelineEvent, TestAttempt | API-15 |
 | `HandOffToSarathi` | Applicant | Check-answers complete; no Aadhaar data in the pack | Handoff record | API-16 |
 | `PullDocumentFromDigiLocker` | Applicant via consent | Valid ConsentArtefact | LearnerLicenceMirror / DrivingLicenceMirror | adapter |
 | `WatchSlot` | Applicant | Reminder only, never books (D-08) | SlotWatch | API-27 |
-| `CompleteGameSession` | Applicant (18+) | Server replay overwrites client score | GameSession, Debrief | API-35, API-36 |
+| `CompleteGameSession` | Applicant (any user) | Server replay overwrites client score | GameSession, Debrief | API-35, API-36 |
 | `SubmitRtoReport` | Applicant | Structured fields only, no names, moderation | RtoReport | API-28 |
 | `SignPracticeLog` | Driving-school instructor | Linked school + student consent | PracticeLog | API-52 |
 | `GrantConsent` / `RevokeConsent` | Applicant | Purpose-bound | ConsentArtefact | API-60 |

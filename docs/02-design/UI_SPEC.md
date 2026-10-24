@@ -11,4 +11,4 @@ The UI specification is split into two parts. Both use the same conventions: scr
 
 **Design foundations:**
 - Tokens: `packages/ui/tokens.css` and `packages/ui/tokens.json`.
-- Contrast check: `scripts/check_contrast.py`.
+- Contrast check: `scripts/check_contrast.mjs`.

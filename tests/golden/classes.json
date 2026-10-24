@@ -1,0 +1,656 @@
+{
+  "cases": [
+    {
+      "id": "CLS-MC50CC-below-min",
+      "description": "MC50CC one day before the 16th birthday: not eligible, eligible from the birthday, plan dated from it",
+      "refs": ["EC-05", "F-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2010-10-24",
+        "vehicles": ["scooter_50cc"]
+      },
+      "expect": {
+        "age": { "years_min": 15, "band": "under_16" },
+        "classes": [
+          {
+            "class_code": "MC50CC",
+            "eligible": false,
+            "eligible_from": "2026-10-24",
+            "reason_key": "elig.under_min_age",
+            "content_depth": "coming"
+          }
+        ],
+        "bundles": [
+          {
+            "bundle_no": 1,
+            "classes": ["MC50CC"],
+            "ll_from": "2026-10-24",
+            "dl_test_unlock": "2026-11-23"
+          }
+        ],
+        "blockers": { "$includes": [{ "rule_id": "BLK-UNDER-16", "due_on": "2026-10-24" }] }
+      }
+    },
+    {
+      "id": "CLS-MC50CC-at-min",
+      "description": "MC50CC on the 16th birthday: eligible with guardian consent, family mode",
+      "refs": ["EC-05"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2010-10-23",
+        "vehicles": ["scooter_50cc"]
+      },
+      "expect": {
+        "age": { "years_min": 16, "band": "16_17" },
+        "family_mode_required": true,
+        "classes": [
+          {
+            "class_code": "MC50CC",
+            "eligible": true,
+            "eligible_from": null,
+            "requires": ["GUARDIAN_CONSENT"],
+            "rule_ids": ["CLS-MC50CC", "ELIG-GUARDIAN-CONSENT"]
+          }
+        ],
+        "blockers": [],
+        "warnings": [{ "rule_id": "WRN-U18-MC50-ONLY", "due_on": "2028-10-23" }],
+        "notices": {
+          "$includes": [
+            { "rule_id": "NTC-FAMILY-MODE" },
+            { "rule_id": "NTC-CLASS-VS-VEHICLE" },
+            { "rule_id": "NTC-PARTIAL-PACK" }
+          ]
+        },
+        "documents": { "$includes": [{ "doc_id": "guardian_consent", "required": true }] }
+      }
+    },
+    {
+      "id": "CLS-MC50CC-year-only-boundary",
+      "description": "MC50CC, Aadhaar year 2010 only: 31 Dec is assumed, so eligible from 2026-12-31 (EC-01)",
+      "refs": ["EC-01", "EC-05"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2010",
+        "dob_precision": "year",
+        "vehicles": ["scooter_50cc"]
+      },
+      "expect": {
+        "age": { "years_min": 15, "years_max": 16, "dob_precision": "year" },
+        "classes": [{ "class_code": "MC50CC", "eligible": false, "eligible_from": "2026-12-31" }],
+        "blockers": {
+          "$includes": [
+            { "rule_id": "BLK-DOB-YEAR-ONLY" },
+            { "rule_id": "BLK-UNDER-16", "due_on": "2026-12-31" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "CLS-MC50CC-moped-picture",
+      "description": "The moped_50cc picture maps to MC50CC",
+      "refs": ["F-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "MH",
+        "dob": "2009-05-05",
+        "vehicles": ["moped_50cc"]
+      },
+      "expect": {
+        "requested_classes": ["MC50CC"],
+        "classes": [{ "class_code": "MC50CC", "eligible": true }]
+      }
+    },
+    {
+      "id": "CLS-MCWOG-below-min",
+      "description": "Scooter (MCWOG) at 17 years 364 days: not eligible, 50 cc alternative offered",
+      "refs": ["EC-05"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2008-10-24",
+        "vehicles": ["scooter"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "MCWOG",
+            "eligible": false,
+            "eligible_from": "2026-10-24",
+            "alternatives": ["MC50CC"],
+            "content_depth": "deep"
+          }
+        ],
+        "warnings": { "$includes": [{ "rule_id": "WRN-U18-MC50-ONLY" }] },
+        "family_mode_required": true
+      }
+    },
+    {
+      "id": "CLS-MCWOG-at-min",
+      "description": "Scooter (MCWOG) on the 18th birthday: eligible, deep content, no family mode",
+      "refs": ["F-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2008-10-23",
+        "vehicles": ["scooter"]
+      },
+      "expect": {
+        "age": { "years_min": 18, "band": "18_19" },
+        "family_mode_required": false,
+        "classes": [
+          {
+            "class_code": "MCWOG",
+            "eligible": true,
+            "content_depth": "deep",
+            "verify_at_rto": false,
+            "alternatives": []
+          }
+        ],
+        "warnings": [],
+        "blockers": []
+      }
+    },
+    {
+      "id": "CLS-MCWOG-year-only-boundary",
+      "description": "MCWOG, year 2008 only: eligible from 2026-12-31",
+      "refs": ["EC-01"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "TN",
+        "dob": "2008",
+        "dob_precision": "year",
+        "vehicles": ["scooter"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "MCWOG", "eligible": false, "eligible_from": "2026-12-31" }],
+        "bundles": [{ "ll_from": "2026-12-31" }]
+      }
+    },
+    {
+      "id": "CLS-MCWG-below-min",
+      "description": "MCWG one day short of 18",
+      "refs": ["EC-05"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2008-10-24",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "MCWG",
+            "eligible": false,
+            "eligible_from": "2026-10-24",
+            "alternatives": ["MC50CC"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "CLS-MCWG-at-min",
+      "description": "MCWG on the 18th birthday",
+      "refs": ["F-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2008-10-23",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "MCWG", "eligible": true, "content_depth": "deep" }],
+        "earliest_dates": {
+          "ll_issue": "2026-10-23",
+          "dl_test_unlock": "2026-11-22",
+          "ll_expires_on": "2027-04-23"
+        }
+      }
+    },
+    {
+      "id": "CLS-MCWG-year-only-boundary",
+      "description": "MCWG, year 2008 only, J&K: JK-B10 replaces the base year-only blocker",
+      "refs": ["EC-01"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2008",
+        "dob_precision": "year",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "MCWG", "eligible": false, "eligible_from": "2026-12-31" }],
+        "blockers": [
+          { "rule_id": "JK-B10", "fix_key": "fix.bring_dob_document", "refs": ["EC-01"] }
+        ],
+        "documents": { "$includes": [{ "doc_id": "full_dob_proof", "required": true }] }
+      }
+    },
+    {
+      "id": "CLS-LMV-NT-below-min",
+      "description": "Car one day short of 18",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "DL", "dob": "2008-10-24", "vehicles": ["car"] },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "LMV-NT",
+            "eligible": false,
+            "eligible_from": "2026-10-24",
+            "alternatives": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "CLS-LMV-NT-at-min",
+      "description": "Car on the 18th birthday; ADTC notice shown for LMV",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "DL", "dob": "2008-10-23", "vehicles": ["car"] },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "LMV-NT",
+            "eligible": true,
+            "content_depth": "deep",
+            "name_key": "class.lmv_nt"
+          }
+        ],
+        "notices": { "$includes": [{ "rule_id": "NTC-ADTC-OPTION", "verify_at_rto": true }] }
+      }
+    },
+    {
+      "id": "CLS-LMV-NT-year-only-boundary",
+      "description": "Car, year 2008 only",
+      "refs": ["EC-01"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "PB",
+        "dob": "2008",
+        "dob_precision": "year",
+        "vehicles": ["car"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "LMV-NT", "eligible": false, "eligible_from": "2026-12-31" }]
+      }
+    },
+    {
+      "id": "CLS-LMV-TR-below-min",
+      "description": "Taxi (LMV-TR) one day short of 20",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "DL", "dob": "2006-10-24", "vehicles": ["taxi"] },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "LMV-TR",
+            "eligible": false,
+            "eligible_from": "2026-10-24",
+            "transport": true,
+            "verify_at_rto": true,
+            "requires": ["FORM_1A"],
+            "flags": ["lmv_prerequisite_unverified"]
+          }
+        ],
+        "blockers": [{ "rule_id": "BLK-TRANSPORT-UNDER-20", "due_on": "2026-10-24" }],
+        "warnings": {
+          "$includes": [{ "rule_id": "WRN-TRANSPORT-LMV-PREREQ", "verify_at_rto": true }]
+        }
+      }
+    },
+    {
+      "id": "CLS-LMV-TR-at-min",
+      "description": "Auto-rickshaw (LMV-TR) at 20 without an LMV licence: eligible, prerequisite flagged verify, Form 1A",
+      "refs": ["EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2006-10-23",
+        "vehicles": ["auto_rickshaw"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "LMV-TR",
+            "eligible": true,
+            "verify_at_rto": true,
+            "content_depth": "coming",
+            "prerequisites": [
+              { "id": "PRQ-TRANSPORT-LMV-1YR", "verified": false },
+              { "id": "PRQ-TRANSPORT-8TH-PASS", "verified": false }
+            ]
+          }
+        ],
+        "blockers": [],
+        "warnings": [{ "rule_id": "WRN-TRANSPORT-LMV-PREREQ" }],
+        "notices": { "$includes": [{ "rule_id": "NTC-SC-LMV-7500KG" }] },
+        "documents": {
+          "$includes": [
+            { "doc_id": "form_1a_medical", "required": true, "rule_id": "DOC-FORM-1A" },
+            {
+              "doc_id": "education_proof_transport",
+              "required": false,
+              "rule_id": "DL-DOC-EDU-TRANSPORT"
+            }
+          ],
+          "$excludes": [{ "doc_id": "form_1_self_declaration" }]
+        }
+      }
+    },
+    {
+      "id": "CLS-LMV-TR-held-lmv-1yr",
+      "description": "Light goods (LMV-TR) at 25 holding an LMV licence since 2020: no prerequisite flag",
+      "refs": ["EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "MH",
+        "dob": "2001-01-15",
+        "vehicles": ["goods_light"],
+        "holds_dl": true,
+        "lmv_dl_held_since": "2020-02-01"
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "LMV-TR",
+            "eligible": true,
+            "flags": [],
+            "requires": ["FORM_1A"],
+            "verify_at_rto": true
+          }
+        ],
+        "warnings": [],
+        "notices": { "$includes": [{ "rule_id": "NTC-SC-LMV-7500KG" }] }
+      }
+    },
+    {
+      "id": "CLS-LMV-TR-year-only-boundary",
+      "description": "Taxi, year 2006 only: transport blocked until 2026-12-31",
+      "refs": ["EC-01", "EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "TN",
+        "dob": "2006",
+        "dob_precision": "year",
+        "vehicles": ["taxi"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "LMV-TR", "eligible": false, "eligible_from": "2026-12-31" }],
+        "blockers": {
+          "$includes": [{ "rule_id": "BLK-TRANSPORT-UNDER-20", "due_on": "2026-12-31" }]
+        }
+      }
+    },
+    {
+      "id": "CLS-E-RICKSHAW-at-min",
+      "description": "E-rickshaw at 18: oral LL test flag, Form 1A, verify chip (class row unverified)",
+      "refs": ["F-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2008-10-23",
+        "vehicles": ["e_rickshaw"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "E-RICKSHAW",
+            "eligible": true,
+            "flags": ["oral_ll_test"],
+            "requires": ["FORM_1A"],
+            "verify_at_rto": true,
+            "content_depth": "coming",
+            "transport": false
+          }
+        ],
+        "documents": {
+          "$includes": [
+            { "doc_id": "form_1a_medical", "required": true },
+            { "doc_id": "form_1_self_declaration" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "CLS-E-RICKSHAW-below-min",
+      "description": "E-rickshaw at 17",
+      "refs": ["F-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2009-01-01",
+        "vehicles": ["e_rickshaw"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "E-RICKSHAW",
+            "eligible": false,
+            "eligible_from": "2027-01-01",
+            "alternatives": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "CLS-E-CART-at-min",
+      "description": "E-cart at 30",
+      "refs": ["F-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "1996-04-10",
+        "vehicles": ["e_cart"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "E-CART",
+            "eligible": true,
+            "flags": ["oral_ll_test"],
+            "requires": ["FORM_1A"],
+            "content_depth": "coming"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CLS-MGV-below-min",
+      "description": "Medium goods at 19",
+      "refs": ["EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2007-06-30",
+        "vehicles": ["goods_medium"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "MGV",
+            "eligible": false,
+            "eligible_from": "2027-06-30",
+            "transport": true
+          }
+        ],
+        "blockers": [{ "rule_id": "BLK-TRANSPORT-UNDER-20" }]
+      }
+    },
+    {
+      "id": "CLS-MGV-at-min",
+      "description": "Medium goods at exactly 20",
+      "refs": ["EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2006-10-23",
+        "vehicles": ["goods_medium"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "MGV",
+            "eligible": true,
+            "flags": ["lmv_prerequisite_unverified"],
+            "prerequisites": [{ "id": "PRQ-TRANSPORT-LMV-1YR" }]
+          }
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "CLS-HGMV-below-min",
+      "description": "Truck at 19",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "PB", "dob": "2007-02-01", "vehicles": ["truck"] },
+      "expect": {
+        "classes": [{ "class_code": "HGMV", "eligible": false, "eligible_from": "2027-02-01" }]
+      }
+    },
+    {
+      "id": "CLS-HGMV-at-min",
+      "description": "Truck at 21",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "PB", "dob": "2005-02-01", "vehicles": ["truck"] },
+      "expect": { "classes": [{ "class_code": "HGMV", "eligible": true, "requires": ["FORM_1A"] }] }
+    },
+    {
+      "id": "CLS-HPMV-below-min",
+      "description": "Bus at 18",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "KL", "dob": "2008-03-03", "vehicles": ["bus"] },
+      "expect": {
+        "classes": [{ "class_code": "HPMV", "eligible": false, "eligible_from": "2028-03-03" }]
+      }
+    },
+    {
+      "id": "CLS-HPMV-at-min",
+      "description": "Bus at 20 exactly",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "KL", "dob": "2006-10-23", "vehicles": ["bus"] },
+      "expect": { "classes": [{ "class_code": "HPMV", "eligible": true }] }
+    },
+    {
+      "id": "CLS-HTV-below-min",
+      "description": "Heavy transport at 19 (class row unverified)",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "TN", "dob": "2007-10-24", "classes": ["HTV"] },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "HTV",
+            "eligible": false,
+            "eligible_from": "2027-10-24",
+            "verify_at_rto": true,
+            "provenance": { "grade": "MK", "verified": false }
+          }
+        ]
+      }
+    },
+    {
+      "id": "CLS-HTV-at-min",
+      "description": "Heavy transport at 20",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "TN", "dob": "2006-10-23", "classes": ["HTV"] },
+      "expect": { "classes": [{ "class_code": "HTV", "eligible": true }] }
+    },
+    {
+      "id": "CLS-ADAPTED-at-min",
+      "description": "Adapted vehicle at 18: rights card flag, verify at RTO",
+      "refs": ["EC-13"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2008-10-23",
+        "vehicles": ["adapted_vehicle"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "ADAPTED",
+            "eligible": true,
+            "flags": ["rights_card"],
+            "verify_at_rto": true,
+            "content_depth": "coming",
+            "rule_ids": ["CLS-ADAPTED", "ELIG-ADAPTED-VERIFY"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "CLS-ADAPTED-below-min",
+      "description": "Adapted vehicle at 17",
+      "refs": ["EC-13"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2009-07-07",
+        "vehicles": ["adapted_vehicle"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "ADAPTED", "eligible": false, "eligible_from": "2027-07-07" }]
+      }
+    },
+    {
+      "id": "CLS-leap-day-dob-not-yet",
+      "description": "Born 29 Feb 2008: on 28 Feb 2026 still 17; eligible from 1 Mar 2026",
+      "refs": ["F-02"],
+      "input": {
+        "as_of": "2026-02-28",
+        "state": "DL",
+        "dob": "2008-02-29",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "age": { "years_min": 17 },
+        "classes": [{ "eligible": false, "eligible_from": "2026-03-01" }]
+      }
+    },
+    {
+      "id": "CLS-leap-day-dob-reached",
+      "description": "Born 29 Feb 2008: 18 on 1 Mar 2026; LL validity clamps nothing (1 Mar + 6 months = 1 Sep)",
+      "refs": ["F-02"],
+      "input": {
+        "as_of": "2026-03-01",
+        "state": "DL",
+        "dob": "2008-02-29",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "age": { "years_min": 18 },
+        "classes": [{ "eligible": true }],
+        "earliest_dates": { "dl_test_unlock": "2026-03-31", "ll_expires_on": "2026-09-01" }
+      }
+    },
+    {
+      "id": "CLS-ll-validity-month-end-clamp",
+      "description": "LL issued 31 Aug: expiry clamps to 28 Feb (non-leap year)",
+      "refs": ["EC-07"],
+      "input": { "as_of": "2026-08-31", "state": "DL", "dob": "2000-01-01", "vehicles": ["car"] },
+      "expect": {
+        "earliest_dates": {
+          "ll_issue": "2026-08-31",
+          "dl_test_unlock": "2026-09-30",
+          "ll_expires_on": "2027-02-28"
+        }
+      }
+    },
+    {
+      "id": "CLS-catalogue-order",
+      "description": "Requested classes come out in catalogue order, de-duplicated (car + bike + explicit MCWG)",
+      "refs": ["F-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2000-01-01",
+        "vehicles": ["car", "bike_gear"],
+        "classes": ["MCWG"]
+      },
+      "expect": {
+        "requested_classes": ["MCWG", "LMV-NT"],
+        "bundles": [{ "classes": ["MCWG", "LMV-NT"] }]
+      }
+    }
+  ]
+}

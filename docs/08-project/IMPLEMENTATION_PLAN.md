@@ -1,14 +1,14 @@
 # Implementation Plan
 > Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Product/design lead · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [BACKLOG](BACKLOG.md) · [TEAM](TEAM.md) · [FIELD_STUDY](FIELD_STUDY.md) · [GLOSSARY](GLOSSARY.md) · [PRD](../01-product/PRD.md) · [Architecture](../03-engineering/ARCHITECTURE.md) · [CI/CD](../05-ops/CICD.md) · [AI evals](../04-ai/AI_EVALS.md) · [Risk register](../06-security-compliance/RISK_REGISTER.md) · [Hackathon plan](../08-project/IMPLEMENTATION_PLAN.md)
-> Inputs read: PROJECT_BRIEF v1.0; `war-room/margdarshak-verification.md` (D-01..D-25); `research/ps1-deep/07-govt-plug-and-play.md`; `research/ps1-deep/08-game-ai-n8n.md`; `field-kit/NAZAR-FIELD-KIT.md`; `field-kit/nazar_stats.py`.
+> Inputs read: PROJECT_BRIEF v1.0; `war-room/margdarshak-verification.md` (D-01..D-25); `research/ps1-deep/07-govt-plug-and-play.md`; `research/ps1-deep/08-game-ai-n8n.md`; `field-kit/NAZAR-FIELD-KIT.md`; `field-kit/nazar_stats.mjs`.
 
 ---
 
 ## 0. How to read this plan
 
 1. **Phases, not hours.** The team builds a complete product and manages its own calendar. This plan fixes the *order* of work (dependencies), the *definition of done* of each phase, and *what is demonstrable* at each point. It never says "by hour 14".
-2. **One ID space.** Every task is a backlog ticket (MD-xxx). The task tables in §5 are generated from [BACKLOG](BACKLOG.md) by `python scripts/gh_import_backlog.py --plan-tables`; if they disagree, BACKLOG wins and the tables are regenerated.
+2. **One ID space.** Every task is a backlog ticket (MD-xxx). The task tables in §5 are generated from [BACKLOG](BACKLOG.md) by `node scripts/gh_import_backlog.mjs --plan-tables`; if they disagree, BACKLOG wins and the tables are regenerated.
 3. **Estimates** are ideal person-days for one focused person (XS ≤ 0.5 · S 1 · M 2–3 · L 4–5 · XL 6–10). They size work and expose the bottleneck lane; they are not a schedule. Velocity measured on P0 converts them into calendar time, which is the team's decision.
 4. **Phases overlap.** A phase is a set of tickets with shared entry criteria, not a calendar block. The Nazar track (P2) starts at gate G0, in parallel with P0, because the council ruled "build order: clip pipeline and field study first" (D-03).
 5. **Two scopes, kept apart everywhere:**
@@ -27,7 +27,7 @@
 | 4 | **Rules are data with sources; no rupee/day/age literal anywhere** | D-05, D-06, D-10, R-09 | EP-04 lands before any screen that shows a number; MD-004 lint fails CI on literals |
 | 5 | **Code computes; Gemini narrates** | D-09, D-10 | Template debrief (MD-242) ships in P2 *before* any AI (P3); the AI layer can only replace wording, never facts |
 | 6 | **Adapters are mocks with the same contract as the real thing; no scraping, no bots** | D-07, D-08, F-56 | EP-05 contract suite (MD-036) in P0; real adapters only in P7 after onboarding (MD-701..708) |
-| 7 | **Under 18 = rules only** | D-13, P-07 | Age-band service (MD-049) in P0; every gated feature has a `minor_gated` contract test |
+| 7 | **AI for everyone; under 18 = family mode** | D-13 revised, P-07 | Age band, family mode and parental consent service (MD-049) in P0; contract tests: a minor's case exists only inside an adult account with parental consent, AI works for it, squads and share cards need the parent's consent, a child's data is never profiled |
 | 8 | **Every module has an owner who can explain it** | D-24 | Owners per epic (TEAM §3); the architecture slide labels each module with its owner (MD-631) |
 | 9 | **Evidence is pre-registered and reported either way** | D-22 | FIELD_STUDY; MD-241, MD-627, MD-628 |
 | 10 | **Render Workflows are load-bearing, n8n is the edge** | D-15, D-16 | RW-1..RW-4 each solve "outlives a request / retries / fan-out / later"; n8n workflows hold no business logic (review checklist in MD-127) |
@@ -43,7 +43,7 @@
 | **P0** | Foundations | Monorepo, CI/CD, design tokens, rule packs, adapters mocked, backend core | EP-00..EP-06 | 56 | ~84 | G0 confirmed | §5.1 DoD |
 | **P1** | Journey core | Plan, blockers, guided LL application, hand-off, stage-aware home, case clock, privacy | EP-07..EP-11, EP-17a, part of EP-43 | 55 | ~98 | Rules engine + UI kit + backend core merged | §5.2 DoD |
 | **P2** | Learning and games core | game-core SDK, score verifier, LL simulator, Nazar + clip pipeline, Stopping Distance, Blind Spot, gamification, readiness, study plumbing | EP-12..EP-16, EP-17b | 45 | ~102 | Monorepo + JobRunner (Nazar track starts at G0) | §5.3 DoD |
-| **P3** | AI layer | DebriefAgent with validator, VoiceGuideAgent live, tutor, decoder, evals | EP-18..EP-22 | 31 | ~66 | `game-sdk@1` frozen, template debrief shipped, consent + age gate live | §5.4 DoD |
+| **P3** | AI layer | DebriefAgent with validator, VoiceGuideAgent live, tutor, decoder, evals | EP-18..EP-22 | 31 | ~66 | `game-sdk@1` frozen, template debrief shipped, consent + family mode live | §5.4 DoD |
 | **P4** | DL test and after | Slots, Live Intel, track explainer, co-pilot, fail and recover, approval tracker, new-rider year, renew/family surface, remaining sims | EP-23..EP-29 | 46 | ~82 | Journey state machine + case clock + game host | §5.5 DoD |
 | **P5** | Ecosystem | School portal, state console, rule studio, multi-tenancy | EP-30..EP-33 | 19 | ~50 | Consent artefacts, analytics aggregates, rule packs v1 | §5.6 DoD |
 | **P6** | Hardening | Accessibility, security, performance, load, legal review, field studies, demo and submission | EP-34..EP-39 | 35 | ~62 | Feature-complete slices to be hardened (per rung, not all at once) | §5.7 DoD |
@@ -296,7 +296,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | MD-046 | FastAPI skeleton, error model, health | EP-06 | BE+AG | S | MD-007 |
 | MD-047 | Database baseline (PostgreSQL 16, SQLAlchemy 2, Alembic) | EP-06 | BE | M | MD-046 |
 | MD-048 | Sessions and accounts | EP-06 | BE | M | MD-047 |
-| MD-049 | Age band and minor gating service | EP-06 | BE | S | MD-047 |
+| MD-049 | Age band, family mode and parental consent service | EP-06 | BE | S | MD-047 |
 | MD-050 | Append-only audit log | EP-06 | BE+AG | S | MD-047 |
 | MD-051 | Observability with PII redaction | EP-06 | BE | M | MD-046 |
 | MD-052 | JobRunner interface (Render Workflows + local) | EP-06 | BE | M | MD-007 |
@@ -313,7 +313,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 - [ ] CI required checks: lint, types, unit (TS + Py), adapter contracts, Playwright smoke, axe, size-limit, Lighthouse, wording/fee-literal lint, gitleaks, CodeQL, SBOM.
 - [ ] Rule-pack schema v1 frozen; CMVR base + J&K pack signed by PD and BE; ≥ 80 golden cases pass in Python and TS with identical output.
 - [ ] All seven adapters (Sarathi mock/deeplink, DigiLocker, AadhaarOffline, Bhashini, Payment, Notification, Slot) pass the contract suite; `api/adapters.openapi.yaml` lints clean.
-- [ ] `u18` gating, audit log, PII redaction and the JobRunner (Render + local) each have tests.
+- [ ] Family mode with parental consent, audit log, PII redaction and the JobRunner (Render + local) each have tests.
 - [ ] Every route shows the non-affiliation footer; the trust line renders from `fees.json` with a source chip.
 
 **Demo checkpoint (P0):** on a phone, open the preview URL → language picker → home shell with 4 tabs, footer and trust line → tap the trust line's source chip → see "CMVR r.32, checked {date}". On a laptop, show the CI run with every job green and one deliberately broken adapter mock failing the contract job.
@@ -400,7 +400,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 **Owners:** FE accountable for screens (EP-08, EP-09, lab); BE for plan/case APIs, state machine, case clock, privacy (EP-07 engine, EP-10, EP-11); PD for blocker fix text, WhatsApp templates, privacy notice and the lab comparison sheet.
 
 **Definition of done (phase)**
-- [ ] Kabir: plan in 3 taps, application in ≤ 6 decision screens, check answers, hand-off; Tanvi: both blockers caught before hand-off; Mohan-ji: Form 1A shown; Rahul: rules-only, no gated feature reachable (all as Playwright tests on a 360 px profile).
+- [ ] Kabir: plan in 3 taps, application in ≤ 6 decision screens, check answers, hand-off; Tanvi: both blockers caught before hand-off; Mohan-ji: Form 1A shown; Rahul: plan inside a parent's account (family mode), every feature including AI reachable, share and squads ask for the parent's consent (all as Playwright tests on a 360 px profile).
 - [ ] Offline plan card equals online for golden personas.
 - [ ] RW-2 sweep idempotent; W1 triggers it; a WhatsApp test-number message and an email arrive; ≤ 1 nudge/day; STOP honoured.
 - [ ] Consent artefacts written for every purpose; export and delete work; delete cancels timeline events.
@@ -420,8 +420,8 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 2. Learn hub with variants, FSRS, Brier calibration, the explainable Readiness Score and the LL Test Simulator in the state's format (EP-13).
 3. **Nazar**: clip capture, the RW-1 pipeline (transcode → blur → propose → two raters → agreement → publish) with a visible retry, blur audit, rater UI, W8, manifest with unseen-clip tracking, the player, scoring, learn mode, the screen-reader alternative and the share card (EP-14).
 4. Stopping Distance and Blind Spot built deep, after the Phaser spike (EP-15).
-5. The gamification engine: XP with diminishing returns, mastery-gated ranks, repairable streaks, co-op squads, 9 badges, the CCPA dark-pattern lint, under-18 gating (EP-16).
-6. Study plumbing: the Nazar study flow, cohort export matching `nazar_stats.py`, RW-4 stats with live counters, W14, HYPOTHESES.md, and the template debrief (EP-17b).
+5. The gamification engine: XP with diminishing returns, mastery-gated ranks, repairable streaks, co-op squads, 9 badges, the CCPA dark-pattern lint, family mode with parental consent for squads and share cards (EP-16).
+6. Study plumbing: the Nazar study flow, cohort export matching `nazar_stats.mjs`, RW-4 stats with live counters, W14, HYPOTHESES.md, and the template debrief (EP-17b).
 
 **Workstreams:** WS-GAME, WS-AUTO (RW-1, RW-4, W8, W14), WS-EVID.
 
@@ -466,7 +466,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | MD-233 | Squads (co-op, adults) | EP-16 | BE+FE | M | MD-226 |
 | MD-234 | Badges (9) | EP-16 | BE+FE | S | MD-230 |
 | MD-235 | Dark-pattern lint (13 CCPA patterns) | EP-16 | PD+AG | M | MD-020 |
-| MD-236 | Under-18 gating across learning and games | EP-16 | BE | S | MD-049 |
+| MD-236 | Family mode across learning and games | EP-16 | BE | S | MD-049 |
 | MD-237 | Nazar study flow | EP-17b | FE | M | MD-222, MD-223, MD-214 |
 | MD-238 | Study cohort, pseudonymous IDs and CSV export | EP-17b | BE | S | MD-237 |
 | MD-239 | RW-4 Field-study stats job and public counters | EP-17b | BE | M | MD-238, MD-052 |
@@ -486,8 +486,8 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 - [ ] Readiness shows "N = knowledge K − calibration C" from API-33; "book anyway" always visible.
 - [ ] LL simulator: J&K = 10 questions, 6 to pass, from the pack; Kerala shows "test at the RTO".
 - [ ] Stopping Distance golden distances match; Blind Spot critical fault ranks first in findings.
-- [ ] Gamification: no XP for opening/sharing; streak silent on break; squads refuse `u18`; dark-pattern checks in CI.
-- [ ] Study flow → export → `python analysis/nazar_stats.py sessions.csv raters.csv` runs unmodified; counters match it; HYPOTHESES.md committed before the first `field_test` session.
+- [ ] Gamification: no XP for opening/sharing; streak silent on break; squads and share cards ask for the parent's consent for a minor's profile; dark-pattern checks in CI.
+- [ ] Study flow → export → `node analysis/nazar_stats.mjs sessions.csv raters.csv` runs unmodified; counters match it; HYPOTHESES.md committed before the first `field_test` session.
 - [ ] Every finding ID has en + hi templates; the template debrief passes the validator.
 
 **Demo checkpoint (P2):** a person who has never seen it scans a QR, consents (18+), takes the 15-question LL mock and 10 Nazar clips, sees the replay with the hazard band and "1.4 s late ≈ 16 m at 40 km/h", gets the template debrief and the share card. Meanwhile the Render Runs page shows RW-1 processing a new clip with one injected retry, and API-71 counters tick up.
@@ -507,14 +507,14 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 
 **Workstreams:** WS-AI, WS-AUTO (RW-3, W6, W12).
 
-**Entry criteria:** `game-sdk@1` frozen (MD-201), verifier live (MD-206), template debrief shipped (MD-242), age gate (MD-049) and consent (MD-133) live, PII utility (MD-138).
+**Entry criteria:** `game-sdk@1` frozen (MD-201), verifier live (MD-206), template debrief shipped (MD-242), family mode (MD-049) and consent (MD-133) live, PII utility (MD-138).
 
 **P3 task table (31 tickets, ~66 ideal person-days; BE 56, FE 10, PD 1; agent-assisted 6)**
 
 | ID | Task | Epic | Owner | Est | Depends on |
 |---|---|---|---|---|---|
 | MD-301 | ADK runtime in FastAPI with env-pinned models | EP-18 | BE | M | MD-046, MD-008 |
-| MD-302 | AI gate: verified adult, consent, tenant flag | EP-18 | BE | S | MD-049, MD-133, MD-301 |
+| MD-302 | AI gate: adult account holder, consent, tenant flag | EP-18 | BE | S | MD-049, MD-133, MD-301 |
 | MD-303 | PII plugin and pre-send redaction | EP-18 | BE | S | MD-138, MD-301 |
 | MD-304 | Number-provenance validator library | EP-18 | BE | M | MD-201 |
 | MD-305 | Safety settings and tone lint | EP-18 | BE+PD | S | MD-301 |
@@ -548,7 +548,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 **Owners:** BE accountable for every agent, guardrail and eval; FE for the debrief card, voice orb, decoder and Sign Snap UI; PD for the tone list, Hindi rating and the review loop.
 
 **Definition of done (phase)**
-- [ ] Every AI route refuses `u18`, missing consent and a disabled flag (contract tests).
+- [ ] Every AI route refuses missing consent and a disabled flag, and serves a minor's family-mode case that has the parent's consent (contract tests).
 - [ ] Debrief eval gates met: schema-valid 100%, rule-ID precision ≥ 95%, top-finding coverage 100%, hallucination 0, safety 0, Hindi fluency ≥ 4.0/5, fallback < 5%; latency p50/p90 measured and recorded (targets p50 < 2.0 s, p90 < 4.0 s are design targets, not facts).
 - [ ] ≥ 30 eval cases each for VoiceGuide, Tutor, Decoder, Coach and Sign Snap; ClipWindowProposer agreement reported; red-team set passes.
 - [ ] Model endpoint switched off → every AI surface still works through templates or text.
@@ -559,7 +559,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 
 **Hackathon showing:** §9 row P3 (ladder rung 4). Voice is shown only if it is stable on venue Wi-Fi; otherwise the recorded clip.
 
-**Risks:** IR-09, IR-12, R-04, R-13 (Gemini terms: 18+, paid tier, "likely accessed by" logged as an open legal question).
+**Risks:** IR-09, IR-12, R-04, R-13 (legal lead: confirm the Gemini/Vertex position on services likely accessed by under-18s with Google, or add a provider that permits minors, before public launch; paid tier).
 
 ### 5.5 P4 · DL test and after
 
@@ -611,7 +611,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | MD-428 | Practice Record (F-28) | EP-27 | BE+FE | M | MD-206, MD-429 |
 | MD-429 | Supervised practice log | EP-27 | BE+FE | S | MD-109 |
 | MD-430 | Renew/fix surface (F-16) | EP-28 | FE+BE | M | MD-124, MD-033 |
-| MD-431 | Family mode (manage a parent's case) | EP-28 | BE+FE | M | MD-133, MD-109 |
+| MD-431 | Family mode (a parent's case or a minor family member's case) | EP-28 | BE+FE | M | MD-133, MD-109 |
 | MD-432 | Helper mode (cyber café/CSC) | EP-28 | BE+FE | M | MD-431 |
 | MD-433 | Minor-riding awareness card (s.199A) | EP-28 | PD | XS | — |
 | MD-434 | Junction Scan (G2) | EP-29 | FE | L | MD-202, MD-229 |
@@ -855,7 +855,7 @@ MD-001 G0 → MD-002 repo → MD-006 monorepo → MD-007 Python layout → MD-05
 1. Build MD-222 (player) and MD-223 (scoring) against a local fixture clip while MD-217 is in progress; only *publishing* needs the pipeline.
 2. Split MD-217 by task: `transcode` + `blur` first (needed for the audit), `proposeWindows` last (AI proposals are optional; two humans set the windows anyway).
 3. Recruit (FIELD_STUDY §5) before the build is ready; sessions start as soon as ≥ 12 clips pass audit.
-4. Write `analysis/journey_stats.py` early, against synthetic CSVs (part of MD-627), so analysis is a command, not a task, at freeze.
+4. Write `analysis/journey_stats.mjs` early, against synthetic CSVs (part of MD-627), so analysis is a command, not a task, at freeze.
 
 ### 7.2 To production adoption
 ```
@@ -927,7 +927,7 @@ flowchart LR
 | P0 | Non-affiliation footer; source chips on every number; the trust line computed from `fees.json` | CI green with contract, axe, budget and wording-lint jobs; adapter list "mock today, real when a state plugs in" | "Every number you see has a source and a date. Mock adapters pass the same tests the government-side ones will." |
 | P1 | 3-tap plan card for Kabir; Tanvi's blockers; LL application in ~6 screens; check answers; hand-off with "simulated eKYC"; persona switch; WhatsApp nudge from the case clock | Render Runs page for RW-2 with a retry; n8n W1 canvas | "Aadhaar, OTP and payment happen on Sarathi. Since 1 Oct 2026 MoRTH stopped private data sharing (NIC RTI); our design runs inside NIC, so it never needed it." |
 | P2 | **Nazar mock (the hook and the closing QR)**; replay with the hazard band; server-verified score card; readiness "78 = knowledge 84 − calibration 6"; Stopping Distance; Blind Spot | **RW-1 clip pipeline Runs page with an injected retry** (headline Workflow); inter-rater Δ; live field counters (API-71) | "Practice and familiarisation, not certification. Kerala's announced format; not affiliated with any MVD." |
-| P3 | Debrief card "how you did · where you lacked · what you could have done · next drill"; voice guide for "papa 52 saal" (only if stable) | `adk web` trace with the validator rejecting "₹0 fee"; `adk eval` summary; the "never sent to AI" list | "Code computes every number; Gemini only narrates, choosing IDs from allowlists. Under 18 gets no AI." |
+| P3 | Debrief card "how you did · where you lacked · what you could have done · next drill"; voice guide for "papa 52 saal" (only if stable) | `adk web` trace with the validator rejecting "₹0 fee"; `adk eval` summary; the "never sent to AI" list | "Code computes every number; Gemini only narrates, choosing IDs from allowlists. Every user gets the AI features; a learner under 18 uses them inside a parent's account." |
 | P4 | Slot finder (sample data) with "notify me"; Live Intel with k ≥ 5 and sample chips; track explainer; fail → private debrief → retest; approval tracker | Golden-hour card (static, 112, s.134A) | "No scraping, no booking bots. Crowd intel is structured, moderated and has no names." |
 | P5 | One console view on synthetic data ("which cases are stuck and why") and the maker-checker rule studio, if built | School Pro mock-up; tenant switch J&K ↔ Kerala | "A state edits its rules as data, with two signatures." |
 | P6 | Lite mode on 3G; p95 numbers; the evidence slide (journey test + Nazar study) | axe/Lighthouse reports; load-test chart; legal memos list; HYPOTHESES.md commit hash | "Convenience sample of N, pre-registered at <hash>. We report it whichever way it came out." |
@@ -950,7 +950,7 @@ flowchart LR
 | IR-09 | ADK/Live API change or model rename | P3 | R-13 | Model ID 404 or deprecation notice | Env-pinned IDs; fallback model; template path |
 | IR-10 | Commit or data before the confirmed start | P0 | R-14 | Any timestamp before G0 | MD-001 gate; history check |
 | IR-11 | Phaser 4 too heavy on low-end phones | P2 | R-05 | < 30 fps on the reference phone | MD-229 spike decides Phaser 3.x; Lite SVG versions |
-| IR-12 | Minor reaches AI or telemetry | P2, P3 | R-04 | `minor_gated` contract test fails | Block release; server-side gate is the only source of truth |
+| IR-12 | A minor's case exists outside a parent's account, or a child's data reaches profiling or ads | P0, P2, P3 | R-04 | Family-mode or parental-consent contract test fails | Block release; the server-side consent check is the only source of truth |
 | IR-13 | Agent-written code nobody can explain | All | D-24 | Reviewer cannot explain a merged change | Revert; ticket reopened with the human as implementer |
 | IR-14 | Kerala HPT stayed | P2, P6 | R-10 | News or court order | EC-28 status flip (MD-828); framing stays "practice" |
 

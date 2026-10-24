@@ -1,0 +1,52 @@
+{
+  "source": "packages/clip-pipeline/src/status.ts TRANSITIONS + src/schema.ts CLIP_STATUSES",
+  "statuses": [
+    "raw",
+    "transcoded",
+    "blurred",
+    "audited",
+    "proposed",
+    "rated",
+    "adjudication",
+    "published",
+    "retired"
+  ],
+  "transitions": {
+    "raw": [
+      "transcoded",
+      "retired"
+    ],
+    "transcoded": [
+      "blurred",
+      "proposed",
+      "retired"
+    ],
+    "blurred": [
+      "blurred",
+      "audited",
+      "proposed",
+      "retired"
+    ],
+    "audited": [
+      "proposed",
+      "retired"
+    ],
+    "proposed": [
+      "rated",
+      "adjudication",
+      "retired"
+    ],
+    "adjudication": [
+      "rated",
+      "retired"
+    ],
+    "rated": [
+      "published",
+      "retired"
+    ],
+    "published": [
+      "retired"
+    ],
+    "retired": []
+  }
+}

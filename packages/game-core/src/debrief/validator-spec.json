@@ -1,0 +1,366 @@
+{
+  "$comment": "Shared DebriefDraft validator rules (DEBRIEF_SPEC §6.3). The TS validator (validator.ts) and the Go validator (services/api internal/debrief) both read this file, so both sides agree on what is legal. Edit the data here, never a copy. Every rule names the spec line it follows in 'source'.",
+  "spec": "margdarshak.debrief.validator",
+  "version": "1.0.0",
+  "source": "docs/09-learning-games/DEBRIEF_SPEC.md §6.2 rule 4, §6.3 V1–V10, §7.1 DebriefDraft",
+  "regex": {
+    "dialect": "Common subset of ECMAScript (no 'u' flag) and Go RE2: literals, character classes and ranges, alternation, groups, ?, *, +, {n,m}, ^, $ and \\b. No lookaround, no backreferences. In both engines \\b is an ASCII word boundary, so it is only used next to ASCII letters.",
+    "flags": "'' or 'i'. Go applies 'i' as a (?i) prefix.",
+    "matching": "A pattern fails a field when it matches anywhere in the field's text after every placeholder is removed."
+  },
+  "placeholder": {
+    "pattern": "\\{\\{fact:([a-z0-9_]+)\\}\\}",
+    "malformed_pattern": "\\{\\{|\\}\\}",
+    "note": "Placeholders are removed before V1, V5, V6 and V10. V7 counts the draft text as written, placeholders included."
+  },
+  "fields": {
+    "how_you_did": {
+      "paths": ["how_you_did"],
+      "max_chars": 160,
+      "placeholder_scope": "positives"
+    },
+    "point_text": {
+      "paths": ["where_you_lacked[i].text", "what_you_could_have_done[i].text"],
+      "max_chars": 140,
+      "placeholder_scope": "finding"
+    },
+    "drill_why": {
+      "paths": ["next_drill.why"],
+      "max_chars": 120,
+      "placeholder_scope": "none"
+    }
+  },
+  "unknown_rule_id": "UNKNOWN",
+  "retry": {
+    "line": "Your draft broke {rule} at {path}: {hint}",
+    "joiner": "\n",
+    "source": "DEBRIEF_SPEC §6.3 flow: retry once with the error list appended"
+  },
+  "pre_checks": {
+    "MODE": {
+      "name": "Template-only game",
+      "check": "A facts pack with debriefMode 'template_only' (Golden Hour) never accepts an AI draft.",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §0 line 5, §9 triggers (D-09, D-14)",
+      "hint": "this game is template only; do not send a draft"
+    },
+    "SCHEMA": {
+      "name": "Shape",
+      "check": "The draft decodes as DebriefDraft (§7.1) with no unknown fields (Zod .strict(), Go DisallowUnknownFields).",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.4, §7.1",
+      "hint": "return exactly one JSON object matching DebriefDraft"
+    }
+  },
+  "rules": {
+    "V1": {
+      "name": "No digits",
+      "check": "No digit in any text field once placeholders are removed.",
+      "pattern": "[0-9०-९]",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V1, §0 line 2 (D-10)",
+      "hint": "remove the digit, use {placeholders}"
+    },
+    "V2": {
+      "name": "Closed IDs",
+      "check": "finding_id ∈ pack.findings[].findingId; rule_id ∈ pack.allowedRuleIds ∪ {unknown_rule_id}; next_drill.drill_id ∈ pack.drillCandidates[].drillId; improved_since_last, when set, ∈ pack.resolvedSinceLast (a previous finding that is no longer present).",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V2; §7.1 improved_since_last comment",
+      "hint": "use only {allowed}"
+    },
+    "V3": {
+      "name": "Placeholders exist",
+      "check": "Every {{fact:k}} names a fact key of the finding its point refers to; in how_you_did a fact key of any positive; next_drill.why takes no placeholders. Text left with '{{' or '}}' after removing placeholders is malformed.",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V3",
+      "hint": "use only these placeholders: {allowed}"
+    },
+    "V4": {
+      "name": "Coverage",
+      "check": "When the pack has findings, where_you_lacked[0].finding_id equals pack.findings[0].findingId.",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V4, §6.2 rule 3",
+      "hint": "start where_you_lacked with {expected}"
+    },
+    "V5": {
+      "name": "Tone lint",
+      "check": "No banned phrase. Every list applies to every locale (drafts mix scripts).",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V5 and §6.2 rule 4; CONTENT_STYLE §8.1 hard bans and §8.3 soft bans; CLAUDE.md D-19",
+      "hint": "rewrite without \"{match}\"; stay calm, second person, no fear or shame",
+      "banned": {
+        "en": [
+          {
+            "pattern": "\\bcertif(y|ied|ies|icate|icates|ication)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'certified'; D-19"
+          },
+          { "pattern": "\\bofficial(ly)?\\b", "flags": "i", "why": "§6.2 rule 4 'official'; D-19" },
+          {
+            "pattern": "\\b(un)?safe (driver|rider)s?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'safe driver', 'unsafe driver'"
+          },
+          {
+            "pattern": "\\bdangerous (driver|rider)s?\\b",
+            "flags": "i",
+            "why": "CONTENT_STYLE §8.1"
+          },
+          {
+            "pattern": "\\byou( would|'d| will|'ll) (have )?crash(ed)?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'you would crash'"
+          },
+          {
+            "pattern": "\\bcrash(ed|es|ing)?\\b",
+            "flags": "i",
+            "why": "CONTENT_STYLE §7 tone: never mention crashes"
+          },
+          { "pattern": "\\byou would have died\\b", "flags": "i", "why": "§6.2 rule 4" },
+          {
+            "pattern": "\\blives? (saved|will be saved)\\b|\\bsaves? lives\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'lives saved'; D-19"
+          },
+          { "pattern": "\\bKerala'?s test\\b", "flags": "i", "why": "§6.2 rule 4 'Kerala's test'" },
+          {
+            "pattern": "\\byour RTO'?s track\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'your RTO's track'"
+          },
+          { "pattern": "\\bguarantee(d|s)?\\b", "flags": "i", "why": "§6.2 rule 4 'guaranteed'" },
+          { "pattern": "\\byou will pass\\b", "flags": "i", "why": "CONTENT_STYLE §8.1 overclaim" },
+          {
+            "pattern": "\\b(death|deaths|deadly|dead|dying)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe death"
+          },
+          {
+            "pattern": "\\bdie(d|s)?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe death"
+          },
+          {
+            "pattern": "\\bkill(ed|s|ing|er)?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe death"
+          },
+          {
+            "pattern": "\\bfatal(ity|ities|ly)?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe death"
+          },
+          {
+            "pattern": "\\bblood(y|ied)?\\b|\\bbleed(s|ing)?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe blood"
+          },
+          {
+            "pattern": "\\binjur(y|ies|ed|ing)\\b|\\bgore\\b|\\bcorpse\\b|\\bmaim(ed)?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe injuries"
+          },
+          {
+            "pattern": "\\b(stupid|silly|careless|lazy|idiot|idiotic|dumb|foolish|pathetic|reckless|useless|hopeless)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never shame"
+          },
+          {
+            "pattern": "\\b(shame|shameful|ashamed|terrible|awful)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never shame"
+          },
+          {
+            "pattern": "\\bfail(ed|ure|ures)\\b",
+            "flags": "i",
+            "why": "§0.1: failing is framed as a plan, never 'FAILED'"
+          },
+          {
+            "pattern": "\\bbeta\\b|\\bbachcha\\b|\\bkiddo\\b|\\bsweetie\\b|\\bmy dear\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never baby ('beta')"
+          },
+          {
+            "pattern": "\\b(fast|quick|quicker|lightning|great|super|amazing|sharp) (reflexes|reactions?)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never praise speed or quick reactions as skill"
+          },
+          {
+            "pattern": "\\bspeed (king|demon|master)\\b|\\bstunts?\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4; CLAUDE.md: no speed or stunt content"
+          },
+          {
+            "pattern": "\\bhurry\\b|\\blast chance\\b",
+            "flags": "i",
+            "why": "CONTENT_STYLE §8.3 false urgency"
+          }
+        ],
+        "hi": [
+          {
+            "pattern": "प्रमाणित|प्रमाणपत्र|सर्टिफ़ाइड|सर्टिफाइड|सर्टिफ़िकेट|सर्टिफिकेट",
+            "flags": "",
+            "why": "§6.2 rule 4 'certified'"
+          },
+          { "pattern": "आधिकारिक", "flags": "", "why": "§6.2 rule 4 'official'; D-19" },
+          {
+            "pattern": "सुरक्षित ड्राइवर|सुरक्षित चालक|असुरक्षित",
+            "flags": "",
+            "why": "§6.2 rule 4 'safe / unsafe driver'"
+          },
+          {
+            "pattern": "ख़तरनाक ड्राइवर|खतरनाक ड्राइवर|ख़तरनाक चालक|खतरनाक चालक",
+            "flags": "",
+            "why": "CONTENT_STYLE §8.1"
+          },
+          {
+            "pattern": "एक्सीडेंट हो जाता|टक्कर हो जाती|दुर्घटना हो जाती",
+            "flags": "",
+            "why": "§6.2 rule 4 'you would crash'"
+          },
+          {
+            "pattern": "मौत|मृत्यु|मर जाते|मर सकते|मर जाएँगे|मर जाएंगे|मारे गए|लाश",
+            "flags": "",
+            "why": "§6.2 rule 4: never describe death"
+          },
+          {
+            "pattern": "खून|ख़ून|घायल",
+            "flags": "",
+            "why": "§6.2 rule 4: never describe blood or injuries"
+          },
+          {
+            "pattern": "जान बचाई|जानें बचाईं|जानें बचाई|जान बचाता",
+            "flags": "",
+            "why": "§6.2 rule 4 'lives saved'"
+          },
+          {
+            "pattern": "केरल का टेस्ट|केरल की परीक्षा|आपके आरटीओ का ट्रैक",
+            "flags": "",
+            "why": "§6.2 rule 4 'Kerala's test', 'your RTO's track'"
+          },
+          { "pattern": "गारंटी|पक्का पास", "flags": "", "why": "§6.2 rule 4 'guaranteed'" },
+          {
+            "pattern": "बेवकूफ़|बेवकूफ|मूर्ख|लापरवाह|शर्म|नालायक",
+            "flags": "",
+            "why": "§6.2 rule 4: never shame"
+          },
+          { "pattern": "फ़ेल|फेल", "flags": "", "why": "§0.1: never 'FAILED'" },
+          { "pattern": "बेटा|बेटी|बच्चू", "flags": "", "why": "§6.2 rule 4: never baby ('beta')" }
+        ],
+        "hinglish": [
+          {
+            "pattern": "\\bpakka pass\\b|\\bpass pakka\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'guaranteed'"
+          },
+          {
+            "pattern": "\\bmaut\\b|\\bmar (jaate|jate|jaoge|jaaoge|sakte|gaye)\\b|\\bmare gaye\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe death"
+          },
+          {
+            "pattern": "\\b(khoon|khun|ghayal)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never describe blood or injuries"
+          },
+          {
+            "pattern": "\\bkhatarnak (driver|rider|chalak)\\b",
+            "flags": "i",
+            "why": "CONTENT_STYLE §8.1"
+          },
+          {
+            "pattern": "\\baccident ho (jata|jaata|jaayega|jayega)\\b|\\btakkar ho (jati|jaati)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'you would crash'"
+          },
+          {
+            "pattern": "\\bjaan (bachai|bachayi|bachaye|bachata)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4 'lives saved'"
+          },
+          { "pattern": "\\bkerala ka test\\b", "flags": "i", "why": "§6.2 rule 4 'Kerala's test'" },
+          {
+            "pattern": "\\b(bewakoof|bevkoof|bewkoof|murkh|laparwah|laparvah|sharam|nalayak)\\b",
+            "flags": "i",
+            "why": "§6.2 rule 4: never shame"
+          },
+          {
+            "pattern": "\\bfail ho( gaye| gae| gya| gaya)?\\b",
+            "flags": "i",
+            "why": "§0.1: never 'FAILED'"
+          },
+          { "pattern": "\\bbachchu\\b|\\bbeti\\b", "flags": "i", "why": "§6.2 rule 4: never baby" }
+        ]
+      }
+    },
+    "V6": {
+      "name": "Language",
+      "check": "Per text field, the share of letters in the locale's script is at least min_share (placeholders removed; a field with no letters passes). draft.locale must equal pack.locale.",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V6 [D]; §6.2 rule 6",
+      "hint": "write in {locale}",
+      "thresholds": {
+        "hi": { "script": "devanagari", "min_share": 0.7 },
+        "en": { "script": "latin", "min_share": 0.9 },
+        "hinglish": { "script": "latin", "min_share": 0.9 }
+      },
+      "scripts": {
+        "devanagari": [[2304, 2403], [2417, 2431]],
+        "latin": [[65, 90], [97, 122], [192, 214], [216, 246], [248, 591]]
+      },
+      "letter": "A code point is a letter when it lies in any 'scripts' range or has Unicode general category L (JS /\\p{L}/u, Go unicode.IsLetter). Devanagari vowel signs count as Devanagari letters; the danda, Devanagari digits and the abbreviation sign (U+0964–U+0970) do not."
+    },
+    "V7": {
+      "name": "Lengths",
+      "check": "Each field's length in Unicode code points (draft text as written) is at most fields.<field>.max_chars.",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V7 (Gemini ignores maxLength)",
+      "hint": "shorten to at most {max} characters"
+    },
+    "V8": {
+      "name": "Counts",
+      "check": "At most max_points points in where_you_lacked and in what_you_could_have_done; no finding_id twice in one list; every what_you_could_have_done finding_id also appears in where_you_lacked.",
+      "max_points": 3,
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V8; §0.1 (at most 3 per section)",
+      "hint": "{detail}"
+    },
+    "V9": {
+      "name": "Escaping",
+      "check": "Applied at render, never a rejection: every rendered text is HTML-escaped for text-node insertion with this map, in this order ('&' first). Quotes are kept as typed (card text is never placed in an attribute), so apostrophes survive.",
+      "on_fail": "always_applied",
+      "source": "DEBRIEF_SPEC §6.3 V9",
+      "escape": [["&", "&amp;"], ["<", "&lt;"], [">", "&gt;"]]
+    },
+    "V10": {
+      "name": "Rupee/fee mention",
+      "check": "No rupee or fee mention in any text field. 'fee' matches as a whole word only, so 'feet show before the person does' (§8.1) passes.",
+      "on_fail": "reject",
+      "source": "DEBRIEF_SPEC §6.3 V10 (D-06)",
+      "hint": "remove \"{match}\"; debriefs never mention money or fees",
+      "patterns": [
+        { "pattern": "₹", "flags": "", "why": "§6.3 V10 '₹' (substring)" },
+        {
+          "pattern": "rupee|रुपये|रुपए|रुपया|रुपयों",
+          "flags": "i",
+          "why": "§6.3 V10 'rupee', 'रुपये' (substring)"
+        },
+        {
+          "pattern": "शुल्क|फ़ीस|फीस",
+          "flags": "",
+          "why": "§6.3 V10 'शुल्क' (substring); 'फ़ीस' is the spoken word"
+        },
+        {
+          "pattern": "\\bfees?\\b",
+          "flags": "i",
+          "why": "§6.3 V10 'fee', whole word (content agent note a)"
+        },
+        {
+          "pattern": "\\b(rs|inr|rupaye|rupaiye|rupaya|shulk)\\b",
+          "flags": "i",
+          "why": "Abbreviations and Hinglish spellings of the same terms"
+        }
+      ]
+    }
+  }
+}

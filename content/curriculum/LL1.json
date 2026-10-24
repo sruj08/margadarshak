@@ -1,0 +1,282 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "LL1",
+  "track": "A_ll_syllabus",
+  "title": {
+    "en": "Road signs & markings",
+    "hi": "सड़क संकेत और मार्किंग"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "All",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Deep",
+  "skill_id": "SK-LL1",
+  "game_ids": ["ll_sim"],
+  "drill_ids": [
+    "DR-LL-TOPIC-LL1",
+    "DR-LL-SIGNS-MANDATORY",
+    "DR-LL-SIGNS-CAUTIONARY",
+    "DR-LL-SIGNS-INFORMATORY",
+    "DR-LL-SIGNS-MARKINGS",
+    "DR-LL-SIGNS-SIGNALS"
+  ],
+  "rule_ids": [
+    "RR-FOG-001",
+    "RR-HIL-002",
+    "RR-HIL-003",
+    "RR-HVY-002",
+    "RR-JCT-002",
+    "RR-LSD-001",
+    "RR-PED-001",
+    "RR-SPD-002"
+  ],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-LL1-1",
+      "text": {
+        "en": "Name the three sign families by shape and colour: mandatory (circles), cautionary (triangles), informatory (rectangles), plus the stop octagon and the give-way inverted triangle.",
+        "hi": "आकार और रंग से संकेतों के तीन परिवार पहचानें: अनिवार्य (गोल), चेतावनी (त्रिकोण), सूचना (आयत), और साथ में स्टॉप का अष्टकोण और 'रास्ता दें' का उल्टा त्रिकोण।"
+      }
+    },
+    {
+      "id": "LO-LL1-2",
+      "text": {
+        "en": "Identify each sign in the sign catalogue in a real-world photo.",
+        "hi": "संकेत सूची के हर संकेत को असली फ़ोटो में पहचानें।"
+      }
+    },
+    {
+      "id": "LO-LL1-3",
+      "text": {
+        "en": "Read lane and edge markings: stop line, zebra crossing, no-overtaking centre line.",
+        "hi": "लेन और किनारे की मार्किंग पढ़ें: स्टॉप लाइन, ज़ेबरा क्रॉसिंग, ओवरटेक मना वाली बीच की लाइन।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-LL1-1",
+      "title": {
+        "en": "Mandatory signs",
+        "hi": "अनिवार्य संकेत"
+      }
+    },
+    {
+      "id": "LS-LL1-2",
+      "title": {
+        "en": "Cautionary signs",
+        "hi": "चेतावनी संकेत"
+      }
+    },
+    {
+      "id": "LS-LL1-3",
+      "title": {
+        "en": "Informatory signs",
+        "hi": "सूचना संकेत"
+      }
+    },
+    {
+      "id": "LS-LL1-4",
+      "title": {
+        "en": "Road markings",
+        "hi": "सड़क की मार्किंग"
+      }
+    },
+    {
+      "id": "LS-LL1-5",
+      "title": {
+        "en": "Traffic lights at junctions",
+        "hi": "चौराहे की ट्रैफ़िक लाइटें"
+      }
+    },
+    {
+      "id": "LS-LL1-6",
+      "title": {
+        "en": "Signs you meet in the J&K hills",
+        "hi": "J&K की पहाड़ियों में मिलने वाले संकेत"
+      },
+      "tenants": ["JK"]
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-LL1-1",
+      "kind": "practice",
+      "text": {
+        "en": "Mandatory signs are mostly circular: a red border forbids, a blue disc orders. Cautionary signs are red-bordered triangles. Informatory signs are rectangles.",
+        "hi": "अनिवार्य संकेत ज़्यादातर गोल होते हैं: लाल किनारा मना करता है, नीला गोला करने को कहता है। चेतावनी संकेत लाल किनारे वाले त्रिकोण होते हैं। सूचना संकेत आयत होते हैं।"
+      },
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-LL1-2",
+      "kind": "practice",
+      "text": {
+        "en": "The stop sign is an octagon and the give-way sign an inverted triangle, shapes no other sign uses.",
+        "hi": "स्टॉप संकेत अष्टकोण होता है और 'रास्ता दें' उल्टा त्रिकोण, ये आकार किसी और संकेत के नहीं होते।"
+      },
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-LL1-3",
+      "kind": "practice",
+      "text": {
+        "en": "A continuous centre line must not be crossed; a broken one may be crossed to overtake when the road ahead is clear.",
+        "hi": "बीच की लगातार लाइन पार नहीं करनी चाहिए; टूटी लाइन को ओवरटेक के लिए तब पार कर सकते हैं जब आगे सड़क साफ़ हो।"
+      },
+      "sources": [
+        {
+          "title": "IRC:35 Code of Practice for Road Markings, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-LL1-1",
+      "myth": {
+        "en": "The shape alone tells you what a sign means.",
+        "hi": "सिर्फ़ आकार से पता चल जाता है कि संकेत का क्या मतलब है।"
+      },
+      "correction": {
+        "en": "Shape gives the family; the symbol inside gives the meaning. Read both.",
+        "hi": "आकार परिवार बताता है; अंदर का निशान मतलब बताता है। दोनों पढ़ें।"
+      }
+    },
+    {
+      "id": "MC-LL1-2",
+      "myth": {
+        "en": "A speed limit is the speed you should ride at.",
+        "hi": "गति-सीमा वह रफ़्तार है जिस पर चलना चाहिए।"
+      },
+      "correction": {
+        "en": "It is a maximum; ride slower when the road, weather or traffic needs it.",
+        "hi": "यह सबसे ज़्यादा सीमा है; सड़क, मौसम या ट्रैफ़िक के हिसाब से धीमे चलें।"
+      },
+      "rule_id": "RR-SPD-002"
+    }
+  ],
+  "concepts": {
+    "target": 100,
+    "authored": [
+      "C-LL1-001",
+      "C-LL1-002",
+      "C-LL1-003",
+      "C-LL1-004",
+      "C-LL1-005",
+      "C-LL1-006",
+      "C-LL1-007",
+      "C-LL1-008",
+      "C-LL1-009",
+      "C-LL1-010",
+      "C-LL1-011",
+      "C-LL1-012",
+      "C-LL1-013",
+      "C-LL1-014",
+      "C-LL1-015",
+      "C-LL1-016",
+      "C-LL1-017",
+      "C-LL1-018",
+      "C-LL1-019",
+      "C-LL1-020",
+      "C-LL1-021",
+      "C-LL1-022",
+      "C-LL1-023",
+      "C-LL1-024",
+      "C-LL1-025",
+      "C-LL1-026",
+      "C-LL1-027",
+      "C-LL1-028",
+      "C-LL1-029",
+      "C-LL1-030"
+    ]
+  },
+  "assessment": {
+    "criterion": {
+      "en": "FSRS mastery M_LL1 ≥ 0.8; mock sections.",
+      "hi": "FSRS महारत M_LL1 ≥ 0.8; मॉक के हिस्से।"
+    },
+    "readiness": "test",
+    "item_refs": [
+      "C-LL1-001",
+      "C-LL1-002",
+      "C-LL1-003",
+      "C-LL1-004",
+      "C-LL1-005",
+      "C-LL1-006",
+      "C-LL1-007",
+      "C-LL1-008",
+      "C-LL1-009",
+      "C-LL1-010",
+      "C-LL1-011",
+      "C-LL1-012",
+      "C-LL1-013",
+      "C-LL1-014",
+      "C-LL1-015",
+      "C-LL1-016",
+      "C-LL1-017",
+      "C-LL1-018",
+      "C-LL1-019",
+      "C-LL1-020",
+      "C-LL1-021",
+      "C-LL1-022",
+      "C-LL1-023",
+      "C-LL1-024",
+      "C-LL1-025",
+      "C-LL1-026",
+      "C-LL1-027",
+      "C-LL1-028",
+      "C-LL1-029",
+      "C-LL1-030"
+    ]
+  },
+  "review": {
+    "needs": [
+      "Two-person content review per sign: the meaning matches the cited standard (IRC:67 / IRC:35)",
+      "Draw our own vectors; never reproduce IRC pages",
+      "Photo consent and blur for team-shot sign photos"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

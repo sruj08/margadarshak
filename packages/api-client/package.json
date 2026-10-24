@@ -1,0 +1,30 @@
+{
+  "name": "@margdarshak/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Typed client generated from api/openapi.yaml (openapi-typescript + openapi-fetch). snake_case on the wire.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/generated/schema.ts",
+    "./case": "./src/case.ts"
+  },
+  "scripts": {
+    "generate": "openapi-typescript ../../api/openapi.yaml -o src/generated/schema.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "clean": "node -e \"require('node:fs').rmSync('coverage',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "openapi-fetch": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "openapi-typescript": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

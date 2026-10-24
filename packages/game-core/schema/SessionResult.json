@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "gameId": {
+      "type": "string",
+      "enum": [
+        "nazar",
+        "stopping_distance",
+        "blind_spot",
+        "junction_scan",
+        "track_twin",
+        "helmet_fit",
+        "golden_hour",
+        "night_glare",
+        "hill_road",
+        "ll_sim"
+      ]
+    },
+    "gameVersion": {
+      "type": "string",
+      "maxLength": 24
+    },
+    "scoringVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "seedOrigin": {
+      "type": "string",
+      "enum": ["server", "client_offline"]
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["learn", "practice", "mock", "pair"]
+    },
+    "score": {
+      "type": "object",
+      "properties": {
+        "raw": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "passed": {
+          "type": ["boolean", "null"]
+        },
+        "passRule": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "enum": ["rule_pack", "design"]
+                },
+                "ref": {
+                  "type": "string",
+                  "maxLength": 48
+                }
+              },
+              "required": ["source", "ref"],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "components": {
+          "maxItems": 64,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "value": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "weight": {
+                "type": "number"
+              },
+              "explainKey": {
+                "type": "string",
+                "maxLength": 64
+              }
+            },
+            "required": ["id", "value", "max", "weight", "explainKey"],
+            "additionalProperties": false
+          }
+        },
+        "capApplied": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 48
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": ["raw", "max", "pct", "passed", "passRule", "components", "capApplied"],
+      "additionalProperties": false
+    },
+    "findings": {
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "findingId": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "severity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "ruleIds": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 32
+            }
+          },
+          "skillId": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "drillIds": {
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 48
+            }
+          },
+          "facts": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,23}$"
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "itemRef": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "findingId",
+          "severity",
+          "critical",
+          "ruleIds",
+          "skillId",
+          "drillIds",
+          "facts"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "evidence": {
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "maxLength": 48
+          },
+          "correct": {
+            "type": "boolean"
+          },
+          "latencyMs": {
+            "type": "number"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["50", "75", "100"]
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "overconfident": {
+            "type": "boolean"
+          }
+        },
+        "required": ["cardId", "correct", "rating", "overconfident"],
+        "additionalProperties": false
+      }
+    },
+    "calibration": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "n": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "brier": {
+              "type": ["number", "null"]
+            },
+            "overconfidence": {
+              "type": ["number", "null"]
+            }
+          },
+          "required": ["n", "brier", "overconfidence"],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "integrity": {
+      "type": "object",
+      "properties": {
+        "flags": {
+          "maxItems": 64,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 32
+          }
+        },
+        "trust": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "timingMode": {
+          "type": "string",
+          "enum": ["rvfc", "fallback", "sim", "none"]
+        },
+        "provisional": {
+          "type": "boolean"
+        }
+      },
+      "required": ["flags", "trust", "timingMode", "provisional"],
+      "additionalProperties": false
+    },
+    "replay": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "type": "number"
+        },
+        "inputs": {
+          "type": "string"
+        }
+      },
+      "required": ["seed", "inputs"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "sid",
+    "gameId",
+    "gameVersion",
+    "scoringVersion",
+    "seed",
+    "seedOrigin",
+    "difficulty",
+    "mode",
+    "score",
+    "findings",
+    "evidence",
+    "calibration",
+    "integrity",
+    "replay"
+  ],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/SessionResult.json",
+  "title": "SessionResult"
+}

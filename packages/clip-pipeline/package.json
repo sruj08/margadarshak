@@ -1,0 +1,103 @@
+{
+  "name": "@margdarshak/clip-pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pure parts of the Nazar clip pipeline (RW-1): clip.json schema and status machine, ffmpeg argv builders and output parsers, blur filter graphs, flash check, two-rater agreement, difficulty, step definitions and manifests. Never runs ffmpeg or a model itself.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "margdarshak-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schema": {
+      "margdarshak-source": "./src/schema.ts",
+      "types": "./dist/schema.d.ts",
+      "default": "./dist/schema.js"
+    },
+    "./status": {
+      "margdarshak-source": "./src/status.ts",
+      "types": "./dist/status.d.ts",
+      "default": "./dist/status.js"
+    },
+    "./projection": {
+      "margdarshak-source": "./src/projection.ts",
+      "types": "./dist/projection.d.ts",
+      "default": "./dist/projection.js"
+    },
+    "./ffmpeg": {
+      "margdarshak-source": "./src/ffmpeg.ts",
+      "types": "./dist/ffmpeg.d.ts",
+      "default": "./dist/ffmpeg.js"
+    },
+    "./probe": {
+      "margdarshak-source": "./src/probe.ts",
+      "types": "./dist/probe.d.ts",
+      "default": "./dist/probe.js"
+    },
+    "./flash": {
+      "margdarshak-source": "./src/flash.ts",
+      "types": "./dist/flash.d.ts",
+      "default": "./dist/flash.js"
+    },
+    "./blur": {
+      "margdarshak-source": "./src/blur.ts",
+      "types": "./dist/blur.d.ts",
+      "default": "./dist/blur.js"
+    },
+    "./agreement": {
+      "margdarshak-source": "./src/agreement.ts",
+      "types": "./dist/agreement.d.ts",
+      "default": "./dist/agreement.js"
+    },
+    "./proposals": {
+      "margdarshak-source": "./src/proposals.ts",
+      "types": "./dist/proposals.d.ts",
+      "default": "./dist/proposals.js"
+    },
+    "./difficulty": {
+      "margdarshak-source": "./src/difficulty.ts",
+      "types": "./dist/difficulty.d.ts",
+      "default": "./dist/difficulty.js"
+    },
+    "./steps": {
+      "margdarshak-source": "./src/steps.ts",
+      "types": "./dist/steps.d.ts",
+      "default": "./dist/steps.js"
+    },
+    "./generation": {
+      "margdarshak-source": "./src/generation.ts",
+      "types": "./dist/generation.d.ts",
+      "default": "./dist/generation.js"
+    },
+    "./manifest": {
+      "margdarshak-source": "./src/manifest.ts",
+      "types": "./dist/manifest.d.ts",
+      "default": "./dist/manifest.js"
+    },
+    "./clip.schema.json": "./schema/clip.schema.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "test": "node --test --experimental-strip-types \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "gen:schema": "node --experimental-strip-types scripts/gen-schema.ts",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

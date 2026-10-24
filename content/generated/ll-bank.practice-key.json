@@ -1,0 +1,1680 @@
+{
+  "file_kind": "question_bank_practice_key",
+  "keys": [
+    {
+      "item_id": "C-LL1-001:v1",
+      "concept_id": "C-LL1-001",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-001",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-001:v2",
+      "concept_id": "C-LL1-001",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-001",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-001:v3",
+      "concept_id": "C-LL1-001",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-001",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-002:v1",
+      "concept_id": "C-LL1-002",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-002",
+      "rule_ids": ["RR-JCT-002"]
+    },
+    {
+      "item_id": "C-LL1-002:v2",
+      "concept_id": "C-LL1-002",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-002",
+      "rule_ids": ["RR-JCT-002"]
+    },
+    {
+      "item_id": "C-LL1-003:v1",
+      "concept_id": "C-LL1-003",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-003",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-003:v2",
+      "concept_id": "C-LL1-003",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-003",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-003:v3",
+      "concept_id": "C-LL1-003",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-003",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-004:v1",
+      "concept_id": "C-LL1-004",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-004:v2",
+      "concept_id": "C-LL1-004",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-004:v3",
+      "concept_id": "C-LL1-004",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-005:v1",
+      "concept_id": "C-LL1-005",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-005",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-005:v2",
+      "concept_id": "C-LL1-005",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-005",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-006:v1",
+      "concept_id": "C-LL1-006",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-006",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL1-006:v2",
+      "concept_id": "C-LL1-006",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-006",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL1-006:v3",
+      "concept_id": "C-LL1-006",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-006",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL1-007:v1",
+      "concept_id": "C-LL1-007",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-007",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-007:v2",
+      "concept_id": "C-LL1-007",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-007",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-008:v1",
+      "concept_id": "C-LL1-008",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-008",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-008:v2",
+      "concept_id": "C-LL1-008",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-008",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-008:v3",
+      "concept_id": "C-LL1-008",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-008",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-009:v1",
+      "concept_id": "C-LL1-009",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-009",
+      "rule_ids": ["RR-SPD-002"]
+    },
+    {
+      "item_id": "C-LL1-009:v2",
+      "concept_id": "C-LL1-009",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-009",
+      "rule_ids": ["RR-SPD-002"]
+    },
+    {
+      "item_id": "C-LL1-009:v3",
+      "concept_id": "C-LL1-009",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-009",
+      "rule_ids": ["RR-SPD-002"]
+    },
+    {
+      "item_id": "C-LL1-010:v1",
+      "concept_id": "C-LL1-010",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-010",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-010:v2",
+      "concept_id": "C-LL1-010",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-010",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-010:v3",
+      "concept_id": "C-LL1-010",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-010",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-011:v1",
+      "concept_id": "C-LL1-011",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-011",
+      "rule_ids": ["RR-HIL-003"]
+    },
+    {
+      "item_id": "C-LL1-011:v2",
+      "concept_id": "C-LL1-011",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-011",
+      "rule_ids": ["RR-HIL-003"]
+    },
+    {
+      "item_id": "C-LL1-011:v3",
+      "concept_id": "C-LL1-011",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-011",
+      "rule_ids": ["RR-HIL-003"]
+    },
+    {
+      "item_id": "C-LL1-012:v1",
+      "concept_id": "C-LL1-012",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-012",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-012:v2",
+      "concept_id": "C-LL1-012",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-012",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-013:v1",
+      "concept_id": "C-LL1-013",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-013",
+      "rule_ids": ["RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL1-013:v2",
+      "concept_id": "C-LL1-013",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-013",
+      "rule_ids": ["RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL1-013:v3",
+      "concept_id": "C-LL1-013",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-013",
+      "rule_ids": ["RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL1-014:v1",
+      "concept_id": "C-LL1-014",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-014",
+      "rule_ids": ["RR-JCT-002", "RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL1-014:v2",
+      "concept_id": "C-LL1-014",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-014",
+      "rule_ids": ["RR-JCT-002", "RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL1-014:v3",
+      "concept_id": "C-LL1-014",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-014",
+      "rule_ids": ["RR-JCT-002", "RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL1-015:v1",
+      "concept_id": "C-LL1-015",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-015",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-015:v2",
+      "concept_id": "C-LL1-015",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-015",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-016:v1",
+      "concept_id": "C-LL1-016",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-016",
+      "rule_ids": ["RR-LSD-001"]
+    },
+    {
+      "item_id": "C-LL1-016:v2",
+      "concept_id": "C-LL1-016",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-016",
+      "rule_ids": ["RR-LSD-001"]
+    },
+    {
+      "item_id": "C-LL1-016:v3",
+      "concept_id": "C-LL1-016",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-016",
+      "rule_ids": ["RR-LSD-001"]
+    },
+    {
+      "item_id": "C-LL1-017:v1",
+      "concept_id": "C-LL1-017",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-017",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-017:v2",
+      "concept_id": "C-LL1-017",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-017",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-018:v1",
+      "concept_id": "C-LL1-018",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-018",
+      "rule_ids": ["RR-HIL-002"]
+    },
+    {
+      "item_id": "C-LL1-018:v2",
+      "concept_id": "C-LL1-018",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-018",
+      "rule_ids": ["RR-HIL-002"]
+    },
+    {
+      "item_id": "C-LL1-019:v1",
+      "concept_id": "C-LL1-019",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-019",
+      "rule_ids": ["RR-FOG-001"]
+    },
+    {
+      "item_id": "C-LL1-019:v2",
+      "concept_id": "C-LL1-019",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-019",
+      "rule_ids": ["RR-FOG-001"]
+    },
+    {
+      "item_id": "C-LL1-020:v1",
+      "concept_id": "C-LL1-020",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-020",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-020:v2",
+      "concept_id": "C-LL1-020",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-020",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-021:v1",
+      "concept_id": "C-LL1-021",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-021",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-021:v2",
+      "concept_id": "C-LL1-021",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-021",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-022:v1",
+      "concept_id": "C-LL1-022",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-022",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-022:v2",
+      "concept_id": "C-LL1-022",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-022",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-023:v1",
+      "concept_id": "C-LL1-023",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-023",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-023:v2",
+      "concept_id": "C-LL1-023",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-023",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-024:v1",
+      "concept_id": "C-LL1-024",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-024",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-024:v2",
+      "concept_id": "C-LL1-024",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-024",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-024:v4",
+      "concept_id": "C-LL1-024",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-024",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-025:v1",
+      "concept_id": "C-LL1-025",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-025",
+      "rule_ids": ["RR-JCT-002"]
+    },
+    {
+      "item_id": "C-LL1-025:v3",
+      "concept_id": "C-LL1-025",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-025",
+      "rule_ids": ["RR-JCT-002"]
+    },
+    {
+      "item_id": "C-LL1-026:v1",
+      "concept_id": "C-LL1-026",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-026",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL1-026:v3",
+      "concept_id": "C-LL1-026",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-026",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL1-027:v1",
+      "concept_id": "C-LL1-027",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-027",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL1-027:v3",
+      "concept_id": "C-LL1-027",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-027",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL1-028:v1",
+      "concept_id": "C-LL1-028",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL1-028",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-028:v3",
+      "concept_id": "C-LL1-028",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL1-028",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-029:v1",
+      "concept_id": "C-LL1-029",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-029",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-029:v3",
+      "concept_id": "C-LL1-029",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-029",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-030:v1",
+      "concept_id": "C-LL1-030",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL1-030",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL1-030:v3",
+      "concept_id": "C-LL1-030",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL1-030",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-001:v1",
+      "concept_id": "C-LL2-001",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-001",
+      "rule_ids": ["RR-WRG-001"]
+    },
+    {
+      "item_id": "C-LL2-001:v2",
+      "concept_id": "C-LL2-001",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-001",
+      "rule_ids": ["RR-WRG-001"]
+    },
+    {
+      "item_id": "C-LL2-002:v1",
+      "concept_id": "C-LL2-002",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-002",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL2-002:v3",
+      "concept_id": "C-LL2-002",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-002",
+      "rule_ids": ["RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL2-003:v1",
+      "concept_id": "C-LL2-003",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-003",
+      "rule_ids": ["RR-HIL-003", "RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL2-003:v2",
+      "concept_id": "C-LL2-003",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-003",
+      "rule_ids": ["RR-HIL-003", "RR-HVY-002"]
+    },
+    {
+      "item_id": "C-LL2-004:v1",
+      "concept_id": "C-LL2-004",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-004:v2",
+      "concept_id": "C-LL2-004",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-005:v1",
+      "concept_id": "C-LL2-005",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-005",
+      "rule_ids": ["RR-JCT-002", "RR-JCT-001"]
+    },
+    {
+      "item_id": "C-LL2-005:v3",
+      "concept_id": "C-LL2-005",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-005",
+      "rule_ids": ["RR-JCT-002", "RR-JCT-001"]
+    },
+    {
+      "item_id": "C-LL2-006:v1",
+      "concept_id": "C-LL2-006",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-006",
+      "rule_ids": ["RR-JCT-002", "RR-JCT-001"]
+    },
+    {
+      "item_id": "C-LL2-006:v3",
+      "concept_id": "C-LL2-006",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-006",
+      "rule_ids": ["RR-JCT-002", "RR-JCT-001"]
+    },
+    {
+      "item_id": "C-LL2-007:v1",
+      "concept_id": "C-LL2-007",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-007",
+      "rule_ids": ["RR-JCT-002", "RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL2-007:v3",
+      "concept_id": "C-LL2-007",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-007",
+      "rule_ids": ["RR-JCT-002", "RR-PED-001"]
+    },
+    {
+      "item_id": "C-LL2-008:v1",
+      "concept_id": "C-LL2-008",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-008",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-008:v3",
+      "concept_id": "C-LL2-008",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-008",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-009:v1",
+      "concept_id": "C-LL2-009",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-009",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-009:v2",
+      "concept_id": "C-LL2-009",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-009",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-010:v1",
+      "concept_id": "C-LL2-010",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-010",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-010:v2",
+      "concept_id": "C-LL2-010",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-010",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-011:v1",
+      "concept_id": "C-LL2-011",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-011",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-011:v3",
+      "concept_id": "C-LL2-011",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-011",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-012:v1",
+      "concept_id": "C-LL2-012",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-012",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-012:v3",
+      "concept_id": "C-LL2-012",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-012",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-013:v1",
+      "concept_id": "C-LL2-013",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-013",
+      "rule_ids": ["RR-WRG-001"]
+    },
+    {
+      "item_id": "C-LL2-013:v3",
+      "concept_id": "C-LL2-013",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-013",
+      "rule_ids": ["RR-WRG-001"]
+    },
+    {
+      "item_id": "C-LL2-014:v1",
+      "concept_id": "C-LL2-014",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-014",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-014:v3",
+      "concept_id": "C-LL2-014",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-014",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-015:v1",
+      "concept_id": "C-LL2-015",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-015",
+      "rule_ids": ["RR-FOL-001"]
+    },
+    {
+      "item_id": "C-LL2-015:v3",
+      "concept_id": "C-LL2-015",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-015",
+      "rule_ids": ["RR-FOL-001"]
+    },
+    {
+      "item_id": "C-LL2-016:v1",
+      "concept_id": "C-LL2-016",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-016",
+      "rule_ids": ["RR-SPD-002", "RR-SPD-001"]
+    },
+    {
+      "item_id": "C-LL2-016:v3",
+      "concept_id": "C-LL2-016",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-016",
+      "rule_ids": ["RR-SPD-002", "RR-SPD-001"]
+    },
+    {
+      "item_id": "C-LL2-017:v1",
+      "concept_id": "C-LL2-017",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-017",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-017:v3",
+      "concept_id": "C-LL2-017",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-017",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL2-018:v1",
+      "concept_id": "C-LL2-018",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-018",
+      "rule_ids": ["RR-PHN-001"]
+    },
+    {
+      "item_id": "C-LL2-018:v3",
+      "concept_id": "C-LL2-018",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-018",
+      "rule_ids": ["RR-PHN-001"]
+    },
+    {
+      "item_id": "C-LL2-019:v1",
+      "concept_id": "C-LL2-019",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-019",
+      "rule_ids": ["RR-HLM-001"]
+    },
+    {
+      "item_id": "C-LL2-019:v3",
+      "concept_id": "C-LL2-019",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-019",
+      "rule_ids": ["RR-HLM-001"]
+    },
+    {
+      "item_id": "C-LL2-020:v1",
+      "concept_id": "C-LL2-020",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-020",
+      "rule_ids": ["RR-ALC-001"]
+    },
+    {
+      "item_id": "C-LL2-020:v3",
+      "concept_id": "C-LL2-020",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-020",
+      "rule_ids": ["RR-ALC-001"]
+    },
+    {
+      "item_id": "C-LL2-021:v1",
+      "concept_id": "C-LL2-021",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-021",
+      "rule_ids": ["RR-NGT-001", "RR-NGT-002"]
+    },
+    {
+      "item_id": "C-LL2-021:v3",
+      "concept_id": "C-LL2-021",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-021",
+      "rule_ids": ["RR-NGT-001", "RR-NGT-002"]
+    },
+    {
+      "item_id": "C-LL2-022:v1",
+      "concept_id": "C-LL2-022",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL2-022",
+      "rule_ids": ["RR-HIL-001", "RR-HIL-003"]
+    },
+    {
+      "item_id": "C-LL2-022:v3",
+      "concept_id": "C-LL2-022",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL2-022",
+      "rule_ids": ["RR-HIL-001", "RR-HIL-003"]
+    },
+    {
+      "item_id": "C-LL2-023:v1",
+      "concept_id": "C-LL2-023",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL2-023",
+      "rule_ids": ["RR-BLT-001"]
+    },
+    {
+      "item_id": "C-LL2-023:v3",
+      "concept_id": "C-LL2-023",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL2-023",
+      "rule_ids": ["RR-BLT-001"]
+    },
+    {
+      "item_id": "C-LL3-001:v1",
+      "concept_id": "C-LL3-001",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-001",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-001:v2",
+      "concept_id": "C-LL3-001",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-001",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-001:v4",
+      "concept_id": "C-LL3-001",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL3-001",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-002:v1",
+      "concept_id": "C-LL3-002",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL3-002",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-002:v2",
+      "concept_id": "C-LL3-002",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL3-002",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-003:v1",
+      "concept_id": "C-LL3-003",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-003",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-003:v2",
+      "concept_id": "C-LL3-003",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL3-003",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-004:v1",
+      "concept_id": "C-LL3-004",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL3-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-004:v3",
+      "concept_id": "C-LL3-004",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-004:v4",
+      "concept_id": "C-LL3-004",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-005:v1",
+      "concept_id": "C-LL3-005",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-005",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-005:v3",
+      "concept_id": "C-LL3-005",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL3-005",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-006:v1",
+      "concept_id": "C-LL3-006",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL3-006",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-006:v3",
+      "concept_id": "C-LL3-006",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-006",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-007:v1",
+      "concept_id": "C-LL3-007",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-007",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-007:v3",
+      "concept_id": "C-LL3-007",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL3-007",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-008:v1",
+      "concept_id": "C-LL3-008",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL3-008",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-008:v3",
+      "concept_id": "C-LL3-008",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-008",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-009:v1",
+      "concept_id": "C-LL3-009",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-009",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-009:v3",
+      "concept_id": "C-LL3-009",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL3-009",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-010:v1",
+      "concept_id": "C-LL3-010",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL3-010",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL3-010:v3",
+      "concept_id": "C-LL3-010",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL3-010",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-001:v1",
+      "concept_id": "C-LL4-001",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-001",
+      "rule_ids": ["RR-LLC-001"]
+    },
+    {
+      "item_id": "C-LL4-001:v3",
+      "concept_id": "C-LL4-001",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL4-001",
+      "rule_ids": ["RR-LLC-001"]
+    },
+    {
+      "item_id": "C-LL4-002:v1",
+      "concept_id": "C-LL4-002",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL4-002",
+      "rule_ids": ["RR-LLC-001"]
+    },
+    {
+      "item_id": "C-LL4-002:v3",
+      "concept_id": "C-LL4-002",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-002",
+      "rule_ids": ["RR-LLC-001"]
+    },
+    {
+      "item_id": "C-LL4-003:v1",
+      "concept_id": "C-LL4-003",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-003",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-003:v3",
+      "concept_id": "C-LL4-003",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL4-003",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-004:v1",
+      "concept_id": "C-LL4-004",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL4-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-004:v3",
+      "concept_id": "C-LL4-004",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL4-004",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-005:v1",
+      "concept_id": "C-LL4-005",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-005",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-005:v3",
+      "concept_id": "C-LL4-005",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL4-005",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-006:v1",
+      "concept_id": "C-LL4-006",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL4-006",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-006:v3",
+      "concept_id": "C-LL4-006",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-006",
+      "rule_ids": []
+    },
+    {
+      "item_id": "C-LL4-007:v1",
+      "concept_id": "C-LL4-007",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-007",
+      "rule_ids": ["RR-DOC-001"]
+    },
+    {
+      "item_id": "C-LL4-007:v3",
+      "concept_id": "C-LL4-007",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL4-007",
+      "rule_ids": ["RR-DOC-001"]
+    },
+    {
+      "item_id": "C-LL4-008:v1",
+      "concept_id": "C-LL4-008",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL4-008",
+      "rule_ids": ["RR-DOC-001"]
+    },
+    {
+      "item_id": "C-LL4-008:v3",
+      "concept_id": "C-LL4-008",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL4-008",
+      "rule_ids": ["RR-DOC-001"]
+    },
+    {
+      "item_id": "C-LL4-009:v1",
+      "concept_id": "C-LL4-009",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-009",
+      "rule_ids": ["RR-DOC-001"]
+    },
+    {
+      "item_id": "C-LL4-009:v3",
+      "concept_id": "C-LL4-009",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL4-009",
+      "rule_ids": ["RR-DOC-001"]
+    },
+    {
+      "item_id": "C-LL4-010:v1",
+      "concept_id": "C-LL4-010",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL4-010",
+      "rule_ids": ["RR-ACC-001", "RR-GHR-002"]
+    },
+    {
+      "item_id": "C-LL4-010:v3",
+      "concept_id": "C-LL4-010",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-010",
+      "rule_ids": ["RR-ACC-001", "RR-GHR-002"]
+    },
+    {
+      "item_id": "C-LL4-011:v1",
+      "concept_id": "C-LL4-011",
+      "correct_option_id": "a",
+      "explanation_id": "EX-C-LL4-011",
+      "rule_ids": ["RR-GHR-001", "RR-GHR-002"]
+    },
+    {
+      "item_id": "C-LL4-011:v3",
+      "concept_id": "C-LL4-011",
+      "correct_option_id": "b",
+      "explanation_id": "EX-C-LL4-011",
+      "rule_ids": ["RR-GHR-001", "RR-GHR-002"]
+    },
+    {
+      "item_id": "C-LL4-012:v1",
+      "concept_id": "C-LL4-012",
+      "correct_option_id": "c",
+      "explanation_id": "EX-C-LL4-012",
+      "rule_ids": ["RR-U18-001"]
+    },
+    {
+      "item_id": "C-LL4-012:v3",
+      "concept_id": "C-LL4-012",
+      "correct_option_id": "d",
+      "explanation_id": "EX-C-LL4-012",
+      "rule_ids": ["RR-U18-001"]
+    }
+  ],
+  "explanations": [
+    {
+      "explanation_id": "EX-C-LL1-001",
+      "text": {
+        "en": "A red octagon is the stop sign. Stop completely at the stop line, even if the road looks empty, and go only when the way is clear.",
+        "hi": "लाल अष्टकोण स्टॉप संकेत है। सड़क ख़ाली लगे तब भी स्टॉप लाइन पर पूरी तरह रुकें, और रास्ता साफ़ होने पर ही आगे बढ़ें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-002",
+      "text": {
+        "en": "The downward-pointing triangle with a red border means give way. Traffic on the road you are joining goes first; slow down and stop if you need to.",
+        "hi": "नीचे की ओर नोक वाला लाल किनारे का त्रिकोण 'रास्ता दें' संकेत है। जिस सड़क में आप जा रहे हैं, उसका ट्रैफ़िक पहले जाता है; धीमे हों और ज़रूरत हो तो रुकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-003",
+      "text": {
+        "en": "A red circle with a white bar means no entry. Vehicles must not enter from this side, usually because traffic comes the other way.",
+        "hi": "सफ़ेद आड़ी पट्टी वाला लाल गोला 'प्रवेश निषेध' है। इस ओर से वाहन अंदर नहीं जा सकते, अक्सर इसलिए कि ट्रैफ़िक दूसरी ओर से आता है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-004",
+      "text": {
+        "en": "A red-bordered circle with a right-bending arrow struck through means no right turn. Go ahead or turn left, and find another way round.",
+        "hi": "लाल किनारे के गोले में कटा हुआ, दाईं ओर मुड़ता तीर मतलब दाएँ मुड़ना मना है। सीधे जाएँ या बाएँ मुड़ें, और दूसरा रास्ता लें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-005",
+      "text": {
+        "en": "A U-shaped arrow struck through in a red-bordered circle means no U-turn here, even when the road looks clear.",
+        "hi": "लाल किनारे के गोले में कटा हुआ U आकार का तीर मतलब यहाँ U-टर्न मना है, सड़क ख़ाली दिखे तब भी।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-006",
+      "text": {
+        "en": "Two cars side by side in a red-bordered circle means no overtaking. Stay behind the vehicle ahead until the stretch ends.",
+        "hi": "लाल किनारे के गोले में अगल-बगल दो कारें मतलब ओवरटेक मना है। यह हिस्सा ख़त्म होने तक आगे वाले वाहन के पीछे रहें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-007",
+      "text": {
+        "en": "A horn struck through in a red-bordered circle means do not use the horn. These signs are common in silence zones near hospitals and schools.",
+        "hi": "लाल किनारे के गोले में कटा हुआ हॉर्न मतलब हॉर्न न बजाएँ। ऐसे संकेत अक्सर अस्पताल और स्कूल के पास साइलेंस ज़ोन में होते हैं।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-008",
+      "text": {
+        "en": "A letter P struck through means no parking: do not leave your vehicle standing here. The no-stopping sign, with a red cross, is stricter still.",
+        "hi": "कटा हुआ P मतलब पार्किंग मना है: यहाँ गाड़ी खड़ी न छोड़ें। लाल क्रॉस वाला 'रुकना मना' संकेत इससे भी सख़्त है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-009",
+      "text": {
+        "en": "A number in a red-bordered circle is the speed limit: the most you may ride at there, not a target. Ride slower when the road, weather or traffic needs it.",
+        "hi": "लाल किनारे के गोले में लिखा नंबर गति-सीमा है: वहाँ की सबसे ज़्यादा रफ़्तार, कोई लक्ष्य नहीं। सड़क, मौसम या ट्रैफ़िक के हिसाब से धीमे चलें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-010",
+      "text": {
+        "en": "A blue circle shows something you must do. The arrow pointing down to the left means keep to the left of the island or obstruction.",
+        "hi": "नीला गोला ऐसा काम बताता है जो करना ज़रूरी है। नीचे-बाईं ओर का तीर मतलब डिवाइडर या रुकावट के बाईं ओर से निकलें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-011",
+      "text": {
+        "en": "A line turning sharply back on itself to the right warns of a right hairpin bend. Slow down before it, stay on your side and never overtake on the bend.",
+        "hi": "दाईं ओर तेज़ी से वापस मुड़ती लाइन दाईं ओर हेयरपिन मोड़ की चेतावनी है। उससे पहले धीमे हों, अपनी तरफ़ रहें और मोड़ पर कभी ओवरटेक न करें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-012",
+      "text": {
+        "en": "This triangle warns of a narrow bridge. Slow down; there may be room for only one vehicle at a time, so wait if something is already crossing.",
+        "hi": "यह त्रिकोण संकरे पुल की चेतावनी है। धीमे हों; एक बार में एक ही वाहन की जगह हो सकती है, इसलिए कोई पहले से पार कर रहा हो तो रुकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-013",
+      "text": {
+        "en": "Children walking in a red-bordered triangle warns of a school ahead. Slow down and expect children to step out, especially at opening and closing times.",
+        "hi": "लाल किनारे के त्रिकोण में चलते बच्चे आगे स्कूल की चेतावनी है। धीमे हों और बच्चों के अचानक सड़क पर आने की उम्मीद रखें, ख़ासकर स्कूल खुलने और छुट्टी के समय।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-014",
+      "text": {
+        "en": "A person walking on stripes warns of a pedestrian crossing ahead. Slow down and be ready to stop for anyone crossing or about to cross.",
+        "hi": "धारियों पर चलता व्यक्ति आगे पैदल यात्री क्रॉसिंग की चेतावनी है। धीमे हों और पार करते या पार करने वाले किसी भी व्यक्ति के लिए रुकने को तैयार रहें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-015",
+      "text": {
+        "en": "A cow in a red-bordered triangle warns that cattle may be on the road. Slow down; animals can move in any direction without warning.",
+        "hi": "लाल किनारे के त्रिकोण में गाय इस बात की चेतावनी है कि सड़क पर मवेशी हो सकते हैं। धीमे हों; जानवर बिना बताए किसी भी ओर जा सकते हैं।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-016",
+      "text": {
+        "en": "Stones falling down a slope warn that rocks may fall onto the road. Don't stop here, and watch for stones lying on the road.",
+        "hi": "ढलान से गिरते पत्थर इस बात की चेतावनी हैं कि सड़क पर पत्थर गिर सकते हैं। यहाँ न रुकें और सड़क पर पड़े पत्थरों का ध्यान रखें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-017",
+      "text": {
+        "en": "A steam engine in a red-bordered triangle warns of a railway crossing with no gate. Stop, look both ways and listen before you cross.",
+        "hi": "लाल किनारे के त्रिकोण में भाप का इंजन बिना फाटक वाली रेलवे क्रॉसिंग की चेतावनी है। पार करने से पहले रुकें, दोनों ओर देखें और सुनें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-018",
+      "text": {
+        "en": "A slope falling away in a red-bordered triangle warns of a steep descent. Use a low gear so the engine helps hold your speed; don't coast in neutral.",
+        "hi": "लाल किनारे के त्रिकोण में नीचे जाती ढलान खड़ी ढलान की चेतावनी है। नीचे का गियर लगाएँ ताकि इंजन रफ़्तार संभाले; न्यूट्रल में न लुढ़कें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-019",
+      "text": {
+        "en": "A vehicle with wavy lines behind it warns that the road may be slippery. Slow down, keep a longer gap and brake gently.",
+        "hi": "पीछे लहरदार लाइनों वाला वाहन इस बात की चेतावनी है कि सड़क फिसलन भरी हो सकती है। धीमे हों, ज़्यादा फ़ासला रखें और धीरे से ब्रेक लगाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-020",
+      "text": {
+        "en": "Two lines coming closer together warn that the road narrows ahead. Slow down and keep left; oncoming traffic will be closer to you.",
+        "hi": "पास आती दो लाइनें बताती हैं कि आगे सड़क संकरी होती है। धीमे हों और बाईं ओर रहें; सामने का ट्रैफ़िक आपके ज़्यादा पास होगा।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-021",
+      "text": {
+        "en": "Blue rectangles are informatory signs. This one, with a fuel pump, tells you a fuel station is ahead.",
+        "hi": "नीले आयत सूचना संकेत होते हैं। फ़्यूल पंप वाला यह संकेत बताता है कि आगे पेट्रोल पंप है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-022",
+      "text": {
+        "en": "This informatory board shows a hospital is ahead or nearby. Near hospitals, ride quietly and avoid the horn.",
+        "hi": "यह सूचना बोर्ड बताता है कि आगे या पास में अस्पताल है। अस्पताल के पास शांति से चलें और हॉर्न न बजाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-023",
+      "text": {
+        "en": "This blue board means the road does not lead through; it ends ahead. You may enter, but you will have to come back the same way.",
+        "hi": "यह नीला बोर्ड बताता है कि सड़क आगे नहीं जाती, आगे बंद है। आप अंदर जा सकते हैं, पर उसी रास्ते लौटना होगा।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-024",
+      "text": {
+        "en": "Indian road signs come in three families: mandatory signs are mostly circles (a red border forbids, a blue disc orders), cautionary signs are red-bordered triangles, and informatory signs are rectangles. Stop is an octagon and give way an inverted triangle.",
+        "hi": "भारतीय सड़क संकेतों के तीन परिवार हैं: अनिवार्य संकेत ज़्यादातर गोल होते हैं (लाल किनारा मना करता है, नीला गोला करने को कहता है), चेतावनी संकेत लाल किनारे वाले त्रिकोण होते हैं, और सूचना संकेत आयत होते हैं। स्टॉप अष्टकोण होता है और 'रास्ता दें' उल्टा त्रिकोण।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-025",
+      "text": {
+        "en": "Wide white stripes across the road mark a pedestrian crossing. Slow down, give way to anyone on it, and never stop on the stripes.",
+        "hi": "सड़क पर आड़ी चौड़ी सफ़ेद धारियाँ पैदल यात्री क्रॉसिंग होती हैं। धीमे हों, उस पर मौजूद लोगों को रास्ता दें और धारियों पर कभी न रुकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-026",
+      "text": {
+        "en": "An unbroken centre line, white or yellow, means do not cross it or overtake across it. Wait until the line becomes broken and the road ahead is clear.",
+        "hi": "बीच की लगातार लाइन, सफ़ेद हो या पीली, मतलब इसे पार न करें और इसके पार ओवरटेक न करें। लाइन टूटी होने और आगे सड़क साफ़ होने तक रुकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-027",
+      "text": {
+        "en": "A broken centre line means you may cross it to overtake, but only when you can see the road ahead is clear for the whole move.",
+        "hi": "बीच की टूटी लाइन मतलब ओवरटेक के लिए इसे पार कर सकते हैं, पर तभी जब पूरे ओवरटेक के लिए आगे सड़क साफ़ दिखे।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-028",
+      "text": {
+        "en": "A steady amber light means stop at the stop line unless you are so close that you cannot stop in time. Red comes next; never speed up to beat it.",
+        "hi": "लगातार पीली बत्ती का मतलब है स्टॉप लाइन पर रुकें, जब तक कि आप इतने पास न हों कि समय पर रुक न सकें। इसके बाद लाल होती है; उससे पहले निकलने के लिए कभी रफ़्तार न बढ़ाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-029",
+      "text": {
+        "en": "A flashing amber light means the signal is not controlling traffic right now. Slow down, look both ways and go on with care, giving way as needed.",
+        "hi": "चमकती पीली बत्ती मतलब इस समय सिग्नल ट्रैफ़िक नहीं चला रहा। धीमे हों, दोनों ओर देखें और सावधानी से आगे बढ़ें, ज़रूरत हो तो रास्ता दें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL1-030",
+      "text": {
+        "en": "A flashing red light works like a stop sign: stop completely, then go only when the way is clear.",
+        "hi": "चमकती लाल बत्ती स्टॉप संकेत की तरह है: पूरी तरह रुकें, फिर रास्ता साफ़ होने पर ही जाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-001",
+      "text": {
+        "en": "In India traffic keeps left. Ride as close to the left as is practical and let oncoming traffic pass on your right; never ride against traffic, even for a short distance.",
+        "hi": "भारत में ट्रैफ़िक बाईं ओर चलता है। जितना हो सके बाईं ओर चलें और सामने के ट्रैफ़िक को अपनी दाईं ओर से निकलने दें; थोड़ी दूरी के लिए भी उल्टी दिशा में न चलें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-002",
+      "text": {
+        "en": "Overtake only on the right of the vehicle you are passing, after checking that the road ahead is clear. Passing on the left puts you where drivers don't expect you.",
+        "hi": "आगे वाले वाहन को सिर्फ़ उसकी दाईं ओर से ओवरटेक करें, और पहले देख लें कि आगे सड़क साफ़ है। बाईं ओर से निकलने पर आप वहाँ होते हैं जहाँ ड्राइवर आपकी उम्मीद नहीं करता।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-003",
+      "text": {
+        "en": "Don't overtake where you cannot see far enough ahead, such as bends, hill tops and junctions, or at pedestrian crossings. Wait for a straight, clear stretch.",
+        "hi": "जहाँ आगे दूर तक न दिखे, जैसे मोड़, चढ़ाई का ऊपरी हिस्सा और चौराहे, या पैदल यात्री क्रॉसिंग पर, वहाँ ओवरटेक न करें। सीधे और साफ़ हिस्से का इंतज़ार करें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-004",
+      "text": {
+        "en": "When you are being overtaken, keep left and don't speed up. Make it easy for the other vehicle to pass and pull back in.",
+        "hi": "जब कोई आपको ओवरटेक कर रहा हो, बाईं ओर रहें और रफ़्तार न बढ़ाएँ। दूसरे वाहन के लिए आगे निकलकर वापस लौटना आसान बनाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-005",
+      "text": {
+        "en": "Where a junction has no signals, signs or police and neither road is the main road, give way to traffic coming from your right, and to anyone already in the junction.",
+        "hi": "जहाँ चौराहे पर न सिग्नल हो, न संकेत, न पुलिस, और कोई सड़क मुख्य न हो, वहाँ दाईं ओर से आते ट्रैफ़िक को और चौराहे में पहले से मौजूद लोगों को रास्ता दें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-006",
+      "text": {
+        "en": "When you come out of a side road, lane or driveway, traffic already on the main road goes first. Stop if needed, creep forward to see, and go only into a gap you can complete.",
+        "hi": "किसी गली, लेन या घर के रास्ते से निकलते समय मुख्य सड़क पर पहले से चल रहा ट्रैफ़िक पहले जाता है। ज़रूरत हो तो रुकें, धीरे बढ़कर देखें और उतने ही फ़ासले में निकलें जिसमें आप पूरा निकल सकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-007",
+      "text": {
+        "en": "Give way to anyone on a pedestrian crossing, and never stop on the stripes. If a vehicle has stopped at a crossing, someone may be crossing in front of it.",
+        "hi": "पैदल यात्री क्रॉसिंग पर मौजूद हर व्यक्ति को रास्ता दें और धारियों पर कभी न रुकें। अगर क्रॉसिंग पर कोई वाहन रुका है, तो उसके आगे कोई पार कर रहा हो सकता है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-008",
+      "text": {
+        "en": "Give free passage to ambulances and fire engines on emergency duty: move to the left and slow down or stop so they can pass.",
+        "hi": "आपात ड्यूटी पर चल रही एम्बुलेंस और दमकल गाड़ी को रास्ता दें: बाईं ओर हो जाएँ और धीमे हों या रुकें ताकि वे निकल सकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-009",
+      "text": {
+        "en": "Use the horn only to warn others when needed, never to rush people. Don't use it in silence zones near hospitals and schools, or where a horn-prohibited sign is shown.",
+        "hi": "हॉर्न सिर्फ़ ज़रूरत पड़ने पर दूसरों को सावधान करने के लिए बजाएँ, किसी को जल्दी कराने के लिए नहीं। अस्पताल और स्कूल के पास साइलेंस ज़ोन में, या जहाँ हॉर्न मना का संकेत हो, हॉर्न न बजाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-010",
+      "text": {
+        "en": "Don't park where you block or surprise others: on bends, bridges and hill tops, at or near junctions and crossings, on footpaths, or in front of entrances. Use marked parking.",
+        "hi": "ऐसी जगह पार्क न करें जहाँ आप दूसरों का रास्ता रोकें या उन्हें चौंकाएँ: मोड़, पुल और चढ़ाई के ऊपर, चौराहे और क्रॉसिंग पर या उनके पास, फ़ुटपाथ पर, या किसी गेट के सामने। तय पार्किंग इस्तेमाल करें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-011",
+      "text": {
+        "en": "To turn right, check mirrors, signal right in good time and move towards the centre of the road. Give way to oncoming traffic, then turn.",
+        "hi": "दाएँ मुड़ने के लिए शीशे देखें, समय से दायाँ इंडिकेटर दें और सड़क के बीच की ओर जाएँ। सामने के ट्रैफ़िक को रास्ता दें, फिर मुड़ें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-012",
+      "text": {
+        "en": "To turn left, check your mirror and your left side, signal left in good time and keep close to the left. Watch for cyclists and pedestrians on your left before you turn.",
+        "hi": "बाएँ मुड़ने के लिए शीशा और अपनी बाईं ओर देखें, समय से बायाँ इंडिकेटर दें और बाईं ओर पास रहें। मुड़ने से पहले बाईं ओर साइकिल सवारों और पैदल यात्रियों का ध्यान रखें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-013",
+      "text": {
+        "en": "On a one-way road traffic moves in one direction only. Never ride against it or reverse along it; take the next legal route instead.",
+        "hi": "वन-वे सड़क पर ट्रैफ़िक एक ही दिशा में चलता है। उसके उल्टा कभी न चलें और न पीछे की ओर रिवर्स करें; अगला सही रास्ता लें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-014",
+      "text": {
+        "en": "Keep within your lane. Before changing lanes, check mirrors, signal and look over your shoulder, then move only into a clear gap.",
+        "hi": "अपनी लेन के भीतर रहें। लेन बदलने से पहले शीशे देखें, इंडिकेटर दें और कंधे के ऊपर से देखें, फिर सिर्फ़ ख़ाली फ़ासले में जाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-015",
+      "text": {
+        "en": "Keep at least a 3-second gap: when the vehicle ahead passes a fixed point, you should take 3 seconds or more to reach it. Make it 4 seconds or more in the wet or at night.",
+        "hi": "कम से कम 3 सेकंड का फ़ासला रखें: आगे वाला वाहन किसी तय जगह से निकले, तो आपको वहाँ पहुँचने में 3 सेकंड या उससे ज़्यादा लगने चाहिए। गीली सड़क पर या रात में इसे 4 सेकंड या ज़्यादा करें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-016",
+      "text": {
+        "en": "A speed limit is the most you may ride at, not a target. Ride at a speed that lets you stop within the distance you can see to be clear.",
+        "hi": "गति-सीमा सबसे ज़्यादा अनुमत रफ़्तार है, कोई लक्ष्य नहीं। उतनी रफ़्तार रखें जिस पर आप साफ़ दिख रही दूरी के भीतर रुक सकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-017",
+      "text": {
+        "en": "In left-hand traffic, roundabouts run clockwise. Slow down, give way to traffic already on the roundabout (coming from your right), and signal before you leave.",
+        "hi": "बाईं ओर चलने वाले ट्रैफ़िक में गोल चक्कर घड़ी की दिशा में चलता है। धीमे हों, चक्कर पर पहले से मौजूद (आपकी दाईं ओर से आते) ट्रैफ़िक को रास्ता दें, और निकलने से पहले इंडिकेटर दें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-018",
+      "text": {
+        "en": "Using a handheld phone while riding or driving is an offence. Even hands-free calls distract you, so set navigation before you start and pull over to talk.",
+        "hi": "बाइक या गाड़ी चलाते समय हाथ में फ़ोन लेकर इस्तेमाल करना अपराध है। हैंड्स-फ़्री कॉल भी ध्यान भटकाती है, इसलिए चलने से पहले नेविगेशन सेट करें और बात करने के लिए किनारे रुकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-019",
+      "text": {
+        "en": "The rider and the pillion must both wear a protective helmet, on every trip, with the strap fastened.",
+        "hi": "चलाने वाले और पीछे बैठी सवारी, दोनों को हर सफ़र में स्ट्रैप बाँधकर सुरक्षात्मक हेलमेट पहनना चाहिए।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-020",
+      "text": {
+        "en": "Riding or driving with alcohol in your blood above the legal limit is an offence, and alcohol slows you down well before you feel it. Coffee doesn't help; plan a sober ride home.",
+        "hi": "क़ानूनी सीमा से ज़्यादा शराब पीकर बाइक या गाड़ी चलाना अपराध है, और शराब आपको महसूस होने से पहले ही धीमा कर देती है। कॉफ़ी से कोई फ़र्क़ नहीं पड़ता; घर लौटने का ऐसा इंतज़ाम करें जिसमें चलाने वाले ने न पी हो।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-021",
+      "text": {
+        "en": "Dip to low beam for oncoming traffic and when following another vehicle, so you don't dazzle drivers. If you are dazzled, look to the left edge and slow down.",
+        "hi": "सामने से आते ट्रैफ़िक के लिए और किसी के पीछे चलते समय लो बीम करें, ताकि ड्राइवरों की आँखें न चौंधियाएँ। अगर आपकी आँखें चौंधियाएँ, तो बाएँ किनारे की ओर देखें और धीमे हो जाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-022",
+      "text": {
+        "en": "On steep, narrow roads, vehicles going downhill normally give way to vehicles climbing, which find it harder to stop and restart. Stop at a widening and let them pass.",
+        "hi": "खड़ी और संकरी सड़कों पर नीचे उतरते वाहन आमतौर पर चढ़ते वाहनों को रास्ता देते हैं, क्योंकि चढ़ते वाहन के लिए रुककर फिर चलना मुश्किल होता है। चौड़ी जगह पर रुकें और उन्हें निकलने दें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL2-023",
+      "text": {
+        "en": "Everyone in a car should wear a seatbelt on every trip, in the front and rear seats; airbags are built to work together with belts.",
+        "hi": "कार में हर व्यक्ति को हर सफ़र में सीट बेल्ट पहननी चाहिए, आगे और पीछे दोनों सीटों पर; एयरबैग बेल्ट के साथ मिलकर काम करने के लिए बने होते हैं।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-001",
+      "text": {
+        "en": "To show you are slowing down, stretch your right arm out with the palm facing down and move it up and down a few times.",
+        "hi": "धीमे होने का इशारा देने के लिए दायाँ हाथ बगल में फैलाएँ, हथेली नीचे की ओर रखें और उसे कुछ बार ऊपर-नीचे करें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-002",
+      "text": {
+        "en": "To show you are going to stop, raise your right forearm straight up from the elbow with the palm facing forward.",
+        "hi": "रुकने का इशारा देने के लिए दाईं बाँह कोहनी से सीधी ऊपर उठाएँ, हथेली आगे की ओर रखें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-003",
+      "text": {
+        "en": "To show a right turn, stretch your right arm straight out to the side, palm facing forward, and hold it still.",
+        "hi": "दाएँ मुड़ने का इशारा देने के लिए दायाँ हाथ बगल में सीधा फैलाएँ, हथेली आगे की ओर, और उसे स्थिर रखें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-004",
+      "text": {
+        "en": "To show a left turn, stretch your right arm out and rotate it in an anticlockwise circle.",
+        "hi": "बाएँ मुड़ने का इशारा देने के लिए दायाँ हाथ फैलाएँ और उसे घड़ी की उल्टी दिशा में गोल घुमाएँ।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-005",
+      "text": {
+        "en": "To let the vehicle behind overtake, hold your right arm out below shoulder level and swing it backward and forward. The overtaking driver must still check that the road ahead is clear.",
+        "hi": "पीछे वाले वाहन को ओवरटेक करने देने के लिए दायाँ हाथ कंधे से नीचे फैलाएँ और आगे-पीछे झुलाएँ। ओवरटेक करने वाले को फिर भी देखना होगा कि आगे सड़क साफ़ है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-006",
+      "text": {
+        "en": "Switch on your indicator well before you turn or change lanes, after checking your mirrors, so others have time to react.",
+        "hi": "मुड़ने या लेन बदलने से काफ़ी पहले, शीशे देखकर, इंडिकेटर चालू करें ताकि दूसरों को संभलने का समय मिले।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-007",
+      "text": {
+        "en": "Switch your indicator off after the turn. Many two-wheelers don't cancel it by themselves, and a forgotten indicator misleads others.",
+        "hi": "मुड़ने के बाद इंडिकेटर बंद करें। कई दोपहिया में यह अपने-आप बंद नहीं होता, और भूला हुआ इंडिकेटर दूसरों को भ्रम में डालता है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-008",
+      "text": {
+        "en": "Hazard warning lights, with all indicators blinking together, are for a vehicle that has stopped or broken down where it may be a hazard. In fog, use low beam and fog lamps instead; hazard lights while moving confuse others.",
+        "hi": "हैज़र्ड लाइट, यानी सारे इंडिकेटर एक साथ जलना-बुझना, उस वाहन के लिए है जो रुका हो या ख़राब हो गया हो और ख़तरा बन सकता हो। कोहरे में इसके बजाय लो बीम और फ़ॉग लैंप इस्तेमाल करें; चलते समय हैज़र्ड लाइट दूसरों को भ्रम में डालती है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-009",
+      "text": {
+        "en": "Brighter red rear lamps mean the vehicle ahead is braking. Ease off early and check your gap; several brake lights at once can mean traffic is stopping.",
+        "hi": "पिछली लाल बत्तियाँ तेज़ हों तो आगे वाला वाहन ब्रेक लगा रहा है। जल्दी रफ़्तार कम करें और फ़ासला जाँचें; एक साथ कई ब्रेक लाइट का मतलब हो सकता है कि ट्रैफ़िक रुक रहा है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL3-010",
+      "text": {
+        "en": "A signal only shows what you plan to do; it does not give you the right of way. Check that it is clear before you move, and don't rely on other people's signals alone.",
+        "hi": "इंडिकेटर सिर्फ़ बताता है कि आप क्या करने वाले हैं; इससे आपको रास्ते का हक़ नहीं मिलता। चलने से पहले देखें कि रास्ता साफ़ है, और सिर्फ़ दूसरों के इंडिकेटर के भरोसे न रहें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-001",
+      "text": {
+        "en": "A learner must display an \"L\" plate on the front and the rear of the vehicle (CMVR r.3).",
+        "hi": "लर्नर को वाहन के आगे और पीछे, दोनों जगह \"L\" प्लेट लगानी होती है (CMVR r.3)।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-002",
+      "text": {
+        "en": "A learner's licence is for learning under supervision: show \"L\" plates and be accompanied by a person who holds a valid driving licence for that vehicle (CMVR r.3).",
+        "hi": "लर्नर लाइसेंस निगरानी में सीखने के लिए होता है: \"L\" प्लेट लगाएँ और साथ में ऐसा व्यक्ति हो जिसके पास उस वाहन का वैध ड्राइविंग लाइसेंस हो (CMVR r.3)।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-003",
+      "text": {
+        "en": "A learner's licence is valid for 6 months from the date it is issued. Take your driving test before it runs out.",
+        "hi": "लर्नर लाइसेंस जारी होने की तारीख़ से 6 महीने तक वैध रहता है। इसके ख़त्म होने से पहले ड्राइविंग टेस्ट दें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-004",
+      "text": {
+        "en": "You can take the driving test 30 days after your learner's licence is issued; use that time to practise. Your plan shows your state's exact date.",
+        "hi": "लर्नर लाइसेंस जारी होने के 30 दिन बाद आप ड्राइविंग टेस्ट दे सकते हैं; यह समय अभ्यास में लगाएँ। आपकी योजना में आपके राज्य की सही तारीख़ दिखती है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-005",
+      "text": {
+        "en": "You can apply for a geared motorcycle (MCWG) or a car (LMV-NT) licence from age 18.",
+        "hi": "गियर वाली मोटरसाइकिल (MCWG) या कार (LMV-NT) के लाइसेंस के लिए 18 साल की उम्र से आवेदन कर सकते हैं।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-006",
+      "text": {
+        "en": "Until 18 you can only get the gearless two-wheeler licence for engines up to 50 cc, with your parent's or guardian's consent. Most scooters are bigger than 50 cc.",
+        "hi": "18 साल से पहले सिर्फ़ 50 cc तक के बिना गियर वाले दोपहिया का लाइसेंस मिल सकता है, वह भी माता-पिता या अभिभावक की सहमति से। ज़्यादातर स्कूटर 50 cc से बड़े होते हैं।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-007",
+      "text": {
+        "en": "Carry, or be able to show, your driving licence and the vehicle's registration certificate (RC), insurance certificate and pollution under control (PUC) certificate.",
+        "hi": "अपना ड्राइविंग लाइसेंस और वाहन का रजिस्ट्रेशन सर्टिफ़िकेट (RC), बीमा सर्टिफ़िकेट और प्रदूषण नियंत्रण (PUC) सर्टिफ़िकेट साथ रखें या दिखा सकें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-008",
+      "text": {
+        "en": "Digital copies of your licence and RC in DigiLocker or mParivahan are meant to be accepted like the originals; plain photos or scans are not. Acceptance in practice can vary by state, so carry the originals if you are unsure.",
+        "hi": "DigiLocker या mParivahan में रखी लाइसेंस और RC की डिजिटल कॉपी मूल दस्तावेज़ की तरह मानी जानी चाहिए; साधारण फ़ोटो या स्कैन नहीं। असल में यह राज्य के हिसाब से बदल सकता है, इसलिए पक्का न हो तो मूल दस्तावेज़ साथ रखें।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-009",
+      "text": {
+        "en": "Every motor vehicle used in a public place must have at least third-party insurance, which covers your liability to other people. Riding without valid insurance is an offence.",
+        "hi": "सार्वजनिक जगह पर चलने वाले हर मोटर वाहन का कम से कम थर्ड-पार्टी बीमा होना ज़रूरी है, जो दूसरे लोगों के प्रति आपकी ज़िम्मेदारी को कवर करता है। बिना वैध बीमे के चलाना अपराध है।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-010",
+      "text": {
+        "en": "If you are involved in a road accident where someone is hurt, help them get medical care, call 112 and report it to the police (MV Act s.134).",
+        "hi": "अगर आप किसी ऐसे सड़क हादसे में शामिल हैं जिसमें कोई घायल हुआ है, तो उसे इलाज दिलाने में मदद करें, 112 पर कॉल करें और पुलिस को सूचना दें (MV Act s.134)।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-011",
+      "text": {
+        "en": "People who help a road accident victim in good faith are protected by law (MV Act s.134A, the Good Samaritan provision). Fear of trouble should not stop you from calling 112 and helping.",
+        "hi": "जो लोग नेक नीयत से सड़क हादसे के घायल की मदद करते हैं, उन्हें क़ानूनी सुरक्षा मिलती है (MV Act s.134A, नेक मददगार प्रावधान)। परेशानी का डर आपको 112 पर कॉल करने और मदद करने से न रोके।"
+      }
+    },
+    {
+      "explanation_id": "EX-C-LL4-012",
+      "text": {
+        "en": "Under MV Act s.199A, the guardian or the vehicle's owner can be held responsible when a minor commits a motor-vehicle offence. Don't hand your vehicle to someone who can't hold a licence for it.",
+        "hi": "MV Act s.199A के तहत, नाबालिग के मोटर वाहन से जुड़े अपराध के लिए अभिभावक या वाहन मालिक को ज़िम्मेदार ठहराया जा सकता है। अपना वाहन किसी ऐसे व्यक्ति को न दें जो उसका लाइसेंस नहीं ले सकता।"
+      }
+    }
+  ]
+}

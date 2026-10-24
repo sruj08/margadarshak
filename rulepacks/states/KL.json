@@ -1,0 +1,201 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "KL",
+  "name": "Kerala overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: verify at your RTO. Online LL test scrapped Aug 2022 (EC-10). HPT announced by circular of 12 Sep 2026, from 1 Dec 2026 (EC-28: status field announced / in_force / stayed / postponed). Conflict to resolve: the Sarathi Kerala modal (observed 2026-10-22) lists 'Issue of LL' as a faceless service; whether the LL test itself can be taken at home again is unverified, so online stays false.",
+  "rules": [
+    {
+      "id": "KL-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.kl.ll.test_mode",
+      "condition": true,
+      "output": { "value": { "onlineAvailable": false, "where": ["rto"] } },
+      "text": {
+        "en": "Kerala stopped the online LL test in 2022 after agents took tests for applicants. The LL test is at the RTO."
+      },
+      "source": {
+        "title": "Onmanorama, 02 Aug 2022: Kerala abandons online learner licence test",
+        "url": "https://onmanorama.com/news/business/2022/08/02/kerala-abandons-online-test-learner-licence-fraud-reported.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "KL-PRM-HPT",
+      "kind": "param",
+      "overrides": "PRM-HPT",
+      "textKey": "rule.kl.hpt",
+      "condition": true,
+      "output": {
+        "value": {
+          "status": "announced",
+          "effectiveFrom": "2026-12-01",
+          "circularDate": "2026-09-12",
+          "clips": 10,
+          "marksPerClip": 10,
+          "passMark": 60
+        }
+      },
+      "text": {
+        "en": "Kerala announced a hazard-perception test from December 2026: 10 one-minute clips, 10 marks each, pass 60/100, after the 30-day gap and before the ground test."
+      },
+      "source": {
+        "title": "Onmanorama, 14 Sep 2026: Kerala adds hazard perception test for driving licences from Dec 1",
+        "url": "https://www.onmanorama.com/news/kerala/2026/09/14/kerala-adds-hazard-perception-test-for-driving-licences-from-dec-1-first-in-india.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "KL-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.kl.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": false,
+          "tracks": ["road test before H-test", "angular/parallel parking", "zig-zag", "gradient"]
+        }
+      },
+      "text": {
+        "en": "Kerala tests are run by Motor Vehicle Inspectors: a road test before the H-test, plus parking, zig-zag and gradient tests, with dashcams."
+      },
+      "source": {
+        "title": "Onmanorama, 19 Sep 2024: Kerala test reforms (Circular 4/2024)",
+        "url": "https://onmanorama.com/news/kerala/2024/09/19/high-driving-test-failure-rate-post-reforms-kerala-government-revise-daily-limit.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "KL-NTC-HPT",
+      "kind": "notice",
+      "textKey": "notice.kl.hpt_in_your_test",
+      "condition": {
+        "all": [
+          { "in": [{ "param": { "id": "PRM-HPT", "path": "status" } }, ["announced", "in_force"]] },
+          {
+            "gte": [
+              { "fact": "dlTestUnlock" },
+              { "param": { "id": "PRM-HPT", "path": "effectiveFrom" } }
+            ]
+          }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "Your driving test falls after Kerala's hazard-perception test starts. Practise in Kerala's announced format."
+      },
+      "refs": ["EC-28"],
+      "source": {
+        "title": "Onmanorama, 14 Sep 2026; South First on the HPT circular",
+        "url": "https://thesouthfirst.com/kerala/how-fast-can-you-spot-danger-keralams-new-licence-test-faces-driving-school-block/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "KL-NTC-HPT-UPCOMING",
+      "kind": "notice",
+      "textKey": "notice.kl.hpt_may_apply",
+      "condition": {
+        "all": [
+          { "in": [{ "param": { "id": "PRM-HPT", "path": "status" } }, ["announced", "in_force"]] },
+          {
+            "lt": [
+              { "fact": "dlTestUnlock" },
+              { "param": { "id": "PRM-HPT", "path": "effectiveFrom" } }
+            ]
+          },
+          {
+            "gte": [
+              { "fact": "llExpiresOn" },
+              { "param": { "id": "PRM-HPT", "path": "effectiveFrom" } }
+            ]
+          }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "If your driving test is on or after the HPT start date, Kerala's hazard-perception test applies to you."
+      },
+      "refs": ["EC-28"],
+      "source": {
+        "title": "Onmanorama, 14 Sep 2026",
+        "url": "https://www.onmanorama.com/news/kerala/2026/09/14/kerala-adds-hazard-perception-test-for-driving-licences-from-dec-1-first-in-india.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "KL-NTC-HPT-STAYED",
+      "kind": "notice",
+      "textKey": "notice.kl.hpt_stayed",
+      "condition": {
+        "in": [{ "param": { "id": "PRM-HPT", "path": "status" } }, ["stayed", "postponed"]]
+      },
+      "output": {},
+      "text": {
+        "en": "Kerala's hazard-perception test is on hold. Practise in the format Kerala announced on 12 Sep 2026; it is not part of your test right now."
+      },
+      "refs": ["EC-28"],
+      "source": {
+        "title": "Kerala HPT status row (changes when a stay or postponement is published)",
+        "url": "https://www.onmanorama.com/news/kerala/2026/09/14/kerala-adds-hazard-perception-test-for-driving-licences-from-dec-1-first-in-india.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "KL-WRN-SLOT-BACKLOG",
+      "kind": "warning",
+      "textKey": "warning.kl.slot_backlog",
+      "fixKey": "fix.book_slot_early",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "In Kerala a driving-test date has often been 3 months or more after the LL (2024 reports). Book as soon as booking opens."
+      },
+      "refs": ["EC-07"],
+      "source": {
+        "title": "Onmanorama, Sep 2024: test backlog after reforms",
+        "url": "https://onmanorama.com/news/kerala/2024/09/19/high-driving-test-failure-rate-post-reforms-kerala-government-revise-daily-limit.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ]
+}

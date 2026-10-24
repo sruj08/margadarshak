@@ -1,0 +1,170 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M13",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Pillion, triple riding and loads",
+    "hi": "पीछे की सवारी, तीन सवारी और सामान"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "2W",
+  "deep_content_classes": ["MCWOG", "MCWG"],
+  "available_to": "all",
+  "phase_1_2_depth": "Lesson only",
+  "skill_id": "SK-M13",
+  "game_ids": ["helmet_fit"],
+  "drill_ids": ["DR-HF-PILLION"],
+  "rule_ids": ["RR-PIL-001", "RR-HLM-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M13-1",
+      "text": {
+        "en": "Know how a load changes braking and stability.",
+        "hi": "जानें कि सामान से ब्रेक और संतुलन कैसे बदलता है।"
+      }
+    },
+    {
+      "id": "LO-M13-2",
+      "text": {
+        "en": "Know the legal pillion count.",
+        "hi": "पीछे कितनी सवारी क़ानूनी है, यह जानें।"
+      }
+    },
+    {
+      "id": "LO-M13-3",
+      "text": {
+        "en": "Keep a child pillion protected.",
+        "hi": "पीछे बैठे बच्चे की हिफ़ाज़त करें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M13-1",
+      "title": {
+        "en": "Pillions, loads and the Pillion Pledge",
+        "hi": "पीछे की सवारी, सामान और पिलियन वचन"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M13-1",
+      "kind": "evidence",
+      "text": {
+        "en": "15,408 pillions were killed without a helmet in 2023.",
+        "hi": "2023 में बिना हेलमेट के पीछे बैठी 15,408 सवारियों की मौत हुई।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.3 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M13-2",
+      "kind": "evidence",
+      "text": {
+        "en": "Srinagar issued 11,140 triple-riding challans in 2024.",
+        "hi": "श्रीनगर में 2024 में तीन सवारी के 11,140 चालान हुए।"
+      },
+      "sources": [
+        {
+          "title": "Greater Kashmir (as cited in research 02; URL to pin)",
+          "url": null,
+          "grade": "S",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "low",
+      "verified": false
+    },
+    {
+      "id": "KF-M13-3",
+      "kind": "law",
+      "text": {
+        "en": "A two-wheeler may carry one pillion, seated on a proper seat behind the rider.",
+        "hi": "दोपहिया पर चलाने वाले के पीछे ठीक सीट पर एक ही सवारी बैठ सकती है।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 as amended 2019 (section to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M13-4",
+      "kind": "law",
+      "text": {
+        "en": "A child pillion needs a helmet, a harness and a speed cap; the age band and cap render only once verified.",
+        "hi": "पीछे बैठे बच्चे के लिए हेलमेट, हार्नेस और रफ़्तार की सीमा ज़रूरी है; उम्र और सीमा पक्की होने के बाद ही दिखाई जाती हैं।"
+      },
+      "sources": [
+        {
+          "title": "Central Motor Vehicles Rules, 2022 amendment (not re-fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-PIL-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M13-1",
+      "myth": {
+        "en": "Three on a bike is fine for a short distance.",
+        "hi": "थोड़ी दूरी के लिए बाइक पर तीन लोग ठीक हैं।"
+      },
+      "correction": {
+        "en": "A two-wheeler is built for one pillion; an extra person changes braking and balance.",
+        "hi": "दोपहिया एक सवारी के लिए बना है; एक और व्यक्ति से ब्रेक और संतुलन बदल जाते हैं।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 4,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Quiz ≥ 80%.",
+      "hi": "क्विज़ ≥ 80%।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Legal check (pillion provisions; CMVR 2022 child-pillion amendment)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

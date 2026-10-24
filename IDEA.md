@@ -62,7 +62,7 @@ We build it as a complete product running on mock adapters. It is **not affiliat
 | **Helper** | Elder sibling or cyber-café operator | Apply on someone's behalf, with consent, safely |
 | **Driving school** | Owner near the RTO | Students, hazard-training tools (Kerala now requires them), learner progress |
 | **RTO / Transport Commissioner** | The government | Fewer counter queries and re-tests, visibility of where applications stall |
-| **Rahul** (edge) | 17 | Only a ≤50 cc licence. Rules-only experience: no AI, no tracking, no streaks |
+| **Rahul** (edge) | 17 | Only a ≤50 cc licence. Uses the full product, AI included, on a parent's phone inside the parent's account (family mode) with parental consent; no behavioural tracking or targeted ads |
 
 **Job to be done:** *"When I turn 18 and need a licence, help me get it myself, on the first try, without paying an agent or being humiliated, and come out actually able to read Indian roads, so my family and friends see I do things right."*
 
@@ -261,7 +261,7 @@ There are 22 modules in total; see `docs/09-learning-games/CURRICULUM.md`.
 - vehicle advice
 - scam verdicts
 
-Rules are exact, and AI would invent things. **Under-18 users get no AI**, because Gemini's terms require 18+ and DPDP has rules for children. Real users run on the paid tier. Aadhaar numbers, OTPs and face images never reach a model.
+Rules are exact, and AI would invent things. **AI is for everyone (D-13 revised):** every AI feature works for every user. A learner aged 16–17 uses Margdarshak on a parent's phone, inside the parent's adult account (family mode), with verifiable parental consent; there is no behavioural tracking or targeted advertising on a child's data, and squads and share cards need the parent's consent. Real users run on the paid tier. Aadhaar numbers, OTPs and face images never reach a model.
 
 ---
 
@@ -296,10 +296,10 @@ flowchart LR
     PWA[Next.js 16 PWA<br/>HeroUI v3 · Tailwind 4 · Phaser 4 games]
   end
   subgraph Margdarshak Core
-    API[FastAPI · Python 3.12<br/>rules engine · journey state machine · case clock]
+    API[Go 1.27 API · chi · contract-first<br/>rules engine · journey state machine · case clock]
     SV[Score verifier<br/>game-core replay]
-    ADK[ADK agents · Gemini]
-    WF[Render Workflows<br/>clip pipeline · clock sweep · debrief fan-out]
+    ADK[ADK for Go agents · Gemini]
+    WF[Render Workflows · TypeScript tasks<br/>clip pipeline · clock sweep · debrief fan-out]
     DB[(PostgreSQL 16)]
   end
   subgraph Government Adapter Layer
@@ -327,9 +327,10 @@ flowchart LR
 
 **Stack:**
 - **Web and games:** Next.js 16, React 19, TypeScript, Tailwind 4, HeroUI v3, Motion, Rive, Phaser 4, MediaPipe, ts-fsrs, next-intl, Serwist.
-- **Backend and data:** FastAPI, Pydantic 2, SQLAlchemy 2, Alembic, PostgreSQL 16, Redis.
-- **AI:** Google ADK 2.x (Python), Gemini, Sarvam.
-- **Jobs, automation and storage:** Render Workflows, n8n, Cloudflare R2.
+- **Backend and data:** Go 1.27 (chi v5, oapi-codegen contract-first from `api/openapi.yaml`, pgx v5 + sqlc, goose migrations, slog with PII redaction), PostgreSQL 16 (embedded Postgres in tests, no Docker needed), Redis.
+- **AI:** Google ADK for Go (`google.golang.org/adk` v1.9.x, `RunLive` for voice), Go Gemini SDK (`google.golang.org/genai` v1.76.x, Live API), Gemini, Sarvam.
+- **Jobs, automation and storage:** Render Workflows (TypeScript SDK `@renderinc/sdk`), n8n, Cloudflare R2.
+- **Other TypeScript services:** the score verifier (Node). No Python anywhere.
 - **Engineering:** GitHub Actions, OpenTelemetry.
 
 Versions are pinned in `TECH_STACK.md`.
@@ -365,7 +366,7 @@ Versions are pinned in `TECH_STACK.md`.
 - **No impersonation:** no emblem, no "official", and a "not affiliated" footer on every page.
 - **DPDP:**
   - purpose-bound consent records
-  - under-18 users treated as children: no AI, no telemetry, no streaks
+  - children are under 18: a learner aged 16–17 uses the full product, AI included, inside a parent's account (family mode) with verifiable parental consent; no behavioural tracking or targeted ads on a child's data
   - export, delete and a grievance officer
 - **CERT-In:** incidents reported within 6 hours, and 180-day logs kept in India once in production.
 - **Government standards:** GIGW 3.0, UX4G and WCAG; an STQC pre-audit pack for any state hosting.

@@ -1,0 +1,46 @@
+{
+  "name": "@margdarshak/gamification",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Learning maths and gamification rules (FSRS mastery, readiness, calibration, XP, ranks, weekly streaks, squads, badges, share and family-mode guards, dark-pattern lint spec). Pure functions; never reads the clock.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "margdarshak-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./learning": {
+      "margdarshak-source": "./src/learning.ts",
+      "types": "./dist/learning.d.ts",
+      "default": "./dist/learning.js"
+    },
+    "./gamification": {
+      "margdarshak-source": "./src/gamification.ts",
+      "types": "./dist/gamification.d.ts",
+      "default": "./dist/gamification.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "test": "node --test --experimental-strip-types \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "ts-fsrs": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

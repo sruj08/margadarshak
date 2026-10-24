@@ -1,0 +1,53 @@
+{
+  "name": "@margdarshak/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Margdarshak citizen PWA (Next.js 16 App Router).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json",
+    "test": "vitest run",
+    "i18n:check": "node scripts/check-messages.mjs",
+    "clean": "node -e \"for (const d of ['.next','coverage']) require('node:fs').rmSync(d,{recursive:true,force:true})\"",
+    "size:first-load": "node scripts/first-load.mjs"
+  },
+  "dependencies": {
+    "@heroui/react": "catalog:",
+    "@heroui/styles": "catalog:",
+    "@margdarshak/api-client": "workspace:*",
+    "@margdarshak/content": "workspace:*",
+    "@margdarshak/game-core": "workspace:*",
+    "@margdarshak/gamification": "workspace:*",
+    "@margdarshak/rules": "workspace:*",
+    "@margdarshak/ui": "workspace:*",
+    "@serwist/turbopack": "catalog:",
+    "@serwist/window": "catalog:",
+    "lucide-react": "catalog:",
+    "motion": "catalog:",
+    "next": "catalog:",
+    "next-intl": "catalog:",
+    "phaser": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "serwist": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "esbuild": "0.28.2",
+    "jsdom": "catalog:",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

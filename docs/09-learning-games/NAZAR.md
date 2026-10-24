@@ -1,5 +1,6 @@
-# Nazar: hazard perception on real Indian roads
-> Project: Margdarshak · Owner: Nazar owner (clip pipeline + field study) · Status: Draft v0.1 · Last updated: 2026-10-23
+# Nazar: hazard perception on Indian road scenes
+> Project: Margdarshak · Owner: Nazar owner (clip pipeline + field study) · Status: Draft v0.1 · Last updated: 2026-10-24 (§16 appended)
+> **2026-10-24:** the hackathon build's clip bank is **AI-generated** (ADR-0013, §16). Until this date the title read "on real Indian roads". Filming (§4) and the blur audit (§5) are superseded for the hackathon build and still apply to Phase 3+ filmed clips.
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [GAME_DESIGN §2](GAME_DESIGN.md) · [GAME_SDK](GAME_SDK.md) · [DEBRIEF_SPEC](DEBRIEF_SPEC.md) · [GAMIFICATION_ENGINE](GAMIFICATION_ENGINE.md) · [CURRICULUM](CURRICULUM.md) · [Field kit](../../../field-kit/NAZAR-FIELD-KIT.md) · [AI models](../04-ai/MODELS.md) · [Data pipeline](../04-ai/DATA_PIPELINE.md) · [Privacy](../06-security-compliance/PRIVACY.md)
 > Features: F-23 (hero), F-57 field study, F-25 debrief, F-26 share card · Models: M-06 ClipWindowProposer, M-08 Saaras, M-09 on-device/offline blur detectors · Entities: E-20 Clip, E-21 ClipRating, E-16, E-17 · APIs: API-34..API-37, API-55 clip admin, API-70/71 field study · Directives: D-03, D-11, D-12, D-15, D-19, D-22 · Risks: R-06 too few clips, R-10 Kerala HPT stayed, R-12 bystander privacy · Edge cases: EC-18, EC-28
 
@@ -9,11 +10,11 @@
 
 **The council ruling (D-03):** the journey is the body; **Nazar plus the game debrief is the heart**. Nazar leads the demo hook, the one evidence-slide number and the closing QR ("take the 3-minute test"), and its clip-ingest pipeline is the headline Render Workflow (D-15).
 
-**What it is.** A hazard-perception trainer and mock on **real, blurred Indian road clips** (Jammu first), scored by code against windows set by two independent human raters, in **Kerala's announced format** (10 clips × 10 marks, pass 60/100, from 1 Dec 2026) with UK-style 5-band timing and a pattern-clicking rule that scores zero.
+**What it is.** A hazard-perception trainer and mock on ~~**real, blurred Indian road clips** (Jammu first)~~ **AI-generated Indian road scenes, labelled "AI-generated scene" everywhere** (hackathon build, ADR-0013, §16; filmed clips are Phase 3+), scored by code against windows set by two independent human raters, in **Kerala's announced format** (10 clips × 10 marks, pass 60/100, from 1 Dec 2026) with UK-style 5-band timing and a pattern-clicking rule that scores zero.
 
 **Why it matters.** India tests knowledge (LL MCQ) and vehicle control (track), never **anticipation** (`02` §2). Hazard-perception training has on-road RCT evidence (Horswill; `05` insight 9); commentary training brought novices to experienced-driver detection (Isler et al. 2009); HPT scores predict crashes (Horswill et al. 2015, doi:10.1016/j.aap.2015.05.019 [K]). 70.9% of 2023 accidents involved a valid DL holder (RAI23 T3.2): the licence certifies little.
 
-**What it is not (D-11, D-19):** not Kerala's test or Kerala's clips; not a certification; not a crash-risk prediction for an individual; not "the first" of anything; not "official". Copy says **"Kerala's announced format (as reported)"**, **"practice score"**, **"our clips"**. Claim on stage: "trains and measures a skill linked to crash risk", never "reduces crashes" or "lives saved".
+**What it is not (D-11, D-19):** not Kerala's test or Kerala's clips; not real footage (the hackathon bank is AI-generated, §16); not a certification; not a crash-risk prediction for an individual; not "the first" of anything; not "official". Copy says **"Kerala's announced format (as reported)"**, **"practice score"**, ~~**"our clips"**~~ **"our AI-generated scenes"** (§16). Claim on stage: "trains and measures a skill linked to crash risk", never "reduces crashes" or "lives saved".
 
 ```mermaid
 flowchart LR
@@ -36,17 +37,19 @@ flowchart LR
   STATS --> BANK
 ```
 
+> **Hackathon build (2026-10-24, §16):** clips come from `clip_generate`: scene catalogue → Gemini Omni Flash → normalise → flash check → register as `ai_generated` → transcode → render without blur → open review. The filming, blur and blur-audit boxes above apply only to filmed clips (Phase 3+). Proposals, the two raters, agreement and publish are unchanged.
+
 ---
 
 ## 1. Modes
 
 | Mode | Who | Clips | Feedback | Scoring | Counts toward |
 |---|---|---|---|---|---|
-| **Mock (Kerala format)** | adult, online | 10 unseen clips, rule-pack mix of difficulty 2–4 [D] | after all 10 | Kerala marks /100 (§2) | Nazar Score, badges, share card, Practice Record, field study |
-| **Practice** | adult; u18 blocked | 1–5 clips by staircase, may include quiet clips | after each clip: replay with window band and tap flags | UK-style 0–5 per hazard + false alarms | FSRS, XP |
-| **Learn (occlusion + prediction)** | adult; u18 still-frame version on device | clip freezes 0.5 s before onset [D]: "what happens next?" (4 picture options from `hazard_type`) + "tap where" | immediate | prediction correct / location correct | FSRS |
-| **Commentary (*bolke chalao*)** | adult, online, per-use consent | 1 clip (Phase 1–2) | after transcription | `commentary_pct` (separate) | FSRS, debrief |
-| **Pair** | two adults in a squad | same seed, same 10 clips | each sees own result + "you both spotted X of Y" | Kerala marks | nothing extra (no winner) |
+| **Mock (Kerala format)** | every user (family mode included, D-13 revised), online | 10 unseen clips, rule-pack mix of difficulty 2–4 [D] | after all 10 | Kerala marks /100 (§2) | Nazar Score, badges, share card, Practice Record, field study |
+| **Practice** | every user | 1–5 clips by staircase, may include quiet clips | after each clip: replay with window band and tap flags | UK-style 0–5 per hazard + false alarms | FSRS, XP |
+| **Learn (occlusion + prediction)** | every user | clip freezes 0.5 s before onset [D]: "what happens next?" (4 picture options from `hazard_type`) + "tap where" | immediate | prediction correct / location correct | FSRS |
+| **Commentary (*bolke chalao*)** | every user, online, per-use consent (the parent's for a minor's profile) | 1 clip (Phase 1–2) | after transcription | `commentary_pct` (separate) | FSRS, debrief |
+| **Pair** | two squad members (a minor's profile only after the parent consents to squads) | same seed, same 10 clips | each sees own result + "you both spotted X of Y" | Kerala marks | nothing extra (no winner) |
 | **Screen-reader alternative** | anyone | still frames with audio description | immediate | correct / not | FSRS; labelled **"not the same skill as the timed test"** |
 
 ---
@@ -88,6 +91,8 @@ Mean of the last 3 **eligible** mocks (GAME_SDK §6.4: server seed, unseen clips
 ## 3. Clip bank specification (E-20)
 
 ### 3.1 Media
+> For AI-generated clips (§16), generation replaces the "Capture" column: 720p, 16:9, an opening shot plus extensions of 3–10 s each, at most 40 s in total. Delivery is unchanged, and the generated audio is stripped like any other audio.
+
 | Property | Capture | Delivery |
 |---|---|---|
 | Orientation | landscape | landscape (portrait players letterbox) |
@@ -155,6 +160,8 @@ Hazard windows of mock-eligible clips are **never** shipped to the client before
 
 ## 4. Filming protocol (safety first)
 
+> **Superseded for the hackathon build (2026-10-24, §16, ADR-0013):** no footage is filmed; the bank is AI-generated from `content/nazar/scenes.json`. This protocol stays binding for any filmed clip (Phase 3+, `origin: "filmed"`).
+
 **Hard rules (never waived):**
 1. **The rider never touches the phone.** A passenger films, or the phone is on a fixed handlebar/dashboard mount started before departure (field kit §4; verification §3.3).
 2. Helmets on (rider and passenger), all traffic rules obeyed, normal speeds only. **No staged hazards, no provoking traffic, no chasing.**
@@ -174,6 +181,8 @@ Hazard windows of mock-eligible clips are **never** shipped to the client before
 ---
 
 ## 5. Blur (R-12 bystander privacy)
+
+> **For AI-generated clips (2026-10-24, §16):** nothing real is filmed, so there is no blur pass and no blur audit. Instead, a curator **synthetic review** must pass before the clip can publish. It checks five things: no real-person likeness, no readable plates, no real brands, no collision or injury, and the hazard is visible. Filmed clips still need everything below.
 
 | Step | Tool | Rule |
 |---|---|---|
@@ -260,7 +269,7 @@ Phase 1–2: two team members or friends (field kit §0), pseudonymous IDs, 30-m
 
 ## 9. Commentary mode (record-then-score, D-12)
 
-Full flow in DEBRIEF_SPEC §10. Summary: per-use consent → the user narrates over 1 clip → audio uploaded (adult, online) → transcribed with word timings (Gemini audio; Saaras v3 for Dogri, M-08) → **audio deleted immediately**, transcript PII-redacted (EC-20) → deterministic lexicon matcher maps mentions to `hazardType` with timestamps → a mention in `[a − 1 s, b]` is a hit → `commentary_pct` and `NAZ_COMM_*` findings. The DebriefAgent sees findings, never the transcript. Evidence: Isler et al. 2009 (`05` insight 9). Live coaching with Gemini Live is roadmap.
+Full flow in DEBRIEF_SPEC §10. Summary: per-use consent → the user narrates over 1 clip → audio uploaded (online) → transcribed with word timings (Gemini audio; Saaras v3 for Dogri, M-08) → **audio deleted immediately**, transcript PII-redacted (EC-20) → deterministic lexicon matcher maps mentions to `hazardType` with timestamps → a mention in `[a − 1 s, b]` is a hit → `commentary_pct` and `NAZ_COMM_*` findings. The DebriefAgent sees findings, never the transcript. Evidence: Isler et al. 2009 (`05` insight 9). Live coaching with Gemini Live is roadmap.
 
 ---
 
@@ -276,7 +285,7 @@ Source of truth: [`field-kit/NAZAR-FIELD-KIT.md`](../../../field-kit/NAZAR-FIELD
 | Forms | A/B clip orders, counterbalanced |
 | Hypotheses | H1 ≥ 30% of licence holders score < 60/100; H2 |r(LL mock, Nazar)| < 0.3; H3 per-clip score improves on 5 fresh clips after feedback (paired, one-sided); H4 inter-rater median |Δonset| ≤ 0.5 s |
 | Exclusions | sessions < 60 s total; > 3 taps per second (spam); declared under 18 |
-| Analysis | `analysis/nazar_stats.py` (field kit §7): N, % < 60 with Wilson 95% CI; r with Fisher-z 95% CI; median seconds late → metres; pre/post with one-sided Wilcoxon; inter-rater median Δ; test-retest r if ≥ 8 retakes |
+| Analysis | `analysis/nazar_stats.mjs` (field kit §7): N, % < 60 with Wilson 95% CI; r with Fisher-z 95% CI; median seconds late → metres; pre/post with one-sided Wilcoxon; inter-rater median Δ; test-retest r if ≥ 8 retakes |
 | Live numbers | nightly field-stats Render Workflow recomputes; API-71 `GET /v1/stats/public` shows live counters to judges; n8n W14 mirrors consented, pseudonymous rows to the team sheet |
 | Honesty footnote | "Convenience sample of N, 18+, Jammu/Punjab colleges; our clips and windows, pre-registered at <hash>; not Kerala's clips; no crash outcomes measured. HPT–crash link: Horswill et al. 2015, doi:10.1016/j.aap.2015.05.019." |
 | Reporting | the result is reported whichever way it comes out |
@@ -287,7 +296,7 @@ Source of truth: [`field-kit/NAZAR-FIELD-KIT.md`](../../../field-kit/NAZAR-FIELD
 
 ## 11. Licence: CC-BY 4.0
 
-- **Licensed under CC-BY 4.0:** the **blurred** clips, their metadata (`clip.json` without rater pseudonyms), the final hazard windows, and per-clip aggregate difficulty. Attribution string: "Margdarshak clip bank, team Chanakya (Nestiq Private Limited), 2026, CC-BY 4.0" (PROJECT_BRIEF §8: CC-BY 4.0 for the clip bank and rule packs; code is Apache-2.0).
+- **Licensed under CC-BY 4.0:** the **blurred** clips (for the hackathon build, the AI-generated clips, which carry `origin: "ai_generated"` and their generation record in the bank manifest; CC-BY on model outputs is [unverified: owner Nazar owner, check the Gemini API terms], §16), their metadata (`clip.json` without rater pseudonyms), the final hazard windows, and per-clip aggregate difficulty. Attribution string: "Margdarshak clip bank, team Chanakya (Nestiq Private Limited), 2026, CC-BY 4.0" (PROJECT_BRIEF §8: CC-BY 4.0 for the clip bank and rule packs; code is Apache-2.0).
 - **Never published:** raw footage (deleted after audit), individual rater marks with identities, any user tap data.
 - **Why CC-BY:** a digital-public-good posture that a state (Kerala's driving-school mandate) or NIC could adopt and audit (verification G14).
 - **Contributions (Phase 3+):** driving schools and volunteers contribute footage under a contributor agreement granting CC-BY 4.0 on the blurred output, after the same blur audit; filming-safety rules (§4) are part of the agreement.
@@ -308,7 +317,7 @@ Source of truth: [`field-kit/NAZAR-FIELD-KIT.md`](../../../field-kit/NAZAR-FIELD
 | Buffering (EC-18) | whole MP4 preloaded before the clip starts; scoring on rVFC media time |
 | Spam taps (EC-18) | pattern rule §2.2 |
 | Low-end / 2G (EC-19) | 360p, size shown before download, offline pack; Lite mode offers the still-frame lessons |
-| Under 18 (EC-05) | mock, practice and commentary blocked; still-frame learn lessons on device only |
+| Under 18 (EC-05) | family mode (D-13 revised): every mode as for any user; the share card and pair mode need the parent's consent. The field study (§10) stays 18+ |
 | Kerala stay (EC-28) | §8 |
 | AI down (EC-29) | Nazar scoring and templates need no AI; only window *proposals* (offline) and commentary transcription pause |
 
@@ -320,9 +329,9 @@ E-20 Clip (no PII: blurred media, coarse place, month); E-21 ClipRating (rater p
 
 | Area | Phase 1–2 | Phase 3+ |
 |---|---|---|
-| Clips | ≥ 12 Jammu 2W clips (backup: 6) | 100+ across tenants, car POV, night/fog, hill |
+| Clips | ~~≥ 12 Jammu 2W clips (backup: 6)~~ AI-generated from 29 catalogue scenes (25 hazard, 4 quiet; 2W and 4W; J&K, Kerala, metro, small town), §16 | 100+ across tenants, car POV, night/fog, hill (filmed, or AI-generated with the same labels) |
 | Pipeline | Render Workflow end to end with a visible injected retry on the Runs page (D-15) | same behind `JobRunner` on a MeitY-empanelled cloud / NIC (D-17) |
-| Blur | YuNet + plate model + 100% audit | + periodic external privacy audit |
+| Blur | ~~YuNet + plate model + 100% audit~~ none for AI clips; curator synthetic review instead (§16) | filmed clips: YuNet + plate model + 100% audit, + periodic external privacy audit |
 | Raters | 2 team members/friends | paid instructors, drift tracking |
 | Difficulty | curator + empirical | IRT (GRM), DIF checks, equated forms |
 | Modes | mock, practice, learn, 1-clip commentary, pair | all, plus Dogri commentary |
@@ -338,3 +347,55 @@ E-20 Clip (no PII: blurred media, coarse place, month); E-21 ClipRating (rater p
 | Check the dash-cam legal position note with the compliance author | Nazar owner | 2026-10-24 |
 | Re-check Kerala HPT status on demo morning | Nazar owner | demo day |
 | Measure clip sizes at 360p/480p and update §3.1 | Nazar owner | after first transcode |
+| Confirm that SynthID survives our transcode; rerun `gemini-smoke.manual.ts` if the model changes (§16) | Nazar owner | before generating the bank |
+| Confirm CC-BY 4.0 can apply to Gemini outputs under the API terms (§16) | Nazar owner | before the bank manifest is public |
+| State "AI-generated clips" in `HYPOTHESES.md` (MD-241) before any data (§16) | Field-study lead | before first taker |
+
+---
+
+## 16. Decision: AI-generated clip bank (2026-10-24)
+
+**Decision (product owner, ADR-0013):** for the hackathon build, Nazar's clip bank is **AI-generated** with Gemini video generation (`gemini-omni-1.1-flash`, configurable as `GEMINI_MODEL_VIDEO_GEN`) instead of filmed footage (option C). **Why:** time. There is not enough time before the demo to film, blur and audit 20+ clips frame by frame safely.
+
+**What changes**
+
+| Area | Before (§3–§5, §14) | Now (hackathon build) |
+|---|---|---|
+| Source | filmed under §4 (Jammu, 2W) | 29 scenes in `content/nazar/scenes.json`:<br>• 25 hazard scenes covering all 15 types in §3.3, plus 4 quiet scenes<br>• 2W and 4W<br>• day, dusk, dawn, rain and overcast<br>• J&K hills and towns; Kerala town, rural and highway; metro; small-town market |
+| Generation | none | `clip_generate`: an opening shot plus extension turns (3–10 s each, ≤ 40 s), 720p 16:9, prompt PRM-CLIPGEN 1.0.0, with the guardrails in every prompt |
+| `clip.json` | no origin | `origin: "ai_generated"`, `generation {model, sceneId, promptVersion, seedOrBatchId, generatedAt, durationMs, extensions, synthId: true, disclosure: "ai_generated"}`, `speedSource: "scene_spec"` |
+| Status path | raw → transcoded → blurred → (audited) → proposed | raw → transcoded → **proposed** (never blurred or audited) |
+| Privacy gate before publish | blur audit, 100% of frames, 0 misses | **synthetic review** by a curator (5 checks, all true) |
+| Filming protocol (§4) | binding | **superseded** for the hackathon build; binding again for filmed clips |
+| Raters, agreement, adjudication, final windows, scoring, verifier | as specified | **unchanged**. Two human raters set every window. The generator's onset is only an approximate hint (± 3 s). It is never authoritative, never stored in clip.json and never sent to learners. |
+| Labels | "our clips" | An "AI-generated scene" chip on every AI clip: player, between clips, replay, results, screen-reader page and share card. The brief says "Practice on AI-generated road scenes in Kerala's announced format". Never "real Indian roads", "Kerala's clips" or "official". |
+
+**Validity.** Results describe performance **on our AI-generated scenes**, and any study or slide claim must say so. FIELD_STUDY carries a dated note, and `HYPOTHESES.md` must say it before any data. Calibrated difficulty applies to these scenes only.
+
+**Disclosure.** Every output carries Google's invisible SynthID watermark. Our delivery transcode strips container metadata (privacy rule), so the disclosure travels in `clip.json`, in both manifests and in the UI label. Whether SynthID survives our encode is unverified.
+
+**Guardrails** (`ai/prompts/clip_generator.md`):
+- no collision, injury, blood or crash;
+- no real brands or logos;
+- no readable plates;
+- no recognisable real people;
+- no text overlays;
+- no speeding or stunts;
+- ambient traffic audio only, with no speech;
+- the hazard develops (cue first) and then resolves safely.
+
+The curator review checks each output against the same list. A clip that fails is regenerated or retired, never published with a caveat.
+
+**Smoke run (2026-10-24, real API, quiet scene SCN-101, two turns):**
+- Turn 1 returned an 8 s video in 59 s. Turn 2 returned the whole 16 s video in 115 s, so each extension output is the whole video so far, which the task assumes and checks.
+- The raw output was 1280×720 H.264 at 24 fps with an AAC track and an `encoder=Google` tag. After normalising, the audio and the tag were gone.
+- The 360p and 480p renditions conformed to §3.1 and passed the flash check.
+- The 360p file came to about 2.4 MB per 30 s, slightly over the §3.1 target. Measure again on the full bank.
+
+**Code:**
+- `packages/clip-pipeline`: schema, status machine, `generation.ts`, steps `CLIP_GENERATE_STEPS`;
+- `packages/content`: scene schema and checks;
+- `services/workflows/src/tasks/clip-generate.ts`;
+- `apps/web/src/features/nazar`: labels.
+
+The Go side is being built by its owner: `clip.register_generated`, the start op, accepting `syntheticReview` at publish, and the `clip.schema.json` copy. The curator UI owner is building the "Generate clip" form.

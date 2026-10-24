@@ -1,0 +1,146 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M15",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Landslides, shooting stones, snow and black ice",
+    "hi": "भूस्खलन, गिरते पत्थर, बर्फ़ और ब्लैक आइस"
+  },
+  "priority": "P0",
+  "priority_tenants": ["JK"],
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": ["JK"],
+  "phase_1_2_depth": "Storyboard only",
+  "skill_id": "SK-M15",
+  "game_ids": ["hill_road"],
+  "drill_ids": ["DR-HR-TRIP"],
+  "rule_ids": ["RR-LSD-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M15-1",
+      "text": {
+        "en": "Read hill warning signs.",
+        "hi": "पहाड़ी चेतावनी संकेत पढ़ें।"
+      }
+    },
+    {
+      "id": "LO-M15-2",
+      "text": {
+        "en": "Don't stop under loose slopes.",
+        "hi": "ढीली ढलानों के नीचे न रुकें।"
+      }
+    },
+    {
+      "id": "LO-M15-3",
+      "text": {
+        "en": "Recognise black-ice conditions: shaded bends, early morning.",
+        "hi": "ब्लैक आइस की हालत पहचानें: छाँव वाले मोड़, सुबह-सुबह।"
+      }
+    },
+    {
+      "id": "LO-M15-4",
+      "text": {
+        "en": "Check the J&K Traffic Police road status before a trip.",
+        "hi": "सफ़र से पहले J&K ट्रैफ़िक पुलिस से सड़क की स्थिति देखें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M15-1",
+      "title": {
+        "en": "Hill hazards and their warning signs",
+        "hi": "पहाड़ी ख़तरे और उनके चेतावनी संकेत"
+      }
+    },
+    {
+      "id": "LS-M15-2",
+      "title": {
+        "en": "Plan a Jammu → Srinagar trip (sample advisory)",
+        "hi": "जम्मू → श्रीनगर सफ़र की योजना (सैंपल एडवाइज़री)"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M15-1",
+      "kind": "evidence",
+      "text": {
+        "en": "The J&K hill hazard pattern: shooting stones and landslides (Ramban–Banihal), fog at the Banihal and Jawahar tunnel approaches, black ice and snow (Jawahar Tunnel, Mughal Road, Sinthan), hairpins (Patnitop, Batote). Counts per hazard are unknown.",
+        "hi": "J&K के पहाड़ी ख़तरों का पैटर्न: गिरते पत्थर और भूस्खलन (रामबन–बनिहाल), बनिहाल और जवाहर सुरंग के रास्तों पर कोहरा, ब्लैक आइस और बर्फ़ (जवाहर सुरंग, मुग़ल रोड, सिंथन), हेयरपिन मोड़ (पटनीटॉप, बटोटे)। हर ख़तरे की गिनती पता नहीं।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak research 02-accident-curriculum §1.9 (secondary; not re-fetched)",
+          "url": null,
+          "grade": "S",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M15-2",
+      "kind": "design",
+      "text": {
+        "en": "Trip-plan advisories are clearly labelled samples ('Sample advisory: check J&K Traffic Police for today's'), never a fake live status.",
+        "hi": "सफ़र की योजना वाली सूचनाएँ साफ़ तौर पर सैंपल बताई जाती हैं ('सैंपल एडवाइज़री: आज की स्थिति J&K ट्रैफ़िक पुलिस से देखें'), कभी नकली लाइव स्थिति नहीं।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak design decision (D-14; CURRICULUM M15)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "high",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M15-1",
+      "myth": {
+        "en": "Stopping under a cliff for a break is fine when the weather is clear.",
+        "hi": "मौसम साफ़ हो तो चट्टान के नीचे आराम के लिए रुकना ठीक है।"
+      },
+      "correction": {
+        "en": "Stones can fall in clear weather too; stop only where the slope is stable.",
+        "hi": "साफ़ मौसम में भी पत्थर गिर सकते हैं; वहीं रुकें जहाँ ढलान स्थिर हो।"
+      },
+      "rule_id": "RR-LSD-001"
+    }
+  ],
+  "concepts": {
+    "target": 5,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Trip-plan rubric ≥ 80%.",
+      "hi": "सफ़र-योजना रूब्रिक ≥ 80%।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Local review (J&K)", "Route-risk features stay roadmap (verification row 7)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

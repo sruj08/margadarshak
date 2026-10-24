@@ -20,7 +20,7 @@
     And every page shows the footer "Independent prototype by team Chanakya. Not affiliated with MoRTH, NIC or any State Transport Department. Uses simulated government data."
     And government adapters run in "mock" mode with visible "simulated" chips
   ```
-- **Age gate** (implicit): stories marked **18+** are hidden and their endpoints refuse requests (HTTP 403 `age_gate`) for users whose verified age band is under 18 (D-13).
+- **Family mode** (implicit): every story applies to every user, AI included (D-13 revised). A learner under 18 uses Margdarshak inside a parent's (adult) account; the parent gives consent. A child's data is never used for behavioural tracking or targeted ads; squads and share cards for a minor's profile need the parent's consent.
 
 ### 0.1 Epic index
 | Epic | Name | Stages | Features | Stories |
@@ -41,7 +41,7 @@
 | EP-14 | Driving-school portal | Eco | F-40 | US-230–US-240 |
 | EP-15 | State / RTO console | Eco | F-41 | US-250–US-257 |
 | EP-16 | Rule-pack studio | Eco | F-42 | US-260–US-267 |
-| EP-17 | Privacy, consent and age gates | Cross | F-54, F-55 | US-270–US-278 |
+| EP-17 | Privacy, consent and family mode | Cross | F-54, F-55 | US-270–US-278 |
 | EP-18 | Languages, Lite mode and accessibility | Cross | F-50, F-51, F-52 | US-290–US-297 |
 | EP-19 | Platform, adapters and tenancy | Platform | F-56, F-58 | US-300–US-306 |
 | EP-20 | Field study and evidence | Evidence | F-57 | US-310–US-316 |
@@ -111,17 +111,18 @@ Scenario: Grouped services with search
 As Mohan-ji (P-03), I want to tap a mic and say what I need, so that I don't have to read.
 `F-01, F-30 · Must · M · S0 · EC-20 · API-40 · Deep-C (one scripted Hindi flow)`
 ```gherkin
-Scenario: Mic routes to a plan (18+)
+Scenario: Mic routes to a plan
   Given my verified age band is "50-59"
   When I tap the mic and say "Mere papa 52 saal ke hain, unko car ka licence chahiye"
   Then the voice guide navigates to the Licence Plan with age 52 and vehicle "car" prefilled
   And it shows the "Form 1A required (age 40+)" warning with its rule-ID chip
   And it does not submit, pay or book anything
 
-Scenario: Mic hidden for minors
-  Given my declared age band is "16-17"
+Scenario: Mic in family mode
+  Given a learner aged 16-17 is using the parent's account in family mode
+  And the parent has given mic consent
   When the home loads
-  Then no mic is shown and the tile helper text says "Tap to start"
+  Then the mic is shown as for any user
 ```
 
 #### US-006 · Non-affiliation disclaimer on first launch
@@ -292,7 +293,7 @@ Scenario: Different eligibility ages (EC-21)
 ```
 
 #### US-016 · Aadhaar shows only my year of birth
-As Kabir (P-01), I want to be warned if my Aadhaar has only a year, so that the age gate doesn't reject me.
+As Kabir (P-01), I want to be warned if my Aadhaar has only a year, so that the licence age check doesn't reject me.
 `F-04 · Must · S · S1 · EC-01 · API-13 · Deep-A`
 ```gherkin
 Scenario: YOB-only Aadhaar
@@ -344,12 +345,13 @@ Scenario: Turning 40 mid-journey (EC-04)
 As Rahul (P-07), I want to see what I can legally do now, so that I'm not turned away at the counter.
 `F-04 · Must · S · S1 · EC-05, EC-17 · API-01 · Thin`
 ```gherkin
-Scenario: Minor path, rules only
-  Given my DOB makes me 17
+Scenario: Minor path, family mode
+  Given my DOB makes me 17 and I use my parent's account in family mode
   When my plan renders
   Then only "MC ≤ 50 cc with guardian consent" is offered
   And a "Your 18th-birthday plan" card shows the date I can apply for MCWOG/MCWG
-  And no account, AI, streak, squad or analytics event is created
+  And every other feature, AI included, works as for any user
+  And my data is never used for behavioural tracking or targeted ads
 ```
 
 #### US-021 · Transport classes under 20
@@ -657,7 +659,7 @@ Scenario: Coach marks
   And I can skip them; they never reappear unless I ask
 ```
 
-#### US-058 · Explain my wrong answer (18+)
+#### US-058 · Explain my wrong answer
 As Kabir (P-01), I want to know why my answer was wrong in plain Hinglish, so that I understand the rule.
 `F-31 · Should · M · S3–S4 · EC-29 · API-41 · Thin`
 ```gherkin
@@ -687,7 +689,7 @@ Scenario: Cached mock
   Given I opened Learn once on Wi-Fi
   When I go offline
   Then a full mock test runs from the service-worker cache
-  And for users under 18 results stay on the device only
+  And results sync when I am back online (in family mode, to the parent's account)
 ```
 
 #### US-061 · Hindi question parity
@@ -715,7 +717,7 @@ Scenario: Bridge home
   And a legal-practice card says "Riding on an LL needs an L-plate and a licensed companion"
 ```
 
-#### US-071 · Nazar mock in Kerala's announced format (18+)
+#### US-071 · Nazar mock in Kerala's announced format
 As Kabir (P-01), I want a 10-clip, 100-mark hazard test, so that I know where I stand against a 60/100 pass mark.
 `F-23 · Must (hero) · L · S4 · EC-18, EC-28 · API-37, API-34, API-35 · Deep-B`
 ```gherkin
@@ -880,7 +882,7 @@ Scenario: Unverified rule is not cited by AI
   Then HR_NO_YIELD_UPHILL is recorded but the AI debrief does not cite the rule; the template shows "rule being verified"
 ```
 
-#### US-086 · Commentary: say what I see, then get scored (18+)
+#### US-086 · Commentary: say what I see, then get scored
 As Kabir (P-01), I want to narrate a clip aloud and see which hazards I named, so that I learn to scan out loud.
 `F-25, F-23 · Must · M · S4 · EC-20, EC-29 · API-34, API-36 · Deep-B (one clip)`
 ```gherkin
@@ -957,10 +959,10 @@ Scenario: Replay mismatch
 
 ---
 
-## EP-06 AI assistance (cross-cutting, 18+)
+## EP-06 AI assistance (cross-cutting, every user)
 **Goal:** AI that helps without inventing facts. Code computes numbers; Gemini narrates from allowlists (D-09, D-10). **PS1 box:** 12.
 
-#### US-100 · A debrief after every session (18+)
+#### US-100 · A debrief after every session
 As Kabir (P-01), I want "how you did, where you lacked, what you could have done, your next drill", so that every session ends with a plan.
 `F-25 · Must · M · S3–S8 · EC-29 · API-36 · Deep-B`
 ```gherkin
@@ -991,17 +993,19 @@ Scenario: AI unavailable
   And no error message blames the user
 ```
 
-#### US-103 · Minors get the template only
-As Rahul (P-07), I want feedback on my practice, so that I learn, without my data going to an AI.
+#### US-103 · A minor gets the same debrief in family mode
+As Rahul (P-07), I want feedback on my practice, so that I learn, with my parent in control of my data.
 `F-25 · Must · S · S3–S4 · EC-05 · — · Thin`
 ```gherkin
-Scenario: Under-18 debrief
-  Given my age band is under 18
-  When I finish a static lesson quiz
-  Then a template debrief is rendered on the device and nothing is sent to any AI or analytics endpoint
+Scenario: Family-mode debrief
+  Given I am 17 and use my parent's account in family mode
+  And my parent has consented to AI features for my case
+  When I finish a game session
+  Then I get the same four-part AI debrief as any user, with the same validator and template fallback
+  And my data is never used for behavioural tracking or targeted ads
 ```
 
-#### US-104 · Voice guide navigates and fills fields (18+)
+#### US-104 · Voice guide navigates and fills fields
 As Mohan-ji (P-03), I want to say what I need and have the app take me there and fill fields, so that I can use it without reading much.
 `F-30 · Must · L · Cross · EC-20 · API-40 · Deep-C (scripted Hindi flow live)`
 ```gherkin
@@ -1052,7 +1056,7 @@ Scenario: Client-side redaction
   And the guide says "Never share your Aadhaar number or OTP with anyone, including us"
 ```
 
-#### US-109 · Decode a Sarathi screenshot (18+)
+#### US-109 · Decode a Sarathi screenshot
 As Kabir (P-01), I want to upload a screenshot of a confusing status, so that I learn what it means and what to do.
 `F-32 · Should · M · S2–S7 · EC-20 · API-42 · Thin`
 ```gherkin
@@ -1078,11 +1082,11 @@ As Mohan-ji (P-03), I want to paste a challan SMS or link, so that I know whethe
 Scenario: Rules decide, AI explains
   When I paste a message with a link ending ".apk"
   Then the verdict is "Do not open. Government services never send APK files." decided by rules
-  And the AI (if 18+) only explains the red flags
+  And the AI only explains the red flags
   And no verdict ever says "safe"; the best verdict is "Sender and domain match the allowlist; still check on the government site yourself"
 ```
 
-#### US-112 · My weekly coach plan (18+)
+#### US-112 · My weekly coach plan
 As Kabir (P-01), I want a short weekly plan, so that I know which 4 sessions to do.
 `F-25 · Must · S · S3–S5 · — · — · Thin`
 ```gherkin
@@ -1093,14 +1097,15 @@ Scenario: Coach wording only
   And it offers implementation-intention buttons "Mon 7 pm / Tue 7 pm / Pick a time"
 ```
 
-#### US-113 · AI only after verified 18+
-As P-06 (state) and a parent, I want AI features locked behind a verified adult age, so that minors never reach Gemini.
+#### US-113 · AI for every user; an adult holds the account
+As P-06 (state) and a parent, I want every AI feature available while an adult holds the account and consents, so that a minor uses AI only through family mode.
 `F-54 · Must · S · Cross · EC-05 · API-40–API-43 · Deep-C`
 ```gherkin
-Scenario: Server-side gate
-  Given my account has no verified DOB ≥ 18
-  When any AI endpoint is called
-  Then it returns 403 age_gate and the UI hides AI entry points
+Scenario: Server-side consent check
+  Given a minor's case in the parent's account (family mode)
+  When any AI endpoint is called for that case
+  Then it runs as for any user if the parent's AI consent artefact is active
+  And without that consent the UI asks the parent to consent; it never shows an age wall
 ```
 
 #### US-114 · "AI can't book, pay or submit" on every AI surface
@@ -1148,14 +1153,14 @@ Scenario: Silent on break
   And the streak ends and is archived on DL test day
 ```
 
-#### US-123 · Create or join a squad (18+)
+#### US-123 · Create or join a squad
 As Kabir (P-01), I want a 3–5 friend squad, so that we prepare together.
 `F-26 · Must · S · S4 · — · API-39 · Thin`
 ```gherkin
 Scenario: Invite-only squad
   When I create a squad and share the invite link
   Then friends join by link; squads have 3–5 members
-  And under-18 users cannot create or join squads (D-13)
+  And a minor's profile joins a squad only with the parent's consent (D-13 revised)
   And the squad score is the mean of (Nazar Score × (1 − Brier))
 ```
 
@@ -2055,8 +2060,8 @@ Scenario: Status values
 
 ---
 
-## EP-17 Privacy, consent and age gates
-**Goal:** built to DPDP Rules (never "DPDP-compliant"); no Aadhaar numbers, OTPs or biometrics ever (D-07, D-13, D-18).
+## EP-17 Privacy, consent and family mode
+**Goal:** built to DPDP Rules (never "DPDP-compliant"); no Aadhaar numbers, OTPs or biometrics ever; minors use the full product through a parent's account (D-07, D-13 revised, D-18).
 
 #### US-270 · Consent per purpose
 As Kabir (P-01), I want to grant consent for each purpose separately, so that I control my data.
@@ -2097,24 +2102,26 @@ Scenario: Contact in footer
   Then the footer links a grievance page with the grievance officer's name, email and response timeline
 ```
 
-#### US-274 · Under-18 gating
-As Rahul (P-07), I want the features I'm allowed, so that I can prepare legally.
+#### US-274 · Family mode for a learner under 18
+As Rahul (P-07), I want to use the full app on my parent's phone, so that I can prepare legally.
 `F-54 · Must · M · Cross · EC-05 · — · Deep-C`
 ```gherkin
 Scenario: Minor experience
   Given I declare a DOB under 18
-  Then I get plan card, checklist and static lessons without an account
-  And AI, telemetry, streaks, squads, share cards and WhatsApp marketing are hidden and blocked server-side
+  Then my case is created inside my parent's account (family mode) after the parent gives verifiable parental consent
+  And every feature, AI and streaks included, works as for any user
+  And squads and share cards need the parent's consent; WhatsApp marketing is never sent
+  And my data is never used for behavioural tracking, profiling or targeted ads (s.9(3))
 ```
 
-#### US-275 · Verified 18+ for AI and history
-As P-06 (state), I want progress history and AI only for verified adults, so that children's data rules are respected.
+#### US-275 · Verified adult account holder
+As P-06 (state), I want every account held by a verified adult, so that children's data rules (verifiable parental consent) are respected.
 `F-54 · Must · M · Cross · — · API-60 · Deep-C`
 ```gherkin
 Scenario: Age verification mode
   Given hackathon mode
-  Then 18+ is self-declared with an attestation and the AI gate checks it server-side
-  And in production the DOB is verified via DigiLocker (adapter) before account history or AI is enabled
+  Then the account holder self-declares 18+ with an attestation, checked server-side when a family member's case is added
+  And in production the parent's adult status is verified via DigiLocker (adapter, Rule 10) before a minor's case is added
 ```
 
 #### US-276 · We never ask for Aadhaar numbers or OTPs

@@ -5,7 +5,7 @@
 ## 0. Principles
 1. **One standard, two backends.** Every service emits OpenTelemetry (traces, metrics, logs). The hackathon exports OTLP to Grafana Cloud plus Sentry for errors; production exports to an OTel Collector and a Grafana LGTM stack **in India**. No code changes between them, only `OTEL_EXPORTER_OTLP_ENDPOINT`.
 2. **PII never reaches telemetry.** Redaction happens in the process before export, and again in the Collector (defence in depth). Telemetry carries pseudonymous IDs only.
-3. **Under-18 users produce no product telemetry** (D-13, war-room G7): no game events, no analytics events, no AI traces. Operational logs (HTTP status, latency) keep only a hashed session ID.
+3. **No behavioural tracking of a child's data** (D-13 revised, DPDP s.9). Every feature, AI included, works for a 16–17 learner in a parent's account (family mode, verifiable parental consent), but that minor's case produces no product-analytics events (API-63) and no data for ads or profiling. Operational telemetry needed to run and secure the service (HTTP status, latency, AI token counts and validator verdicts, never text) is kept, with only pseudonymous or hashed IDs.
 4. **Every alert has a runbook link and an owner.** No alert without a playbook in RUNBOOK.md.
 5. **Measure the things the judges and the state will ask about:** p95 latency, cold starts, fallback rates, invented-number count, cost in ₹.
 
@@ -13,9 +13,9 @@
 | Service | Library (pin at H0) | Auto-instrumented | Custom spans / metrics |
 |---|---|---|---|
 | `margdarshak-web` (Next.js 16) | `@vercel/otel` or Next.js `instrumentation.ts` with `@opentelemetry/sdk-node`; `@sentry/nextjs`; web-vitals reporter | route handlers, fetch | `web_vitals_{lcp,inp,cls}` per route and per `lite=true/false`; `page_bytes_first_load` |
-| `margdarshak-api` (FastAPI) | `opentelemetry-distro`, `opentelemetry-instrumentation-{fastapi,sqlalchemy,httpx,redis,logging}`, `sentry-sdk[fastapi]` | HTTP, DB, outbound HTTP, Valkey | rules evaluation, adapter calls (`adapter.name`, `adapter.mode`), ADK graph nodes (§6), validator verdicts, JobRunner start/await, HMAC failures |
+| `margdarshak-api` (Go 1.27) | OpenTelemetry Go `go.opentelemetry.io/otel` v1.47.0 (OTLP/HTTP exporters), `otelhttp` v0.72.0 (chi server + outbound `http.Client` transports), a pgx `QueryTracer` hook for DB spans, go-redis v9 OTel hooks, ADK for Go telemetry (`google.golang.org/adk/telemetry`) for model/tool spans, `sentry-go` v0.50.0 with `SendDefaultPII: false` (sentry-go and go-redis are added to go.mod by BE-platform) | HTTP, DB, outbound HTTP, Valkey, ADK/genai calls | rules evaluation, adapter calls (`adapter.name`, `adapter.mode`), ADK graph nodes (§6), validator verdicts, JobRunner start/await, HMAC failures |
 | `margdarshak-score-verifier` (Node) | `@opentelemetry/sdk-node` + `@opentelemetry/auto-instrumentations-node` | HTTP | `replay.duration_ms`, `replay.hash_mismatch_total{game}`, `replay.score_delta` (client − server) |
-| `margdarshak-workflows` (Render Workflows, Python) | same Python OTel SDK; **trace context passed as a task argument** (`traceparent` string), since runs are separate instances | outbound HTTP, DB | one span per task attempt: `task.name`, `task.attempt`, `task.run_id`, outcome; `clip_pipeline_stage_seconds{stage}` |
+| `margdarshak-workflows` (Render Workflows, TypeScript) | `@opentelemetry/sdk-node` + `@opentelemetry/auto-instrumentations-node`; **trace context passed as a task argument** (`traceparent` string), since runs are separate instances; the HMAC calls to `/internal/job-steps/*` carry it on as a W3C header | outbound HTTP (Go API job steps, R2) | one span per task attempt: `task.name`, `task.attempt`, `task.run_id`, outcome; `clip_pipeline_stage_seconds{stage}` |
 | n8n Cloud | execution log (30-day on Pro) + W12 alerts | — | every call to the backend carries `X-MD-Workflow: W0x` and `X-MD-Execution: <id>`, recorded as span attributes |
 
 **Trace propagation:** W3C `traceparent` across web → API → verifier → Workflows. n8n can't propagate W3C context, so the API starts a new root span per n8n call and links it by `n8n.execution_id`.
@@ -24,19 +24,19 @@
 
 ## 2. Logging (structured, PII-redacted)
 ### 2.1 Format
-JSON, one event per line, UTC timestamps with milliseconds, via `structlog` (Python) and `pino` (Node):
+JSON, one event per line, UTC timestamps with milliseconds, via Go's standard `log/slog` (`slog.NewJSONHandler`, wrapped by the redaction handler from `internal/privacy`, with `trace_id`/`span_id` added from the request context) and `pino` (Node: web, score verifier, workflows tasks):
 ```json
 {"ts":"2026-10-24T09:12:03.418Z","level":"info","service":"margdarshak-api","env":"hackathon-prod",
  "tenant":"jk","trace_id":"4bf92f3577b34da6a3ce929d0e0e4736","span_id":"00f067aa0ba902b7",
  "event":"case.stage_changed","case_id":"case_7Hk2...","from":"S3","to":"S4","actor":"user:u_9fQ...",
- "age_band":"adult","http":{"route":"/v1/cases/{id}/events","status":200,"duration_ms":41},
+ "age_band":"26_40","http":{"route":"/v1/cases/{id}/events","status":200,"duration_ms":41},
  "build_sha":"a1b2c3d"}
 ```
 
 ### 2.2 What is never logged
 | Never log | Why | How it's enforced |
 |---|---|---|
-| Aadhaar numbers (12 digits, with or without spaces), VIDs, OTPs | Aadhaar Act; D-07; EC-20 | regex redaction processor `[AADHAAR_REDACTED]` in structlog/pino + Collector `transform` processor; CI test feeds samples through the logger |
+| Aadhaar numbers (12 digits, with or without spaces), VIDs, OTPs | Aadhaar Act; D-07; EC-20 | redaction in-process: a `slog.Handler` wrapper in `internal/privacy` rewrites every string attribute and the message (12-digit Aadhaar-like numbers validated with Verhoeff, OTP-like codes in context, phone numbers, emails, tokens → `[AADHAAR_REDACTED]` etc.), the same rules in a pino redaction hook for Node, + Collector `transform` processor; a Go test (`go test ./internal/privacy/...`) and a Node test feed samples through the loggers |
 | Phone numbers, emails, names, DOB, addresses | DPDP data minimisation | only pseudonymous IDs (`u_…`, `case_…`); E-14 contact is a separate encrypted table that is never serialised in logs |
 | LL/DL numbers in clear (E-04, E-05) | identity data | stored hashed; logs show the last 2 characters at most |
 | Request/response bodies | may contain any of the above | body logging disabled; only route templates (`/v1/cases/{id}`), not raw paths with IDs |
@@ -51,7 +51,7 @@ JSON, one event per line, UTC timestamps with milliseconds, via `structlog` (Pyt
 | Application | request logs, errors, job outcomes | Render logs (plan default) + Grafana Cloud free tier (14 days [unverified quota; owner Ops lead]) | **180 days hot/warm in Loki + archive** (CERT-In) |
 | Security / audit | auth events, admin actions, rule-pack approvals, consent changes, data exports, HMAC failures, `/internal/*` calls | Postgres `audit_log` (E-30, append-only) + logs | **180 days minimum** rolling within Indian jurisdiction (CERT-In Directions 28 Apr 2022, war-room G6) + longer where the state's records policy requires |
 | AI telemetry | token counts, cost, verdicts | Postgres `ai_calls` table, 90 days | 180 days |
-| Product analytics (F-55) | aggregated, no PII, adults only | Postgres, 13 months aggregated | per state policy |
+| Product analytics (F-55) | aggregated, no PII; no events from a minor's case in family mode (D-13 revised) | Postgres, 13 months aggregated | per state policy |
 
 ## 3. Production pipeline (India)
 ```mermaid
@@ -100,7 +100,7 @@ SLIs are measured server-side at the load balancer / Render edge and from synthe
 | **D9 Cost (₹)** | Render credits used (manual entry daily), Gemini ₹/day, Sarvam ₹/day, WhatsApp conversations/messages, R2 storage | Ops lead (COST.md) |
 
 ## 6. LLM observability
-Every model call goes through one wrapper (`app.ai.client`) that emits a span following the OpenTelemetry **GenAI semantic conventions** (`gen_ai.system`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`) plus Margdarshak attributes. ADK's own tracing hooks are used where they exist [unverified for ADK 2.12's OTel exporter options; owner AI lead, H0].
+Every model call goes through one Go wrapper (`internal/adapters/ai`, around the ADK runner and the `google.golang.org/genai` client) that emits a span following the OpenTelemetry **GenAI semantic conventions** (`gen_ai.system`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`) plus Margdarshak attributes. ADK for Go's own tracing (`google.golang.org/adk/telemetry`, v1.9.0) is used where it exists [unverified: which GenAI attributes it emits and how it shares our tracer provider; owner AI lead, H0].
 
 | Attribute / metric | Example | Why |
 |---|---|---|
@@ -111,7 +111,7 @@ Every model call goes through one wrapper (`app.ai.client`) that emits a span fo
 | `md.latency_ms` | 1,640 | SLO-5 |
 | `md.validator.verdict` | `ok` / `retry` / `fallback` | guardrail health |
 | `md.validator.reasons` | `["digit_outside_placeholder"]` | what the model got wrong |
-| `md.fallback.cause` | `timeout` / `validation` / `under18` / `no_consent` / `breaker_open` / `offline` | EC-29 analysis |
+| `md.fallback.cause` | `timeout` / `validation` / `no_consent` / `parent_consent_missing` / `breaker_open` / `offline` | EC-29 analysis |
 | `md.provenance.replaced_numbers` | 0 | D-10: must be 0 in evals and near 0 live |
 | `md.pii.redactions` | 1 | EC-20: counts redactions before send, not content |
 | `md.allowed_rule_ids_count` | 4 | closed-ID design check |
@@ -135,7 +135,7 @@ Every model call goes through one wrapper (`app.ai.client`) that emits a span fo
 | A-05 | AI fallback spike | debrief fallback > 20 % over 5 min (breaker open) | SEV-3 | Telegram | PB-01 |
 | A-06 | AI provider errors | Gemini 5xx/429 > 10 % for 5 min | SEV-3 | Telegram | PB-01 |
 | A-07 | Invented number | `md.provenance.replaced_numbers > 0` in production on any agent other than through the validator path, or validator digit rejections > 5 % / hour | SEV-2 | Telegram + AI lead | PB-01 |
-| A-08 | Minor reached AI | any AI call with `age_band != adult` (must be impossible) | **SEV-1** | phone | PB-13 |
+| A-08 | Minor's case without parental consent | any AI call, case write or analytics event for a case with `age_band` in (`under_16`, `16_17`) and no valid parental-consent artefact, or any analytics event from a minor's case (must be impossible; D-13 revised) | **SEV-1** | phone | PB-13 |
 | A-09 | WhatsApp failures | send failures > 10 % in a W01/W04 run, or Meta error 131047/131026 bursts | SEV-3 | Telegram | PB-02 |
 | A-10 | Case-clock missed | no completed `case_clock_sweep` by 08:30 IST | SEV-2 | Telegram | PB-08 |
 | A-11 | Workflows failures | task failure after all retries > 3 in 15 min, or a run queued > 10 min | SEV-3 | Telegram | PB-08 |

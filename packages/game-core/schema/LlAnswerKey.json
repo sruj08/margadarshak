@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "qref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "pattern": "^[A-Za-z0-9_.:@-]+$"
+    },
+    "cardId": {
+      "type": "string",
+      "maxLength": 48
+    },
+    "correctOptionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "pattern": "^[A-Za-z0-9_.:@-]+$"
+    },
+    "topic": {
+      "type": "string",
+      "enum": ["LL0", "LL1", "LL2", "LL3", "LL4"]
+    },
+    "signFamily": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["MANDATORY", "CAUTIONARY", "INFORMATORY", "MARKINGS", "SIGNALS"]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "signId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^SIGN-[A-Z]{2,4}-\\d{3}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": ["qref", "cardId", "correctOptionId", "topic", "signFamily", "signId"],
+  "$id": "https://margdarshak.example/schemas/game-core/LlAnswerKey.json",
+  "title": "LlAnswerKey"
+}

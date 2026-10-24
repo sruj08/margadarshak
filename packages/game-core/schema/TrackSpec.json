@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "trackId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "class": {
+      "type": "string",
+      "enum": ["2W", "LMV"]
+    },
+    "source": {
+      "type": "string",
+      "enum": ["design", "rule_pack", "live_intel"]
+    },
+    "label": {
+      "type": "string",
+      "const": "practice_layout"
+    },
+    "timeLimitS": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 600
+    },
+    "passDemerits": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "immediateFailTimeFactor": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "demerits": {
+      "type": "object",
+      "properties": {
+        "lineTouch": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "cone": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "footDown": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "stall": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "rollback": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "overTimePer10s": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        }
+      },
+      "required": ["lineTouch", "cone", "footDown", "stall", "rollback", "overTimePer10s"]
+    },
+    "halfWidthM": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 5
+    },
+    "offTrackMarginM": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 5
+    },
+    "centreline": {
+      "minItems": 4,
+      "maxItems": 400,
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "number",
+            "minimum": -500,
+            "maximum": 500
+          },
+          {
+            "type": "number",
+            "minimum": -500,
+            "maximum": 500
+          }
+        ],
+        "items": false,
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "segments": {
+      "minItems": 1,
+      "maxItems": 40,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fromIndex": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "toIndex": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "location": {
+            "type": "string",
+            "enum": ["loop_left", "loop_right", "crossing", "entry", "exit"]
+          }
+        },
+        "required": ["fromIndex", "toIndex", "location"]
+      }
+    },
+    "cones": {
+      "maxItems": 40,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "rM": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 1
+          }
+        },
+        "required": ["x", "y", "rM"]
+      }
+    },
+    "start": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "headingDeg": {
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        }
+      },
+      "required": ["x", "y", "headingDeg"]
+    },
+    "finishFraction": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 1
+    },
+    "finishRadiusM": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 10
+    }
+  },
+  "required": [
+    "trackId",
+    "version",
+    "class",
+    "source",
+    "label",
+    "timeLimitS",
+    "passDemerits",
+    "immediateFailTimeFactor",
+    "demerits",
+    "halfWidthM",
+    "offTrackMarginM",
+    "centreline",
+    "segments",
+    "cones",
+    "start",
+    "finishFraction",
+    "finishRadiusM"
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/TrackSpec.json",
+  "title": "TrackSpec"
+}

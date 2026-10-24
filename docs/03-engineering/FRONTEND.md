@@ -19,7 +19,7 @@ Two scopes appear in every section:
 | 3 | **No rupee literal in any UI string or prompt.** Fees render from `FeeQuote.lineItems[]` (E-07) via `formatInr()`. A Biome/grit lint rule (§12) fails the build on `₹\s?\d` in `messages/*.json` and `*.tsx`. | D-06 |
 | 4 | **Non-affiliation footer** on every page, both apps, every theme including Lite: "Independent prototype, not affiliated with MoRTH/NIC/State Transport Departments; simulated government data." Plus a first-launch disclaimer sheet. No emblem, no "official" wording (D-19 wording-ban lint, §12). | D-01, D-19 |
 | 5 | **Aadhaar, OTP, payment and submission never happen in Margdarshak.** There is no input field anywhere that accepts an Aadhaar number or OTP. Those steps are a hand-off to Sarathi (F-07 Mode A) or the state's adapter (Mode B). | D-07 |
-| 6 | Every AI surface shows the line "AI can't book, pay or submit" and a source chip with the rule ID. Under-18 users (P-07) see no AI surface at all, no telemetry, no streaks, no squads. | D-09, D-13 |
+| 6 | Every AI surface shows the line "AI can't book, pay or submit" and a source chip with the rule ID. Every user sees every AI surface, including a learner under 18 (P-07) in a parent's account (family mode); for that learner the client sends no analytics or game telemetry, and squads and share cards appear only after the parent's consent. | D-09, D-13 revised |
 | 7 | Mobile first at **360 × 640 CSS px**, 18 px body text, 48 × 48 px targets, WCAG 2.1 AA. Desktop is an enhancement. | F-52, D-21 |
 | 8 | Works offline for: mock LL tests, downloaded Nazar packs, saved lessons, the last plan card, and the application draft. Writes queue in IndexedDB and replay with idempotency keys. | F-51, EC-11, EC-19 |
 | 9 | Lite mode first load **< 300 KB** transferred (brotli), with no HeroUI, Motion, Rive, Lottie, Phaser or TanStack Query in that bundle. | F-51, EC-19 |
@@ -40,9 +40,9 @@ margdarshak/
 │   ├── rules/               # @margdarshak/rules — rule-pack JSON Schema, generated TS types, Zod; (Phase 3) offline evaluator
 │   └── api-client/          # @margdarshak/api-client — generated from api/openapi.yaml (openapi-typescript + openapi-fetch)  [new: added by this doc]
 ├── services/
-│   ├── api/                 # FastAPI (see BACKEND.md)
+│   ├── api/                 # Go 1.27 API: chi + oapi-codegen + pgx/sqlc + ADK for Go (see BACKEND.md, ADR-0011)
 │   ├── score-verifier/      # Node service that imports @margdarshak/game-core and replays sessions
-│   └── workflows/           # Render Workflows Python tasks
+│   └── workflows/           # Render Workflows tasks in TypeScript (@renderinc/sdk)
 └── api/openapi.yaml         # the contract both apps are generated from
 ```
 
@@ -135,7 +135,7 @@ apps/web/
 │   │   ├── redact/              # client-side PII redaction (EC-20)
 │   │   ├── time/                # serverClock (offset from Date header), countdown helpers (EC-15)
 │   │   ├── a11y/                # reduced motion, focus management, live regions
-│   │   ├── telemetry/           # analytics (API-63, no PII), web-vitals, gated off for u18
+│   │   ├── telemetry/           # analytics (API-63, no PII), web-vitals, off for a family-mode learner under 18
 │   │   └── flags/               # tenant feature flags from API (ai_coach, voice, school_portal…)
 │   ├── stores/                  # Zustand stores (§4.3)
 │   └── styles/globals.css       # @import "tailwindcss"; @import "@heroui/styles"; @import "@margdarshak/ui/tokens.css"
@@ -171,12 +171,12 @@ All routes are under `/[locale]` (`en`, `hi`; `doi` for reviewed strings, fallin
 | S3 | `/learn/review` | client | device session | API-31, API-32; ts-fsrs offline | Review queue works offline; answers sync via outbox |
 | S3 | `/learn/readiness` | client | device session | F-21; API-33 | Shown as "78 = knowledge 84 − calibration 6"; "book anyway" always visible (advisory gate) |
 | S3 | `/learn/ll-test` | client (zero decorative motion) | none | F-22 | Format from the tenant rule pack (timer, count, pass mark), guided first run; fully offline |
-| S3 | `/learn/sign-snap` | client (camera) | adult + consent | F-27, M-07 | Could; hidden for u18 |
+| S3 | `/learn/sign-snap` | client (camera) | consent | F-27, M-07 | Could; available to every user (D-13 revised) |
 | S4 Bridge | `/bridge` | RSC + client | case owner | F-09 case clock day plan; API-14 | "Driving test unlocks in N days" from server `unlockAt` |
-| S4 | `/bridge/play` | RSC | device session | Game picker (F-23, F-24) | Under-18: games available, no telemetry, no streaks; local-only scoring |
+| S4 | `/bridge/play` | RSC | device session | Game picker (F-23, F-24) | Every user; for a family-mode learner under 18: server sessions and streaks as usual, no telemetry |
 | S4 | `/bridge/play/nazar` | client (video) | device session | F-23; API-37, API-34, API-35 | §7 timing. Mock = unseen clips only |
 | S4 | `/bridge/play/[gameId]` | client (Phaser or React) | device session | F-24; API-34, API-35 | `gameId` ∈ manifest enum; unknown → 404 |
-| S4 | `/bridge/play/session/[sid]/debrief` | client | device session | F-25; API-36 | Template card renders instantly; AI "Coach notes" swap in (§8.4); u18 = template only |
+| S4 | `/bridge/play/session/[sid]/debrief` | client | device session | F-25; API-36 | Template card renders instantly; AI "Coach notes" swap in (§8.4) for every user |
 | S4 | `/bridge/practice-record` | RSC | account | F-28; API-46 | "Practice Record", never "verified" |
 | S5 Book | `/book` | RSC + client map | case owner | F-10; API-25, API-26 | Map = static tiles + list fallback (list is default on Lite/2G) |
 | S5 | `/book/offices/[officeId]` | RSC (ISR 5 min) | none | API-26, API-29 (Live Intel) | F-11: k ≥ 5 aggregates only; seeded rows labelled |
@@ -314,9 +314,9 @@ export const qk = {
 | `useVoiceStore` | `state: idle\|listening\|thinking\|speaking\|acting\|didnt_catch\|offline\|handoff`, `level`, `transcript`, `pendingAction` | no |
 | `useGameHostStore` | `status, gameId, sid, provisionalScore, timingMode, paused` | no |
 | `useConsentUiStore` | which consent sheet is open, helper banner visibility | no |
-| `useSessionStore` | `deviceSessionId, userBand: "u18"\|"adult"\|"unknown", role` (no names, no DOB) | yes (`userBand` only) |
+| `useSessionStore` | `deviceSessionId, familyLearner: boolean, parentConsent: { squads, shareCards }, role` (no names, no DOB) | yes (`familyLearner` only) |
 
-`userBand` is set from the server (`/v1/cases/{id}` or the account) and is used to hide AI, telemetry, streaks and squads for under-18 users (D-13). It is a UX gate; the API enforces the same rule.
+`familyLearner` is set from the server (`/v1/cases/{id}`: `for_family_member` with an under-18 `age_band`) and only switches off analytics/game telemetry and shows the parent-consent step before squads and share cards (D-13 revised). It never hides AI or any other feature. It is a UX hint; the API enforces the same rule (403 `PARENT_CONSENT_REQUIRED`).
 
 ### 4.4 Offline persistence and the outbox
 
@@ -325,7 +325,7 @@ sequenceDiagram
   participant UI as Step screen
   participant OB as Outbox (IndexedDB)
   participant SW as Service worker
-  participant API as FastAPI
+  participant API as Go API
   UI->>OB: put {id, method:PATCH, url:/v1/cases/:id, body, idemKey, ifMatch}
   UI-->>UI: show "Saved on this phone"
   OB->>API: replay when online (FIFO per caseId)
@@ -342,7 +342,7 @@ sequenceDiagram
 - IndexedDB databases: `md-outbox` (pending writes), `md-drafts` (per-step drafts), `md-telemetry` (game events, `(sid, seq)` dedupe), `md-query` (persisted TanStack cache for allow-listed keys: plan, case, timeline, review queue, module content, fees).
 - **EC-14 shared device:** "Clear this device" deletes all four databases, Cache Storage entries tagged `user:*`, localStorage, and unregisters push. Helper mode clears automatically on sign-out and after 10 minutes idle.
 - **EC-26 account deleted:** the API returns `410 Gone` for the case; the client wipes local stores for that `caseId` and shows the confirmation.
-- Under-18 sessions do not write to `md-telemetry`.
+- A family-mode learner under 18 does not write to `md-telemetry`.
 
 ### 4.5 Server clock (EC-15)
 - Every API response carries the `Date` header and a `serverNow` field on clock-bearing resources (API-11, API-14).
@@ -357,7 +357,7 @@ sequenceDiagram
 - **RSC fetches** (server side, in `page.tsx`) call the API over Render's private network URL (`API_INTERNAL_URL`) with the user's session cookie forwarded. **Client fetches** use `NEXT_PUBLIC_API_BASE_URL`.
 - Every request sends `X-Tenant: <state code>` (resolved in middleware from host or the user's chosen state), `Accept-Language`, and `X-Request-Id` (uuidv7) for tracing.
 - Responses are validated with Zod at the boundary only for data the UI turns into facts (fee quotes, clock, debrief card). A schema mismatch is a Sentry error and the screen shows the "we couldn't load this" state, not wrong numbers.
-- No Next.js Server Actions write to the database; Server Actions are used only in Lite mode to proxy form POSTs to the API (§9), so all business logic stays in FastAPI.
+- No Next.js Server Actions write to the database; Server Actions are used only in Lite mode to proxy form POSTs to the API (§9), so all business logic stays in the Go API.
 
 ---
 
@@ -485,7 +485,7 @@ Rules:
 ### 8.4 Debrief rendering (template first)
 1. On session end, render the **template card** ("Auto notes") immediately from `SessionResult.findings` + local templates.
 2. Call API-35 (server replay) → API-36 (debrief). If the AI card ("Coach notes") arrives within 6 s and passes the server validator, cross-fade to it; otherwise keep the template (EC-29).
-3. Under-18 users: never call the AI path.
+3. Every user, including a family-mode learner under 18, gets the AI path (D-13 revised).
 
 ---
 
@@ -497,7 +497,7 @@ Lite mode is a separate route group, not a CSS toggle, because the budget cannot
 |---|---|---|
 | Rendering | RSC + client islands | **RSC only**, HTML forms, progressive enhancement; one tiny client script (≤ 12 KB) for the outbox and countdown |
 | UI library | HeroUI v3 + Motion | Plain semantic HTML styled with `packages/ui` tokens + a Lite stylesheet (≤ 15 KB brotli). No shadows, no blur, no gradients |
-| Data | TanStack Query | Server fetch per request; POSTs go to a Server Action that proxies to FastAPI with the idempotency key |
+| Data | TanStack Query | Server fetch per request; POSTs go to a Server Action that proxies to the Go API with the idempotency key |
 | Media | Rive orb, Lottie, images | CSS concentric-ring orb fallback (no voice in Lite); no hero images; SVG icons inlined only where used |
 | Games | Phaser sims, Nazar video | LL simulator (HTML form) + SVG "decision" versions of the sims (e.g. Blind Spot "tap the safe position" on a static diagram). Nazar only after explicit pack download, 360p |
 | Fonts | Figtree + Mukta subsets | System UI font stack first; Mukta Devanagari subset (~ 20 KB woff2) only for `hi`/`doi` |
@@ -528,9 +528,9 @@ Lite routes cover: Home, Plan (3 taps), Plan card, Apply steps (same step IDs), 
 `features/games/GameHost.tsx` is the only component that loads a game. It:
 1. Resolves the `GameManifest` (Zod, `@margdarshak/game-core`) for `gameId`; rejects unknown IDs.
 2. Calls API-34 to create a session → `{ sid, seed, difficulty, items[], scoringVersion }`. Offline: generates a local `sid` (uuidv7) and seed, marked `offline: true`; the server re-seeds on sync and the session counts only for practice.
-3. Builds the `ctx` (`{ sessionId, userBand, locale, a11y, difficulty, seed, items, offline, deviceClass }`). Games never receive a name, DOB, phone, case file or location.
+3. Builds the `ctx` (`{ sessionId, locale, a11y, difficulty, seed, items, offline, deviceClass }`). Games never receive a name, DOB, phone, case file or location.
 4. Lazy-loads the game module with `next/dynamic(() => import("@/features/games/<id>"), { ssr: false })`.
-5. Subscribes to the game's event bus; appends events to `md-telemetry` with strictly increasing `seq` (skipped for u18).
+5. Subscribes to the game's event bus; appends events to `md-telemetry` with strictly increasing `seq` (skipped for a family-mode learner under 18).
 6. Pauses on `visibilitychange` (mandatory); a hidden tab during a timed item voids that item (integrity flag).
 7. On `end`, gets the client `SessionResult`, shows it as **provisional**, posts API-35 with `replay.inputs` (delta-encoded, gzip, base64) + seed. The server replay result replaces the provisional score.
 
@@ -624,11 +624,11 @@ Implementation contract:
 
 ---
 
-## 12. Voice orb: WebSocket client to ADK live (F-30, API-40)
+## 12. Voice orb: WebSocket client to ADK for Go `RunLive` (F-30, API-40)
 
 ### 12.1 Gates before connecting
-1. `userBand === "adult"` (verified DOB ≥ 18) and tenant flag `voice` on (D-13). Otherwise the orb is not rendered.
-2. Consent "Voice guide" artefact present (API-60). Privacy chip "Mic on · not stored" while listening.
+1. Tenant flag `voice` on. The orb is rendered for every user, including a learner under 18 in family mode (D-13 revised).
+2. Consent "Voice guide" artefact present (API-60); for a family-mode learner, the parent's consent covers it. Privacy chip "Mic on · not stored" while listening.
 3. Online. Otherwise show the offline state.
 
 ### 12.2 Protocol (client side)
@@ -645,7 +645,7 @@ Implementation contract:
 | S → C | text JSON `action` | `{ type:"action", actionId, name: "navigate"\|"fill_field"\|"open_drill"\|"read_debrief"\|"show_rule", args }` — a **closed enum**; anything else is ignored and logged |
 | S → C | text JSON `source` | `{ ruleId, sourceUrl, verifiedOn }` → source chip |
 | S → C | text JSON `state` | `listening`/`thinking`/`speaking`/`handoff`/`error` |
-| S → C | close codes | 4401 unauthenticated, 4403 age/consent gate, 4429 voice quota, 1011 upstream error → orb "Didn't catch" + text fallback |
+| S → C | close codes | 4401 unauthenticated, 4403 consent missing (`PARENT_CONSENT_REQUIRED` for a family-mode learner, or the voice purpose), 4429 voice quota, 1011 upstream error → orb "Didn't catch" + text fallback |
 
 ### 12.3 Action executor rules
 - `navigate(routeId)`: `routeId` must be in a static allow-list map (`voiceRoutes.ts`); unknown IDs are dropped.
@@ -659,7 +659,7 @@ Applied to typed text before send and to the displayed user transcript:
 - OTP in context: `/\b(otp|ओटीपी|code|कोड)\D{0,12}\d{4,8}\b/i` → `[otp removed]`
 - Phone: `/\b(?:\+?91[\s-]?)?[6-9]\d{9}\b/` → `[phone removed]`
 - Card/UPI PIN context: `/\b(pin|पिन)\D{0,8}\d{4,6}\b/i`
-Spoken digits cannot be redacted on the client; the server applies transcription-side redaction plus the ADK PII plugin, and the agent is instructed to refuse and explain ("Never share your Aadhaar or OTP with anyone, including me"). Unit tests cover Devanagari digits (`०-९`) too.
+Spoken digits cannot be redacted on the client; the server applies transcription-side redaction plus our ADK for Go PII plugin, and the agent is instructed to refuse and explain ("Never share your Aadhaar or OTP with anyone, including me"). Unit tests cover Devanagari digits (`०-९`) too.
 
 ### 12.5 Failure handling
 - Reconnect with backoff 1, 2, 4 s, max 3 tries, then the text fallback.
@@ -672,7 +672,7 @@ Spoken digits cannot be redacted on the client; the server applies transcription
 
 - **CSP** (set in `next.config.ts` headers, nonce per request from middleware): `default-src 'self'; script-src 'self' 'nonce-…' 'wasm-unsafe-eval'; connect-src 'self' <API> <WS> <Sentry ingest>; media-src 'self' blob: <R2 clip domain>; img-src 'self' data: blob: <R2>; worker-src 'self' blob:; frame-ancestors 'none'; form-action 'self' https://sarathi.parivahan.gov.in`. `wasm-unsafe-eval` is needed for MediaPipe and Rive.
 - Other headers: HSTS, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(self), microphone=(self), geolocation=()`, `X-Content-Type-Options: nosniff`.
-- No third-party analytics or ad SDKs. Analytics go to API-63 as aggregated, PII-free events (F-55); under-18 sessions send none.
+- No third-party analytics or ad SDKs. Analytics go to API-63 as aggregated, PII-free events (F-55); a family-mode learner under 18 sends none.
 - Sentry: `sendDefaultPii: false`; `beforeSend` scrubs query strings, form values and anything matching the §12.4 patterns; Session Replay disabled.
 - Cookies: `md_sid` (device session, HttpOnly, Secure, SameSite=Lax), `md_lite`, `NEXT_LOCALE`. No PII in cookies or localStorage.
 - Phone/email (E-14) are entered only on the account and notification-consent screens and are never cached by the SW (`md-api-user` excludes `/v1/me/contacts`).
@@ -722,7 +722,7 @@ Enforcement: `size-limit` per route chunk in CI, Lighthouse CI on Slow 3G thrott
 | Auth | Anonymous device session → optional email magic link / Google | DigiLocker OAuth (PKCE) / Jan Parichay via adapters |
 | Sarathi | Mode A hand-off (copy-pack + deep link), "simulated" chips on mock data | Mode B adapter once a state adopts |
 | Languages | en + hi complete; Dogri voice in | Rule-pack-ready translations per state, human-reviewed |
-| Offline | Mock tests, drafts, Nazar pack, last plan | Offline plan evaluator (`packages/rules` TS evaluator sharing golden files with Python) |
+| Offline | Mock tests, drafts, Nazar pack, last plan | Offline plan evaluator (`packages/rules` TS mirror sharing the `tests/golden/` files with the authoritative Go engine) |
 | Lite | `/lite` routes for Home, Plan, Apply, LL test, Tracker | All stages; SMS/IVR fallbacks after TRAI DLT |
 | Console | School Pro list + inspection export; State console read-only views on seeded aggregates; rule-pack studio with maker-checker; clip admin | Jan Parichay SSO, per-tenant RBAC, STQC audit |
 | Games | Nazar deep; 4 deep sims (Stopping Distance, Blind Spot, Junction Scan, Track Test Twin); others thin | All 8 deep with calibrated difficulty |
@@ -736,3 +736,37 @@ Enforcement: `size-limit` per route chunk in CI, Lighthouse CI on Slow 3G thrott
 | `@serwist/turbopack` + Range requests for cached video, verified on Android Chrome | Frontend lead | 2026-10-24 |
 | ADK live audio formats (16 kHz in / 24 kHz out) confirmed against `gemini-3.8-live` vs `gemini-2.5-flash-native-audio-preview-12-2025` [unverified for 3.8] | AI lead | 2026-10-24 |
 | TypeScript 7 compatibility review | Frontend lead | 2026-11-15 |
+
+## 18. P2 wiring in `apps/web` (W0b, 2026-10-24)
+
+**Workspace packages.** `@margdarshak/game-core`, `@margdarshak/gamification` and `@margdarshak/content` are `workspace:*` dependencies, and `phaser` comes from the catalog. Their package `exports` put a custom `margdarshak-source` condition (→ `src/*.ts`) ahead of `types`/`default` (→ an unbuilt `dist/`). Turbopack has no custom-condition option, so the web app resolves them from source with tsconfig `paths`. Next/Turbopack, `tsc` and the editor read those paths, and `vitest.config.ts` mirrors them as aliases. They are also listed in `transpilePackages`. The packages' explicit `.ts` relative imports need `allowImportingTsExtensions`, which `apps/web/tsconfig.json` already sets; Turbopack and Vite accept them unchanged.
+
+| Import | Resolves to |
+|---|---|
+| `@margdarshak/game-core` · `/schema` · `/sim` · `/scoring` · `/integrity` · `/learning` · `/sdk` · `/sdk/browser` · `/fixtures` · `/debrief` | `packages/game-core/src/index.ts`, `src/<sub>/index.ts` |
+| `@margdarshak/gamification` · `/learning` · `/gamification` | `packages/gamification/src/{index,learning,gamification}.ts` |
+| `@margdarshak/content` | `packages/content/src/index.ts`. **`@margdarshak/content/node` is deliberately unmapped**: it reads the disk, so a web import of it fails to type-check |
+| `@content/*` | the repo's `content/` data, for example `import games from "@content/catalogue/games.json"` |
+
+Game code must never enter a shared layout. A game page loads its module with `next/dynamic(..., { ssr: false })` (§10.1). Phaser is imported with `await import("phaser")` inside the mount effect (§10.2), so it gets its own lazy chunk; this was checked in a production build.
+
+**Message namespaces.** P2 copy lives in `messages/{en,hi}/<ns>.json` for `games`, `nazar`, `learnHub`, `llSim`, `sims`, `me`, `study` and `curator`, and never in `messages/{en,hi}.json`. Each file holds the namespace body with no wrapper key, and is read with `useTranslations("nazar")` or `getTranslations("nazar")`. `src/i18n/messages.ts` (`MESSAGE_NAMESPACES`, `loadMessages`) deep-merges these files into the catalogue in `src/i18n/request.ts`. `global.d.ts` types each namespace from its English file. `scripts/check-messages.mjs` (`pnpm lint:i18n`) and `src/lib/messages.test.ts` fail in four cases:
+- a key, placeholder or tag differs between en and hi;
+- a namespace file exists in only one locale;
+- a namespace reuses a top-level key of `<locale>.json`;
+- a body is wrapped in its own name.
+
+To add a namespace, update the list, both files and `global.d.ts`. All messages are serialised into every page's HTML through the root `NextIntlClientProvider`, and the first-load gate counts them, so keep each namespace lean.
+
+**Play shell.** The route group `src/app/[locale]/(play)/layout.tsx` is a full-screen `<main id="main" data-shell="play">` with no TopBar, tab bar or orb. It serves the game `…/play` routes, LL exam mode and the `/nazar` player. It stays under `[locale]/layout.tsx`, so the non-affiliation footer (D-01, D-19) renders below the stage, one scroll away.
+
+**Clip media and packs.**
+- **CSP.** `NEXT_PUBLIC_MEDIA_HOST` (an origin, or a bare host that means https) is added to `media-src`, `img-src` and `connect-src`. `media-src` keeps `blob:` for clips preloaded whole (§10.3).
+- **Downloads (page side).** The service worker has an opt-in `md-clip-pack` cache. The page writes it through `src/lib/offline/clip-pack.ts`:
+  - `downloadClipPack({ urls, userAction: true, onProgress, signal })`: call it only from an explicit tap, after the pack size is shown;
+  - `clipPackStatus(urls)`, `removeClipPack(urls)` and `clearClipPacks()`.
+- **Serving (worker side).** `src/app/sw.ts` serves clip requests cache-first with Range support (`<video>` requests, plus `.mp4`, `.webm` and `.m4v` fetches). It never stores a network response, so streaming stores nothing. Its route sits ahead of `defaultCache`.
+- **Cache matching.** Lookups ignore the query string and `Vary`, so clip URLs must be unique by origin and path.
+- **Media host.** It must answer a CORS `GET` with a full `200`.
+
+**Admin.** `/:locale/admin/*` gets `X-Robots-Tag: noindex, nofollow, noarchive` (plan D4).

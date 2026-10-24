@@ -1,0 +1,101 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "PB",
+  "name": "Punjab overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: verify at your RTO. Faceless RTO services since 29 Oct 2025 (Sewa Kendra / 1076 doorstep); automated, video-recorded test tracks; whether a fresh LL test is offered online is unverified.",
+  "rules": [
+    {
+      "id": "PB-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.pb.ll.test_mode",
+      "condition": true,
+      "output": { "value": { "onlineAvailable": true, "where": ["home_online", "rto"] } },
+      "text": {
+        "en": "Punjab offers LL services through Sarathi (eKYC + faceless). Whether the LL test itself is online for every applicant is not confirmed."
+      },
+      "source": {
+        "title": "Sarathi Punjab contactless/faceless modal (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PB-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.pb.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": true,
+          "tracks": ["automated, video-recorded track (28-32 centres)"]
+        }
+      },
+      "text": { "en": "Punjab tests run on automated, video-recorded tracks." },
+      "source": {
+        "title": "Governance Now: in Punjab getting a driving licence will be easier",
+        "url": "https://www.governancenow.com/gov-next/egov/in-punjab-getting-driving-licence-will-be-easier"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PB-NTC-FACELESS",
+      "kind": "notice",
+      "textKey": "notice.pb.faceless_services",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Punjab's faceless RTO services (Sewa Kendra and the 1076 doorstep helpline) can collect documents and deliver certificates."
+      },
+      "refs": ["F-07"],
+      "source": {
+        "title": "Patrika: faceless RTO services launched in Punjab, 56 services",
+        "url": "https://www.patrika.com/en/national-news/faceless-rto-services-launched-in-punjab-56-services-now-digital-20062212"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PB-NTC-LL-EXTENSION",
+      "kind": "notice",
+      "textKey": "notice.pb.ll_extension",
+      "condition": { "ne": [{ "fact": "llIssuedOn" }, null] },
+      "output": {},
+      "text": {
+        "en": "Punjab lists an 'extension of LL validity' service; ask before your LL expires."
+      },
+      "refs": ["EC-07"],
+      "source": {
+        "title": "Tribune: Punjab DL services (lists extension of LL validity)",
+        "url": "https://www.tribuneindia.com/news/punjab/explainer-what-is-the-driving-licence-scam-all-about"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ]
+}

@@ -1,0 +1,550 @@
+{
+  "name": "W02 · Milestone notifier (webhook from API) → WhatsApp template / email → receipts → 24 h fallback check",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "md/milestone",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000001",
+      "name": "Milestone event (from API)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "8d2e4f60-1b7a-4c3e-9f20-b2f0c0020001",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "MD inbound webhook token"
+        }
+      },
+      "notes": "Called by the Go API for real-time milestones (LL issued, payment pending > 2 h (EC-09), test result entered, licence approved) and by clock.fire_batch for each case-clock batch (W01 → case_clock_sweep). Signed envelope { ts, payload: \"<JSON string>\", sig: \"sha256=<hex hmac(MD_HMAC_SECRET, ts + '.' + payload)>\" }. payload = { event, event_id, messages: [OutboundMessage] }. The API has already applied opt-in, quiet hours and the ≤ 1 nudge/day limit (MD-130): every message here is one the API decided to send."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verify the signed envelope before any work. Crypto only; no business logic.\nconst crypto = require('crypto');\nconst b = $json.body || {};\nconst ts = String(b.ts ?? '');\nconst payload = typeof b.payload === 'string' ? b.payload : '';\nconst sig = String(b.sig ?? '');\nconst expected = 'sha256=' + crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${payload}`).digest('hex');\nconst fresh = /^\\d+$/.test(ts) && Math.abs(Date.now() / 1000 - Number(ts)) <= 300;\nconst a = Buffer.from(expected);\nconst g = Buffer.from(sig);\nconst sigOk = a.length === g.length && crypto.timingSafeEqual(a, g);\nlet parsed = null;\nif (sigOk && fresh) {\n  try { parsed = JSON.parse(payload); } catch (e) { parsed = null; }\n}\nconst valid = parsed !== null && typeof parsed === 'object';\nreturn [{ json: { valid, reason: valid ? 'ok' : !sigOk ? 'bad_signature' : !fresh ? 'stale' : 'bad_payload', payload: valid ? parsed : null } }];"
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000002",
+      "name": "Verify envelope (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "notes": "Timing-safe compare; 300 s freshness window (same as the API side). Needs `crypto` in Code nodes (n8n Cloud: allowed)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000003",
+      "name": "Envelope valid + fresh?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ accepted: true, event_id: $json.payload.event_id ?? null }) }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000004",
+      "name": "Respond 202",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ accepted: false, reason: $json.reason }) }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000005",
+      "name": "Respond 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Split the API's messages into items and drop any idempotency key already handled in the last\n// 48 h (the API retries a batch; the user must never get the same message twice).\nconst p = $('Verify envelope (HMAC)').first().json.payload || {};\nconst msgs = Array.isArray(p.messages) ? p.messages : [];\nconst store = $getWorkflowStaticData('global');\nconst now = Date.now();\nstore.seen = Object.fromEntries(Object.entries(store.seen || {}).filter(([, exp]) => exp > now));\nconst out = [];\nfor (const m of msgs) {\n  const key = m.idempotency_key || m.notification_id;\n  if (!key || store.seen[key]) continue;\n  store.seen[key] = now + 48 * 3600 * 1000;\n  out.push({ json: { ...m, event: p.event ?? null, event_id: p.event_id ?? null } });\n}\nreturn out;"
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000006",
+      "name": "Split + drop duplicate keys",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 200],
+      "notes": "Keys are `{caseId}:{milestoneId}:{dueOn}:{channel}` (BACKEND.md §7.2). Static data persists for production (active) executions only."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "whatsapp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "whatsapp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "sms",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "sms"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "web_push-or-in_app"
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000007",
+      "name": "Route by channel",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1100, 200],
+      "notes": "Routing only. Web push and in-app are sent by the backend itself; they pass straight to receipts."
+    },
+    {
+      "parameters": {
+        "operation": "sendTemplate",
+        "phoneNumberId": "={{ $vars.MD_WA_PHONE_NUMBER_ID }}",
+        "recipientPhoneNumber": "={{ $json.to }}",
+        "template": "={{ $json.template_id }}|{{ $json.lang || 'en' }}",
+        "components": {
+          "component": [
+            {
+              "type": "body",
+              "bodyParameters": {
+                "parameter": "={{ Object.values($json.vars || {}).map(v => ({ type: 'text', text: String(v) })) }}"
+              }
+            }
+          ]
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000008",
+      "name": "WhatsApp template",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [1320, 60],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak WhatsApp Cloud (test number)"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "notes": "Meta-approved utility templates only (MD-131): md_ll_issued_v1, md_payment_pending_v1, md_test_result_v1, md_licence_approved_v1, md_ll_day25_v1, md_ll_expiry_t30_v1, md_ll_expiry_t7_v1. Vars are dates/first names computed by the backend; no fee or day literals here (D-06). Fail-message previews carry no outcome words."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.text_body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000009",
+      "name": "Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1320, 200],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak notifications mailbox"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Subject and body are rendered by the backend from reviewed templates (with the non-affiliation footer)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sms-gateway.invalid/REPLACE_WHEN_DLT_REGISTERED",
+        "options": {}
+      },
+      "id": "b2f0c002-0000-4000-8000-00000000000a",
+      "name": "SMS (DISABLED until TRAI DLT registration, MD-623)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 340],
+      "disabled": true,
+      "notes": "DISABLED ON PURPOSE (D-16, MD-128). No SMS is sent until TRAI DLT entity + template registration (MD-623). The node has no credentials, an .invalid host and no outgoing connection; the backend never emits channel=sms while the tenant flag is off. Enabling it needs a reviewed change, not an n8n edit."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// One receipt per message; paired-item lineage gives the original message.\nconst src = $('Split + drop duplicate keys').item.json;\nconst r = $json;\nconst failed = !!r.error;\nconst sentHere = src.channel === 'whatsapp' || src.channel === 'email';\nreturn { json: {\n  notification_id: src.notification_id,\n  idempotency_key: src.idempotency_key ?? null,\n  channel: src.channel,\n  provider_message_id: r.messages?.[0]?.id ?? r.id ?? null,\n  status: failed ? 'failed' : (sentHere ? 'sent' : 'backend_channel'),\n  error_code: failed ? String(r.error?.code ?? r.error?.message ?? 'unknown').slice(0, 80) : null,\n  at: new Date().toISOString()\n} };"
+      },
+      "id": "b2f0c002-0000-4000-8000-00000000000b",
+      "name": "Collect receipts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 200]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "receipts",
+        "options": {}
+      },
+      "id": "b2f0c002-0000-4000-8000-00000000000c",
+      "name": "Aggregate receipts",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1760, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Sign the API-66 receipts call (Margdarshak-Signature, fresh timestamp).\nconst crypto = require('crypto');\nconst body = JSON.stringify({ event: 'delivery_receipt', at: new Date().toISOString(), workflow: 'W02', execution_id: $execution.id, event_id: $('Verify envelope (HMAC)').first().json.payload.event_id ?? null, receipts: $json.receipts });\nconst ts = Math.floor(Date.now() / 1000).toString();\nconst v1 = crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex');\nreturn [{ json: { body, signature: `t=${ts},v1=${v1}`, idempotency_key: `w02-receipts:${$execution.id}`, receipts: $json.receipts } }];"
+      },
+      "id": "b2f0c002-0000-4000-8000-00000000000d",
+      "name": "Sign receipts (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1980, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/internal/webhooks/n8n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "X-MD-Event",
+              "value": "delivery_receipt"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-00000000000e",
+      "name": "API-66 ack receipts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2200, 200],
+      "notes": "Backend marks E-13 Notification rows sent/failed; a failed WhatsApp send makes the backend schedule email/web push. Idempotent by notification_id. Not auto-retried: a retry must be re-signed (replay cache)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep only WhatsApp messages that were sent, for the 24 h 'seen?' check (reshape only).\nconst receipts = $('Sign receipts (HMAC)').first().json.receipts || [];\nconst ids = receipts.filter((r) => r.channel === 'whatsapp' && r.status === 'sent').map((r) => r.notification_id);\nreturn ids.length ? [{ json: { notification_ids: ids } }] : [];"
+      },
+      "id": "b2f0c002-0000-4000-8000-00000000000f",
+      "name": "WhatsApp sends to re-check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2420, 200]
+    },
+    {
+      "parameters": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000010",
+      "name": "Wait 24 h",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2640, 200],
+      "webhookId": "8d2e4f60-1b7a-4c3e-9f20-b2f0c0020010",
+      "notes": "Timer only (resumes by time). One execution waits for the whole batch, never one per user (execution budget)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Sign the 'seen?' check: one POST for the whole batch.\nconst crypto = require('crypto');\nconst body = JSON.stringify({ notification_ids: $json.notification_ids });\nconst ts = Math.floor(Date.now() / 1000).toString();\nconst v1 = crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex');\nreturn [{ json: { body, signature: `t=${ts},v1=${v1}` } }];"
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000011",
+      "name": "Sign seen check (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2860, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/internal/notifications/seen",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000012",
+      "name": "Seen? (backend decides fallback)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3080, 200],
+      "notes": "Proposed endpoint (x-proposed; spec text: GET /internal/notifications/{id}/seen, batched here as one signed POST). Response { results: [{ notification_id, action: 'request_fallback' | 'none' }] }. The backend applies opt-in, quiet hours and the nudge limit; n8n only routes on `action`."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reshape: the ids the backend asked to fall back on (email / web push sent by the backend).\nconst results = Array.isArray($json.results) ? $json.results : [];\nconst ids = results.filter((r) => r.action === 'request_fallback').map((r) => r.notification_id);\nif (ids.length === 0) return [];\nconst crypto = require('crypto');\nconst body = JSON.stringify({ event: 'request_fallback', at: new Date().toISOString(), workflow: 'W02', notification_ids: ids });\nconst ts = Math.floor(Date.now() / 1000).toString();\nconst v1 = crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex');\nreturn [{ json: { body, signature: `t=${ts},v1=${v1}`, idempotency_key: `w02-fallback:${$execution.id}` } }];"
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000013",
+      "name": "Sign fallback request (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3300, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/internal/webhooks/n8n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "X-MD-Event",
+              "value": "request_fallback"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "b2f0c002-0000-4000-8000-000000000014",
+      "name": "API-66 request fallback",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3520, 200],
+      "notes": "The backend sends the email / web push fallback itself (never SMS, D-16)."
+    }
+  ],
+  "connections": {
+    "Milestone event (from API)": {
+      "main": [[{ "node": "Verify envelope (HMAC)", "type": "main", "index": 0 }]]
+    },
+    "Verify envelope (HMAC)": {
+      "main": [[{ "node": "Envelope valid + fresh?", "type": "main", "index": 0 }]]
+    },
+    "Envelope valid + fresh?": {
+      "main": [
+        [{ "node": "Respond 202", "type": "main", "index": 0 }],
+        [{ "node": "Respond 401", "type": "main", "index": 0 }]
+      ]
+    },
+    "Respond 202": {
+      "main": [[{ "node": "Split + drop duplicate keys", "type": "main", "index": 0 }]]
+    },
+    "Split + drop duplicate keys": {
+      "main": [[{ "node": "Route by channel", "type": "main", "index": 0 }]]
+    },
+    "Route by channel": {
+      "main": [
+        [{ "node": "WhatsApp template", "type": "main", "index": 0 }],
+        [{ "node": "Email", "type": "main", "index": 0 }],
+        [{ "node": "SMS (DISABLED until TRAI DLT registration, MD-623)", "type": "main", "index": 0 }],
+        [{ "node": "Collect receipts", "type": "main", "index": 0 }]
+      ]
+    },
+    "WhatsApp template": {
+      "main": [[{ "node": "Collect receipts", "type": "main", "index": 0 }]]
+    },
+    "Email": {
+      "main": [[{ "node": "Collect receipts", "type": "main", "index": 0 }]]
+    },
+    "Collect receipts": {
+      "main": [[{ "node": "Aggregate receipts", "type": "main", "index": 0 }]]
+    },
+    "Aggregate receipts": {
+      "main": [[{ "node": "Sign receipts (HMAC)", "type": "main", "index": 0 }]]
+    },
+    "Sign receipts (HMAC)": {
+      "main": [[{ "node": "API-66 ack receipts", "type": "main", "index": 0 }]]
+    },
+    "API-66 ack receipts": {
+      "main": [[{ "node": "WhatsApp sends to re-check", "type": "main", "index": 0 }]]
+    },
+    "WhatsApp sends to re-check": {
+      "main": [[{ "node": "Wait 24 h", "type": "main", "index": 0 }]]
+    },
+    "Wait 24 h": {
+      "main": [[{ "node": "Sign seen check (HMAC)", "type": "main", "index": 0 }]]
+    },
+    "Sign seen check (HMAC)": {
+      "main": [[{ "node": "Seen? (backend decides fallback)", "type": "main", "index": 0 }]]
+    },
+    "Seen? (backend decides fallback)": {
+      "main": [[{ "node": "Sign fallback request (HMAC)", "type": "main", "index": 0 }]]
+    },
+    "Sign fallback request (HMAC)": {
+      "main": [[{ "node": "API-66 request fallback", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "executionTimeout": -1,
+    "errorWorkflow": "REPLACE_WITH_W12_WORKFLOW_ID",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "margdarshak" },
+    { "name": "F-53 notifications" },
+    { "name": "messaging-edge" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "margdarshak": {
+      "workflow_id": "W02",
+      "ticket": "MD-128",
+      "owner": "Ops lead",
+      "doc": "docs/05-ops/N8N_WORKFLOWS.md#w02",
+      "business_logic": "none (recipients, channel, template, nudge limit, quiet hours and fallback are decided by the backend)",
+      "executions_per_month": 1500,
+      "sms": "disabled node only, no credentials, no outgoing connection (MD-623)",
+      "required_variables": [
+        "MD_API_BASE",
+        "MD_HMAC_SECRET",
+        "MD_N8N_READ_TOKEN",
+        "MD_WA_PHONE_NUMBER_ID"
+      ]
+    }
+  },
+  "active": false,
+  "versionId": "00000000-0000-4000-8000-00000000b201"
+}

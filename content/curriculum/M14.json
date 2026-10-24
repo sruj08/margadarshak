@@ -1,0 +1,192 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M14",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Hill and mountain roads (J&K)",
+    "hi": "पहाड़ी और पर्वतीय सड़कें (J&K)"
+  },
+  "priority": "P0",
+  "priority_tenants": ["JK"],
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Lessons + storyboard",
+  "skill_id": "SK-M14",
+  "game_ids": ["hill_road"],
+  "drill_ids": ["DR-HR-GEAR", "DR-HR-YIELD", "DR-HR-BENDS"],
+  "rule_ids": ["RR-HIL-001", "RR-HIL-002", "RR-HIL-003"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M14-1",
+      "text": {
+        "en": "Go downhill in a low gear; no coasting; don't ride the brakes.",
+        "hi": "ढलान पर नीचे के गियर में उतरें; न्यूट्रल में न लुढ़कें; लगातार ब्रेक न दबाएँ।"
+      }
+    },
+    {
+      "id": "LO-M14-2",
+      "text": {
+        "en": "Downhill gives way to uphill on narrow sections.",
+        "hi": "तंग हिस्सों में नीचे उतरने वाले, चढ़ने वालों को रास्ता देते हैं।"
+      }
+    },
+    {
+      "id": "LO-M14-3",
+      "text": {
+        "en": "Horn at blind bends; no overtaking on bends.",
+        "hi": "अंधे मोड़ पर हॉर्न; मोड़ पर ओवरटेक नहीं।"
+      }
+    },
+    {
+      "id": "LO-M14-4",
+      "text": {
+        "en": "Park safely on a slope.",
+        "hi": "ढलान पर ठीक से पार्क करें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M14-1",
+      "title": {
+        "en": "Engine braking",
+        "hi": "इंजन ब्रेकिंग"
+      }
+    },
+    {
+      "id": "LS-M14-2",
+      "title": {
+        "en": "Who gives way",
+        "hi": "कौन रास्ता दे"
+      }
+    },
+    {
+      "id": "LS-M14-3",
+      "title": {
+        "en": "Blind bends",
+        "hi": "अंधे मोड़"
+      }
+    },
+    {
+      "id": "LS-M14-4",
+      "title": {
+        "en": "One-way and convoy advisories",
+        "hi": "वन-वे और काफ़िले की सूचनाएँ"
+      },
+      "tenants": ["JK"]
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M14-1",
+      "kind": "evidence",
+      "text": {
+        "en": "On 29 March 2024 a passenger vehicle plunged into a gorge at Battery Chashma, Ramban, on NH44; 10 people lost their lives.",
+        "hi": "29 मार्च 2024 को NH44 पर रामबन के बैटरी चश्मा में एक यात्री वाहन खाई में गिरा; 10 लोगों की जान गई।"
+      },
+      "sources": [
+        {
+          "title": "All India Radio News",
+          "url": "https://newsonair.gov.in/jk-road-accident-at-least-ten-killed-after-a-passenger-vehicle-plunged-into-deep-gorge",
+          "grade": "S",
+          "pin_status": "pinned",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M14-2",
+      "kind": "evidence",
+      "text": {
+        "en": "Curves saw 22,263 deaths nationally in 2023 (+8.2%). Hill risk is nearly invisible in MoRTH coding (J&K 'steep grade': 13 accidents, 6 deaths), so this module rests on the pattern, not a national count.",
+        "hi": "2023 में देश भर में मोड़ों पर 22,263 मौतें हुईं (+8.2%)। MoRTH के कोड में पहाड़ी जोखिम लगभग दिखता ही नहीं (J&K 'खड़ी ढलान': 13 हादसे, 6 मौतें), इसलिए यह मॉड्यूल पैटर्न पर टिका है, राष्ट्रीय गिनती पर नहीं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.5 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Annex 22 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M14-3",
+      "kind": "law",
+      "text": {
+        "en": "On steep roads, downhill traffic gives way to uphill traffic (not re-fetched; the AI may not cite it until verified).",
+        "hi": "खड़ी सड़कों पर नीचे उतरता ट्रैफ़िक चढ़ते ट्रैफ़िक को रास्ता देता है (दोबारा जाँचा नहीं गया; पक्का होने तक AI इसे उद्धृत नहीं कर सकता)।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-HIL-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M14-1",
+      "myth": {
+        "en": "Coasting downhill in neutral saves fuel and is fine.",
+        "hi": "न्यूट्रल में ढलान उतरना पेट्रोल बचाता है और ठीक है।"
+      },
+      "correction": {
+        "en": "In neutral the engine can't hold your speed and the brakes overheat; use a low gear.",
+        "hi": "न्यूट्रल में इंजन रफ़्तार नहीं संभालता और ब्रेक गर्म हो जाते हैं; नीचे का गियर लगाएँ।"
+      },
+      "rule_id": "RR-HIL-002"
+    }
+  ],
+  "concepts": {
+    "target": 6,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G9 mastered (Ghat Ready badge); in Phase 1–2, quiz ≥ 80%.",
+      "hi": "G9 में महारत (घाट रेडी बैज); फ़ेज़ 1–2 में क्विज़ ≥ 80%।"
+    },
+    "readiness": "road_tenant",
+    "readiness_tenants": ["JK"],
+    "item_refs": []
+  },
+  "review": {
+    "needs": [
+      "J&K-specific review by a local instructor or J&K Traffic Police public material [unverified availability]",
+      "Legal fetch of the MVDR 2017 uphill-priority rule"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

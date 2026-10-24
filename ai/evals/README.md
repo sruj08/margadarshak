@@ -32,12 +32,12 @@ To come (owners and dates in AI_EVALS §2):
   "game_id": "nazar|junction_scan|stopping_distance|blind_spot|track_twin|night_glare|hill_road|helmet_fit|golden_hour|ll_sim|bundle",
   "band": "strong|medium|weak|edge|adversarial|<a>+<b>",
   "locale": "en|hi|hinglish|doi",
-  "user": { "age_band": "adult|u18", "consent_ai_coach": true },
+  "user": { "age_band": "under_16|16_17|18_25|26_40|41_60|60_plus", "family_mode": false, "consent_ai_coach": true },
   "session_result": { /* 08 §2.2 SessionResult: sid, gameId, score{components}, findings[{findingId,severity,ruleIds,skillId,facts}], integrity */ },
   "context": { "prev_finding_ids": [], "commentary_transcript": "…optional, untrusted…" },
   "build_facts_expected": { "top_findings_sent": [], "allowed_rule_ids": [], "excluded_unverified_rule_ids": [], "drill_candidates": [], "dropped_fact_keys": [] },
   "expected": {
-    "route": "llm|template|blocked_u18", "fallback_reason": null,
+    "route": "llm|template", "fallback_reason": null,
     "top_finding_id": "NAZ_LATE_RESPONSE",
     "rule_id_gold": { "NAZ_LATE_RESPONSE": ["RUL.CUR.PED_BUS_STOP"] },
     "drill_in": ["DRL.NAZ.BUS_STOP.L2", "…"],
@@ -50,6 +50,7 @@ To come (owners and dates in AI_EVALS §2):
 
 - **Facts are computed, not typed.** Stopping distances use `d = v·1.5 + v²/(2·μ·9.81)` with μ = 0.7 dry and 0.4 wet. Nazar metres use `late_s × speed / 3.6` (08 G1, G3).
 - **Golden Hour** cases always expect `route: "template"`: safety-critical content takes no generative AI (D-14).
+- **Family mode (D-13 revised, 23 Oct 2026).** `age_band: "u18"` marks a learner's profile inside a parent's (adult) account, with `family_mode: true`. With the parent's consent it takes the normal `llm` route (DB-126, VN-030). The old `blocked_u18` route is retired.
 - **Track Twin** rules are `verified:false` (practice layout), so their gold rule is `UNKNOWN`.
 
 ### voice_nav_30.jsonl
@@ -68,7 +69,7 @@ The explanations are marked `draft_pending_two_person_review`. They must be chec
 ## How to run
 
 ```bash
-python -I scripts/evals/gen_debrief_150.py ai/evals/debrief_150.jsonl   # deterministic; CI diffs it
+node scripts/evals/gen_debrief_150.mjs ai/evals/debrief_150.jsonl   # deterministic; CI diffs it
 python -I scripts/evals/jsonl_to_evalset.py ai/evals ai/evals/adk         # → ADK *.evalset.json (to write at H0)
 pytest tests/ai -m eval                                                    # ADK AgentEvaluator + custom metrics
 adk eval services/api/margdarshak_ai/agents/voice ai/evals/adk/voice_nav.evalset.json --config_file_path ai/evals/adk/test_config.json
@@ -81,5 +82,5 @@ adk eval services/api/margdarshak_ai/agents/voice ai/evals/adk/voice_nav.evalset
 1. Every bug, incident or human-review finding becomes a case **before** the fix merges.
 2. Use the next free `case_id` and never reuse one.
 3. Fill `labels.labelled_by` with two names. Disagreements go to the AI lead.
-4. Debrief cases: add them to `scripts/evals/gen_debrief_150.py`, so the file stays reproducible (rename the set when it grows past 150, e.g. `debrief_v2`).
+4. Debrief cases: add them to `scripts/evals/gen_debrief_150.mjs`, so the file stays reproducible (rename the set when it grows past 150, e.g. `debrief_v2`).
 5. Run the offline job locally (`pytest tests/ai -m offline`) before pushing.

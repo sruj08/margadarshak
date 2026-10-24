@@ -1,0 +1,174 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "LL3",
+  "track": "A_ll_syllabus",
+  "title": {
+    "en": "Driving & hand signals",
+    "hi": "ड्राइविंग और हाथ के संकेत"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "All",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Deep",
+  "skill_id": "SK-LL3",
+  "game_ids": ["ll_sim"],
+  "drill_ids": ["DR-LL-TOPIC-LL3"],
+  "rule_ids": [],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-LL3-1",
+      "text": {
+        "en": "Give and read the standard hand signals: slowing, stopping, turning right or left, letting the vehicle behind overtake.",
+        "hi": "हाथ के मानक इशारे दें और पढ़ें: धीमा होना, रुकना, दाएँ या बाएँ मुड़ना, पीछे वाले को ओवरटेक करने देना।"
+      }
+    },
+    {
+      "id": "LO-LL3-2",
+      "text": {
+        "en": "Use indicators and the horn correctly.",
+        "hi": "इंडिकेटर और हॉर्न का सही इस्तेमाल करें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-LL3-1",
+      "title": {
+        "en": "Hand signals for slowing and stopping",
+        "hi": "धीमा होने और रुकने के हाथ के इशारे"
+      }
+    },
+    {
+      "id": "LS-LL3-2",
+      "title": {
+        "en": "Hand signals for turning and overtaking",
+        "hi": "मुड़ने और ओवरटेक के हाथ के इशारे"
+      }
+    },
+    {
+      "id": "LS-LL3-3",
+      "title": {
+        "en": "Indicators, brake lights and hazard lights",
+        "hi": "इंडिकेटर, ब्रेक लाइट और हैज़र्ड लाइट"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-LL3-1",
+      "kind": "law",
+      "text": {
+        "en": "Hand signals are given with the right arm, from the driver's side in left-hand traffic.",
+        "hi": "बाईं ओर चलने वाले ट्रैफ़िक में हाथ के इशारे दाएँ हाथ से, चालक की ओर से दिए जाते हैं।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, signal schedule (gazette text not fetched; unverified until fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-LL3-2",
+      "kind": "practice",
+      "text": {
+        "en": "Signal in good time, check before you move, and cancel the indicator after the turn.",
+        "hi": "समय से इंडिकेटर दें, चलने से पहले देखें, और मुड़ने के बाद इंडिकेटर बंद करें।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM LL3 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-LL3-1",
+      "myth": {
+        "en": "A left turn is signalled by holding out the left arm.",
+        "hi": "बाएँ मुड़ने का इशारा बायाँ हाथ फैलाकर दिया जाता है।"
+      },
+      "correction": {
+        "en": "The left-turn hand signal uses the right arm, rotated anticlockwise.",
+        "hi": "बाएँ मुड़ने का हाथ का इशारा दाएँ हाथ को घड़ी की उल्टी दिशा में घुमाकर दिया जाता है।"
+      }
+    },
+    {
+      "id": "MC-LL3-2",
+      "myth": {
+        "en": "Once you indicate, you can move across.",
+        "hi": "इंडिकेटर देते ही आप दूसरी ओर जा सकते हैं।"
+      },
+      "correction": {
+        "en": "A signal shows your plan but gives no right of way; check it is clear first.",
+        "hi": "इंडिकेटर आपका इरादा बताता है, रास्ते का हक़ नहीं देता; पहले देखें कि रास्ता साफ़ है।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 12,
+    "authored": [
+      "C-LL3-001",
+      "C-LL3-002",
+      "C-LL3-003",
+      "C-LL3-004",
+      "C-LL3-005",
+      "C-LL3-006",
+      "C-LL3-007",
+      "C-LL3-008",
+      "C-LL3-009",
+      "C-LL3-010"
+    ]
+  },
+  "assessment": {
+    "criterion": {
+      "en": "FSRS mastery M_LL3 ≥ 0.8.",
+      "hi": "FSRS महारत M_LL3 ≥ 0.8।"
+    },
+    "readiness": "test",
+    "item_refs": [
+      "C-LL3-001",
+      "C-LL3-002",
+      "C-LL3-003",
+      "C-LL3-004",
+      "C-LL3-005",
+      "C-LL3-006",
+      "C-LL3-007",
+      "C-LL3-008",
+      "C-LL3-009",
+      "C-LL3-010"
+    ]
+  },
+  "review": {
+    "needs": [
+      "Legal review against the MVDR 2017 signal schedule (unverified until fetched)",
+      "Illustration review for left-hand-traffic correctness"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

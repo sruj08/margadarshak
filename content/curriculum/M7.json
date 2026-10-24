@@ -1,0 +1,133 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M7",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Following distance and overtaking judgement",
+    "hi": "फ़ासला और ओवरटेक का फ़ैसला"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Lessons + quiz only",
+  "skill_id": "SK-M7",
+  "game_ids": ["nazar"],
+  "drill_ids": ["DR-NAZ-OCCL-OVERTAKING_ONCOMING"],
+  "rule_ids": ["RR-FOL-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M7-1",
+      "text": {
+        "en": "Keep a 3-second gap, 4 seconds or more in the wet or at night.",
+        "hi": "3 सेकंड का फ़ासला रखें, गीली सड़क पर या रात में 4 सेकंड या ज़्यादा।"
+      }
+    },
+    {
+      "id": "LO-M7-2",
+      "text": {
+        "en": "Judge whether an overtaking gap is enough, and abort when it isn't.",
+        "hi": "अंदाज़ा लगाएँ कि ओवरटेक के लिए फ़ासला काफ़ी है या नहीं, और न हो तो इरादा छोड़ दें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M7-1",
+      "title": {
+        "en": "Count the seconds",
+        "hi": "सेकंड गिनें"
+      }
+    },
+    {
+      "id": "LS-M7-2",
+      "title": {
+        "en": "Overtake: see, gap, commit or abort",
+        "hi": "ओवरटेक: देखें, फ़ासला, फ़ैसला या रुकें"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M7-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Rear-end collisions caused 36,804 deaths and head-on collisions 28,898 in 2023.",
+        "hi": "2023 में पीछे से टक्कर में 36,804 और आमने-सामने की टक्कर में 28,898 मौतें हुईं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 1.5 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M7-2",
+      "kind": "practice",
+      "text": {
+        "en": "Keep at least a 3-second gap; 4 or more in the wet or at night.",
+        "hi": "कम से कम 3 सेकंड का फ़ासला रखें; गीली सड़क पर या रात में 4 या ज़्यादा।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M7 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-FOL-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M7-1",
+      "myth": {
+        "en": "Riding close behind stops others cutting in.",
+        "hi": "ठीक पीछे चलने से कोई बीच में नहीं घुसता।"
+      },
+      "correction": {
+        "en": "A short gap leaves you no time to react; keep at least 3 seconds.",
+        "hi": "कम फ़ासले में संभलने का समय नहीं मिलता; कम से कम 3 सेकंड रखें।"
+      },
+      "rule_id": "RR-FOL-001"
+    }
+  ],
+  "concepts": {
+    "target": 4,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Gap-judgement items ≥ 80%; FSRS mastery ≥ 0.8.",
+      "hi": "फ़ासले के अंदाज़े वाले सवाल ≥ 80%; FSRS महारत ≥ 0.8।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Instructor review"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

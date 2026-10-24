@@ -2,7 +2,7 @@
 id: PRM-DEBRIEF
 version: 1.0.0
 agent: DebriefAgent (M-02)
-model_env: MD_MODEL_DEBRIEF          # default gemini-3.1-flash-lite
+model_env: GEMINI_MODEL_DEBRIEF          # default gemini-3.1-flash-lite
 output_schema: margdarshak_ai.schemas.DebriefDraft
 state_inputs: [facts, allowed_rule_ids, drill_candidates, locale, prev_finding_ids, canary]
 temperature: 0.3

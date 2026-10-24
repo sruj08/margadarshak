@@ -1,0 +1,1780 @@
+{
+  "$schema": "../schema/question-bank.schema.json",
+  "file_kind": "question_bank",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "Hand and indicator signals. Hand-signal pictures come in three views (rear, side, front) so position memorising fails. The signal schedule is unverified until the MVDR 2017 text is fetched. SERVER-SIDE CONTENT: items[].key and concepts[].explanation must never reach a client in mock mode; publish only through splitQuestionBank (packages/content). Every item is a draft awaiting two-person review; Hindi awaits native review.",
+  "topic": "LL3",
+  "confidence_levels": [50, 75, 100],
+  "answer_mode": "single_choice",
+  "concepts": [
+    {
+      "concept_id": "C-LL3-001",
+      "topic": "LL3",
+      "title": {
+        "en": "Hand signal: slowing down",
+        "hi": "हाथ का इशारा: धीमा होना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-001",
+        "text": {
+          "en": "To show you are slowing down, stretch your right arm out with the palm facing down and move it up and down a few times.",
+          "hi": "धीमे होने का इशारा देने के लिए दायाँ हाथ बगल में फैलाएँ, हथेली नीचे की ओर रखें और उसे कुछ बार ऊपर-नीचे करें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, signal schedule (gazette text not fetched; unverified until fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-001:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does this rider's hand signal mean?",
+            "hi": "इस सवार के हाथ के इशारे का क्या मतलब है?"
+          },
+          "stem_assets": ["ILL-HS-SLOW-REAR"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is going to stop",
+                "hi": "सवार रुकने वाले हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is turning right or moving to the right",
+                "hi": "सवार दाएँ मुड़ रहे हैं या दाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The vehicle behind may overtake the rider",
+                "hi": "पीछे वाला वाहन सवार को ओवरटेक कर सकता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL3-001:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Seen from the side, what is this rider telling others?",
+            "hi": "बगल से देखने पर यह सवार दूसरों को क्या बता रहा है?"
+          },
+          "stem_assets": ["ILL-HS-SLOW-SIDE"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is turning left or moving to the left",
+                "hi": "सवार बाएँ मुड़ रहे हैं या बाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is going to stop",
+                "hi": "सवार रुकने वाले हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL3-001:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 5,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How do you signal by hand that you are slowing down?",
+            "hi": "हाथ से कैसे इशारा करेंगे कि आप धीमे हो रहे हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Raise your right forearm straight up from the elbow, palm facing forward",
+                "hi": "दाईं बाँह कोहनी से सीधी ऊपर उठाएँ, हथेली आगे की ओर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Stretch your right arm out, palm down, and move it up and down",
+                "hi": "दायाँ हाथ बगल में फैलाएँ, हथेली नीचे रखें, और ऊपर-नीचे हिलाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Stretch your right arm straight out to the side, palm facing forward",
+                "hi": "दायाँ हाथ बगल में सीधा फैलाएँ, हथेली आगे की ओर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Hold your right arm out below shoulder level and swing it backward and forward",
+                "hi": "दायाँ हाथ कंधे से नीचे फैलाएँ और आगे-पीछे झुलाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL3-001:v4",
+          "variant": 4,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 5,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Raising the right forearm straight up, palm forward, tells others you are slowing down. True or false?",
+            "hi": "दाईं बाँह सीधी ऊपर उठाना, हथेली आगे की ओर, दूसरों को बताता है कि आप धीमे हो रहे हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-002",
+      "topic": "LL3",
+      "title": {
+        "en": "Hand signal: stopping",
+        "hi": "हाथ का इशारा: रुकना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-002",
+        "text": {
+          "en": "To show you are going to stop, raise your right forearm straight up from the elbow with the palm facing forward.",
+          "hi": "रुकने का इशारा देने के लिए दाईं बाँह कोहनी से सीधी ऊपर उठाएँ, हथेली आगे की ओर रखें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, signal schedule (gazette text not fetched; unverified until fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-002:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does this rider's hand signal mean?",
+            "hi": "इस सवार के हाथ के इशारे का क्या मतलब है?"
+          },
+          "stem_assets": ["ILL-HS-STOP-REAR"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is turning right or moving to the right",
+                "hi": "सवार दाएँ मुड़ रहे हैं या दाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is going to stop",
+                "hi": "सवार रुकने वाले हैं"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The rider is turning left or moving to the left",
+                "hi": "सवार बाएँ मुड़ रहे हैं या बाईं ओर जा रहे हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL3-002:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Seen from the front, what is this rider signalling?",
+            "hi": "सामने से देखने पर यह सवार क्या इशारा कर रहा है?"
+          },
+          "stem_assets": ["ILL-HS-STOP-FRONT"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The vehicle behind may overtake the rider",
+                "hi": "पीछे वाला वाहन सवार को ओवरटेक कर सकता है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is going to stop",
+                "hi": "सवार रुकने वाले हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL3-002:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 5,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How do you signal by hand that you are going to stop?",
+            "hi": "हाथ से कैसे इशारा करेंगे कि आप रुकने वाले हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Stretch your right arm out, palm down, and move it up and down",
+                "hi": "दायाँ हाथ बगल में फैलाएँ, हथेली नीचे रखें, और ऊपर-नीचे हिलाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Stretch your right arm straight out to the side, palm facing forward",
+                "hi": "दायाँ हाथ बगल में सीधा फैलाएँ, हथेली आगे की ओर"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Hold your right arm out below shoulder level and swing it backward and forward",
+                "hi": "दायाँ हाथ कंधे से नीचे फैलाएँ और आगे-पीछे झुलाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Raise your right forearm straight up from the elbow, palm facing forward",
+                "hi": "दाईं बाँह कोहनी से सीधी ऊपर उठाएँ, हथेली आगे की ओर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-003",
+      "topic": "LL3",
+      "title": {
+        "en": "Hand signal: turning right",
+        "hi": "हाथ का इशारा: दाएँ मुड़ना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-003",
+        "text": {
+          "en": "To show a right turn, stretch your right arm straight out to the side, palm facing forward, and hold it still.",
+          "hi": "दाएँ मुड़ने का इशारा देने के लिए दायाँ हाथ बगल में सीधा फैलाएँ, हथेली आगे की ओर, और उसे स्थिर रखें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, signal schedule (gazette text not fetched; unverified until fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-003:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does this rider's hand signal mean?",
+            "hi": "इस सवार के हाथ के इशारे का क्या मतलब है?"
+          },
+          "stem_assets": ["ILL-HS-RIGHT-REAR"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The rider is turning right or moving to the right",
+                "hi": "सवार दाएँ मुड़ रहे हैं या दाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is turning left or moving to the left",
+                "hi": "सवार बाएँ मुड़ रहे हैं या बाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The vehicle behind may overtake the rider",
+                "hi": "पीछे वाला वाहन सवार को ओवरटेक कर सकता है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL3-003:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Seen from the side, what is this rider telling others?",
+            "hi": "बगल से देखने पर यह सवार दूसरों को क्या बता रहा है?"
+          },
+          "stem_assets": ["ILL-HS-RIGHT-SIDE"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The rider is going to stop",
+                "hi": "सवार रुकने वाले हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is turning left or moving to the left",
+                "hi": "सवार बाएँ मुड़ रहे हैं या बाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is turning right or moving to the right",
+                "hi": "सवार दाएँ मुड़ रहे हैं या दाईं ओर जा रहे हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL3-003:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 5,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How do you signal a right turn by hand?",
+            "hi": "हाथ से दाएँ मुड़ने का इशारा कैसे करेंगे?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Stretch your right arm out and move it in an anticlockwise circle",
+                "hi": "दायाँ हाथ फैलाएँ और उसे घड़ी की उल्टी दिशा में गोल घुमाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Stretch your right arm straight out to the side, palm facing forward",
+                "hi": "दायाँ हाथ बगल में सीधा फैलाएँ, हथेली आगे की ओर"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Stretch your right arm out, palm down, and move it up and down",
+                "hi": "दायाँ हाथ बगल में फैलाएँ, हथेली नीचे रखें, और ऊपर-नीचे हिलाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Raise your right forearm straight up from the elbow, palm facing forward",
+                "hi": "दाईं बाँह कोहनी से सीधी ऊपर उठाएँ, हथेली आगे की ओर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-004",
+      "topic": "LL3",
+      "title": {
+        "en": "Hand signal: turning left",
+        "hi": "हाथ का इशारा: बाएँ मुड़ना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-004",
+        "text": {
+          "en": "To show a left turn, stretch your right arm out and rotate it in an anticlockwise circle.",
+          "hi": "बाएँ मुड़ने का इशारा देने के लिए दायाँ हाथ फैलाएँ और उसे घड़ी की उल्टी दिशा में गोल घुमाएँ।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, signal schedule (gazette text not fetched; unverified until fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-004:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does this rider's hand signal mean?",
+            "hi": "इस सवार के हाथ के इशारे का क्या मतलब है?"
+          },
+          "stem_assets": ["ILL-HS-LEFT-REAR"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The rider is turning right or moving to the right",
+                "hi": "सवार दाएँ मुड़ रहे हैं या दाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is turning left or moving to the left",
+                "hi": "सवार बाएँ मुड़ रहे हैं या बाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The vehicle behind may overtake the rider",
+                "hi": "पीछे वाला वाहन सवार को ओवरटेक कर सकता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL3-004:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 5,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How do you signal a left turn by hand?",
+            "hi": "हाथ से बाएँ मुड़ने का इशारा कैसे करेंगे?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Stretch your right arm straight out to the side, palm facing forward",
+                "hi": "दायाँ हाथ बगल में सीधा फैलाएँ, हथेली आगे की ओर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Stretch your left arm straight out to the left",
+                "hi": "बायाँ हाथ बाईं ओर सीधा फैलाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Hold your right arm out below shoulder level and swing it backward and forward",
+                "hi": "दायाँ हाथ कंधे से नीचे फैलाएँ और आगे-पीछे झुलाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Stretch your right arm out and move it in an anticlockwise circle",
+                "hi": "दायाँ हाथ फैलाएँ और उसे घड़ी की उल्टी दिशा में गोल घुमाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL3-004:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Seen from the front, what is this rider signalling?",
+            "hi": "सामने से देखने पर यह सवार क्या इशारा कर रहा है?"
+          },
+          "stem_assets": ["ILL-HS-LEFT-FRONT"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The rider is turning left or moving to the left",
+                "hi": "सवार बाएँ मुड़ रहे हैं या बाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is turning right or moving to the right",
+                "hi": "सवार दाएँ मुड़ रहे हैं या दाईं ओर जा रहे हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL3-004:v4",
+          "variant": 4,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "To signal a left turn by hand, you rotate your right arm in an anticlockwise circle. True or false?",
+            "hi": "हाथ से बाएँ मुड़ने का इशारा देने के लिए दायाँ हाथ घड़ी की उल्टी दिशा में गोल घुमाते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-005",
+      "topic": "LL3",
+      "title": {
+        "en": "Hand signal: letting the vehicle behind overtake",
+        "hi": "हाथ का इशारा: पीछे वाले को ओवरटेक करने देना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-005",
+        "text": {
+          "en": "To let the vehicle behind overtake, hold your right arm out below shoulder level and swing it backward and forward. The overtaking driver must still check that the road ahead is clear.",
+          "hi": "पीछे वाले वाहन को ओवरटेक करने देने के लिए दायाँ हाथ कंधे से नीचे फैलाएँ और आगे-पीछे झुलाएँ। ओवरटेक करने वाले को फिर भी देखना होगा कि आगे सड़क साफ़ है।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, signal schedule (gazette text not fetched; unverified until fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-005:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does this rider's hand signal mean?",
+            "hi": "इस सवार के हाथ के इशारे का क्या मतलब है?"
+          },
+          "stem_assets": ["ILL-HS-OVERTAKE-REAR"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The vehicle behind may overtake the rider",
+                "hi": "पीछे वाला वाहन सवार को ओवरटेक कर सकता है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The rider is slowing down",
+                "hi": "सवार धीमे हो रहे हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The rider is turning left or moving to the left",
+                "hi": "सवार बाएँ मुड़ रहे हैं या बाईं ओर जा रहे हैं"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The rider is going to stop",
+                "hi": "सवार रुकने वाले हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL3-005:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 5,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How do you show the vehicle behind that it may overtake you?",
+            "hi": "पीछे वाले वाहन को कैसे बताएँगे कि वह आपको ओवरटेक कर सकता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Raise your right forearm straight up from the elbow, palm facing forward",
+                "hi": "दाईं बाँह कोहनी से सीधी ऊपर उठाएँ, हथेली आगे की ओर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Hold your right arm out below shoulder level and swing it backward and forward",
+                "hi": "दायाँ हाथ कंधे से नीचे फैलाएँ और आगे-पीछे झुलाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Stretch your right arm straight out to the side, palm facing forward",
+                "hi": "दायाँ हाथ बगल में सीधा फैलाएँ, हथेली आगे की ओर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Stretch your right arm out, palm down, and move it up and down",
+                "hi": "दायाँ हाथ बगल में फैलाएँ, हथेली नीचे रखें, और ऊपर-नीचे हिलाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL3-005:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Once you wave a vehicle past, its driver no longer needs to check the road ahead. True or false?",
+            "hi": "आपके हाथ हिलाकर निकलने का इशारा देने के बाद पीछे वाले ड्राइवर को आगे सड़क देखने की ज़रूरत नहीं रहती। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-006",
+      "topic": "LL3",
+      "title": {
+        "en": "Indicators in good time",
+        "hi": "समय से इंडिकेटर"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-006",
+        "text": {
+          "en": "Switch on your indicator well before you turn or change lanes, after checking your mirrors, so others have time to react.",
+          "hi": "मुड़ने या लेन बदलने से काफ़ी पहले, शीशे देखकर, इंडिकेटर चालू करें ताकि दूसरों को संभलने का समय मिले।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM LL3 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-006:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When should you switch on your indicator before turning?",
+            "hi": "मुड़ने से पहले इंडिकेटर कब चालू करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Just as you start turning",
+                "hi": "ठीक मुड़ते समय"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "After you have turned",
+                "hi": "मुड़ जाने के बाद"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Well before the turn, so others can see it in time",
+                "hi": "मोड़ से काफ़ी पहले, ताकि दूसरे समय पर देख सकें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only if someone is behind you",
+                "hi": "सिर्फ़ तब, जब पीछे कोई हो"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL3-006:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You plan to turn left at the next junction. What is the right order?",
+            "hi": "आप अगले चौराहे पर बाएँ मुड़ना चाहते हैं। सही क्रम क्या है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Turn, then signal",
+                "hi": "मुड़ना, फिर इंडिकेटर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Signal, turn, then check the mirror",
+                "hi": "इंडिकेटर, मुड़ना, फिर शीशा देखना"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Brake hard, then signal",
+                "hi": "ज़ोर से ब्रेक, फिर इंडिकेटर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Mirror, signal, slow down, then turn",
+                "hi": "शीशा, इंडिकेटर, धीमे होना, फिर मुड़ना"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL3-006:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "An indicator is needed only if there is traffic behind you. True or false?",
+            "hi": "इंडिकेटर सिर्फ़ तब ज़रूरी है जब पीछे ट्रैफ़िक हो। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-007",
+      "topic": "LL3",
+      "title": {
+        "en": "Cancelling the indicator",
+        "hi": "इंडिकेटर बंद करना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-007",
+        "text": {
+          "en": "Switch your indicator off after the turn. Many two-wheelers don't cancel it by themselves, and a forgotten indicator misleads others.",
+          "hi": "मुड़ने के बाद इंडिकेटर बंद करें। कई दोपहिया में यह अपने-आप बंद नहीं होता, और भूला हुआ इंडिकेटर दूसरों को भ्रम में डालता है।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM LL3 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-007:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What should you do with your indicator after you finish a turn?",
+            "hi": "मोड़ पूरा होने के बाद इंडिकेटर का क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Switch it off",
+                "hi": "उसे बंद करें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Leave it on to show you turned",
+                "hi": "यह दिखाने के लिए चालू रहने दें कि आप मुड़े"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Switch on the other side",
+                "hi": "दूसरी ओर का चालू करें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Leave it on until you stop",
+                "hi": "रुकने तक चालू रहने दें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL3-007:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Your scooter's right indicator is still blinking after a turn. Why does it matter?",
+            "hi": "मोड़ के बाद भी आपके स्कूटर का दायाँ इंडिकेटर जल-बुझ रहा है। इससे क्या फ़र्क़ पड़ता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "It doesn't matter at all",
+                "hi": "बिल्कुल फ़र्क़ नहीं पड़ता"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Others may think you are about to turn right again",
+                "hi": "दूसरे सोच सकते हैं कि आप फिर से दाएँ मुड़ने वाले हैं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "It uses up the fuel",
+                "hi": "इससे पेट्रोल ख़त्म होता है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "It gives you the right of way",
+                "hi": "इससे आपको रास्ते का हक़ मिलता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL3-007:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Many two-wheeler indicators don't switch off by themselves, so you must cancel them. True or false?",
+            "hi": "कई दोपहिया के इंडिकेटर अपने-आप बंद नहीं होते, इसलिए आपको उन्हें बंद करना होता है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-008",
+      "topic": "LL3",
+      "title": {
+        "en": "Hazard warning lights",
+        "hi": "हैज़र्ड लाइट"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-008",
+        "text": {
+          "en": "Hazard warning lights, with all indicators blinking together, are for a vehicle that has stopped or broken down where it may be a hazard. In fog, use low beam and fog lamps instead; hazard lights while moving confuse others.",
+          "hi": "हैज़र्ड लाइट, यानी सारे इंडिकेटर एक साथ जलना-बुझना, उस वाहन के लिए है जो रुका हो या ख़राब हो गया हो और ख़तरा बन सकता हो। कोहरे में इसके बजाय लो बीम और फ़ॉग लैंप इस्तेमाल करें; चलते समय हैज़र्ड लाइट दूसरों को भ्रम में डालती है।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M16 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-008:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does this car's light signal usually mean?",
+            "hi": "इस कार की बत्तियों का इशारा आमतौर पर क्या बताता है?"
+          },
+          "stem_assets": ["ILL-VL-HAZARD-REAR"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "It is turning left",
+                "hi": "यह बाएँ मुड़ रही है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "It is turning right",
+                "hi": "यह दाएँ मुड़ रही है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "It has stopped and is warning of a hazard",
+                "hi": "यह रुकी है और ख़तरे की चेतावनी दे रही है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "It is braking hard",
+                "hi": "यह ज़ोर से ब्रेक लगा रही है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL3-008:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When should you use hazard warning lights?",
+            "hi": "हैज़र्ड लाइट कब इस्तेमाल करनी चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "When driving through fog, to be seen",
+                "hi": "कोहरे में चलते समय, ताकि दिखें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "When going straight across a junction",
+                "hi": "चौराहा सीधे पार करते समय"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "When parking where you shouldn't for a moment",
+                "hi": "थोड़ी देर ग़लत जगह पार्क करते समय"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "When your vehicle has broken down or stopped where it may be a hazard",
+                "hi": "जब आपका वाहन ख़राब हो गया हो या ऐसी जगह रुका हो जहाँ वह ख़तरा बन सकता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL3-008:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Switching on hazard lights while moving in fog is the right way to be seen. True or false?",
+            "hi": "कोहरे में चलते हुए हैज़र्ड लाइट चालू करना दिखने का सही तरीका है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-009",
+      "topic": "LL3",
+      "title": {
+        "en": "Brake lights",
+        "hi": "ब्रेक लाइट"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-009",
+        "text": {
+          "en": "Brighter red rear lamps mean the vehicle ahead is braking. Ease off early and check your gap; several brake lights at once can mean traffic is stopping.",
+          "hi": "पिछली लाल बत्तियाँ तेज़ हों तो आगे वाला वाहन ब्रेक लगा रहा है। जल्दी रफ़्तार कम करें और फ़ासला जाँचें; एक साथ कई ब्रेक लाइट का मतलब हो सकता है कि ट्रैफ़िक रुक रहा है।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM LL3 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-009:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "picture_to_meaning",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "The red lamps on the car ahead glow brighter. What does that tell you?",
+            "hi": "आगे वाली कार की लाल बत्तियाँ तेज़ चमकने लगती हैं। इससे आपको क्या पता चलता है?"
+          },
+          "stem_assets": ["ILL-VL-BRAKE-REAR"],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "It is braking",
+                "hi": "वह ब्रेक लगा रही है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "It is speeding up",
+                "hi": "वह रफ़्तार बढ़ा रही है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "It is about to turn",
+                "hi": "वह मुड़ने वाली है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Its headlights are on",
+                "hi": "उसकी हेडलाइट चालू है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL3-009:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "The brake lights of several vehicles ahead come on at once. What should you do?",
+            "hi": "आगे कई वाहनों की ब्रेक लाइट एक साथ जलती हैं। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Overtake them all quickly",
+                "hi": "सबको जल्दी से ओवरटेक करें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Ease off and be ready to brake",
+                "hi": "रफ़्तार कम करें और ब्रेक लगाने को तैयार रहें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Keep your speed until you are close",
+                "hi": "पास पहुँचने तक रफ़्तार बनाए रखें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Sound the horn",
+                "hi": "हॉर्न बजाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL3-009:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Brake lights coming on ahead are a cue to check your gap and slow down. True or false?",
+            "hi": "आगे ब्रेक लाइट जलना फ़ासला जाँचने और धीमे होने का इशारा है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL3-010",
+      "topic": "LL3",
+      "title": {
+        "en": "A signal is not a right of way",
+        "hi": "इंडिकेटर से रास्ते का हक़ नहीं मिलता"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL3-010",
+        "text": {
+          "en": "A signal only shows what you plan to do; it does not give you the right of way. Check that it is clear before you move, and don't rely on other people's signals alone.",
+          "hi": "इंडिकेटर सिर्फ़ बताता है कि आप क्या करने वाले हैं; इससे आपको रास्ते का हक़ नहीं मिलता। चलने से पहले देखें कि रास्ता साफ़ है, और सिर्फ़ दूसरों के इंडिकेटर के भरोसे न रहें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM LL3; M5 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL3-010:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You have switched on your right indicator. Does that let you move across straight away?",
+            "hi": "आपने दायाँ इंडिकेटर चालू कर दिया है। क्या अब आप तुरंत दाईं ओर जा सकते हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Yes; others must give way once you signal",
+                "hi": "हाँ; इंडिकेटर देते ही दूसरों को रास्ता देना होगा"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Yes, if you also sound the horn",
+                "hi": "हाँ, अगर साथ में हॉर्न भी बजाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "No; you must still check that it's clear before moving",
+                "hi": "नहीं; चलने से पहले फिर भी देखना होगा कि रास्ता साफ़ है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only on highways",
+                "hi": "सिर्फ़ हाईवे पर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL3-010:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "The car ahead is indicating left but hasn't slowed down. What should you do?",
+            "hi": "आगे वाली कार बायाँ इंडिकेटर दे रही है पर धीमी नहीं हुई है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Assume it will turn and pass it on the left",
+                "hi": "मान लें कि वह मुड़ेगी और उसकी बाईं ओर से निकल जाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Ignore the indicator and keep close behind",
+                "hi": "इंडिकेटर को नज़रअंदाज़ करें और ठीक पीछे चलते रहें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Sound the horn and pass",
+                "hi": "हॉर्न बजाएँ और निकल जाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Hang back and see what it does; the signal may be a mistake",
+                "hi": "पीछे रहें और देखें वह क्या करती है; हो सकता है इंडिकेटर ग़लती से चालू हो"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL3-010:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A signal tells others what you plan to do but does not give you the right of way. True or false?",
+            "hi": "इंडिकेटर दूसरों को बताता है कि आप क्या करने वाले हैं, पर इससे आपको रास्ते का हक़ नहीं मिलता। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    }
+  ]
+}

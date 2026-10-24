@@ -1,0 +1,68 @@
+{
+  "unit": "paise",
+  "currency": "INR",
+  "version": "fixture-1",
+  "items": [
+    {
+      "id": "FEE-LL-ISSUE",
+      "amount": 15000,
+      "per": "class",
+      "stage": "LL",
+      "source": {
+        "title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "checkedOn": "2026-10-22",
+      "confidence": "medium"
+    },
+    {
+      "id": "FEE-LL-TEST",
+      "amount": 5000,
+      "per": "application",
+      "stage": "LL",
+      "source": {
+        "title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL page",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "checkedOn": "2026-10-22",
+      "confidence": "medium"
+    },
+    {
+      "id": "FEE-DL-TEST",
+      "amount": 30000,
+      "per": "class",
+      "stage": "LL",
+      "source": {
+        "title": "CMVR 1989 r.32: driving test fee per class, paid together with the LL fee",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "checkedOn": "2026-10-22",
+      "confidence": "medium"
+    },
+    {
+      "id": "FEE-DL-ISSUE",
+      "amount": 20000,
+      "per": "application",
+      "stage": "DL",
+      "source": {
+        "title": "CMVR 1989 r.32: issue of driving licence",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "checkedOn": "2026-10-22",
+      "confidence": "medium"
+    },
+    {
+      "id": "FEE-SMART-CARD",
+      "amount": 20000,
+      "per": "application",
+      "stage": "DL",
+      "smartCard": true,
+      "source": {
+        "title": "CMVR 1989 r.32 smart-card surcharge; MoRTH circular 18-07-2023 (r.81 note 2, laminated card)",
+        "url": "https://morth.nic.in/sites/default/files/circulars_document/2-RT-11036-219-2021-MVL%20dated%2018-07-2023001.pdf"
+      },
+      "checkedOn": "2026-10-22",
+      "confidence": "medium"
+    }
+  ]
+}

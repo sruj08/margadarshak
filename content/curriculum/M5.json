@@ -1,0 +1,145 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M5",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Left-overtake and lane splitting",
+    "hi": "बाएँ से ओवरटेक और लेनों के बीच से निकलना"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "2W",
+  "deep_content_classes": ["MCWOG", "MCWG"],
+  "available_to": "all",
+  "phase_1_2_depth": "Through Nazar + G3",
+  "skill_id": "SK-M5",
+  "game_ids": ["nazar", "blind_spot"],
+  "drill_ids": [
+    "DR-NAZ-OCCL-AUTO_CUT_IN",
+    "DR-NAZ-OCCL-VEHICLE_PULLING_OUT",
+    "DR-NAZ-OCCL-DOOR_OPENING",
+    "DR-BS-RIDE-LEFTTURN"
+  ],
+  "rule_ids": ["RR-HVY-002", "RR-HVY-003"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M5-1",
+      "text": {
+        "en": "Overtake only on the right, with a clear gap.",
+        "hi": "सिर्फ़ दाईं ओर से, पूरे फ़ासले के साथ ओवरटेक करें।"
+      }
+    },
+    {
+      "id": "LO-M5-2",
+      "text": {
+        "en": "Recognise when splitting lanes beside a turning or stopping vehicle is dangerous.",
+        "hi": "पहचानें कि मुड़ते या रुकते वाहन के बगल से लेनों के बीच निकलना कब ख़तरनाक है।"
+      }
+    },
+    {
+      "id": "LO-M5-3",
+      "text": {
+        "en": "Predict where a vehicle will move next.",
+        "hi": "अंदाज़ा लगाएँ कि कोई वाहन आगे किधर जाएगा।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M5-1",
+      "title": {
+        "en": "Why the left is the trap",
+        "hi": "बाईं ओर ख़तरा क्यों है"
+      }
+    },
+    {
+      "id": "LS-M5-2",
+      "title": {
+        "en": "Reading intent: indicators, wheels, head turns",
+        "hi": "इरादा पढ़ना: इंडिकेटर, पहिये, सिर का घूमना"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M5-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Hit-from-side collisions caused 20,623 deaths and hit-from-back 36,804 in 2023.",
+        "hi": "2023 में बगल से टक्कर में 20,623 और पीछे से टक्कर में 36,804 मौतें हुईं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 1.5 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M5-2",
+      "kind": "law",
+      "text": {
+        "en": "Overtake only on the right.",
+        "hi": "ओवरटेक सिर्फ़ दाईं ओर से करें।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-HVY-002"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M5-1",
+      "myth": {
+        "en": "Slipping up the left of a turning vehicle is quicker and fine.",
+        "hi": "मुड़ते वाहन की बाईं ओर से निकलना जल्दी है और ठीक है।"
+      },
+      "correction": {
+        "en": "That is where a turning vehicle sweeps across; hold back until it has turned.",
+        "hi": "मुड़ता वाहन उसी जगह को घेरता है; उसके मुड़ने तक पीछे रुकें।"
+      },
+      "rule_id": "RR-HVY-003"
+    }
+  ],
+  "concepts": {
+    "target": 5,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Nazar hazard-type mastery ≥ 0.8 for the tagged types, and no BS_LEFT_OVERTAKE in the last 2 G3 sessions.",
+      "hi": "टैग किए गए ख़तरों पर नज़र महारत ≥ 0.8, और पिछले 2 G3 सेशन में कोई BS_LEFT_OVERTAKE नहीं।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Clip window two-rater agreement (NAZAR §6)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

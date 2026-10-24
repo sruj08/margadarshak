@@ -1,0 +1,144 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M16",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Fog and rain",
+    "hi": "कोहरा और बारिश"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Via G2 wet only",
+  "skill_id": "SK-M16",
+  "game_ids": ["stopping_distance", "night_glare", "nazar"],
+  "drill_ids": ["DR-SD-PREDICT-WET", "DR-SD-SIGHT-WET", "DR-NG-FOG"],
+  "rule_ids": ["RR-FOG-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M16-1",
+      "text": {
+        "en": "Slow down and lengthen the gap.",
+        "hi": "धीमे हों और फ़ासला बढ़ाएँ।"
+      }
+    },
+    {
+      "id": "LO-M16-2",
+      "text": {
+        "en": "Use low beam (and fog lamps), never high beam in fog; avoid hazard lights while moving.",
+        "hi": "लो बीम (और फ़ॉग लैंप) इस्तेमाल करें, कोहरे में कभी हाई बीम नहीं; चलते समय हैज़र्ड लाइट न जलाएँ।"
+      }
+    },
+    {
+      "id": "LO-M16-3",
+      "text": {
+        "en": "Recognise aquaplaning and slippery painted lines.",
+        "hi": "पानी पर फिसलना (एक्वाप्लेनिंग) और फिसलन भरी पेंट की लाइनें पहचानें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M16-1",
+      "title": {
+        "en": "Fog and rain",
+        "hi": "कोहरा और बारिश"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M16-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Fog or mist saw 14,617 deaths (about 8.5%) and rain 13,734 in 2023; December, the fog season, is the second-deadliest month (15,383 deaths).",
+        "hi": "2023 में कोहरे या धुंध में 14,617 मौतें (लगभग 8.5%) और बारिश में 13,734 हुईं; कोहरे का महीना दिसंबर सबसे ज़्यादा मौतों वाला दूसरा महीना है (15,383)।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Tables 3.8, 7.2 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M16-2",
+      "kind": "practice",
+      "text": {
+        "en": "In fog or rain: slow down, keep a longer gap, use low beam, never high beam in fog.",
+        "hi": "कोहरे या बारिश में: धीमे चलें, ज़्यादा फ़ासला रखें, लो बीम रखें, कोहरे में कभी हाई बीम नहीं।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M16 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-FOG-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M16-1",
+      "myth": {
+        "en": "High beam helps you see in fog.",
+        "hi": "कोहरे में हाई बीम से ज़्यादा दिखता है।"
+      },
+      "correction": {
+        "en": "High beam reflects back off fog; use low beam.",
+        "hi": "हाई बीम कोहरे से टकराकर लौटती है; लो बीम इस्तेमाल करें।"
+      },
+      "rule_id": "RR-FOG-001"
+    },
+    {
+      "id": "MC-M16-2",
+      "myth": {
+        "en": "Hazard lights while moving help others see you in fog.",
+        "hi": "कोहरे में चलते हुए हैज़र्ड लाइट से दूसरे आपको बेहतर देखते हैं।"
+      },
+      "correction": {
+        "en": "They hide your indicators and confuse others; use low beam and fog lamps.",
+        "hi": "इससे आपके इंडिकेटर छिप जाते हैं और दूसरे भ्रम में पड़ते हैं; लो बीम और फ़ॉग लैंप इस्तेमाल करें।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 4,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G2 wet rounds ≥ 80%; quiz.",
+      "hi": "G2 के गीली सड़क वाले राउंड ≥ 80%; क्विज़।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Instructor review"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

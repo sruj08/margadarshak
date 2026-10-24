@@ -1,0 +1,119 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M21",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Pre-ride check (T-CLOCS)",
+    "hi": "चलने से पहले की जाँच (T-CLOCS)"
+  },
+  "priority": "P2",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Not built",
+  "skill_id": "SK-M21",
+  "game_ids": [],
+  "drill_ids": [],
+  "rule_ids": ["RR-PRE-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M21-1",
+      "text": {
+        "en": "Check tyres, controls, lights, oil, chassis and stand in about a minute.",
+        "hi": "लगभग एक मिनट में टायर, कंट्रोल, लाइटें, ऑयल, चेसिस और स्टैंड जाँचें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M21-1",
+      "title": {
+        "en": "The one-minute check",
+        "hi": "एक मिनट की जाँच"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M21-1",
+      "kind": "evidence",
+      "text": {
+        "en": "The burden of vehicle defects is unknown: MoRTH has no defect coding.",
+        "hi": "वाहन की ख़राबी से होने वाले हादसों की संख्या पता नहीं: MoRTH में ख़राबी का कोड नहीं है।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), §3.18–3.19 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M21-2",
+      "kind": "practice",
+      "text": {
+        "en": "T-CLOCS: tyres, controls, lights, oil, chassis, stand, in about 60 seconds.",
+        "hi": "T-CLOCS: टायर, कंट्रोल, लाइटें, ऑयल, चेसिस, स्टैंड, लगभग 60 सेकंड में।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M21 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-PRE-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M21-1",
+      "myth": {
+        "en": "Tyres only need checking at the service.",
+        "hi": "टायर सिर्फ़ सर्विस पर जाँचने होते हैं।"
+      },
+      "correction": {
+        "en": "A quick look before each ride catches low pressure and damage early.",
+        "hi": "हर बार चलने से पहले एक नज़र से कम हवा और नुक़सान जल्दी पकड़ में आता है।"
+      },
+      "rule_id": "RR-PRE-001"
+    }
+  ],
+  "concepts": {
+    "target": 6,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Checklist completion.",
+      "hi": "चेकलिस्ट पूरी करना।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Instructor review"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

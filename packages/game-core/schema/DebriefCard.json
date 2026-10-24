@@ -1,0 +1,311 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "gameId": {
+      "type": "string",
+      "enum": [
+        "nazar",
+        "stopping_distance",
+        "blind_spot",
+        "junction_scan",
+        "track_twin",
+        "helmet_fit",
+        "golden_hour",
+        "night_glare",
+        "hill_road",
+        "ll_sim"
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["coach_notes", "auto_notes"]
+    },
+    "locale": {
+      "type": "string",
+      "enum": ["en", "hi", "hinglish"]
+    },
+    "label": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "notes_label": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "notices": {
+      "maxItems": 4,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 120
+      }
+    },
+    "how_you_did": {
+      "type": "string",
+      "maxLength": 600
+    },
+    "where_you_lacked": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "findingId": {
+            "type": "string",
+            "maxLength": 40,
+            "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+          },
+          "ruleId": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "pattern": "^RR-[A-Z][A-Z0-9]{1,3}-\\d{3}$"
+                  },
+                  "text": {
+                    "type": "string",
+                    "maxLength": 400
+                  },
+                  "source_title": {
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "source_url": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 500
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "verified_on": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": ["id", "text", "source_title", "source_url", "verified_on"],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": ["findingId", "ruleId", "text", "rule"],
+        "additionalProperties": false
+      }
+    },
+    "what_you_could_have_done": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "findingId": {
+            "type": "string",
+            "maxLength": 40,
+            "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+          },
+          "ruleId": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "pattern": "^RR-[A-Z][A-Z0-9]{1,3}-\\d{3}$"
+                  },
+                  "text": {
+                    "type": "string",
+                    "maxLength": 400
+                  },
+                  "source_title": {
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "source_url": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 500
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "verified_on": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": ["id", "text", "source_title", "source_url", "verified_on"],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": ["findingId", "ruleId", "text", "rule"],
+        "additionalProperties": false
+      }
+    },
+    "next_drill": {
+      "type": "object",
+      "properties": {
+        "drillId": {
+          "type": "string",
+          "maxLength": 48,
+          "pattern": "^DR-[A-Z]{2,3}-[A-Z0-9_-]+$"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deeplink": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "why": {
+          "type": "string",
+          "maxLength": 600
+        }
+      },
+      "required": ["drillId", "level", "deeplink", "why"],
+      "additionalProperties": false
+    },
+    "improved_since_last": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "generator_version": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "model": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 80
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "validator": {
+      "type": "object",
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": ["pass", "fallback"]
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "violations": {
+          "maxItems": 12,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["MODE", "SCHEMA", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10"]
+          }
+        }
+      },
+      "required": ["verdict", "attempts", "violations"],
+      "additionalProperties": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+    }
+  },
+  "required": [
+    "sid",
+    "gameId",
+    "kind",
+    "locale",
+    "label",
+    "notes_label",
+    "notices",
+    "how_you_did",
+    "where_you_lacked",
+    "what_you_could_have_done",
+    "next_drill",
+    "improved_since_last",
+    "generator_version",
+    "model",
+    "validator",
+    "created_at"
+  ],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/DebriefCard.json",
+  "title": "DebriefCard"
+}

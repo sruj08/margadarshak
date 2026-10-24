@@ -1,7 +1,7 @@
 # Design System
 > Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Design lead · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [Project brief](../00-overview/PROJECT_BRIEF.md) · [Accessibility](ACCESSIBILITY.md) · [Localization](LOCALIZATION.md) · [Content style](CONTENT_STYLE.md) · [UI spec](UI_SPEC.md) · [Frontend](../03-engineering/FRONTEND.md) · [Architecture](../03-engineering/ARCHITECTURE.md)
-> Code: [`packages/ui/tokens.json`](../../packages/ui/tokens.json) (DTCG source of truth) · [`packages/ui/tokens.css`](../../packages/ui/tokens.css) (CSS variables + Tailwind v4 `@theme`) · [`scripts/check_contrast.py`](../../scripts/check_contrast.py) (computes every ratio quoted here; runs in CI)
+> Code: [`packages/ui/tokens.json`](../../packages/ui/tokens.json) (DTCG source of truth) · [`packages/ui/tokens.css`](../../packages/ui/tokens.css) (CSS variables + Tailwind v4 `@theme`) · [`scripts/check_contrast.mjs`](../../scripts/check_contrast.mjs) (computes every ratio quoted here; runs in CI)
 > Inputs: `research/ps1-deep/06-design-language.md` (Sarvam CSS read, Vakyam source, Lexington, UX4G, GOV.UK, SGDS, Duolingo, Zutobi), `05-psychology.md`, `08-game-ai-n8n.md`, `war-room/margdarshak-verification.md` (D-01..D-25), Vakyam source at `G:\HACKATHON_PROJECTS\IQOO_VAKYAM\landing\src\styles\` (read-only), HeroUI v3.2.6 component list and theme variables (read 2026-10-23 via the HeroUI docs scripts).
 
 ---
@@ -83,7 +83,7 @@ flowchart LR
 - Every Margdarshak variable is prefixed `--md-*`. The reason: HeroUI v3 already owns `--surface`, `--success`, `--danger`, `--focus` and `--border`. Vakyam overwrote those names directly; we alias them instead (`tokens.css` §5), so a HeroUI upgrade cannot silently change our colours.
 
 ### 3.2 Light theme (default)
-All ratios were **computed** by `scripts/check_contrast.py` (WCAG 2.x relative luminance), not estimated. The pass bars are 4.5:1 for text, and 3:1 for large text and UI boundaries. The IDs refer to `tokens.json` `$extensions.contrastPairs`.
+All ratios were **computed** by `scripts/check_contrast.mjs` (WCAG 2.x relative luminance), not estimated. The pass bars are 4.5:1 for text, and 3:1 for large text and UI boundaries. The IDs refer to `tokens.json` `$extensions.contrastPairs`.
 
 | Token | Hex | Role | Computed ratio |
 |---|---|---|---|
@@ -567,7 +567,7 @@ Lottie rules:
 | Acting (navigate / fill) | Orb shrinks to a corner; a BorderBeam (Vakyam) traces the field being filled | "Filled your name. OK? · आपका नाम भर दिया। ठीक है?" + Yes / Change | Focus moves to the filled field; waits for confirmation |
 | Didn't catch | Orb dims once, no shake | "Say it again, or type it · फिर से बोलिए, या लिख दीजिए" + keyboard button | Text input always visible |
 | Offline / no mic | Grey ring, mic-off glyph | "Voice needs internet. Typing works offline." | — |
-| Under 18 (P-07) | Orb hidden; the search field remains | — (no AI for under-18s, D-13) | — |
+| Family mode (P-07) | Same as every other state; the orb works for a learner under 18 in the parent's account (D-13 revised) | Same copy as for every user | — |
 | AI unavailable (EC-29) | Grey ring, keyboard glyph | "Voice is resting right now. Search works." | — |
 
 ---
@@ -617,7 +617,7 @@ Lottie rules:
 | `Dropdown` | Overflow menus (console only) | — |
 | `Typography` | Not used; our `Text` component applies the scale tokens | — |
 | `Slider` | Stopping Distance guess slider (F-24) | 48 px thumb; arrow-key steps; value shown as text |
-| `ColorArea`, `ColorField`, `ColorPicker`, `ColorSlider`, `ColorSwatch`, `ColorSwatchPicker` | Tenant theme editor in the rule-pack studio only (F-42, F-58) | Validates contrast live with the same algorithm as `check_contrast.py` |
+| `ColorArea`, `ColorField`, `ColorPicker`, `ColorSlider`, `ColorSwatch`, `ColorSwatchPicker` | Tenant theme editor in the rule-pack studio only (F-42, F-58) | Validates contrast live with the same algorithm as `check_contrast.mjs` |
 
 ### 11.3 Custom components
 | ID | Component | Features | Anatomy | Variants | Key a11y |
@@ -654,7 +654,7 @@ Lottie rules:
 | C-30 | `SquadCard` | F-26 | Squad name, member initials, shared co-op score | — | No ranking by speed |
 | C-31 | `HelperBanner` | F-17 | "Helping {name} · consent recorded {time}" + "End help" + "Clear this device" | `active`, `ending` | Persistent; `region` landmark |
 | C-32 | `ConsentSheet` | F-54 | Purpose, data used, retention, withdraw path, per-purpose toggles (all off by default), "Agree" | per purpose | No pre-ticked boxes; equal-weight Agree/Not now |
-| C-33 | `AgeGate` | D-13 | DOB once → bands (under 16 / 16–17 / 18+) → features shown | — | Explains why ("AI is for 18+ under our AI provider's terms") |
+| C-33 | `AgeGate` | D-13 revised | Learner's DOB once → bands (under 16 / 16–17 / 18+) → licence eligibility only (EC-05, EC-06); for a learner under 18 it hands off to family mode (the case sits in the parent's account, parent consents). Never hides features | — | Explains why ("Learners under 18 use Margdarshak in a parent's account") |
 | C-34 | `AIChip` + `AIDisclosure` | D-09 | "AI" chip + "AI can't book, pay or submit. Facts come from verified rules." | `inline`, `card-footer` | Text, not icon only |
 | C-35 | `ScamResult` | F-33 | Verdict from rules: "Matches a known scam pattern" / "Not on our list of real sites" / "On the government list: {domain}"; AI explanation below | — | Never the word "safe" (D-19) |
 | C-36 | `GoldenHourCard` | F-15, D-12 | One-tap 112, "You are protected (s.134A)" card, 4 cited do/don't steps, "not medical training" | — | Works offline; no AI; no motion |
@@ -680,7 +680,7 @@ Lottie rules:
 | Offline | `StatusBanner[offline]` + Lite badge; cached actions stay enabled | What still works | Polite live region when the connection changes |
 | Simulated | SimulatedChip on the card/screen | "Simulated: in production this runs on Sarathi" | Chip text read |
 | Success | ✓ + `--md-success` | What happened + what's next | `role="status"` |
-| Under-18 | AI/streak/squad components not rendered; rules-only alternatives shown | "This part is for 18+" | — |
+| Family mode | Every component renders, AI included (D-13 revised); squad and share-card components show a parent-consent step until the parent turns them on | MC-237 / MC-260 | — |
 
 ---
 
@@ -796,7 +796,7 @@ The tokens page (https://www.ux4g.gov.in/foundations/tokens) defines:
 ## 14. Governance and QA
 | Gate | Tool | Fails the build when |
 |---|---|---|
-| Contrast | `python -I scripts/check_contrast.py` | Any pair below its minimum, or an "expected failure" starts passing (keeps the audit list honest) |
+| Contrast | `node scripts/check_contrast.mjs` | Any pair below its minimum, or an "expected failure" starts passing (keeps the audit list honest) |
 | Token use | Stylelint (`color-no-hex` in apps/components, custom rule banning `--md-ember`/`--md-amber` on `color:`, and `--md-ease-spring-reward` outside `packages/game-core`/`games/*`) | Raw hex, decorative token as text colour, spring easing outside games |
 | A11y | `@axe-core/playwright`, Storybook a11y addon, Lighthouse CI a11y ≥ 97 | Any serious/critical axe violation |
 | Visual regression | Playwright screenshots: 6 themes/modes × 3 locales (en, hi, en-XA pseudo) × 3 viewports (360, 600, 1280) on 12 key screens | Diff > 0.1% without approval |
@@ -817,7 +817,7 @@ The tokens page (https://www.ux4g.gov.in/foundations/tokens) defines:
 | EC-02 Address ≠ residence | `BlockerRow` + non-Aadhaar path; IL-03 style explainer |
 | EC-03 Blank S/o line | `BlockerRow[caution]` + "what the RTO accepts" (verify flag) |
 | EC-04 Turning 40 mid-journey | `CaseClock` gains a Form 1A caution row on the computed date |
-| EC-05 Age 16–17 | `AgeGate` → ≤ 50 cc plan; vehicle pictograms grey out others with the reason; no AI/streak components |
+| EC-05 Age 16–17 | `AgeGate` → ≤ 50 cc plan in family mode; vehicle pictograms grey out other classes with the reason; all other components (AI, streaks) as for every user |
 | EC-06 Transport under 20 | Pictogram disabled-with-reason (`aria-disabled`) |
 | EC-07 LL expiry vs slot | `CaseClock` caution → critical; red allowed (real deadline) |
 | EC-08 3+ fails | `DebriefCard` + remedial referral `StatusBanner[info]`; never red |
@@ -863,7 +863,7 @@ The tokens page (https://www.ux4g.gov.in/foundations/tokens) defines:
 
 ---
 
-## Appendix A: Full computed contrast table (output of `scripts/check_contrast.py`, 2026-10-23)
+## Appendix A: Full computed contrast table (output of `scripts/check_contrast.mjs`, 2026-10-23)
 | ID | Theme | Foreground | Background | Ratio | Min | Result | Use |
 |---|---|---|---|---|---|---|---|
 | L-01 | light | `light.ink` #1F1F1F | `light.bg` #FCFCFA | **16.05** | 4.5 | pass | body text on page |

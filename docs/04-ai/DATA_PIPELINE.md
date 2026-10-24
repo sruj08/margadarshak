@@ -3,7 +3,7 @@
 > Related: [MODELS §M-06, §M-09](MODELS.md) · [AGENTS §3.6](AGENTS.md) · [AI_EVALS](AI_EVALS.md) · [RESPONSIBLE_AI](RESPONSIBLE_AI.md) · [DATA_MODEL](../03-engineering/DATA_MODEL.md) · [PRIVACY / DPDP](../06-security-compliance/PRIVACY.md) · [N8N workflows](../05-ops/N8N_WORKFLOWS.md) · [HYPOTHESES](../08-project/FIELD_STUDY.md)
 > Sources: 04 §3.4, §1.8; 08 §1.3 (offline), §2.3 (telemetry), §3 G1 (Nazar), §6 W8/W15; D-15 (headline Workflow), D-22, council §3.3 (data, safety), PROJECT_BRIEF M-06, M-09, E-08, E-16, E-17, E-20, E-21.
 
-**The Render Workflows Python SDK API shape** (task decorators, retries, waiting on external events) is **[unverified]** in our research. Code below is `# PSEUDO`. Owner: Pipeline lead, confirm against the Render Workflows docs at H0 (the B-sponsors notes say Workflows has no cron, so n8n triggers runs via the run-task API).
+**Render Workflows tasks are TypeScript** (`services/workflows`, `@renderinc/sdk` 1.4.0; ADR-0011, ADR-0005). The task API (`task({name, retry, timeoutSeconds, plan}, fn)`, `ctx.run(subtask, ...)`, `Promise.all` fan-out) is taken from the SDK README (checked 2026-10-23); it has **no wait-for-event or sleep API**. Business steps (consent checks, M-06, agreement, publish) run in the Go API behind HMAC job-step calls; only media work (ffmpeg, blur, flash check) runs inside the task. Code below is a `SKETCH`. Owner: Pipeline lead, confirm plan names and limits against the Render Workflows docs at H0 (the B-sponsors notes say Workflows has no cron, so n8n triggers runs via the API, which calls the Render REST API `POST /v1/task-runs`).
 
 ---
 
@@ -20,7 +20,7 @@
 | LL syllabus and sign sets (per `02-rules-process.md`) | Question bank, sign catalogue | Government material; images we redraw are CC-BY 4.0 (ours) | Two-person review |
 | AI4Bharat IndicTrans2 | Dogri/Hindi draft translations | Open model; licence **[unverified]** (owner AI lead, check the model card at H0) | Native review mandatory |
 | MediaPipe Tasks Vision | Helmet Fit (M-09) | Apache-2.0 [K] | On device |
-| YuNet face detector; plate detector | Blur (M-09) | Licence **[unverified]** (owner Pipeline lead, H0 + 4 h) | Worker-side |
+| YuNet face detector; plate detector | Blur (M-09) | Licence **[unverified]** (owner Pipeline lead, H0 + 4 h) | Inside the TypeScript Workflows task (ONNX models via `onnxruntime-node`, hash-pinned) |
 
 ---
 
@@ -49,8 +49,8 @@ flowchart LR
 ```
 
 **Triggers.**
-- n8n W8 fires on "new upload" (or the curator page webhook) and calls the Render run-task API.
-- Human waits (hours to days) are held as Workflow waits resumed by our API when a rater submits. n8n sends the reminders (08 §6 W8).
+- n8n W8 fires on "new upload" (or the curator page webhook) and calls API-67, which starts `clip_ingest` through the Go `JobRunner` (Render REST API `POST /v1/task-runs`).
+- Human waits (hours to days: blur audit, raters, adjudication) are held **between runs** in n8n W8, because Workflows has no wait API and a 24 h run cap: `clip_ingest` run → human steps → n8n calls API-67 → `clip_finalize` run (PROJECT_BRIEF §15). A missed blur sends the clip back through `blur`. n8n sends the reminders (08 §6 W8).
 
 ### 2.2 Step details
 
@@ -67,20 +67,52 @@ flowchart LR
 | `adjudicate` | Third person; sees both raters plus the proposals | waits | final windows + reason code | n/a |
 | `publish` | Writes the manifest entry `{clip_id, version, urls, sha256, bytes, hazards[{a_ms,b_ms,type}], difficulty_curator, region, road_type, time_of_day, licence:"CC-BY-4.0", blur_audit_id}` and warms the CDN | 3 | the manifest version (PWA "download practice pack" picks it up) | Rollback = previous manifest version |
 
-```python
-# PSEUDO - Render Workflows Python SDK shape unverified
-@workflow(name="clip_ingest")
-def clip_ingest(clip_id: str):
-    raw = ingest(clip_id)                       # task, retries=3
-    mp4 = transcode(raw)                        # task, retries=3
-    blurred = blur(mp4)                         # task, retries=2
-    audit = wait_for_event("blur_audit", clip_id)   # human; loops back to blur on miss
-    delete_raw(raw)
-    proposals = propose_windows(blurred)        # task, retries=5, backoff on 429
-    r1, r2 = wait_for_event("rating", clip_id, rater=1), wait_for_event("rating", clip_id, rater=2)
-    agreement = compute_agreement(r1, r2)
-    final = agreement.final if agreement.ok else wait_for_event("adjudication", clip_id)
-    publish(clip_id, final, audit)
+```ts
+// SKETCH - services/workflows/src/clips.ts, Render Workflows TypeScript SDK (@renderinc/sdk 1.4.0).
+// task(), ctx.run() and the retry options are from the SDK README (checked 2026-10-23).
+// The SDK has no sleep / wait-for-event API and runs are capped at 24 h, so the pipeline is split:
+// clip_ingest run -> blur audit + two raters + adjudication wait in n8n W08 -> n8n calls API-67 -> clip_finalize run.
+import { task, type TaskContext } from "@renderinc/sdk/workflows";
+import { apiStep } from "./api"; // HMAC POST to the Go API, private network: /internal/job-steps/{step} (proposed)
+import { runFfmpeg } from "./media/ffmpeg"; // 360p + 480p H.264, audio stripped (-an)
+import { blurFacesAndPlates } from "./media/blur"; // onnxruntime-node: YuNet faces + plate detector (M-09)
+import { flashCheck } from "./media/flash"; // <= 3 flashes/s (WCAG 2.3.1)
+
+const retry = (maxRetries: number) => ({ maxRetries, waitDurationMs: 1000, backoffScaling: 2 });
+
+const ingest = task({ name: "ingest", retry: retry(3) }, (_c: TaskContext, clipId: string) =>
+  apiStep("clip.ingest_check", { clip_id: clipId })); // consent + CC-BY grant + codec/duration checks (Go)
+const transcode = task({ name: "transcode", retry: retry(3), timeoutSeconds: 900 }, (_c: TaskContext, clipId: string) =>
+  runFfmpeg(clipId));
+const blur = task({ name: "blur", retry: retry(2), timeoutSeconds: 1200 }, (_c: TaskContext, clipId: string) =>
+  blurFacesAndPlates(clipId));
+const flash = task({ name: "flash_check", retry: retry(2) }, (_c: TaskContext, clipId: string) => flashCheck(clipId));
+const proposeWindows = task({ name: "propose_windows", retry: { maxRetries: 5, waitDurationMs: 2000, backoffScaling: 2 } },
+  (_c: TaskContext, clipId: string) => apiStep("clip.propose_windows", { clip_id: clipId })); // M-06 runs in the Go API (ADK for Go)
+
+export const clipIngest = task({ name: "clip_ingest", timeoutSeconds: 1800 }, async (ctx: TaskContext, clipId: string) => {
+  await ctx.run(ingest, clipId);
+  await ctx.run(transcode, clipId);
+  await ctx.run(blur, clipId);
+  await ctx.run(flash, clipId);
+  await ctx.run(proposeWindows, clipId); // a 429 here shows the visible retry on the Runs page (D-15)
+  return apiStep("clip.open_review", { clip_id: clipId }); // blur audit + rater queue; n8n W08 holds the human waits
+});
+
+const agreement = task({ name: "compute_agreement", retry: retry(3) }, (_c: TaskContext, clipId: string) =>
+  apiStep("clip.agreement", { clip_id: clipId })); // §2.3, deterministic Go code
+const deleteRaw = task({ name: "delete_raw", retry: retry(3) }, (_c: TaskContext, clipId: string) =>
+  apiStep("clip.delete_raw", { clip_id: clipId }));
+const publish = task({ name: "publish", retry: retry(3) }, (_c: TaskContext, clipId: string) =>
+  apiStep("clip.publish_manifest", { clip_id: clipId })); // manifest entry + CDN warm
+
+// Started by n8n W08 through API-67 once blur_audit passed and both ratings (or the adjudication) exist.
+export const clipFinalize = task({ name: "clip_finalize", timeoutSeconds: 300 }, async (ctx: TaskContext, clipId: string) => {
+  const a = await ctx.run(agreement, clipId);
+  if (!a.ok && !a.adjudicated) return apiStep("clip.request_adjudication", { clip_id: clipId }); // W08 restarts clip_finalize later
+  await ctx.run(deleteRaw, clipId);
+  return ctx.run(publish, clipId);
+});
 ```
 
 ### 2.3 Two-rater agreement (code)
@@ -138,7 +170,7 @@ The scoring bands are computed from `[a, b]` (08 G1: 5 equal bands; 5/4/3/2/1 po
 
 ### 2.6 Difficulty calibration (after publish)
 
-- Curator difficulty 1–5 at publish. Empirical difficulty = the mean band achieved by adult users on **unseen** mock attempts with trust ≥ 0.6. It is recomputed nightly by the field-stats Workflow (D-15) and shown once n ≥ 30 attempts [D].
+- Curator difficulty 1–5 at publish. Empirical difficulty = the mean band achieved by users on **unseen** mock attempts with trust ≥ 0.6. It is recomputed nightly by the field-stats Workflow (D-15) and shown once n ≥ 30 attempts [D].
 - Clips whose false-alarm rate is > 2× the bank median are flagged for review (an ambiguous hazard).
 - This calibrated difficulty per clip is part of the moat (PROJECT_BRIEF §3).
 
@@ -213,7 +245,7 @@ stateDiagram-v2
 
 ## 4. Telemetry minimisation (E-16, E-17; F-55)
 
-### 4.1 What is collected (adults only)
+### 4.1 What is collected (every user; a minor's data sits in the parent's account)
 
 - `GameEvent` envelope (08 §2.2): `sid, seq, t, mt, type, p`.
   - The `type` enum is closed (29 types).
@@ -228,10 +260,10 @@ stateDiagram-v2
   - device identifiers beyond a pseudonymous install ID.
 - **Games never see** name, DOB, phone, case file or location (08 §2.1).
 
-### 4.2 Under-18 and no-consent users
+### 4.2 Minor profiles (family mode) and no-consent users
 
-- **No telemetry at all** (D-13). Games run locally; the score and template debrief are computed client-side; nothing syncs.
-- No account history, streaks or squads.
+- **Minor profile (family mode, D-13 revised):** telemetry is collected as for everyone, inside the parent's account and under the parent's consent. It is used only for scoring, debriefs, the learner's own progress and k ≥ 5 aggregates, never for behavioural tracking, profiling or targeted ads (DPDP s.9(3)). Streaks work as for everyone; squads and share cards need the parent's consent.
+- **No-consent users:** no telemetry. Games run locally; the score and template debrief are computed client-side; nothing syncs. No account history, streaks or squads.
 
 ### 4.3 Analytics (API-63)
 
@@ -275,7 +307,7 @@ Every user-visible AI output can be traced back to:
 | Data | Where | Retention | Basis / note |
 |---|---|---|---|
 | Voice audio | Not stored | **0** (streamed only) | "Mic on · not stored" |
-| Voice transcripts / ADK sessions | Postgres (ADK sessions) | ≤ 24 h [D]; off by user choice | Captions + resumption only |
+| Voice transcripts / ADK sessions | API process memory (`session.InMemoryService()`; nothing written to Postgres) | ≤ 24 h [D]; off by user choice | Captions + resumption only |
 | Screenshots (decoder), sign photos | Not stored | **0** (request only) | 04 §2 |
 | Prompt inputs for debrief debugging | Postgres (encrypted) | **7 days** [D] (08 §5.3) | Debugging; IDs-only after |
 | Rendered debriefs (E-19) | Postgres | 12 months or until the user deletes | User value; deletable (API-62) |

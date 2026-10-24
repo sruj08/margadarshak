@@ -1,0 +1,143 @@
+{
+  "$comment": "D-19 wording bans (PROJECT_BRIEF §11, CONTENT_STYLE §8.1). English patterns are case-insensitive JS regexes; Hindi patterns are plain-text regexes (no \\b in Devanagari). Hindi equivalents need PD review (MD-004).",
+  "terms": [
+    {
+      "id": "official",
+      "lang": "en",
+      "pattern": "\\bofficial(ly)?\\b",
+      "reason": "D-01/D-19 impersonation risk; say 'government' or 'Sarathi'"
+    },
+    {
+      "id": "official-hi",
+      "lang": "hi",
+      "pattern": "आधिकारिक",
+      "reason": "D-19: 'official' in Hindi"
+    },
+    {
+      "id": "first-ever",
+      "lang": "en",
+      "pattern": "\\bfirst[- ]ever\\b|\\b(India'?s|the world'?s|world'?s|the country'?s) first\\b|\\bthe first (app|platform|service|product|of its kind)\\b",
+      "reason": "D-19 unprovable novelty claim ('Get my first licence' is fine)"
+    },
+    {
+      "id": "first-ever-hi",
+      "lang": "hi",
+      "pattern": "भारत का पहला|भारत की पहली|देश का पहला|दुनिया का पहला|पहली बार ऐसा",
+      "reason": "D-19 novelty claim in Hindi"
+    },
+    {
+      "id": "doesnt-exist",
+      "lang": "en",
+      "pattern": "\\b(doesn'?t|does not) exist\\b",
+      "reason": "D-19 market claim; say 'we found none on {date}'"
+    },
+    {
+      "id": "dpdp-compliant",
+      "lang": "en",
+      "pattern": "\\bDPDP[- ]?compliant\\b|\\bDPDP[- ]?compliance certified\\b",
+      "reason": "D-19; say 'built to the DPDP Rules'"
+    },
+    {
+      "id": "dpdp-compliant-hi",
+      "lang": "hi",
+      "pattern": "DPDP[- ]?अनुपालित|DPDP[- ]?के अनुरूप प्रमाणित",
+      "reason": "D-19 in Hindi"
+    },
+    {
+      "id": "integrated-with-sarathi",
+      "lang": "en",
+      "pattern": "\\bintegrated (with|into) (Sarathi|Aadhaar|DigiLocker|Vahan|Parivahan)\\b",
+      "reason": "D-02/D-19 no private integration exists; say 'hands off to Sarathi'"
+    },
+    {
+      "id": "integrated-with-sarathi-hi",
+      "lang": "hi",
+      "pattern": "सारथी (से|के साथ) (एकीकृत|इंटीग्रेटेड|जुड़ा हुआ)",
+      "reason": "D-19 in Hindi"
+    },
+    {
+      "id": "lives-saved",
+      "lang": "en",
+      "pattern": "\\blives? (saved|will be saved)\\b|\\bsaves? lives\\b",
+      "reason": "D-19 unprovable outcome claim"
+    },
+    {
+      "id": "lives-saved-hi",
+      "lang": "hi",
+      "pattern": "जान(ें)? बचाई|जानें बचाएगा|जान बचाता",
+      "reason": "D-19 in Hindi"
+    },
+    {
+      "id": "verified-licence",
+      "lang": "en",
+      "pattern": "\\bverified (licen[cs]e|driver|practice record)\\b",
+      "reason": "D-10/D-19; say 'Practice Record', 'checked'"
+    },
+    {
+      "id": "verified-licence-hi",
+      "lang": "hi",
+      "pattern": "सत्यापित लाइसेंस|वेरिफ़ाइड लाइसेंस|वेरीफाइड लाइसेंस",
+      "reason": "D-19 in Hindi"
+    },
+    {
+      "id": "unsafe-driver",
+      "lang": "en",
+      "pattern": "\\b(unsafe|dangerous) (driver|rider)\\b",
+      "reason": "D-19 shame language"
+    },
+    {
+      "id": "unsafe-driver-hi",
+      "lang": "hi",
+      "pattern": "असुरक्षित (ड्राइवर|चालक|राइडर)|ख़तरनाक (ड्राइवर|चालक)|खतरनाक (ड्राइवर|चालक)",
+      "reason": "D-19 in Hindi"
+    },
+    {
+      "id": "you-would-crash",
+      "lang": "en",
+      "pattern": "\\byou (would|will|'d) (have )?crash(ed)?\\b",
+      "reason": "D-19 fear language"
+    },
+    {
+      "id": "you-would-crash-hi",
+      "lang": "hi",
+      "pattern": "आपका एक्सीडेंट हो (जाता|जाएगा)|आप दुर्घटना कर (देते|देंगे)",
+      "reason": "D-19 in Hindi"
+    },
+    {
+      "id": "saarthi",
+      "lang": "en",
+      "pattern": "\\bSaarthi\\b",
+      "reason": "D-01: our name is Margdarshak; 'Sarathi' only for the government portal"
+    },
+    {
+      "id": "stqc-certified",
+      "lang": "en",
+      "pattern": "\\bSTQC[- ]certified\\b",
+      "reason": "D-19; say 'audit-ready'"
+    },
+    {
+      "id": "safe-verdict",
+      "lang": "en",
+      "pattern": "\\b(this|it|link|site|app|message) (is|looks) (100% )?safe\\b",
+      "reason": "D-19 'safe' as a scam verdict"
+    },
+    {
+      "id": "safe-verdict-hi",
+      "lang": "hi",
+      "pattern": "(यह|लिंक|ऐप|साइट) सुरक्षित है",
+      "reason": "D-19 'safe' verdict in Hindi"
+    },
+    {
+      "id": "guaranteed-pass",
+      "lang": "en",
+      "pattern": "\\bguaranteed pass\\b|\\b100% pass\\b",
+      "reason": "Overclaim (CONTENT_STYLE §8.1)"
+    },
+    {
+      "id": "ten-plus-languages",
+      "lang": "en",
+      "pattern": "\\b10\\+ languages\\b",
+      "reason": "Cut (D-21); say 'English and Hindi, plus Dogri voice'"
+    }
+  ]
+}

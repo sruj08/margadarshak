@@ -4,7 +4,7 @@
 
 **Scope.** Every security control for the citizen PWA, the FastAPI backend, the score verifier, the ADK agents (M-01..M-09), Render Workflows jobs, n8n, the ecosystem consoles (F-40, F-41, F-42, API-55) and the government adapter layer (F-56).
 
-**Two columns everywhere.** *Hackathon build (Phase 1–2)* is what ships on Render Singapore with **synthetic data only** (plus consented 18+ field-study participants on the Gemini paid tier, D-13). *Production (Phase 3+)* is what a State Transport Department (STD) or NIC would host on MeghRaj / a MeitY-empanelled Indian cloud (D-17).
+**Two columns everywhere.** *Hackathon build (Phase 1–2)* is what ships on Render Singapore with **synthetic data only** (plus consented 18+ field-study participants on the Gemini paid tier). *Production (Phase 3+)* is what a State Transport Department (STD) or NIC would host on MeghRaj / a MeitY-empanelled Indian cloud (D-17).
 
 **Claim discipline (D-19).** We say "built to OWASP ASVS L2", "audit-ready", "built to DPDP Rules". We never say "STQC-certified", "DPDP-compliant", "official" or "integrated with Sarathi".
 
@@ -28,7 +28,7 @@
 1. **Collect the minimum.** We never collect an Aadhaar number, VID, OTP, biometrics, captcha or a face for matching (D-07). We never store document images (E-06 holds only the check result). The LL and DL numbers are never stored in clear (E-04, E-05).
 2. **Government steps stay on government systems.** eKYC, OTP, payment and submission happen on Sarathi or the state gateway (F-07). Margdarshak never holds credentials for Sarathi or DigiLocker on the user's behalf. No scraping and no booking bots (D-08; IT Act s.43).
 3. **Code owns every number.** Eligibility, fees, timelines, scores and scam verdicts are deterministic (D-09). Gemini only narrates IDs from allowlists, so a prompt injection can at worst change wording, never a fee or a score.
-4. **Minors are out of the data path.** Under-18 users get rules-only, account-less features: no AI, no telemetry, no streaks, no squads (D-13, P-07).
+4. **Minors are protected, not excluded.** A learner under 18 gets the full product, including every AI feature, inside a parent's adult account (family mode) with the parent's verifiable consent (D-13 revised, P-07). A child's data is never used for behavioural tracking, profiling or targeted ads (DPDP s.9(3)); squads and share cards for a minor's profile need the parent's consent.
 5. **Tenants are states.** Data, keys and rule packs are isolated per tenant (E-31, F-58).
 6. **Assume breach.** Field-level encryption for contact data (E-14), pseudonymous IDs elsewhere, an append-only audit log (E-30), and a 6-hour CERT-In clock in the runbook.
 7. **Portable controls.** Every control works the same on Render and on MeghRaj/NIC: containers, Postgres 16, Redis, S3-compatible storage, OpenTelemetry. No control depends on a Render-only feature.
@@ -89,9 +89,9 @@ The full DFD with every flow numbered and the STRIDE table per component is in [
 
 | Actor | Persona | Phase 1–2 (hackathon) | Phase 3+ (production) | Session lifetime | Step-up / MFA |
 |---|---|---|---|---|---|
-| **Anonymous visitor** | P-01/P-02 before sign-up, P-07 (minor) | No login. API-01 plan, API-02/03 rules work with a rate-limited anonymous **device session** (opaque 256-bit ID in an `__Host-mg_dev` cookie, HttpOnly, Secure, SameSite=Lax) | Same | 30 days rolling; no personal data attached | None |
+| **Anonymous visitor** | P-01/P-02 before sign-up, P-07 (minor, before the parent signs in) | No login. API-01 plan, API-02/03 rules work with a rate-limited anonymous **device session** (opaque 256-bit ID in an `__Host-mg_dev` cookie, HttpOnly, Secure, SameSite=Lax) | Same | 30 days rolling; no personal data attached | None |
 | **Registered citizen (18+)** | P-01, P-02, P-03 | Email magic link (one-time token, 10 min, single use, bound to the requesting device session) **or** Google Sign-In (OIDC, `authlib`, PKCE S256, `nonce`, `aud` + `iss` checks) | Add **DigiLocker OAuth 2.0 + PKCE** (requester spec v1.12, `07-govt-plug-and-play.md` §A2) or **Jan Parichay** through the tenant's identity adapter. Mobile OTP only through a DLT-registered sender (D-16) | Access: opaque session ID, 12 h idle / 30 days absolute; rotated on every privilege change | Re-auth (fresh magic link) before export (API-61), delete (API-62), adding a helper (API F-17), or changing the contact (E-14) |
-| **Minor (16–17)** | P-07 | **No account.** Plan card, checklist, static lessons and local-only practice run without any server-side identity. The age gate is server-side on the DOB the user enters (F-02) | Account only with **verifiable parental consent** per DPDP Rule 10 (parent verified via DigiLocker or details already held). Even then: no AI, telemetry, streaks or squads (D-13). Roadmap | n/a | n/a |
+| **Minor (16–17), family mode** | P-07 | **No separate account.** The learner's case is a family member's profile inside the parent's (adult) account, on the parent's phone, with the full product including AI. The parent signs in (same methods as a registered citizen) and gives the consents, recorded with `acting_for` = parent | Parent verified as an identifiable adult per DPDP Rule 10 (DigiLocker or details already held); same full product | Parent's session | Parent's step-up rules apply |
 | **Helper** | P-04 (sibling, CSC/cyber-café operator) | A helper acts **inside the applicant's case** through a HelperLink (E-29). The applicant creates the link from their own session; the helper signs in with their own magic link. Consent artefact (E-15) records purpose, scope (`case:read`, `case:edit_draft`), expiry (default 7 days) and is revocable | Same + CSC operator ID attribute when a CSC adapter exists. Helper sessions on shared devices default to "public computer" mode: 15 min idle timeout, no "remember me", "clear this device" button (EC-14) | 15 min idle on shared-device mode, 2 h otherwise | The applicant confirms each sensitive action (send letter, add class) by a link sent to **their** contact, never the helper's |
 | **Driving-school staff** | P-05 | Email magic link + **TOTP** (`pyotp`, RFC 6238), roles `school_owner`, `school_instructor` | OIDC with the tenant IdP or Google Workspace + **WebAuthn** passkey (`py_webauthn`) | 8 h | MFA at every login |
 | **RTO officer / state console viewer** | P-06 | Demo accounts only (synthetic data), WebAuthn passkey | **Jan Parichay / state SSO** via an `IdentityPort` adapter (Parichay integration **[unverified]**, owner BE, check with NIC by 2026-12-15); MFA enforced by the IdP; IP allowlist for the state network | 8 h, 30 min idle | Step-up for exports |
@@ -113,11 +113,12 @@ The full DFD with every flow numbered and the STRIDE table per component is in [
 - **CSRF:** SameSite plus a double-submit token on all state-changing requests from the PWA; consoles use `SameSite=Strict` plus the token.
 - **Logout everywhere:** API to revoke all sessions for an actor; triggered automatically on account deletion (API-62), contact change and helper revocation (EC-25).
 
-### 3.3 Age gate (D-13) as a security control
-- The DOB entered in F-02 / F-05 produces `age_band ∈ {under16, 16_17, 18_plus}` computed **server-side** with the server clock (EC-15). If the DOB came from an Aadhaar with year only (EC-01), the band uses the conservative assumption (31 Dec of that year), so a borderline user is treated as younger.
-- AI endpoints (API-40..API-43, API-36 narration) check `age_band == 18_plus` **and** `ai_consent == granted` in the policy layer before any call to Gemini or Sarvam. The check is in the dependency-injected `require_ai_eligible()` FastAPI dependency and again in an ADK `before_model_callback` (defence in depth).
+### 3.3 Family mode and consent (D-13 revised) as a security control
+- The DOB entered in F-02 / F-05 produces `age_band ∈ {under_16, 16_17, 18_25, 26_40, 41_60, 60_plus}` computed **server-side** with the server clock (EC-15). If the DOB came from an Aadhaar with year only (EC-01), the band uses the conservative assumption (31 Dec of that year), so a borderline user is treated as younger. The band drives licence eligibility and family mode, not access to features.
+- AI endpoints (API-40..API-43, API-36 narration) serve every user. The policy layer checks that the session belongs to an adult account holder **and** that `PUR-AI-FEATURES` consent is granted for the case (for a family member's case, the parent's artefact with `acting_for` = parent) before any call to Gemini or Sarvam, and checks again just before the model call (defence in depth).
+- A minor profile (`flags.minor`) is excluded from behavioural analytics, profiling and any ad path (DPDP s.9(3)); squad join and share cards for it require the parent's consent.
 - A user who changes DOB from <18 to ≥18 must re-confirm the DOB on a declaration screen; changes are rate-limited (1 per 30 days) and logged to E-30. Field-study participants confirm 18+ on the consent form.
-- Residual risk: a minor can lie about DOB. Mitigation is the declaration, the copy ("AI features are for adults only, Google's terms require it"), and no reward for unlocking AI. Logged as R-04 and R-13.
+- Residual risk: a minor can lie about DOB to open their own account instead of family mode. Mitigation is the declaration and the fact that family mode offers the same full product, so there is no reward for lying. Provider terms on minors: see R-13.
 
 ---
 
@@ -262,7 +263,7 @@ Crypto shredding: deleting a tenant DEK makes all that tenant's E-14 data unread
 5. **Voice (API-40) caveat.** Live audio is streamed to Gemini before any transcript exists, so redaction cannot happen before the model hears it. Controls: (a) a pre-mic notice "Never say your Aadhaar, OTP or bank details"; (b) system instruction to never repeat or store numbers and to reply with the refusal script; (c) the input transcription stream is scanned in real time; on an Aadhaar/OTP hit the server **ends the live session**, discards the session transcript, and logs `pii_trip:voice` (type only); (d) paid tier, so prompts aren't used for product improvement (Gemini API terms, last updated 2026-04-28; Google still logs prompts for a limited period for abuse detection); (e) residual risk recorded as R-17.
 
 ### 10.3 Never sent to any model (shown on screen, `04-ai-adk-gemini.md` §2)
-Aadhaar number or VID, OTP, captcha, passwords, face images for authentication, contact details, DOB (only `age_band`), LL/DL/application numbers, anything from a minor.
+Aadhaar number or VID, OTP, captcha, passwords, face images for authentication, contact details, DOB (only `age_band`), LL/DL/application numbers. A minor profile's AI inputs get the same redaction and are never used for profiling.
 
 ---
 
@@ -305,7 +306,7 @@ sequenceDiagram
 | V9 | Clip order shuffled per session from the seed; windows never leave the server, so memorising answers from DevTools fails | design |
 | V10 | Field-study sessions require a study consent artefact and a `study_session` flag; only verified, flag-free sessions enter the nightly stats Workflow | design |
 
-Under-18 local practice runs without server sessions and produces no stored score (D-13).
+A minor's practice in family mode is verified and stored like anyone else's, inside the parent's account (D-13 revised).
 
 ---
 
@@ -402,7 +403,7 @@ Versions are re-pinned at H0 against the registries; any version written in docs
 | Design | ADR for any new data flow, processor or AI tool; AI tools reviewed against the closed-enum rule | BE / AI |
 | Code | Conventional Commits; branch protection (1 review, status checks); CODEOWNERS for `security/`, `policy/`, `pii_guard/`, `prompts/`, `rulepacks/` | All |
 | Build | CI: lint, type-check (mypy strict, `tsc --noEmit`), unit, contract tests (adapters), RLS tests, PII vectors, Semgrep, Bandit, gitleaks, SCA, Trivy, SBOM | OPS |
-| Test | Playwright e2e incl. age-gate, helper, delete, clear-device; axe accessibility; `adk eval` ≥ 30 cases per agent (D-10); ZAP baseline against preview deploys | FE / AI / SEC |
+| Test | Playwright e2e incl. family-mode consent, helper, delete, clear-device; axe accessibility; `adk eval` ≥ 30 cases per agent (D-10); ZAP baseline against preview deploys | FE / AI / SEC |
 | Release | Signed tags, changelog incl. rule-pack changes (public `CHANGELOG`, §3.3 of verification), SBOM attached | OPS |
 | Operate | Alerts §9, on-call rota during judging, incident runbook | OPS / SEC |
 | Learn | Post-incident review within 5 working days; threat model updated | SEC |
@@ -435,7 +436,7 @@ Versions are re-pinned at H0 against the registries; any version written in docs
 |---|---|---|
 | Hosting | Render Singapore, synthetic data, consented 18+ study data only | MeghRaj / MeitY-empanelled CSP or NIC, India region; data, logs, backups and AI inference in India |
 | Identity | Magic link, Google OIDC, passkeys for staff | + DigiLocker OAuth/PKCE, Jan Parichay/state SSO via adapters |
-| AI | Gemini API paid tier (D-13) | Vertex AI in an Indian region (Mumbai `asia-south1` lists Gemini 2.5 Flash/Flash-Lite/Pro for in-region ML processing per Google's data-residency page; current-model coverage to be checked), or Bhashini/local Indic models behind the same port |
+| AI | Gemini API paid tier (D-13 revised; provider terms on minors: R-13) | Vertex AI in an Indian region (Mumbai `asia-south1` lists Gemini 2.5 Flash/Flash-Lite/Pro for in-region ML processing per Google's data-residency page; current-model coverage to be checked), or Bhashini/local Indic models behind the same port |
 | Keys | Env-held KEK, per-tenant DEK | KMS/HSM in India, per-tenant KEK |
 | Logs | 30 days + E-30 | 1 year in India (covers CERT-In 180 days and DPDP Rule 8(3)) |
 | Assurance | CI scanners, internal tests, LLM evals | External VAPT, safe-to-host certificate, annual re-audit, ISO 27001 roadmap |

@@ -1,7 +1,7 @@
 # Curriculum: the LL syllabus and 22 road-safety modules
 > Project: Margdarshak · Owner: Content lead (with Learning & Games lead) · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [GAME_DESIGN](GAME_DESIGN.md) · [GAMIFICATION_ENGINE](GAMIFICATION_ENGINE.md) · [DEBRIEF_SPEC](DEBRIEF_SPEC.md) · [NAZAR](NAZAR.md) · [GAME_SDK](GAME_SDK.md) · [PRD](../01-product/PRD.md) · [Localization](../02-design/LOCALIZATION.md) · [Responsible AI](../04-ai/RESPONSIBLE_AI.md)
-> Features: F-20 Learn hub, F-21 Readiness, F-22 LL Simulator, F-23 Nazar, F-24 mini-games, F-25 debrief, F-31 tutor, F-15 new-rider year, F-50 languages · Entities: E-08 Rule, E-18 TopicMastery · APIs: API-30, API-31, API-32, API-33 · Directives: D-05, D-09, D-11, D-12, D-13, D-14, D-19, D-21, D-25
+> Features: F-20 Learn hub, F-21 Readiness, F-22 LL Simulator, F-23 Nazar, F-24 mini-games, F-25 debrief, F-31 tutor, F-15 new-rider year, F-50 languages · Entities: E-08 Rule, E-18 TopicMastery · APIs: API-30, API-31, API-32, API-33 · Directives: D-05, D-09, D-11, D-12, D-13 revised, D-14, D-19, D-21, D-25
 > Primary evidence: `research/ps1-deep/02-accident-curriculum.md` (MoRTH *Road Accidents in India* 2023 = **RAI23**, 2024 = **RAI24**), `05-psychology.md`, `01-abroad.md`, `08-game-ai-n8n.md`; `research/ps1-current-state/02-rules-process.md`.
 
 ---
@@ -362,7 +362,7 @@ All modules: languages **EN + HI in full** (F-50); **Dogri voice-in** for naviga
 - **Concepts.** 3.
 - **Question variants.** Scenario cards.
 - **Game.** None.
-- **Assessment.** Quiz (adults); minors see static content only.
+- **Assessment.** Quiz for everyone; parents and 16–17s (family mode, D-13 revised) get their own scenario cards.
 - **Rules cited.** `RR-U18-001` (law; `verified: false`).
 - **Review needs.** Legal.
 - **Phase 1–2.** Static card (F-17 minor-riding awareness).
@@ -478,7 +478,7 @@ flowchart LR
 
 | EC | Curriculum behaviour |
 |---|---|
-| EC-05 / P-07 aged 16–17 | Static lessons + LL practice on device only; no AI, no telemetry, no streaks, no squads; Nazar mock and commentary blocked; M20 card for minors |
+| EC-05 / P-07 aged 16–17 | Family mode (D-13 revised): every module, game, AI tutor and debrief, streak and Nazar mode as for any user, inside the parent's account; squads and share cards need the parent's consent; M20 plain-language card for minors |
 | EC-10 no online LL test | LL0 explains "test at RTO"; simulator unchanged |
 | EC-13 disability, deaf, colour vision | Every lesson is no-audio by default with captions; colour-vision-safe sign rendering (shape + symbol carry meaning); a screen-reader path for every module; rights card linked |
 | EC-18 screen-reader users | Audio-described hazard lessons as an honest alternative to Nazar ("not the same skill") |

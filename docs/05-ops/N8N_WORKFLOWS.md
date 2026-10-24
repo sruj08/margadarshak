@@ -21,7 +21,7 @@
 | `POST /internal/webhooks/n8n` | **API-66** | all | receipts, replies, button choices, heartbeats (`X-MD-Event` header selects the handler) |
 | `POST /internal/jobs/{test-eve, parent-cards, coach, analytics-digest, rules-sources}` | proposed (not in PROJECT_BRIEF §7) | W04, W05, W06, W13, W15 | batch "who gets what" lists |
 | `POST /internal/intel/{id}/precheck`, `/decision` | proposed | W09 | moderation pre-check and decision |
-| `POST /v1/admin/clips/{id}/review-tasks`, `/finalize`, `/status` | **API-55** | W08 | clip review tasks and finalize |
+| `POST /internal/clips/{id}/review-tasks`, `POST /internal/jobs/clip_finalize` (API-67), `POST /internal/clips/{id}/status` | **API-55 internal / API-67** | W08 | clip review tasks and finalize (bearer + `Margdarshak-Signature` HMAC) |
 | `GET /internal/watchers?office_id=` | proposed | W03 | slot-watch subscribers |
 | `POST /internal/letters/{id}/render` | proposed (API-45 family) | W11 | PDF render after approval |
 | `POST /internal/leads/{id}/...` | proposed (API-51 family) | W07 | school lead routing |
@@ -29,8 +29,9 @@
 ### 1.2 Auth
 | Direction | Mechanism |
 |---|---|
-| n8n → backend | `X-MD-Timestamp` + `X-MD-Signature: sha256=HMAC(MD_HMAC_SECRET, "${ts}.${body}")` + `Idempotency-Key`; or a bearer token scoped `n8n` for reads. Backend rejects skew > 300 s and replays (Key Value). |
-| backend / Workflows → n8n webhooks | n8n Header Auth credential **and** a signed envelope `{ts, payload, sig}` verified with the Crypto node before any work (W08, W09). |
+| n8n → backend | `Authorization: Bearer <MD_N8N_READ_TOKEN>` (one of the API's `INTERNAL_BEARER_TOKENS`) **and** `Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(MD_HMAC_SECRET, t + "." + body)>` (GETs sign the empty body, `t + "."`), plus `Idempotency-Key` on writes. The backend rejects a clock skew over 300 s and replays; the replay cache is keyed on method + path (with query) + signature, so two different calls signed in the same second do not collide, and every retry is signed again with a fresh `t`. |
+| Render Workflows tasks → backend (`/internal/job-steps/{step}`) | Same scheme: `Margdarshak-Signature` with `INTERNAL_HMAC_SECRET` **and** `Authorization: Bearer $INTERNAL_BEARER_TOKEN`. Decision (24 Oct 2026): job steps are **not** exempt from the bearer check; the workflow service gets `INTERNAL_BEARER_TOKEN` in `infra/render.yaml` (same value as one entry of the API's `INTERNAL_BEARER_TOKENS`). |
+| backend / Workflows → n8n webhooks | n8n Header Auth credential (`X-MD-Webhook-Token`, API env `N8N_WEBHOOK_TOKEN`) **and** a signed envelope `{ts, payload, sig}` with `sig = "sha256=" + hex(HMAC-SHA256(MD_HMAC_SECRET, ts + "." + payload))` (API env `N8N_HMAC_SECRET`), verified with the Crypto/Code node before any work (W02, W08, W09). W02 is `POST {N8N_BASE_URL}/webhook/md/milestone`; `payload` is the JSON string `{event, event_id, tenant, messages:[{notification_id, idempotency_key, channel, template_id, lang, to, vars}]}`. |
 | our page → n8n Wait node | the browser never sees `$execution.resumeUrl`; the backend stores it on the task row and POSTs to it with the `X-MD-Resume-Token` header after the human acts (W08, W11, W15). |
 | n8n → Meta / Gmail / Telegram | n8n credential vault; tokens rotated after the event. |
 
@@ -42,7 +43,7 @@
 - **Timeouts:** every Wait node has a time limit; the timeout branch is explicit (never "approve on timeout").
 
 ### 1.4 PII in n8n
-Phone number + first name, and only for users who opted in to that channel (E-14, E-15). No Aadhaar data, DOB, LL/DL numbers, case facts or free text. **Under-18 users get no WhatsApp marketing and no coach/parent/streak messages** (D-13); their only messages are rule-driven reminders sent to the guardian account in family mode, if any.
+Phone number + first name, and only for users who opted in to that channel (E-14, E-15). No Aadhaar data, DOB, LL/DL numbers, case facts or free text. **A learner under 18 is in a parent's account (family mode, D-13 revised).** Every message goes to the account holder's opted-in channels: reminders, the coach plan and the family card, all with the parent's consent. A minor's case never gets WhatsApp marketing or engagement nudges built on behavioural tracking.
 
 ## 2. Approval patterns that work
 | Pattern | How | Use for | Notes |
@@ -94,14 +95,14 @@ Columns: **Trigger · main nodes · inputs → outputs · auth · error handling
 ### W05 Weekly family card (F-17)
 - **Trigger:** Schedule Sunday 10:00 IST.
 - **Nodes:** Schedule → HTTP `POST /internal/jobs/parent-cards` → Split → backend-rendered card image URL → WhatsApp image template → receipts → API-66.
-- **Scope change vs 08 W5:** only **adult learners (18+) who chose to share with a named family member** (e.g. Kabir → Mohan-ji, P-01/P-03). Under-18 users have no account history (D-13), so there's no weekly card for them. The card shows progress, the next date and "Govt fee for one class: computed from the rule pack" vs the agent quote the learner entered, never the word "official" (D-19).
+- **Scope change vs 08 W5:** only **learners who chose to share with a named family member** (e.g. Kabir → Mohan-ji, P-01/P-03). For a learner under 18 in family mode (D-13 revised), the card goes to the account holder (the parent), with the parent's consent. The card shows progress, the next date and "Govt fee for one class: computed from the rule pack" vs the agent quote the learner entered, never the word "official" (D-19).
 - **Executions:** ≈ 4–5.
 - **Why n8n:** calendar batch + media sending; rendering stays in the backend.
 
 ### W06 Weekly coach plan (F-21, M-03)
 - **Trigger:** Schedule Monday 07:00 IST.
 - **Nodes:** Schedule → HTTP `POST /internal/jobs/coach` (FSRS plan computed in code → CoachAgent wording through the validator; template fallback) → Split → web push or WhatsApp "your 4 sessions this week" with implementation-intention reply buttons ("On __ at __ I will…", 05 principle 4) → replies → API-66 (`X-MD-Event: intention_reply`).
-- **Rules:** adults only; ≤ 1 nudge/day; opt-in.
+- **Rules:** every learner (D-13 revised; a minor's plan goes to the account holder in family mode, with parental consent); ≤ 1 nudge/day; opt-in.
 - **Executions:** ≈ 4–5 (+ reply events ≈ 200).
 - **Why n8n:** orchestration around the AI and capturing button replies.
 
@@ -113,7 +114,7 @@ Columns: **Trigger · main nodes · inputs → outputs · auth · error handling
 
 ### W08 Hazard-clip review queue (F-23, D-15) · exported
 - **Trigger:** Webhook `md/clip-ready`, called by the Render Workflows task `clip_ingest` after transcode → blur faces/plates → propose windows (M-06, offline).
-- **Nodes:** Webhook → Crypto (HMAC of the envelope) → IF valid & fresh (else 401) → Respond 202 → Code (parse payload, validate `clip_id`) → HTTP `POST /v1/admin/clips/{id}/review-tasks` (**API-55**, stage `rater_1`, with `$execution.resumeUrl`) → Telegram notify curators → **Wait (resume webhook, header auth, ≤ 48 h)** → Switch(windows_set / reject / timeout) → HTTP create `rater_2` task (blind to rater 1, different person) → Telegram → **Wait ≤ 48 h** → IF windows_set → HTTP `POST /v1/admin/clips/{id}/finalize` (starts the Workflows task `clip_finalize`: agreement in code → publish to the public bucket + manifest + CDN warm) → Telegram "finalizing" ; reject/timeout → HTTP `/status` → Telegram "stopped".
+- **Nodes:** Webhook → Crypto (HMAC of the envelope) → IF valid & fresh (else 401) → Respond 202 → Code (parse payload, validate `clip_id`) → HTTP `POST /internal/clips/{id}/review-tasks` (**API-55**, stage `rater_1`, with `$execution.resumeUrl`) → Telegram notify curators → **Wait (resume webhook, header auth, ≤ 48 h)** → Switch(windows_set / reject / timeout) → HTTP create `rater_2` task (blind to rater 1, different person) → Telegram → **Wait ≤ 48 h** → IF windows_set → HTTP `POST /internal/jobs/clip_finalize` (API-67; starts the Workflows task `clip_finalize`: agreement in code → publish to the public bucket + manifest + CDN warm) → Telegram "finalizing" ; reject/timeout → HTTP `POST /internal/clips/{id}/status` → Telegram "stopped".
 - **Inputs → outputs:** clip → published manifest entry (or rejected).
 - **Why the split:** a Workflows run is capped at 24 h and has no sleep/pause (B-sponsors §1), but rating takes days. So **compute lives in Workflows runs before and after; the human wait lives in n8n**. The demo shows both: the Runs page (with the injected blur retry) and the n8n canvas.
 - **Approval pattern:** B (our curator page resumes the Wait node). Telegram is notification only.

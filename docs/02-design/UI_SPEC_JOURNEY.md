@@ -21,7 +21,7 @@ This document specifies **every journey screen**: what it is for, where it lives
 | `[P3+]` | Production (Phase 3+), after a state adopts: real adapters run by government (D-02, D-08). |
 | Copy keys | `screen.element` (next-intl message IDs). EN is the source; HI is reviewed by a native speaker before ship (F-50). Placeholders in `{braces}` are always filled by code. |
 | ₹ in copy | **No rupee literal exists in any UI string or prompt (D-06).** Strings carry `{fee_total}` etc. The example values shown in this doc (₹700, ₹200, ₹1,150) are what `fees.json` (CMVR r.32) renders today, and are shown so reviewers can sanity-check layout. |
-| Analytics | Event names are `snake_case` verbs, sent through API-63 with `{screen_id, stage, locale, lite, tenant}` plus the listed props. No PII, ever (F-55). **No events at all for under-18 sessions** (D-13). |
+| Analytics | Event names are `snake_case` verbs, sent through API-63 with `{screen_id, stage, locale, lite, tenant}` plus the listed props. No PII, ever (F-55). Events from a minor's profile (family mode) use the same allowlisted, aggregate-only taxonomy and are never used for behavioural tracking, profiling or ads (DPDP s.9(3), D-13 revised). |
 
 ### 0.2 What changed from the team report (read this before borrowing from it)
 | Team report said | This spec says | Why |
@@ -68,7 +68,7 @@ This document specifies **every journey screen**: what it is for, where it lives
 ```
 - **TopBar**: logo mark (Diya lamp glyph, no emblem, no tricolour ribbon, no Parivahan logo; D-01), wordmark in Fraunces 500, a `ToggleButtonGroup` for हि / EN, and a settings `Button isIconOnly` with `aria-label`. When **Helper mode** is on, the TopBar is replaced by the HelperBanner (SCR-142). When **Lite mode** is on, the logo becomes a 1-colour SVG and all glows are removed.
 - **TabBar** (4 tabs only, team-report decision kept): Home · My Licence (tracker, documents, plan, letters) · Learn (companion spec) · Help (voice, FAQ, screen decoder, scam checker, contacts). Built as a custom `TabBar` on top of HeroUI `Tabs` semantics but rendered as `<nav aria-label="Main">` with links (it is navigation, not a tab panel). Active tab: `--primary` icon + label 600 + 3 px top indicator. Target 64 × 64 px.
-- **VoiceOrb dock** (F-30): Rive orb, 72 px, `button` "Start voice guide · आवाज़ से पूछें". Hidden for under-18 sessions (D-13), in the exam simulator, on the golden-hour card (no AI, D-14) and when the riding lock is active. Lite mode uses the CSS concentric-ring fallback.
+- **VoiceOrb dock** (F-30): Rive orb, 72 px, `button` "Start voice guide · आवाज़ से पूछें". Shown for every user, including a learner under 18 in family mode (D-13 revised). Hidden in the exam simulator, on the golden-hour card (no AI, D-14) and when the riding lock is active. Lite mode uses the CSS concentric-ring fallback.
 - **Footer** (non-affiliation, D-01): on every page including errors and the 404. Contains the grievance officer link (IT Rules 2021, Live Intel), the accessibility statement and a page-level "last updated" date (GIGW 3.0).
 - **SimChip** `[P1–2]`: `Chip variant="soft"` "Simulated data · नमूना डेटा", shown on any screen showing adapter-backed data (slots, office intel, approval status, DigiLocker mock). Removed per-adapter in `[P3+]` when the real adapter is live.
 
@@ -113,7 +113,7 @@ Theme: HeroUI's oklch variables are overridden by the Margdarshak tokens (`--acc
 | `QRCard` | `qrcode` (SVG) | `payload` (no PII) | SCR-093 |
 | `LetterPreview` | `Surface` | `letter: Letter` | SCR-104, SCR-111 |
 | `HelperBanner` | `Alert` | `subjectAlias`, `expiresAt` | SCR-142 |
-| `VoiceOrb` / `VoiceSheet` | Rive + `Drawer` | `state`, `level` | everywhere (18+) |
+| `VoiceOrb` / `VoiceSheet` | Rive + `Drawer` | `state`, `level` | everywhere (every user, D-13 revised) |
 | `SimChip`, `LiteBadge`, `OfflineBanner`, `NonAffiliationFooter` | `Chip`, `Alert` | — | shell |
 | `EmptyState` | `Surface` + Diya/dawn-road SVG | `illustration`, `line`, `action` | §5 |
 
@@ -143,7 +143,7 @@ Theme: HeroUI's oklch variables are overridden by the Margdarshak tokens (`--acc
 WCAG 2.1 AA (targeting 2.2 for target size and focus appearance), GIGW 3.0, UX4G. 18 px body, 48 × 48 px minimum targets (56 px primary buttons), focus ring 3 px `--focus` with 2 px offset, never colour alone (glyph + colour + word), `lang` attribute per string block, skip link, landmarks (`header`, `nav`, `main`, `footer`), live regions for autosave and countdowns (polite, throttled to once per minute), no time limits outside the real-exam simulator, no drag-only gestures, captions always on in the voice sheet, `prefers-contrast: more` and Sunlight mode (pure white, black ink, no glows) for RTO yards.
 
 ### 1.8 Analytics conventions
-Every event: `{event, screen_id, stage (S0..S9|X), journey_state (H-xx), locale, lite (bool), offline (bool), tenant, app_version, ts}`. Allowed extra props are enumerations or bucketed numbers only (age **band**, never DOB; state code; class codes; counts). No free text, no IDs other than an opaque `case_ref` hash rotated per 30 days. Under-18 → no events; consent "analytics" off → no events (F-54). Full taxonomy in METRICS.md; §7 here lists every event this spec fires.
+Every event: `{event, screen_id, stage (S0..S9|X), journey_state (H-xx), locale, lite (bool), offline (bool), tenant, app_version, ts}`. Allowed extra props are enumerations or bucketed numbers only (age **band**, never DOB; state code; class codes; counts). No free text, no IDs other than an opaque `case_ref` hash rotated per 30 days. A minor's profile (family mode) → same allowlisted events, never used for profiling or ads (s.9(3)); consent "analytics" off → no events (F-54). Full taxonomy in METRICS.md; §7 here lists every event this spec fires.
 
 ---
 
@@ -219,7 +219,7 @@ flowchart TD
 | SCR-002 First-launch notice | `/welcome` | none | static |
 | SCR-003 Home (logged-out) | `/` | none | RSC, static shell |
 | SCR-004 All services | `/services` | none | static |
-| SCR-005 Voice sheet | overlay `?voice=1` | 18+ | client |
+| SCR-005 Voice sheet | overlay `?voice=1` | none (mic consent) | client |
 | SCR-010–013 Plan steps | `/plan/age`, `/plan/vehicle`, `/plan/state`, `/plan/building` | none | client, state in URL + sessionStorage |
 | SCR-014 Plan card | `/plan/{planId}` | none (plan IDs are unguessable, 30-day TTL) | RSC + API-01 |
 | SCR-015 Class planner | `/plan/{planId}/classes` | none | client |
@@ -239,7 +239,7 @@ flowchart TD
 | SCR-060 Stage-aware home | `/` (when a case exists) | session | RSC + API-11/14 |
 | SCR-070 Tracker | `/case/{caseId}/tracker` (My Licence tab root) | session | API-14 |
 | SCR-080–083 Slots | `/case/{caseId}/slots`, `/offices/{officeId}`, `/case/{caseId}/slots/watch`, `/case/{caseId}/slots/booked` | session (office pages public) | API-25/26/27 |
-| SCR-085–086 Live Intel | `/offices/{officeId}/intel`, `/offices/{officeId}/report` | report needs session, 18+ | API-28/29 |
+| SCR-085–086 Live Intel | `/offices/{officeId}/intel`, `/offices/{officeId}/report` | report needs session (account holder) | API-28/29 |
 | SCR-090–096 Driving test | `/case/{caseId}/test/track`, `/test/eve`, `/test/day`, `/test/qr`, `/test/calm`, `/test/vehicle`, `/test/result` | session | — |
 | SCR-100–105 Fail & recover | `/case/{caseId}/recover`, `/recover/drill`, `/recover/retest`, `/recover/remedial`, `/recover/rti`, `/recover/ll-check` | session | API-45 |
 | SCR-110–113 Approval | `/case/{caseId}/approval`, `/approval/letter`, `/issued`, `/issued/card` | session | API-45 |
@@ -250,7 +250,7 @@ flowchart TD
 | SCR-160 Notifications | `/me/inbox`, `/me/inbox/settings` | session | — |
 | SCR-170–172 Settings | `/me/settings`, `/me/settings/lite`, (offline is a state) | none | — |
 | SCR-180 Sign-in | `/signin`, `/signin/check-email` | none | — |
-| SCR-181–183 Help | `/help`, `/help/decode`, `/help/scam-check` | none / 18+ for AI | API-42/43 |
+| SCR-181–183 Help | `/help`, `/help/decode`, `/help/scam-check` | none (AI consent for decoder) | API-42/43 |
 | Demo persona switcher `[P1–2]` | `/demo` (hidden; `noindex`; labelled "Demo personas") | none | — |
 
 ---
@@ -284,7 +284,7 @@ stateDiagram-v2
   H12_renewal_due --> H12x_dl_expired: expiry passed (EC-16)
   H11_dl_holder --> H01_planned: add a class (S9)
 ```
-Overlay flags (any state): `minor` (EC-05, P-07), `helper_session` (EC-14), `challan_check` (user flagged a challan SMS), `lite`, `offline`, `rulepack_changed` (EC-27), `sarathi_down` (EC-11).
+Overlay flags (any state): `minor` (EC-05, P-07; the learner is under 18 and the case sits in a parent's account, family mode, D-13 revised; all features stay on), `helper_session` (EC-14), `challan_check` (user flagged a challan SMS), `lite`, `offline`, `rulepack_changed` (EC-27), `sarathi_down` (EC-11).
 
 ### 3.2 Stage → primary action table (F-08)
 Exactly one primary action per state. "Secondary" is at most two quiet links. The countdown and dates come from `CaseClock` (rules engine, server time).
@@ -311,7 +311,7 @@ Exactly one primary action per state. "Secondary" is at most two quiet links. Th
 | H-12 renewal due | S9 | Your licence expires on {date}. Renew from now; there's no grace period. | आपका लाइसेंस {date} को खत्म होगा। अभी से रिन्यू करें; कोई ग्रेस पीरियड नहीं है। | Plan my renewal | Do I need Form 1A? | Days to expiry |
 | H-12x DL expired | S9 | Your licence expired {d} days ago. You can't legally drive until it's renewed. | आपका लाइसेंस {d} दिन पहले खत्म हुआ। रिन्यू होने तक गाड़ी चलाना कानूनन मना है। | Plan my renewal now | Over 1 year late? (retest) | Days since expiry; at 365 → retest copy |
 | Overlay: challan check | S8 | Got a challan message? Check it only on echallan.parivahan.gov.in. | चालान का मैसेज आया? सिर्फ़ echallan.parivahan.gov.in पर जाँचें। | (secondary card; never replaces the state's primary) | Is this message real? | — |
-| Overlay: minor (16–17) | S1 | Rules-only mode. | सिर्फ़ नियम वाला मोड। | See my ≤50 cc plan | For parents: s.199A | — |
+| Overlay: minor (16–17) | S1 | Family mode: learning in {account_holder}'s account. | फ़ैमिली मोड: {account_holder} के अकाउंट में सीख रहे हैं। | See my ≤50 cc plan | For parents: s.199A | — |
 
 ---
 ## 4. Screens
@@ -452,7 +452,7 @@ Each screen uses the same block: **Purpose · Route · Implements**, a 360 px wi
 | `home.chips` | "Licence for my father" · "How much are the fees?" · "When can I take the test?" | "पापा के लिए लाइसेंस" · "फीस कितनी है?" · "टेस्ट कब दे सकता हूँ?" |
 | `home.trust` | Govt fee for one vehicle class: {fee_one_class} + {fee_card} card. Your state may add a service charge. Never pay agents. | एक गाड़ी-श्रेणी की सरकारी फीस: {fee_one_class} + {fee_card} कार्ड। आपका राज्य सर्विस चार्ज जोड़ सकता है। एजेंट को पैसे न दें। |
 | `home.all` | All services, by who you are | सभी सेवाएँ, आप कौन हैं उसके हिसाब से |
-- **States:** loading: shell is static; only `TrustLine` values hydrate from `fees.json` (bundled, so no network; skeleton never shown). Offline: identical, orb shows the offline state (06 §B10). Under-18 (known from a previous plan on this device): orb and chips hidden; a line "Voice guide is for 18+. Everything else works." Error: if `fees.json` fails to parse, the trust line hides the numbers and says "See fees in your plan" (never a hard-coded fallback number).
+- **States:** loading: shell is static; only `TrustLine` values hydrate from `fees.json` (bundled, so no network; skeleton never shown). Offline: identical, orb shows the offline state (06 §B10). Family mode (a learner under 18 in a parent's account): orb and chips shown as for everyone, with a small `Chip` "Family mode · {account_holder}" (D-13 revised). Error: if `fees.json` fails to parse, the trust line hides the numbers and says "See fees in your plan" (never a hard-coded fallback number).
 - **Interactions & motion:** headline mask-reveal 700 ms on first paint only (not on back-nav); tiles rise 8 px with 40 ms stagger; tile press scales 0.98 with `e1` shadow. The orb breathes (4 s). Reduced motion: none of these.
 - **Accessibility:** `h1` is the headline; tiles are a `ul` of links, each with an accessible name = title + line; prompt chips are buttons labelled "Ask: …"; the trust line is a `p`, not an alert.
 - **Analytics:** `home_viewed {variant:"H-00"}`, `verb_tile_tapped {tile: first|practise|renew|check}`, `voice_prompt_chip_tapped {chip_id}`, `all_services_opened`, `trust_source_opened`.
@@ -494,9 +494,9 @@ Each screen uses the same block: **Purpose · Route · Implements**, a 360 px wi
 - **Accessibility:** each group is a `section` with `h2`; the toggle group is `nav aria-label="Jump to group"`.
 - **Analytics:** `services_search {q_len, results_count}` (no query text), `service_opened {service_id}`.
 
-#### SCR-005 Voice guide sheet (cross-cutting, 18+)
+#### SCR-005 Voice guide sheet (cross-cutting, every user)
 - **Purpose:** the voice entry on every screen: navigate and fill fields inside Margdarshak, answer from verified rules with a source chip, never submit, pay or book on Sarathi (F-30, D-09).
-- **Route:** overlay `?voice=1` on any route. **Implements:** F-30, M-01, M-08, EC-20, EC-29, D-13.
+- **Route:** overlay `?voice=1` on any route. **Implements:** F-30, M-01, M-08, EC-20, EC-29, D-13 revised.
 ```
 ┌────────────────────────────────────────┐
 │ (screen dims to 40%)                   │
@@ -522,7 +522,7 @@ Each screen uses the same block: **Purpose · Route · Implements**, a 360 px wi
 - **Components:** `Drawer` (bottom, `isDismissable`), Rive orb (`state`, `level`), `TextField` fallback, `Chip` privacy, `SourceChip`, `Button`.
 - **Orb states** follow 06 §B10 exactly (idle, listening, thinking, speaking, acting, didn't catch, offline, human hand-off). "Acting" shows a BorderBeam on the field being filled with **Yes / Change** confirmation; never auto-advances a question page.
 - **Copy:** `voice.boundary` "I can guide and fill. I can't book, pay or submit on Sarathi." / "मैं रास्ता दिखा सकता हूँ और फ़ॉर्म भर सकता हूँ। Sarathi पर बुकिंग, पेमेंट या सबमिट नहीं कर सकता।" · `voice.pii_redacted` (EC-20) "I removed a number that looked like an Aadhaar or OTP. Never share those with anyone, including us." / "आधार या OTP जैसा दिखने वाला नंबर मैंने हटा दिया। इन्हें किसी से भी साझा न करें, हमसे भी नहीं।" · `voice.unknown` "I don't know that for your RTO yet. Here's where to check." / "आपके RTO के लिए यह अभी मुझे पता नहीं। यहाँ जाँच सकते हैं।" · `voice.resting` (EC-29) "Voice is resting. Type instead; it works the same." / "आवाज़ अभी बंद है। लिखकर पूछिए, वैसे ही काम करेगा।"
-- **States:** offline → mic-off ring + "Voice needs internet. Typing works offline for navigation."; AI down → template navigation (keyword router) with the resting line; minor → sheet never opens (route guard returns to the page with a `Toast` "Voice guide is for 18+").
+- **States:** offline → mic-off ring + "Voice needs internet. Typing works offline for navigation."; AI down → template navigation (keyword router) with the resting line; family mode → opens as for everyone; the parent's mic consent (PUR-MIC) covers the minor's case.
 - **Accessibility:** captions always on; transcript `aria-live="polite"`; Stop is a 48 px button; Escape closes; focus returns to the orb; never vibrates during capture (06 §B9).
 - **Analytics:** `voice_opened {entry: orb|chip|deeplink}`, `voice_intent {intent_id}` (closed enum, no transcript), `voice_action_confirmed {action_id}`, `voice_pii_redacted`, `voice_fallback_shown {reason}`. Transcripts are not stored (chip promise).
 
@@ -533,8 +533,8 @@ Each screen uses the same block: **Purpose · Route · Implements**, a 360 px wi
 The plan is three one-question screens and a result. No login, no network needed for the logic (the rules pack for the chosen state is fetched once and cached; API-01 is called to mint a shareable `planId`, but the card renders from local evaluation if offline). Progress shows "1 of 3".
 
 #### SCR-010 Plan step 1: age or date of birth
-- **Purpose:** age decides eligible classes, Form 1A, minor mode and the 18+ AI gate.
-- **Route:** `/plan/age`. **Implements:** F-02, EC-01, EC-04, EC-05, EC-06, D-13.
+- **Purpose:** age decides eligible classes, Form 1A and whether the case runs in family mode (a learner under 18 in a parent's account, D-13 revised). Age never switches features off.
+- **Route:** `/plan/age`. **Implements:** F-02, EC-01, EC-04, EC-05, EC-06, D-13 revised.
 ```
 ┌────────────────────────────────────────┐
 │ ←  Your licence plan          1 of 3   │  ProgressBar (3 segments)
@@ -568,7 +568,7 @@ The plan is three one-question screens and a result. No login, no network needed
 - **Copy (HI):** `plan.age.h1` "आपकी उम्र कितनी है?" · `plan.age.sub` "या सटीक प्लान के लिए जन्म-तिथि डालें।" · bands "16 से कम / 16 या 17 / 18 या 19 / 20 से 39 / 40 या ज़्यादा" · `plan.age.why` "उम्र से तय होता है कि आप कौन-सी गाड़ी सीख सकते हैं और मेडिकल फ़ॉर्म चाहिए या नहीं। हम सिर्फ़ उम्र का दायरा रखते हैं।" · `plan.age.helper` "किसी और के लिए अप्लाई कर रहे हैं?"
 - **States:** validation error (future date, impossible date) → error summary + `FieldError` "Enter a real date, like 05 08 2007." / "सही तारीख डालें, जैसे 05 08 2007।"; under 16 → SCR-013 shows a kind "not yet" plan (see EC table, "under 16"); offline: fully works.
 - **Accessibility:** radio group and date field are in one `Fieldset` with a single `legend` "How old are you?"; choosing a band clears the DOB and vice versa, announced politely ("Date of birth cleared").
-- **Analytics:** `plan_started {entry}`, `plan_age_answered {age_band, used_dob:boolean}`. If `age_band` < 18 → the session's analytics flag is set off and **this event is the last one sent**, carrying only `{minor:true}`. [Decision for METRICS/PRIVACY owners: whether even this single minor-count event is allowed; default **off** until signed off.]
+- **Analytics:** `plan_started {entry}`, `plan_age_answered {age_band, used_dob:boolean}`. If `age_band` < 18 → the case is flagged family mode; events continue on the same allowlisted, aggregate-only taxonomy and are never used for profiling or ads (s.9(3), D-13 revised).
 
 #### SCR-011 Plan step 2: what will you drive? (pictures)
 - **Purpose:** pictures instead of class codes (MCWG/MCWOG/LMV), multi-select so the class planner can bundle (F-03).
@@ -724,7 +724,7 @@ The plan is three one-question screens and a result. No login, no network needed
 | `plan.whatsapp` | Send this plan to WhatsApp | यह प्लान WhatsApp पर भेजें |
 | `plan.change` | Change my answers | मेरे जवाब बदलें |
 | `plan.content_coming` | Plan and fees only. Learning content coming. | सिर्फ़ प्लान और फ़ीस। पढ़ाई का कंटेंट जल्द आएगा। |
-- **States:** loading (deep link opened cold) → `Skeleton` card with 6 rows; plan expired (> 30 days) → `EmptyState` "This plan is over 30 days old and rules may have changed. Make a fresh one in 3 taps." + "Make a new plan"; rule pack changed since the plan was made (EC-27) → `Alert info` "Rules for {state} changed on {date}. Your plan is updated: {diff_summary}." with a "What changed" disclosure; offline → card renders from cache with "Saved on this phone" chip; share/WhatsApp disabled with reason; minor → CTA becomes "See my ≤50 cc steps" and WhatsApp share sends to a parent only (rules-only, no account).
+- **States:** loading (deep link opened cold) → `Skeleton` card with 6 rows; plan expired (> 30 days) → `EmptyState` "This plan is over 30 days old and rules may have changed. Make a fresh one in 3 taps." + "Make a new plan"; rule pack changed since the plan was made (EC-27) → `Alert info` "Rules for {state} changed on {date}. Your plan is updated: {diff_summary}." with a "What changed" disclosure; offline → card renders from cache with "Saved on this phone" chip; share/WhatsApp disabled with reason; minor → CTA becomes "See my ≤50 cc steps"; the case sits in the parent's account (family mode, D-13 revised), and sharing the minor's plan card needs the parent's consent.
 - **Interactions & motion:** the card enters with `ease-out-expo` 400 ms (rise 16 px); rows count up only for the fee (240 ms, tabular digits so nothing shifts); JourneyMap steps expand with height animation; the primary CTA is sticky at the bottom after scrolling past the card (with 16 px safe-area padding).
 - **Accessibility:** card is a `section` with `h2` per group; the key facts are a `dl` (term/definition) so screen readers read "Earliest licence, about 5 December 2026"; "~" is spoken as "about"; warnings have glyph + text; the fee row's disclosure is a button "Government fee ₹1,350, show breakdown".
 - **Analytics:** `plan_viewed {classes_count, blockers_count, warnings_count, path: aadhaar|non_aadhaar, online_ll_test:boolean, offline}`, `plan_cta_start`, `plan_share_opened`, `plan_fee_opened`, `plan_bundle_opened`, `plan_changed_answers`.
@@ -837,7 +837,7 @@ The plan is three one-question screens and a result. No login, no network needed
 
 #### SCR-018 Save your case (start application)
 - **Purpose:** turn the plan into a case without forcing an account: anonymous device session first, optional account for "resume on any device".
-- **Route:** `/start`. **Implements:** F-05 (autosave/resume), API-10, F-54, D-13.
+- **Route:** `/start`. **Implements:** F-05 (autosave/resume), API-10, F-54, D-13 revised.
 ```
 ┌────────────────────────────────────────┐
 │ ←  Start your application              │
@@ -860,7 +860,7 @@ The plan is three one-question screens and a result. No login, no network needed
 └────────────────────────────────────────┘
 ```
 - **Data note (for DATA_MODEL/PRIVACY owners):** the server case (E-02) holds non-identifying facts only (state, classes, path, dates, task progress). Identifying answers that Sarathi will need (name, relation name, address for the non-Aadhaar path) are kept in an **on-device vault** (IndexedDB, encrypted with a WebCrypto key) and synced to the server only if the user picks "any device", as an encrypted blob (E-14-style separation). [Proposal; confirm against DATA_MODEL E-02/E-06.]
-- **Minor (16–17):** account option hidden; "on this phone only" fixed; Helper (parent) recommended.
+- **Minor (16–17):** the case is saved in the parent's account (family mode, D-13 revised): the parent signs in and gives consent, then the learner gets the full product, AI included. "On this phone only" stays available if the parent prefers it.
 - **Copy (HI):** `start.local` "सिर्फ़ इस फ़ोन पर सेव करें · कोई अकाउंट नहीं, ऑफ़लाइन भी चलेगा" · `start.sync` "किसी भी डिवाइस पर जारी रखने के लिए सेव करें · ईमेल या Google से साइन इन" · `start.who` "यह लाइसेंस किसके लिए है?" · "मेरे लिए / किसी और के लिए (हेल्पर)"
 - **States:** sign-in chosen → SCR-180 then back; API-10 fails → case created locally with sync pending dot.
 - **Analytics:** `case_created {storage: local|sync, for: self|other}`.
@@ -948,7 +948,7 @@ Every EC has (a) a rule row or state flag, (b) the screen(s) where it appears, (
 | EC-02 Aadhaar address ≠ residence | `aadhaar_match = no` | SCR-012, SCR-014, SCR-020/021, SCR-030 | ▲ | Your Aadhaar address is in {aadhaar_state}. Either update Aadhaar first, or take the non-Aadhaar path with address proof and one RTO visit for the LL test. | आपके आधार का पता {aadhaar_state} का है। या तो पहले आधार अपडेट करें, या पते के सबूत के साथ बिना-आधार वाला रास्ता लें, जिसमें LL टेस्ट के लिए RTO जाना होगा। | Choose my option |
 | EC-03 S/o, D/o line blank on Aadhaar | Q "Does your Aadhaar show your father's or husband's name?" = no | SCR-031 (Q relation), SCR-021 | ▲ | Sarathi fills "Relation name" from Aadhaar and you can't edit it there. Update Aadhaar first, or use the non-Aadhaar path, where you type it. | Sarathi "रिलेशन का नाम" आधार से लेता है और वहाँ बदला नहीं जा सकता। पहले आधार अपडेट करें, या बिना-आधार वाला रास्ता लें, जहाँ आप इसे खुद भरते हैं। | Choose my option |
 | EC-04 Turning 40 mid-journey | `turns_40_on` < projected DL test date | SCR-020, Home (H-05/H-06 banner), SCR-091 | ⓘ→▲ | You turn 40 on {date}. If your driving test is after that, you'll need a medical certificate (Form 1A) from a registered doctor. | आप {date} को 40 के होंगे। अगर टेस्ट उसके बाद है, तो रजिस्टर्ड डॉक्टर से मेडिकल सर्टिफ़िकेट (फ़ॉर्म 1A) चाहिए। | Add Form 1A to my checklist |
-| EC-05 Age 16–17, ≤50 cc only | `age_band = 16–17` | SCR-011, SCR-014, all (minor overlay) | ▲ | At 16–17 you can learn only a gearless vehicle up to 50 cc, with a parent's consent. Most scooters are above 50 cc. We'll show the rules; voice, practice tracking and reminders turn on at 18. | 16–17 साल में आप सिर्फ़ 50 cc तक की बिना गियर वाली गाड़ी, माता-पिता की सहमति से सीख सकते हैं। ज़्यादातर स्कूटर 50 cc से बड़े होते हैं। हम नियम दिखाएँगे; आवाज़, प्रैक्टिस ट्रैकिंग और रिमाइंडर 18 के बाद। | See my ≤50 cc plan |
+| EC-05 Age 16–17, ≤50 cc only | `age_band = 16–17` | SCR-011, SCR-014, all (minor overlay) | ▲ | At 16–17 you can learn only a gearless vehicle up to 50 cc, with a parent's consent. Most scooters are above 50 cc. Your case lives in your parent's account (family mode), and every feature works, AI included. | 16–17 साल में आप सिर्फ़ 50 cc तक की बिना गियर वाली गाड़ी, माता-पिता की सहमति से सीख सकते हैं। ज़्यादातर स्कूटर 50 cc से बड़े होते हैं। आपका केस आपके माता-पिता के अकाउंट में रहता है (फ़ैमिली मोड), और हर सुविधा चलती है, AI समेत। | See my ≤50 cc plan |
 | EC-06 Transport class under 20 | class ∈ transport and age < 20 | SCR-011, SCR-015, SCR-020 | ⬣ | Transport vehicles need you to be 20. You can apply from {date}. (Other rules for transport classes vary; verify at your RTO.) | ट्रांसपोर्ट गाड़ियों के लिए 20 साल ज़रूरी है। आप {date} से अप्लाई कर सकते हैं। (ट्रांसपोर्ट के बाकी नियम अलग-अलग हैं; RTO पर पुष्टि करें।) | Remind me on {date} |
 | EC-07 LL expires while waiting; new application number breaks the slot | LL day ≥ 150 and no slot, or slot date > LL expiry | Home H-07/H-07x, SCR-080, SCR-105 | ⬣ (red allowed) | Your LL expires on {date}, before your slot on {slot_date}. A new LL gets a new application number, which can cancel the slot. Book a test before {date}, or plan a fresh LL now. | आपका LL {date} को खत्म होगा, जो आपके स्लॉट {slot_date} से पहले है। नए LL का नया एप्लीकेशन नंबर बनता है, जिससे स्लॉट रद्द हो सकता है। {date} से पहले टेस्ट बुक करें, या अभी नए LL की योजना बनाएँ। | Find an earlier slot |
 | EC-08 3+ fails, 7-day gap, remedial training | `test_failed` events; count | SCR-100–103, Home H-09 | ▲ | You can retest from {retest_date}. After a failed driving test, the law asks for remedial training at a driving school before you reappear. Here are schools near {office}. | आप {retest_date} से दोबारा टेस्ट दे सकते हैं। ड्राइविंग टेस्ट में फ़ेल होने के बाद, दोबारा टेस्ट से पहले ड्राइविंग स्कूल से रेमेडियल ट्रेनिंग कानूनन ज़रूरी है। {office} के पास के स्कूल ये हैं। | See remedial options |
@@ -1316,7 +1316,7 @@ Notes: EC-17's penalty values are statutory (MV Act s.199A, `03-lifecycle.md` §
 │  ════════════════════════════════════  │
 │  ║            Continue               ║  │
 │  ════════════════════════════════════  │
-│  📷 Not sure? Show us a screenshot →   │  decoder (18+)
+│  📷 Not sure? Show us a screenshot →   │  decoder
 └────────────────────────────────────────┘
 ```
 - **Outcomes:** paid → SCR-044 (application number, optional) → Home H-04 with the LL-test step; debited-pending → SCR-043; failed → "No money was taken? Try again on Sarathi; your copy-pack is ready." + Open Sarathi; stuck → SCR-182; down → EC-11 card + notify opt-in.
@@ -1518,8 +1518,8 @@ H-12 renewal due                      H-12x DL expired
 └──────────────────────────────┘      └──────────────────────────────┘
 H-07x LL expired                      Overlay: minor (16–17)
 ┌──────────────────────────────┐      ┌──────────────────────────────┐
-│ Your LL expired on 1 Feb.    │      │ Rules-only mode. Voice and   │
-│ Quickest restart: we reuse   │      │ practice tracking start at 18│
+│ Your LL expired on 1 Feb.    │      │ Family mode: every feature   │
+│ Quickest restart: we reuse   │      │ works, AI included.          │
 │ your answers.                │      │ ════ See my ≤50 cc plan ═════│
 │ ════ Restart my LL ══════════│      │ For parents: s.199A          │
 │ Why this happened            │      └──────────────────────────────┘
@@ -1537,7 +1537,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 - **Copy:** all header lines EN/HI in §3.2.
 
 #### SCR-061 Demo persona switcher `[P1–2 only]`
-- **Route:** `/demo` (`noindex`, behind `?demo=1`). A `ListBox` of personas: Kabir new (H-01) · Kabir draft · LL day 12 · LL day 31 · LL expiring (9 days) · test tomorrow · failed · passed day 4 (EC-23) · DL holder · Mohan-ji renewal (P-03, 52, Form 1A) · Tanvi (P-02, EC-02 migrant) · Rahul 17 (P-07 minor). Each loads a synthetic case; a persistent `Chip` "Demo persona: {name}" shows on every screen. Removed in `[P3+]` builds by a build flag. Analytics: none (demo traffic tagged `demo:true` and excluded).
+- **Route:** `/demo` (`noindex`, behind `?demo=1`). A `ListBox` of personas: Kabir new (H-01) · Kabir draft · LL day 12 · LL day 31 · LL expiring (9 days) · test tomorrow · failed · passed day 4 (EC-23) · DL holder · Mohan-ji renewal (P-03, 52, Form 1A) · Tanvi (P-02, EC-02 migrant) · Rahul 17 (P-07, family mode in a parent's account). Each loads a synthetic case; a persistent `Chip` "Demo persona: {name}" shows on every screen. Removed in `[P3+]` builds by a build flag. Analytics: none (demo traffic tagged `demo:true` and excluded).
 
 ---
 
@@ -1714,7 +1714,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 
 #### SCR-086 Report what you saw (structured form)
 - **Purpose:** 2-minute, tap-only report after a visit; no free text (D-14, IT Rules 2021 intermediary duties).
-- **Route:** `/offices/{officeId}/report` (18+, session). **Implements:** F-11, API-28, W9, EC-24.
+- **Route:** `/offices/{officeId}/report` (session; the account holder). **Implements:** F-11, API-28, W9, EC-24.
 - **Pages (one question each, SCR-031 shell):** (1) What did you go for? (LL test / DL test / document check / other) (2) Date of visit (`DatePicker`, ≤ 30 days ago) (3) Did you see new slots appear? When? (`TimeField` hour bucket) (4) How long did you wait? (bands) (5) Which documents were asked for? (`CheckboxGroup` from the rule pack's list) (6) Track type and what was checked (`CheckboxGroup`) (7) Result (passed / not / not tested) and, if not, the reason given (`RadioGroup` of codes) (8) **Did anyone offer to "set" a slot or test for money?** (yes/no) → yes shows the EC-24 card and is **never published**, only counted for the state console (F-41, aggregated). Then "Check and send" summary.
 - **Copy (HI):** `report.h1` "आपने जो देखा, वह बताएँ" · `report.offer_q` "क्या किसी ने पैसे लेकर स्लॉट या टेस्ट \"सेट\" करने की पेशकश की?" · `report.sent` "धन्यवाद। मॉडरेशन के बाद आपकी रिपोर्ट दिखेगी, बिना नाम के।"
 - **States:** rate limit (1 report per office per 7 days) → "You've already reported this visit. Thank you."; moderation pending → shown in the user's own "My reports" with status chip.
@@ -1789,7 +1789,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 
 #### SCR-092 Test-day co-pilot
 - **Purpose:** a calm, step-by-step companion at the RTO: which counter, papers check, the QR, a 2-minute calm-down, then "How did it go?" (team report "30-day bridge" day-of-test).
-- **Route:** `/case/{caseId}/test/day`. **Implements:** F-12, D-14 (no AI needed; voice optional 18+), F-52 (Sunlight mode).
+- **Route:** `/case/{caseId}/test/day`. **Implements:** F-12, D-14 (no AI needed; voice optional), F-52 (Sunlight mode).
 ```
 ┌────────────────────────────────────────┐
 │  Test day · Jammu RTO       ☀ Sunlight │  toggle for outdoors
@@ -1869,7 +1869,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 - **Analytics:** `vehicle_checklist_viewed`, `school_contact_tapped {method}` (W7 lead routing only with explicit consent `[P3+]`).
 
 #### SCR-096 How did the test go? (result entry)
-- **Route:** `/case/{caseId}/test/result`. Options: Passed · Didn't pass this time · Didn't happen (absent / rescheduled / RTO issue). Passed → milestone celebration (≤ 1.2 s, skippable) and "Khud Licence" badge offer (self-declared, honour-framed, 18+; F-26) → SCR-110. Not passed → SCR-100 (private). Didn't happen → reschedule guidance + SCR-080. If the user is in Helper mode, the result is recorded for the applicant and the helper sees a neutral confirmation. Copy (HI): "टेस्ट कैसा रहा? / पास हो गया / इस बार नहीं हुआ / टेस्ट हुआ ही नहीं". Analytics: `dl_result_entered {outcome, attempt_n}`.
+- **Route:** `/case/{caseId}/test/result`. Options: Passed · Didn't pass this time · Didn't happen (absent / rescheduled / RTO issue). Passed → milestone celebration (≤ 1.2 s, skippable) and "Khud Licence" badge offer (self-declared, honour-framed; F-26) → SCR-110. Not passed → SCR-100 (private). Didn't happen → reschedule guidance + SCR-080. If the user is in Helper mode, the result is recorded for the applicant and the helper sees a neutral confirmation. Copy (HI): "टेस्ट कैसा रहा? / पास हो गया / इस बार नहीं हुआ / टेस्ट हुआ ही नहीं". Analytics: `dl_result_entered {outcome, attempt_n}`.
 
 ---
 
@@ -1893,7 +1893,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  ( ) Not told                          │
 │ ┌────────────────────────────────────┐ │
 │ │ What to practise                   │ │  debrief card (template;
-│ │ Reverse slowly; stop if a wheel    │ │  AI narration only 18+,
+│ │ Reverse slowly; stop if a wheel    │ │  AI narration for all,
 │ │ nears the line. 3 drills ▸         │ │  numbers from code)
 │ └────────────────────────────────────┘ │
 │  Retest from Sat 5 Dec (7 days)        │  rule pack, confidence chip
@@ -1909,7 +1909,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 ```
 - **Rules:** the 7-day retest gap is `[S-low]/[MK]` in research (02 §5), so the rule-pack row is `confidence: medium` with "verify at your RTO"; the remedial-training requirement is from the MV (Amendment) Act 2019 s.9(5) proviso (03 §A, [P: Bill]); the LL-expiry check compares `retest_date + typical slot lead` with LL expiry and escalates to SCR-105 if at risk (EC-07). 3+ fails (EC-08): the card adds "Many people need 3 or more tries; a few lessons on the exact manoeuvre usually help most." with school options, never shame.
 - **Copy (HI):** `recover.h1` "इस बार नहीं हुआ। ज़्यादातर लोग अगली बार पास होते हैं। यह रहा आपका प्लान।" · `recover.reason_q` "एग्ज़ामिनर ने क्या बताया? (एक चुनें)" · reasons "ट्रैक पर टाइम आउट / लाइन या कोन छू गया / ढलान पर गाड़ी बंद हुई या पीछे लुढ़की / पीछे नहीं देखा या शीशे नहीं देखे / कुछ नहीं बताया" · `recover.retest` "{date} से दोबारा टेस्ट ({gap} दिन)" · `recover.remedial` "दोबारा टेस्ट से पहले: ड्राइविंग स्कूल में रेमेडियल ट्रेनिंग" · `recover.cta` "मेरी ड्रिल शुरू करें"
-- **States:** AI unavailable or under 18 → template card only (same content, plainer); offline → template; "Not told" → generic top-3 reasons for this track type from Live Intel (n ≥ 5) or the rule pack.
+- **States:** AI unavailable or AI consent off → template card only (same content, plainer); offline → template; "Not told" → generic top-3 reasons for this track type from Live Intel (n ≥ 5) or the rule pack.
 - **Accessibility:** private chip is text ("Only you can see this"); no colour-coded judgement.
 - **Analytics:** `fail_debrief_viewed {attempt_n, reason_code}`, `fail_drill_started`, `fail_rti_opened`, `fail_remedial_opened`.
 
@@ -2041,7 +2041,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │ │ valid to show (CMVR r.139).        │ │
 │ └────────────────────────────────────┘ │
 │  [ Claim "Khud Licence" badge (your    │  self-declared, honour
-│    word) ]                             │  framed, 18+
+│    word) ]                             │  framed
 │  ════════════════════════════════════  │
 │  ║  Start my new-rider year          ║  │
 │  ════════════════════════════════════  │
@@ -2163,7 +2163,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  [ Check my challans on the real site ↗]│
 └────────────────────────────────────────┘
 ```
-- **Verdict vocabulary (closed set):** "Looks like a fake" (⬣, rule hit) · "Not on the government domains we know: be careful" (▲) · "This link is on a government domain we know" (✓, **never** "safe"; still "don't share OTPs"). AI (18+) may add a plain-language explanation of *why*, chosen from rule IDs.
+- **Verdict vocabulary (closed set):** "Looks like a fake" (⬣, rule hit) · "Not on the government domains we know: be careful" (▲) · "This link is on a government domain we know" (✓, **never** "safe"; still "don't share OTPs"). AI may add a plain-language explanation of *why*, chosen from rule IDs.
 - **Copy (HI):** `scam.h1` "क्या यह मैसेज असली है?" · `scam.fake` "यह नकली चालान लिंक लगता है।" · `scam.reason1` "लिंक echallan.parivahan.gov.in पर नहीं है" · `scam.reason2` "असली चालान SMS VK-MORTH जैसे ID से आते हैं और कभी कोई ऐप इंस्टॉल करने को नहीं कहते।" · `scam.lost` "पैसे गए? 1930 पर कॉल करें या cybercrime.gov.in पर शिकायत करें।" · `scam.known_gov` "यह लिंक उस सरकारी डोमेन पर है जिसे हम जानते हैं। फिर भी OTP किसी को न बताएँ।"
 - **States:** pasted text contains Aadhaar/OTP-like numbers → redacted before send with the EC-20 notice; offline → rules run locally (allowlist bundled), AI explanation skipped.
 - **Analytics:** `scam_check_run {verdict}`, `real_challan_site_opened`, `cybercrime_link_opened`.
@@ -2249,7 +2249,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  ════════════════════════════════════  │
 │  Want the live status? Check on Sarathi│
 │  (application no. + DOB) ↗             │
-│  📷 Got a confusing Sarathi screen?    │  → decoder (18+)
+│  📷 Got a confusing Sarathi screen?    │  → decoder
 │     Show us a screenshot               │
 └────────────────────────────────────────┘
 ```
@@ -2261,7 +2261,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 ### Cross-cutting: Family and Helper mode (F-17)
 
 #### SCR-140 Family
-- **Purpose:** one person helping others: Kabir managing Mohan-ji's renewal and car re-test (P-03), a sibling helping, and a parent's view of a minor's rules-only plan.
+- **Purpose:** one person helping others: Kabir managing Mohan-ji's renewal and car re-test (P-03), a sibling helping, and a parent running a 16–17-year-old's case in family mode (full product, AI included, D-13 revised).
 - **Route:** `/family` (account required, because consent records must persist). **Implements:** F-17, E-29, E-15, EC-14, EC-17, EC-25.
 ```
 ┌────────────────────────────────────────┐
@@ -2305,7 +2305,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  How do you agree?                     │
 │  ( ) Tap "I agree" here                │
 │  ( ) Say "main sehmat hoon" (recorded  │  voice consent: audio kept
-│      as audio, 18+)                    │  only as consent proof [P3+]
+│      as audio, adult)                  │  only as consent proof [P3+]
 │  ( ) Send a link to my own phone       │  OTP-free link via WhatsApp
 │  ════════════════════════════════════  │
 │  ║        I agree                    ║  │
@@ -2313,7 +2313,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  [ Don't agree ]                       │
 └────────────────────────────────────────┘
 ```
-- **Rules:** consent is never pre-ticked; the applicant can be the account holder (link to their own phone) or a device-local subject (cyber café case). A minor applicant's consent is given by the parent/guardian (DPDP s.9; verifiable parental consent is `[P3+]` roadmap; `[P1–2]` minors stay account-less and rules-only, D-13). Voice-recorded consent is `[P3+]` (retention and storage to be decided in PRIVACY).
+- **Rules:** consent is never pre-ticked; the applicant can be the account holder (link to their own phone) or a device-local subject (cyber café case). A minor applicant's consent is given by the parent/guardian (DPDP s.9(1), Rule 10 verifiable parental consent; the DigiLocker adult check is `[P3+]`, and in `[P1–2]` the parent's signed-in account plus a recorded consent artefact stands in). The minor's case sits in the parent's account (family mode) with the full product, AI included (D-13 revised); squads and share cards for the minor's profile need the parent's consent. Voice-recorded consent is `[P3+]` (retention and storage to be decided in PRIVACY).
 - **Copy (HI):** `consent.body` "{helper_alias} आपका लाइसेंस प्लान बनाने और एप्लीकेशन तैयार करने में मदद करेंगे।" · `consent.can` "वे Margdarshak में आपके जवाब देख और भर सकते हैं।" · `consent.cannot` "वे आपका आधार, OTP या बैंक जानकारी नहीं देख सकते (हम ये लेते ही नहीं), न आपकी तरफ़ से पैसे दे सकते हैं।" · `consent.stop` "आप इसे कभी भी रोक सकते हैं।" · `consent.agree` "मैं सहमत हूँ" · `consent.decline` "सहमत नहीं"
 - **States:** declined → helper sees "No problem. Nothing was saved."; revoked later (EC-25) → helper session ends with the EC-25 notice and local data wipe.
 - **Accessibility:** consent text read-aloud button; the helper/applicant hand-over is announced ("Now hand the phone to the applicant").
@@ -2332,7 +2332,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 - **Route:** `/family/clear-device` (also Settings, Helper end). One `AlertDialog`: "Remove everything Margdarshak saved on this phone: answers, copy-pack, photos you saved here, sign-in." Toggle "Also sign out everywhere" (account). Danger `Button` "Clear this device" → wipes IndexedDB, Cache Storage (except the public app shell), cookies, service-worker case data, and the vault key; confirmation screen "This phone is clear. Files you downloaded (photo, PDFs) are in your Downloads; delete them too." Copy (HI): "इस फ़ोन से सब हटाएँ" · "यह फ़ोन साफ़ है। डाउनलोड की गई फ़ाइलें (फ़ोटो, PDF) आपके Downloads में हैं; उन्हें भी डिलीट करें।" Analytics: `device_cleared` (sent before wipe).
 
 #### SCR-144 My child wants to ride (s.199A awareness, EC-17)
-- **Route:** `/family/minor-riding`. A calm parent card (never shaming the child): the s.199A consequences (rendered from the rule pack), the legal ≤ 50 cc LL route at 16 with guardian consent, and "most scooters are above 50 cc". Primary: "Make a ≤50 cc plan with my child" (rules-only mode). Secondary: share card to WhatsApp. Copy (HI) per EC-17 row. Analytics: `minor_riding_viewed`, `minor_plan_started` (the parent's session; the child's data not tracked).
+- **Route:** `/family/minor-riding`. A calm parent card (never shaming the child): the s.199A consequences (rendered from the rule pack), the legal ≤ 50 cc LL route at 16 with guardian consent, and "most scooters are above 50 cc". Primary: "Make a ≤50 cc plan with my child" (family mode, full product, D-13 revised). Secondary: share card to WhatsApp. Copy (HI) per EC-17 row. Analytics: `minor_riding_viewed`, `minor_plan_started` (the parent's session; no behavioural tracking of the child's data, s.9(3)).
 
 ---
 
@@ -2350,7 +2350,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  Your choices                          │  Switch rows with purpose
 │  Save my case on our servers     [on]  │  (consent artefacts)
 │  WhatsApp reminders              [on]  │
-│  AI coach and voice (18+)        [off] │
+│  AI coach and voice              [off] │
 │  Anonymous usage stats           [on]  │
 │  Share progress with a parent    [off] │
 │  Each switch ▸ shows purpose, data,    │
@@ -2363,8 +2363,8 @@ H-07x LL expired                      Overlay: minor (16–17)
 └────────────────────────────────────────┘
 ```
 - **Components:** HeroUI `Switch` (each with `Description`), `Disclosure` per consent (purpose, data items, retention, date given, version), `Button`.
-- **Rules:** turning a switch off is as easy as on (one tap, no confirm-shaming); AI switch is absent for under-18; "Save my case on our servers" off → case moves to device-only (with a warning that cross-device resume stops).
-- **Copy (HI):** `privacy.h1` "आपकी प्राइवेसी" · `privacy.never` "हम कभी नहीं लेते: आधार नंबर · OTP · बायोमेट्रिक · बैंक या कार्ड जानकारी · दस्तावेज़ों की इमेज" · switches "मेरा केस आपके सर्वर पर सेव करें / WhatsApp रिमाइंडर / AI कोच और आवाज़ (18+) / गुमनाम इस्तेमाल के आँकड़े / माता-पिता के साथ प्रगति साझा करें" · `privacy.export` "मेरा डेटा डाउनलोड करें" · `privacy.delete` "मेरा अकाउंट और केस मिटाएँ"
+- **Rules:** turning a switch off is as easy as on (one tap, no confirm-shaming); in family mode the parent sets the AI switch for the minor's case like any other; "Save my case on our servers" off → case moves to device-only (with a warning that cross-device resume stops).
+- **Copy (HI):** `privacy.h1` "आपकी प्राइवेसी" · `privacy.never` "हम कभी नहीं लेते: आधार नंबर · OTP · बायोमेट्रिक · बैंक या कार्ड जानकारी · दस्तावेज़ों की इमेज" · switches "मेरा केस आपके सर्वर पर सेव करें / WhatsApp रिमाइंडर / AI कोच और आवाज़ / गुमनाम इस्तेमाल के आँकड़े / माता-पिता के साथ प्रगति साझा करें" · `privacy.export` "मेरा डेटा डाउनलोड करें" · `privacy.delete` "मेरा अकाउंट और केस मिटाएँ"
 - **Analytics:** `consent_changed {purpose, on}` (this event itself is exempt from the analytics switch as a legal record, stored in E-15, not in analytics).
 
 #### SCR-151 Consent detail
@@ -2399,7 +2399,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 └────────────────────────────────────────┘
 ```
 - **Rules (08 §4.10, D-16):** ≤ 1 push or WhatsApp per day, tied to a real deadline; quiet hours 22:00–07:00 IST; one-tap opt-out per channel; SMS is `[P3+]` after TRAI DLT registration; failed-test messages have neutral previews.
-- **Message catalogue (template IDs; text in LOCALIZATION):** `plan_saved`, `payment_pending_day3` (EC-09), `ll_day25_book_now`, `ll_day30_unlocked`, `ll_expiry_t30`, `ll_expiry_t7`, `slot_reported_open` (W3), `test_eve_checklist` (W4, with ICS), `test_day_morning`, `retest_plan_ready` (W10, neutral), `approval_day3_check` (EC-23), `approval_letter_ready` (W11), `rulepack_changed` (EC-27), `weekly_coach` (W6, 18+), `parent_card_weekly` (W5, opt-in), `renewal_t365`, `renewal_t30`, `sarathi_back_up` (EC-11).
+- **Message catalogue (template IDs; text in LOCALIZATION):** `plan_saved`, `payment_pending_day3` (EC-09), `ll_day25_book_now`, `ll_day30_unlocked`, `ll_expiry_t30`, `ll_expiry_t7`, `slot_reported_open` (W3), `test_eve_checklist` (W4, with ICS), `test_day_morning`, `retest_plan_ready` (W10, neutral), `approval_day3_check` (EC-23), `approval_letter_ready` (W11), `rulepack_changed` (EC-27), `weekly_coach` (W6), `parent_card_weekly` (W5, opt-in), `renewal_t365`, `renewal_t30`, `sarathi_back_up` (EC-11).
 - **States:** empty → "No messages yet. We'll only message you about real dates." ; offline → cached list.
 - **Analytics:** `inbox_viewed {unread}`, `notification_opened {template_id, channel}`.
 
@@ -2436,14 +2436,14 @@ H-07x LL expired                      Overlay: minor (16–17)
 - Serwist precaches: app shell, SCR-001/002/003, plan steps + the user's state rule pack, the plan card, task list and question pages (answers queue in IndexedDB), copy-pack, checklists, golden hour, scam rules, tracker (cached), Learn offline packs (learning spec). Network-only: Sarathi links, slot dates, Live Intel refresh, voice, AI debrief narration, WhatsApp share. The `OfflineBanner` copy: "You're offline. Saved answers, your plan and mock tests still work." / "आप ऑफ़लाइन हैं। सेव किए जवाब, आपका प्लान और मॉक टेस्ट चलते रहेंगे।" On reconnect: `Toast` "Back online. {n} answers synced." Analytics are queued and sent on reconnect with `offline:true`.
 
 #### SCR-180 Sign in (optional)
-- **Route:** `/signin`. "Continue on any device" with Email magic link (`TextField type=email`) or "Continue with Google". **No phone OTP, no Aadhaar.** Check-email screen with "Open email app" and "Resend in {s}". Production: DigiLocker OAuth (PKCE) / Jan Parichay via adapters `[P3+]`. Minors: route blocked with the EC-05 notice. Copy (HI): "किसी भी डिवाइस पर जारी रखें · ईमेल लिंक / Google से जारी रखें · अपना ईमेल देखें". Analytics: `signin_started {method}`, `signin_completed {method}`.
+- **Route:** `/signin`. "Continue on any device" with Email magic link (`TextField type=email`) or "Continue with Google". **No phone OTP, no Aadhaar.** Check-email screen with "Open email app" and "Resend in {s}". Production: DigiLocker OAuth (PKCE) / Jan Parichay via adapters `[P3+]`. A learner under 18 doesn't sign in alone: the parent signs in and adds them (family mode, SCR-140; ST-15). Copy (HI): "किसी भी डिवाइस पर जारी रखें · ईमेल लिंक / Google से जारी रखें · अपना ईमेल देखें". Analytics: `signin_started {method}`, `signin_completed {method}`.
 
 #### SCR-181 Help
-- **Route:** `/help`. One search (`SearchField`) over reviewed FAQs + the voice orb; tiles: "Decode a Sarathi screen" (SCR-182, 18+), "Is this message real?" (SCR-124), "Fees for my case", "Golden hour", "Contact": Parivahan/Sarathi helpline [number to verify; owner Content lead, due 2026-10-24], state transport helpline (from the tenant pack), Margdarshak support email, grievance officer. Every FAQ answer carries a `SourceChip`. Analytics: `help_search {results_count}`, `help_tile_opened {tile}`.
+- **Route:** `/help`. One search (`SearchField`) over reviewed FAQs + the voice orb; tiles: "Decode a Sarathi screen" (SCR-182), "Is this message real?" (SCR-124), "Fees for my case", "Golden hour", "Contact": Parivahan/Sarathi helpline [number to verify; owner Content lead, due 2026-10-24], state transport helpline (from the tenant pack), Margdarshak support email, grievance officer. Every FAQ answer carries a `SourceChip`. Analytics: `help_search {results_count}`, `help_tile_opened {tile}`.
 
 #### SCR-182 Sarathi screen decoder (F-32)
 - **Purpose:** "What does this Sarathi screen or status mean, and what do I do?", matched to a verified error catalogue; "unknown" allowed (M-05).
-- **Route:** `/help/decode` (18+). **Implements:** F-32, API-42, EC-20, EC-29.
+- **Route:** `/help/decode`. **Implements:** F-32, API-42, EC-20, EC-29.
 ```
 ┌────────────────────────────────────────┐
 │ ←  What does this screen mean?         │
@@ -2465,7 +2465,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 │  Not it? "We don't know this one yet." │
 └────────────────────────────────────────┘
 ```
-- **Rules:** the image is redacted on device (digit runs ≥ 10, QR codes) before upload; the model may only return a catalogue ID or `unknown`; the catalogue starts with the dead-end messages observed in 01 §B and the status phrases in 01 §F. Under 18 or AI off → a searchable list of the same catalogue (text match), no image upload.
+- **Rules:** the image is redacted on device (digit runs ≥ 10, QR codes) before upload; the model may only return a catalogue ID or `unknown`; the catalogue starts with the dead-end messages observed in 01 §B and the status phrases in 01 §F. AI consent off or AI unavailable → a searchable list of the same catalogue (text match), no image upload.
 - **Copy (HI):** `decode.h1` "इस स्क्रीन का मतलब क्या है?" · `decode.unknown` "यह वाला हमें अभी नहीं पता।" · `decode.blur` "आपकी सुरक्षा के लिए लंबे नंबर धुंधले कर दिए गए।"
 - **Analytics:** `decode_run {match: catalogue_id|unknown, via: image|search}`.
 
@@ -2489,7 +2489,7 @@ H-07x LL expired                      Overlay: minor (16–17)
 | ST-12 Camera denied | Photo, decoder | Camera is off. You can upload a photo instead, or allow the camera in settings. | कैमरा बंद है। आप फ़ोटो अपलोड कर सकते हैं, या सेटिंग में कैमरा चालू करें। | Upload |
 | ST-13 Nothing due | Learn entry | All caught up. Your next review opens tomorrow. | सब पूरा। अगला रिव्यू कल खुलेगा। | Try a Nazar clip |
 | ST-14 Slow network | Toast | Slow connection. Switch to Lite mode? | धीमा नेटवर्क। Lite मोड चालू करें? | Switch |
-| ST-15 Minor gate | AI/voice/account | This part is for 18+. Everything about your licence rules still works. | यह हिस्सा 18+ के लिए है। आपके लाइसेंस के नियम वाली सारी चीज़ें चलती रहेंगी। | OK |
+| ST-15 Family mode (D-13 revised) | sign-in by a learner under 18 | You're under 18, so a parent adds you to their account (family mode). Every feature works there, AI included. | आपकी उम्र 18 से कम है, इसलिए माता-पिता आपको अपने अकाउंट में जोड़ें (फ़ैमिली मोड)। वहाँ हर सुविधा चलती है, AI समेत। | Ask a parent |
 | ST-16 Plan expired | Plan card | This plan is over 30 days old and rules may have changed. Make a fresh one in 3 taps. | यह प्लान 30 दिन से पुराना है और नियम बदले हो सकते हैं। 3 टैप में नया बनाइए। | New plan |
 
 **Loading skeleton map:** Home (header + button + card), Plan card (card with 6 rows), Tracker (9 rows), Slots (map block + 3 cards), Intel (4 cards), Inbox (6 rows). Skeletons use `--surface-2` with a 1.2 s shimmer (none in reduced motion/Lite).
@@ -2516,7 +2516,7 @@ Open source · Rules checked {date}
 ---
 
 ## 7. Analytics events fired by this spec (consolidated)
-All go through API-63; payloads carry the common props in §1.8; none carry PII or free text; none fire for under-18 sessions or when the analytics consent is off.
+All go through API-63; payloads carry the common props in §1.8; none carry PII or free text; none fire when the analytics consent is off; events from a minor's profile (family mode) are never used for behavioural tracking, profiling or ads (s.9(3)).
 
 | Area | Events |
 |---|---|
@@ -2546,7 +2546,7 @@ All go through API-63; payloads carry the common props in §1.8; none carry PII 
 | Sarathi | Mode A hand-off + copy-pack (works today); SimChip | Mode B SarathiAdapter run by NIC/state; prefill; status sync; tracker shows "From Sarathi" |
 | Slots | MockSlotAdapter + seeded Live Intel ("Sample data") | SlotAdapter from the state; Live Intel with real n ≥ 5 |
 | DigiLocker | Pointer card + mock consent screen labelled "simulated" | DigiLockerAdapter (after NeGD requester onboarding) |
-| Voice | Gemini Live (Hindi/English) + Sarvam Saaras (Dogri in), one scripted demo flow, 18+ | Bhashini ASR/TTS as the government-preferred path; Vertex AI India region |
+| Voice | Gemini Live (Hindi/English) + Sarvam Saaras (Dogri in), one scripted demo flow | Bhashini ASR/TTS as the government-preferred path; Vertex AI India region |
 | Notifications | WhatsApp test numbers via n8n, email, web push; no SMS | WhatsApp approved templates; SMS after TRAI DLT |
 | Rule packs | J&K, Delhi, Punjab, Kerala + central CMVR; confidence chips | Tenant rule-pack studio with maker-checker (F-42) |
 | Theme | Margdarshak skin; non-affiliation footer | Tenant theme (UX4G skin: `--primary #4A2BC2`, Noto Sans) and tenant footer/emblem slot (F-58) |
@@ -2565,7 +2565,7 @@ All go through API-63; payloads carry the common props in §1.8; none carry PII 
 - Copy lint: banned words (§1.4) and `₹\d` in `messages/*.json` fail CI.
 - Primary-button lint: a test counts `[data-variant="primary"]` per screen and fails if ≠ 1 (the riding lock and golden hour have exactly one each too).
 - Budget: SCR-001/003/010–014 under 300 KB transferred in Lite on Slow 3G; LCP < 2.5 s on a Moto E-class profile [measure at H0].
-- Under-18 persona: no orb, no AI routes reachable, zero analytics requests (network assertion).
+- Family-mode persona (Rahul 17 in a parent's account): orb and AI routes reachable once the parent has consented; squad and share-card actions blocked until the parent's consent (network assertion).
 
 ---
 
@@ -2595,5 +2595,5 @@ All go through API-63; payloads carry the common props in §1.8; none carry PII 
 7. PROJECT_BRIEF F-09 says "day-30 unlock", research says "earliest DL test day 31 after the LL"; this spec renders the unlock date from the rule pack's `min_wait_days` and lets the pack decide day 30 vs 31.
 8. PROJECT_BRIEF §8 lists email magic link / Google auth, while the team report's home table assumes Aadhaar-OTP login; this spec follows PROJECT_BRIEF.
 9. API-16 (`GET /v1/cases/{id}/handoff`, copy-pack) implies the server returns values; this spec proposes it returns the **template only**, with PII values held in an on-device vault (SCR-018 note). DATA_MODEL and API_SPEC owners to confirm.
-10. Analytics for the minor flag: whether a single anonymous "minor plan made" count is allowed under D-13 "no telemetry" needs a privacy sign-off (default off here).
+10. Analytics for the minor flag: resolved by D-13 revised (23 Oct 2026). Family-mode events use the same allowlisted, aggregate-only taxonomy and are never used for profiling or ads.
 

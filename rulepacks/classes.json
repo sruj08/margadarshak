@@ -1,0 +1,333 @@
+{
+  "$schema": "./schema/rulepack.schema.json",
+  "fileKind": "classes",
+  "version": "2026.10.0",
+  "notes": "Every licence class is in the engine (D-05). Deep learning content only for MCWOG, MCWG and LMV-NT; every other class returns contentDepth=coming. Transport prerequisites (1 year on an LMV licence, 8th pass) are flagged verified=false (D-25). Picture keys map vehicle pictures in the plan picker to classes. Catalogue order is the engine's output order.",
+  "classes": [
+    {
+      "id": "CLS-MC50CC",
+      "code": "MC50CC",
+      "sarathiCode": "MC 50CC",
+      "nameKey": "class.mc50cc",
+      "name": { "en": "Gearless two-wheeler up to 50 cc", "hi": "50 cc तक बिना गियर वाला दोपहिया" },
+      "pictures": ["scooter_50cc", "moped_50cc"],
+      "minAge": 16,
+      "maxCc": 50,
+      "guardianConsentUnder18": true,
+      "transport": false,
+      "form1a": "age40",
+      "contentDepth": "coming",
+      "prerequisites": [],
+      "source": {
+        "title": "MV Act 1988 s.4(2) [MK]; Delhi Transport class table (16 with guardian consent)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-MCWOG",
+      "code": "MCWOG",
+      "sarathiCode": "MCWOG",
+      "nameKey": "class.mcwog",
+      "name": { "en": "Scooter without gears", "hi": "बिना गियर वाला स्कूटर" },
+      "pictures": ["scooter"],
+      "minAge": 18,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": false,
+      "form1a": "age40",
+      "contentDepth": "deep",
+      "prerequisites": [],
+      "source": {
+        "title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-MCWG",
+      "code": "MCWG",
+      "sarathiCode": "MCWG",
+      "nameKey": "class.mcwg",
+      "name": { "en": "Motorcycle with gears", "hi": "गियर वाली मोटरसाइकिल" },
+      "pictures": ["bike_gear"],
+      "minAge": 18,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": false,
+      "form1a": "age40",
+      "contentDepth": "deep",
+      "prerequisites": [],
+      "source": {
+        "title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-LMV-NT",
+      "code": "LMV-NT",
+      "sarathiCode": "LMV",
+      "nameKey": "class.lmv_nt",
+      "name": { "en": "Car (private, non-transport)", "hi": "कार (निजी, गैर-परिवहन)" },
+      "pictures": ["car"],
+      "minAge": 18,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": false,
+      "form1a": "age40",
+      "contentDepth": "deep",
+      "prerequisites": [],
+      "source": {
+        "title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-LMV-TR",
+      "code": "LMV-TR",
+      "sarathiCode": "LMV-TR",
+      "nameKey": "class.lmv_tr",
+      "name": {
+        "en": "Taxi, auto-rickshaw or light goods (transport)",
+        "hi": "टैक्सी, ऑटो-रिक्शा या हल्का माल वाहन (परिवहन)"
+      },
+      "pictures": ["taxi", "auto_rickshaw", "goods_light"],
+      "minAge": 20,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": true,
+      "form1a": "always",
+      "contentDepth": "coming",
+      "prerequisites": [
+        {
+          "id": "PRQ-TRANSPORT-LMV-1YR",
+          "textKey": "class.prereq.lmv_licence_1yr",
+          "verified": false
+        },
+        { "id": "PRQ-TRANSPORT-8TH-PASS", "textKey": "class.prereq.eighth_pass", "verified": false }
+      ],
+      "source": {
+        "title": "MV Act 1988 s.4(3) (20 for transport) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-E-RICKSHAW",
+      "code": "E-RICKSHAW",
+      "sarathiCode": "E-RICKSHAW",
+      "nameKey": "class.e_rickshaw",
+      "name": { "en": "E-rickshaw", "hi": "ई-रिक्शा" },
+      "pictures": ["e_rickshaw"],
+      "minAge": 18,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": false,
+      "form1a": "always",
+      "contentDepth": "coming",
+      "prerequisites": [],
+      "source": {
+        "title": "Delhi Transport class table: e-rickshaw from 2015, age 18, oral preliminary test, Form 1A",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-E-CART",
+      "code": "E-CART",
+      "sarathiCode": "E-CART",
+      "nameKey": "class.e_cart",
+      "name": { "en": "E-cart (goods)", "hi": "ई-कार्ट (माल)" },
+      "pictures": ["e_cart"],
+      "minAge": 18,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": false,
+      "form1a": "always",
+      "contentDepth": "coming",
+      "prerequisites": [],
+      "source": {
+        "title": "Delhi Transport class table: e-cart from 2015, age 18, oral preliminary test",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-MGV",
+      "code": "MGV",
+      "sarathiCode": "MGV",
+      "nameKey": "class.mgv",
+      "name": { "en": "Medium goods vehicle (transport)", "hi": "मध्यम माल वाहन (परिवहन)" },
+      "pictures": ["goods_medium"],
+      "minAge": 20,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": true,
+      "form1a": "always",
+      "contentDepth": "coming",
+      "prerequisites": [
+        {
+          "id": "PRQ-TRANSPORT-LMV-1YR",
+          "textKey": "class.prereq.lmv_licence_1yr",
+          "verified": false
+        }
+      ],
+      "source": {
+        "title": "MV Act 1988 s.4(3) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-HGMV",
+      "code": "HGMV",
+      "sarathiCode": "HGMV",
+      "nameKey": "class.hgmv",
+      "name": { "en": "Truck (heavy goods, transport)", "hi": "ट्रक (भारी माल, परिवहन)" },
+      "pictures": ["truck"],
+      "minAge": 20,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": true,
+      "form1a": "always",
+      "contentDepth": "coming",
+      "prerequisites": [
+        {
+          "id": "PRQ-TRANSPORT-LMV-1YR",
+          "textKey": "class.prereq.lmv_licence_1yr",
+          "verified": false
+        }
+      ],
+      "source": {
+        "title": "MV Act 1988 s.4(3) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-HPMV",
+      "code": "HPMV",
+      "sarathiCode": "HPMV",
+      "nameKey": "class.hpmv",
+      "name": { "en": "Bus (heavy passenger, transport)", "hi": "बस (भारी यात्री, परिवहन)" },
+      "pictures": ["bus"],
+      "minAge": 20,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": true,
+      "form1a": "always",
+      "contentDepth": "coming",
+      "prerequisites": [
+        {
+          "id": "PRQ-TRANSPORT-LMV-1YR",
+          "textKey": "class.prereq.lmv_licence_1yr",
+          "verified": false
+        }
+      ],
+      "source": {
+        "title": "MV Act 1988 s.4(3) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-HTV",
+      "code": "HTV",
+      "sarathiCode": "HTV",
+      "nameKey": "class.htv",
+      "name": {
+        "en": "Heavy transport vehicle (as the state lists it)",
+        "hi": "भारी परिवहन वाहन (राज्य की सूची के अनुसार)"
+      },
+      "pictures": ["heavy_transport"],
+      "minAge": 20,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": true,
+      "form1a": "always",
+      "contentDepth": "coming",
+      "prerequisites": [
+        {
+          "id": "PRQ-TRANSPORT-LMV-1YR",
+          "textKey": "class.prereq.lmv_licence_1yr",
+          "verified": false
+        }
+      ],
+      "source": {
+        "title": "MV Act 1988 s.4(3) [MK]; state class lists vary",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "CLS-ADAPTED",
+      "code": "ADAPTED",
+      "sarathiCode": "INVCRG",
+      "nameKey": "class.adapted",
+      "name": { "en": "Adapted vehicle / invalid carriage", "hi": "अनुकूलित वाहन / इनवैलिड कैरिज" },
+      "pictures": ["adapted_vehicle"],
+      "minAge": 18,
+      "maxCc": null,
+      "guardianConsentUnder18": false,
+      "transport": false,
+      "form1a": "age40",
+      "contentDepth": "coming",
+      "prerequisites": [],
+      "source": {
+        "title": "MV Act 1988 s.10(2) invalid carriage class [MK]; Sarathi Divyang category (observed)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ]
+}

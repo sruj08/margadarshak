@@ -7,7 +7,7 @@
 ## 0. Principles for measurement
 
 1. **No PII in analytics, ever** (F-55). Events carry no name, phone, email, DOB, Aadhaar, LL/DL/application number, IP, precise location, free text or transcript. The schema is enforced at API-63; unknown properties are rejected, not dropped silently.
-2. **Under-18 sessions emit no analytics events** (D-13). The only trace of a minor's visit is the operational request counter of the stateless plan endpoint (no identifiers), which is not analytics.
+2. **A child's data is never used for behavioural tracking, profiling or targeted ads** (D-13 revised, DPDP s.9(3)). A learner under 18 uses Margdarshak in family mode, inside the parent's account; their events follow the same allowlisted schema and count only in k ≥ 5 aggregates.
 3. **Skill, not engagement.** We measure hazard-response accuracy, calibration and readiness, not DAU for its own sake ([05 Ψ10](../../../research/ps1-deep/05-psychology.md)). Streaks end at DL test day by design; lifetime DAU is not a goal.
 4. **Honest numbers.** Self-reported outcomes are labelled "self-reported". Percentiles appear only after ≥ 200 verified mocks. Every public figure carries n and a 95% CI. We never claim "lives saved" (D-22).
 5. **Pre-registration.** Field-study hypotheses H1–H4 and J1–J4 are committed after the confirmed start and before any data ([field kit §3, §11.6](../../../field-kit/NAZAR-FIELD-KIT.md)).
@@ -79,7 +79,7 @@ Targets are for **P3 pilot** unless stated; hackathon values are measured on the
 | **Retention** | Bridge engagement | `game_session_completed` in S4 | Learners in S4 with ≥ 4 sessions/week in ≥ 3 of 4 weeks | ≥ 40% | ≤ 1 nudge/day; streak silent on break |
 | | Spaced return | `review_session_completed` | Share of S3–S4 learners completing due reviews on ≥ 3 separate days per week | ≥ 30% | XP diminishes after 45 min/day |
 | | Post-licence refresher | `refresher_completed` | Share of S8 users completing ≥ 1 refresher/month in months 1–3 | ≥ 20% (opt-in) | No streaks after DL |
-| **Referral** | Squad formation | `squad_created`, `squad_joined` | Share of 18+ learners in a squad | ≥ 25% | 18+ only |
+| **Referral** | Squad formation | `squad_created`, `squad_joined` | Share of learners in a squad | ≥ 25% | A minor's profile only with the parent's consent |
 | | Family/helper pull | `family_case_added`, `helper_link_created` | Cases created via family or helper | ≥ 10% of cases | Consent artefacts present |
 | **Revenue** (Eco) | School Pro conversion | `school_pro_started` (server) | Listed schools converting to Pro | ≥ 10% of listed schools in Kerala pilot | Price hypothesis ₹499–999/month [unverified] |
 | | Lead acceptance | `school_lead_accepted` | Leads accepted within 4 h | ≥ 70% | "Sponsored" labels |
@@ -210,7 +210,7 @@ Mean of survival-skill nodes M1, M3, M4, M6, M8, M19 (+ M14 for J&K) and the Naz
 | AI fallback rate | < 20% | Alert above 20% |
 | Nudges per user per day | ≤ 1 | Hard limit in code |
 | Notifications in quiet hours (22:00–07:00 IST) | 0 | Hard limit |
-| Analytics events from under-18 sessions | 0 | Ingress rejects; daily audit query |
+| Family-mode (minor) events joined to a profile, segment or ad audience | 0 | Ingress tags family-mode events; daily audit query |
 | Rupee literals in UI strings/prompts | 0 | CI grep |
 | Wording-ban hits | 0 | CI lint |
 | Live Intel fields shown with n < 5 | 0 | Query test |
@@ -223,7 +223,7 @@ Mean of survival-skill nodes M1, M3, M4, M6, M8, M19 (+ M14 for J&K) and the Naz
 ## 6. Field-study metrics (hackathon evidence)
 | Study | n | Metrics | Freeze | Output |
 |---|---|---|---|---|
-| Nazar study | ≥ 40 licence holders, 18+ | H1–H4, seconds late → metres, test-retest | Sat 24 Oct 2026, 18:00 IST | `analysis/nazar_stats.py` output; API-71 counters |
+| Nazar study | ≥ 40 licence holders, 18+ | H1–H4, seconds late → metres, test-retest | Sat 24 Oct 2026, 18:00 IST | `analysis/nazar_stats.mjs` output; API-71 counters |
 | Journey test | 5–8 first-time or prospective applicants, 18+, synthetic identities | J1–J4, BA-1..BA-6, errors, backtracks, help requests | Same | `journey_sessions.csv`; slide line "k₁/N → k₂/N fully right · median X → Y min · SUS a → b · would still pay an agent p/N → q/N" |
 
 Honesty footnote (on the slide): *"Convenience sample of N, 18+, Jammu/Punjab colleges; our clips and windows, pre-registered at <hash>; not Kerala's clips; no crash outcomes measured."*
@@ -245,7 +245,7 @@ Honesty footnote (on the slide): *"Convenience sample of N, 18+, Jammu/Punjab co
 | `locale` | enum | `en`, `hi` | — |
 | `lite` | bool | true | Lite mode active |
 | `stage` | enum | `S4` | S0–S9, S6F |
-| `age_band` | enum | `18-24`, `25-39`, `40-59`, `60+` | Adults only; minors send nothing |
+| `age_band` | enum | `16-17`, `18-24`, `25-39`, `40-59`, `60+` | `16-17` = a learner in family mode; aggregate only (k ≥ 5), never profiled |
 | `cohort` | enum | `public`, `field_test`, `demo`, `pilot` | Demo and field-test traffic excluded from product KPIs |
 | `net` | enum | `4g`, `3g`, `2g`, `offline_sync` | From `navigator.connection` when available |
 
@@ -350,7 +350,7 @@ To reduce fingerprinting, durations, counts and scores in analytics use buckets:
 |---|---|---|---|
 | `debrief_viewed` | `agent` {M-02}, `source` {ai, template}, `latency_bucket` | Debrief rendered | F-25 |
 | `debrief_validator_rejected` | `agent`, `reason` {digit, unknown_id, schema} | Validator rejects | F-25 |
-| `ai_fallback_used` | `agent`, `cause` {timeout, rate_limit, validator, age_gate} | Template used | F-25, F-30, F-31 |
+| `ai_fallback_used` | `agent`, `cause` {timeout, rate_limit, validator} | Template used | F-25, F-30, F-31 |
 | `voice_session_started` | `lang` {hi, en, doi} | Mic opened | F-30 |
 | `voice_action` | `action` {navigate, fill_field, read_screen, explain_rule, open_help} | Action executed | F-30 |
 | `voice_refusal` | `requested` {book, pay, submit, other} | Out-of-scope request refused | F-30 |
@@ -464,7 +464,7 @@ To reduce fingerprinting, durations, counts and scores in analytics use buckets:
 |---|---|---|---|---|
 | **Judge stats** (API-71, public) | Judges, public | N, % below 60/100 with CI, r with CI, median |Δonset|, sessions today | Live / nightly Workflow | Next.js page → same |
 | **Product daily digest** | Team | Funnel S0→S7, activation, plan → start, debrief source mix, fallback rate, cost/day, guardrails | Daily 21:00 IST (n8n W13) | Slack + Google Sheet → Metabase on India-hosted DB |
-| **Learning** | Nazar lead | Readiness distribution, Brier trend, Nazar Score trend, fresh-clip gain, clip difficulty fit, pattern-click rate | Daily | Notebook (`nazar_stats.py`) → Metabase |
+| **Learning** | Nazar lead | Readiness distribution, Brier trend, Nazar Score trend, fresh-clip gain, clip difficulty fit, pattern-click rate | Daily | Notebook (`nazar_stats.mjs`) → Metabase |
 | **Journey ops** | Rules owner | Blockers by rule ID, collision warnings, retest cycle time, pass-to-card, letters | Daily | Metabase |
 | **Messaging** | Tech lead | Sent/delivered/clicked by template, suppressed (cap, quiet hours), STOP latency, n8n executions vs Pro budget (~10k/month) | Hourly | n8n + Metabase |
 | **AI quality** | Tech lead | Eval pass rate per agent, validator rejects, latency p95, tokens and ₹/day | Per CI run + daily | CI artefact + Metabase |
@@ -476,5 +476,5 @@ To reduce fingerprinting, durations, counts and scores in analytics use buckets:
 ## 9. Experimentation policy
 - **Allowed:** A/B tests on copy clarity, layout and onboarding order, with a pre-written hypothesis and a primary metric from this file; holdouts on reminder timing (not on whether safety-critical reminders like LL expiry are sent).
 - **Not allowed:** experiments that withhold LL-expiry or test-eve reminders, add urgency, change fees shown, hide "Book anyway", or vary gamification rewards in slot-machine patterns (CCPA guidelines; [05 §5](../../../research/ps1-deep/05-psychology.md)).
-- **Minors:** no experiments on under-18 users.
+- **Minors:** a minor's profile always gets the default arm; no experiments on a child's data (s.9(3), behavioural monitoring).
 - **Analysis:** two-sided tests unless pre-registered otherwise; report effect sizes with CIs; stop rules decided in advance.

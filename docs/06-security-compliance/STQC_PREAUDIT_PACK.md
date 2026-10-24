@@ -18,7 +18,7 @@
 | Environments | Staging replica of production in the state's chosen cloud (MeghRaj / MeitY-empanelled CSP / NIC), India region, synthetic data |
 | Test types | Black-box and grey-box web application VAPT (OWASP WSTG), API testing, configuration review (OS, container, DB, TLS), source-code review (optional, recommended for auth/policy/pii_guard modules), mobile/PWA review, LLM-specific tests (OWASP LLM Top 10) |
 | Exclusions | Government systems behind adapters (Sarathi, DigiLocker, PayGov) — tested by their owners; third-party SaaS (Gemini/Vertex, WhatsApp) beyond our integration surface |
-| Accounts given to auditors | One per role (citizen 18+, helper, school owner/instructor, rto_viewer, state_analyst, rule_maker, rule_checker, clip_rater, clip_publisher); a minor test profile; admin via supervised session only |
+| Accounts given to auditors | One per role (citizen 18+, helper, school owner/instructor, rto_viewer, state_analyst, rule_maker, rule_checker, clip_rater, clip_publisher); a family-mode minor profile inside a parent test account; admin via supervised session only |
 | Rules of engagement | Test window, source IPs, no DoS beyond agreed rate, no social engineering of staff, data stays synthetic, findings by encrypted channel |
 | Deliverables expected | Findings report (CVSS v3.1/v4.0), retest report, safe-to-host / audit clearance certificate naming URL and version hash |
 
@@ -152,7 +152,7 @@ GIGW 3.0 covers identity and governance, content, accessibility, quality, securi
 - [ ] Prompt-injection evalset ≥ 40 cases passes (0 tool calls outside enum).
 - [ ] PII vectors: 0 leaks; voice transcript trip ends session.
 - [ ] Provenance guard: 0 invented numbers across ≥ 30 cases per agent (D-10).
-- [ ] Age gate: AI routes refuse `16_17` and `under16` sessions.
+- [ ] Family mode: AI routes serve a minor profile only under the parent's `PUR-AI-FEATURES` consent artefact (`acting_for` = parent).
 - [ ] Safety settings explicitly set (defaults are OFF for Gemini 2.5+).
 - [ ] Budget circuit breaker → template fallback works (EC-29).
 
@@ -169,7 +169,7 @@ GIGW 3.0 covers identity and governance, content, accessibility, quality, securi
 ### 4.4 Privacy and legal (auditor and STD both ask)
 - [ ] Data inventory matches the database schema (automated diff of `DATA_MODEL.md` vs Alembic models).
 - [ ] Notices EN + HI live and versioned; consent artefacts written for each purpose.
-- [ ] Minor mode: no analytics events, no account, no AI.
+- [ ] Family mode: a minor profile's data never reaches behavioural tracking, profiling or ads; squads and share cards for a minor need the parent's consent.
 - [ ] Rights flows: export, correct, delete, withdraw, grievance all tested end to end.
 - [ ] Breach runbook rehearsed (tabletop) with timestamps for 6 h CERT-In and 72 h Board milestones.
 - [ ] Processor DPAs on file; processors in India for government mode.

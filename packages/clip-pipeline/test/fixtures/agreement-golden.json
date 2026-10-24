@@ -1,0 +1,157 @@
+{
+  "description": "Golden vectors for computeAgreement (packages/clip-pipeline/src/agreement.ts). The Go job step clip.agreement must produce the same accepted flag, reasons, deltas and final windows. Options: DEFAULT_AGREEMENT (onset <= 500 ms, end <= 1000 ms, IoU >= 0.3, <= 2 hazards, 30 fps frame snapping).",
+  "cases": [
+    {
+      "name": "perfect match",
+      "raterA": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 }],
+      "raterB": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 }],
+      "expected": {
+        "accepted": true,
+        "reasons": [],
+        "pairs": [{ "deltaOnsetMs": 0, "deltaEndMs": 0 }],
+        "onlyA": 0,
+        "onlyB": 0,
+        "finalHazards": [
+          { "hazardId": "h1", "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 }
+        ]
+      }
+    },
+    {
+      "name": "onset delta exactly 0.5 s is accepted; mean snapped to the nearest frame",
+      "raterA": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 }],
+      "raterB": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12500, "bMs": 17000 }],
+      "expected": {
+        "accepted": true,
+        "reasons": [],
+        "pairs": [{ "deltaOnsetMs": 500, "deltaEndMs": 500 }],
+        "onlyA": 0,
+        "onlyB": 0,
+        "finalHazards": [
+          { "hazardId": "h1", "hazardType": "bus_stop_pedestrian", "aMs": 12267, "bMs": 16767 }
+        ]
+      }
+    },
+    {
+      "name": "onset delta 0.6 s needs a third rater",
+      "raterA": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 }],
+      "raterB": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12600, "bMs": 16500 }],
+      "expected": {
+        "accepted": false,
+        "reasons": ["onset_delta"],
+        "pairs": [{ "deltaOnsetMs": 600, "deltaEndMs": 0 }],
+        "onlyA": 0,
+        "onlyB": 0,
+        "finalHazards": []
+      }
+    },
+    {
+      "name": "end delta 1.1 s needs a third rater",
+      "raterA": [{ "hazardType": "auto_cut_in", "aMs": 5000, "bMs": 9000 }],
+      "raterB": [{ "hazardType": "auto_cut_in", "aMs": 5100, "bMs": 10100 }],
+      "expected": {
+        "accepted": false,
+        "reasons": ["end_delta"],
+        "pairs": [{ "deltaOnsetMs": 100, "deltaEndMs": 1100 }],
+        "onlyA": 0,
+        "onlyB": 0,
+        "finalHazards": []
+      }
+    },
+    {
+      "name": "rater B missed a hazard",
+      "raterA": [
+        { "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 },
+        { "hazardType": "auto_cut_in", "aMs": 25000, "bMs": 28000 }
+      ],
+      "raterB": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12100, "bMs": 16400 }],
+      "expected": {
+        "accepted": false,
+        "reasons": ["unmatched_hazard"],
+        "pairs": [{ "deltaOnsetMs": 100, "deltaEndMs": 100 }],
+        "onlyA": 1,
+        "onlyB": 0,
+        "finalHazards": []
+      }
+    },
+    {
+      "name": "rater B marked an extra hazard",
+      "raterA": [{ "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 }],
+      "raterB": [
+        { "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 },
+        { "hazardType": "cattle_animal", "aMs": 30000, "bMs": 33000 }
+      ],
+      "expected": {
+        "accepted": false,
+        "reasons": ["unmatched_hazard"],
+        "pairs": [{ "deltaOnsetMs": 0, "deltaEndMs": 0 }],
+        "onlyA": 0,
+        "onlyB": 1,
+        "finalHazards": []
+      }
+    },
+    {
+      "name": "type mismatch on the same window",
+      "raterA": [{ "hazardType": "door_opening", "aMs": 8000, "bMs": 11000 }],
+      "raterB": [{ "hazardType": "parked_vehicle_hidden", "aMs": 8000, "bMs": 11000 }],
+      "expected": {
+        "accepted": false,
+        "reasons": ["type_mismatch"],
+        "pairs": [{ "deltaOnsetMs": 0, "deltaEndMs": 0 }],
+        "onlyA": 0,
+        "onlyB": 0,
+        "finalHazards": []
+      }
+    },
+    {
+      "name": "two hazards submitted in different orders",
+      "raterA": [
+        { "hazardType": "wrong_side_2w", "aMs": 30000, "bMs": 34000 },
+        { "hazardType": "bus_stop_pedestrian", "aMs": 12000, "bMs": 16500 }
+      ],
+      "raterB": [
+        { "hazardType": "bus_stop_pedestrian", "aMs": 12300, "bMs": 16200 },
+        { "hazardType": "wrong_side_2w", "aMs": 29800, "bMs": 34600 }
+      ],
+      "expected": {
+        "accepted": true,
+        "reasons": [],
+        "pairs": [
+          { "deltaOnsetMs": 300, "deltaEndMs": 300 },
+          { "deltaOnsetMs": 200, "deltaEndMs": 600 }
+        ],
+        "onlyA": 0,
+        "onlyB": 0,
+        "finalHazards": [
+          { "hazardId": "h1", "hazardType": "bus_stop_pedestrian", "aMs": 12167, "bMs": 16367 },
+          { "hazardId": "h2", "hazardType": "wrong_side_2w", "aMs": 29900, "bMs": 34300 }
+        ]
+      }
+    },
+    {
+      "name": "quiet clip: neither rater marked a hazard",
+      "raterA": [],
+      "raterB": [],
+      "expected": {
+        "accepted": true,
+        "reasons": [],
+        "pairs": [],
+        "onlyA": 0,
+        "onlyB": 0,
+        "finalHazards": []
+      }
+    },
+    {
+      "name": "windows below IoU 0.3 are two different hazards",
+      "raterA": [{ "hazardType": "cyclist", "aMs": 10000, "bMs": 14000 }],
+      "raterB": [{ "hazardType": "cyclist", "aMs": 13000, "bMs": 18000 }],
+      "expected": {
+        "accepted": false,
+        "reasons": ["unmatched_hazard"],
+        "pairs": [],
+        "onlyA": 1,
+        "onlyB": 1,
+        "finalHazards": []
+      }
+    }
+  ]
+}

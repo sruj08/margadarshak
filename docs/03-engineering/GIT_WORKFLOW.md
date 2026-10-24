@@ -1,5 +1,5 @@
 # Git Workflow
-> Project: Margdarshak · Owner: Tech lead · Status: Draft v0.1 · Last updated: 2026-10-23
+> Project: Margdarshak · Owner: Tech lead · Status: Draft v0.2 · Last updated: 2026-10-23
 > Related: [Project Brief](../00-overview/PROJECT_BRIEF.md) · [Coding Standards](CODING_STANDARDS.md) · [Testing](TESTING.md) · [CI/CD](../05-ops/CICD.md) · [Deployment](../05-ops/DEPLOYMENT.md) · [Environment Setup](ENVIRONMENT_SETUP.md) · [Hackathon Plan](../08-project/IMPLEMENTATION_PLAN.md)
 
 ---
@@ -9,24 +9,29 @@ The HackCache '26 start time is disputed (Fri 00:00 vs Fri 21:30 IST, PROJECT_BR
 - The first commit after the confirmed start is tagged `build-start` and its timestamp is shown in the README.
 - Every commit after that is pushed within 30 minutes (no local-only history that could look back-dated).
 - Never rewrite published history (`git push --force` to `main` is blocked).
+- **Humans commit; AI agents do not.** Agents that write code or docs for this repo never run `git commit` or `git push`. The team reviews the working tree and commits (BUILD_CONVENTIONS §1.4).
 
 ---
 
-## 1. Repository shape: one monorepo, two package managers
+## 1. Repository shape: one monorepo, two toolchains
 
 | Ecosystem | Tool | Workspace definition | Lockfile |
 |---|---|---|---|
-| TypeScript (apps, packages, score verifier) | **pnpm 12.15.0** (via Corepack, pinned by `packageManager` in root `package.json`) | `pnpm-workspace.yaml`: `apps/*`, `packages/*`, `services/score-verifier`, `tests/e2e` | `pnpm-lock.yaml` |
-| Python (API, workflows, scripts) | **uv 0.13.5** | `services/api/pyproject.toml` (project `margdarshak-api`); `services/workflows` depends on it via a `[tool.uv.sources]` path entry | `services/api/uv.lock`, `services/workflows/uv.lock` |
+| TypeScript (apps, packages, score verifier, Render Workflows tasks) | **pnpm** via Corepack (`packageManager: pnpm@12.15.0` in root `package.json`; the installed 11.9 also works, BUILD_CONVENTIONS §2) | `pnpm-workspace.yaml`: `apps/*`, `packages/*`, `services/score-verifier`, `services/workflows`, `tests/e2e` | `pnpm-lock.yaml` |
+| Go (API) | **Go 1.27** modules | `services/api/go.mod` (module `github.com/sruj08/margadarshak/services/api`) | `services/api/go.sum` |
 
-Root scripts orchestrate both (`pnpm dev`, `pnpm test`, `pnpm lint` call `uv run …` for Python). See the root `package.json`.
+There is no Python in the repo (ADR-0011). Root `pnpm` scripts orchestrate the TS side and call `go` for the API. The tooling owner is moving the old aliases over; see [ENVIRONMENT_SETUP](ENVIRONMENT_SETUP.md) §6.3 for the Go commands to use meanwhile.
+
+`services/workflows` must be listed in `pnpm-workspace.yaml`. That file belongs to the tooling owner, who adds the entry when the package is created.
 
 ```
 margdarshak/
 ├── apps/web, apps/console           (pnpm)
 ├── packages/ui, game-core, rules, api-client (pnpm)
-├── services/score-verifier          (pnpm)
-├── services/api, services/workflows (uv)
+├── services/score-verifier          (pnpm, Node)
+├── services/workflows               (pnpm, Render Workflows TS tasks, @renderinc/sdk)
+├── services/api                     (Go: cmd/, internal/, migrations/, api/ generated)
+├── tests/golden                     (shared JSON fixtures, run by Go and TS)
 ├── rulepacks/                       (data, versioned with CalVer per pack)
 ├── api/openapi.yaml                 (contract; generated clients committed)
 ├── ai/prompts, ai/evals             (versioned prompts + eval sets)
@@ -114,6 +119,33 @@ Refs: D-05, D-25, EC-06
 
 `commitlint.config.cjs` extends `@commitlint/config-conventional` 21.2.4 with the custom types and the scope enum; `lefthook` runs it on `commit-msg`.
 
+### 3.1 Git hooks (`lefthook.yml`, lefthook 2.2.2)
+```yaml
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{ts,tsx,js,mjs,cjs,json,jsonc,css}"
+      run: corepack pnpm biome check --no-errors-on-unmatched {staged_files}
+    gofmt:
+      root: "services/api/"
+      glob: "*.go"
+      run: test -z "$(gofmt -l {staged_files})" || (gofmt -l {staged_files}; echo "run gofmt -w"; exit 1)
+    govet:
+      root: "services/api/"
+      glob: "*.go"
+      run: go vet ./...
+    secrets:
+      run: detect-secrets-hook --baseline .secrets.baseline {staged_files}
+commit-msg:
+  commands:
+    commitlint:
+      run: corepack pnpm commitlint --edit {1}
+```
+- Hooks are a fast local guard. CI repeats every check, plus golangci-lint, `govulncheck` and the full test suites.
+- `go vet ./...` runs at package level because vet cannot check a single file. It is quick for this module.
+- `lefthook install` runs from the root `prepare` script.
+
 ---
 
 ## 4. Pull requests
@@ -122,22 +154,26 @@ Refs: D-05, D-25, EC-06
 - Every change to `main` goes through a PR (branch protection: required checks, 1 approval in Phase 1–2, 2 for protected paths in Phase 3+, linear history, no force push, conversation resolution required).
 - PR title = the squash commit message (Conventional Commit format; checked by a CI job).
 - Size target ≤ 400 changed lines excluding generated files and fixtures; larger PRs need a reason in the description.
-- Generated files (`packages/api-client/src/schema.d.ts`, `packages/rules/src/generated/*`) must match their sources (CI regenerates and diffs).
+- Generated files must match their sources. CI regenerates them and diffs:
+  - `packages/api-client/src/schema.d.ts` and `packages/rules/src/generated/*`.
+  - Go: `services/api/api/*.gen.go` (oapi-codegen) and `services/api/internal/store/sqlcgen/` (sqlc), via `go generate ./... && git diff --exit-code`.
 - Draft PRs welcome; CI runs on drafts.
 
 ### 4.2 Required checks (names as they appear in GitHub; workflow YAML in [CI/CD](../05-ops/CICD.md))
 | Check | What |
 |---|---|
-| `lint` | Biome, ESLint (Next rules), Ruff, wording/fact lints, commitlint on PR title |
-| `typecheck` | `tsc --noEmit` all TS projects; `mypy --strict` |
-| `unit` | Vitest (TS), pytest (Python) with coverage gates ([TESTING](TESTING.md) §10) |
-| `golden` | rules + fees + journey golden suites (EC-01..EC-30) — required for any change under `rulepacks/`, `services/api/src/margdarshak/domain/` |
-| `contract` | adapter contract tests (mock adapters always; real adapters on nightly) |
+| `lint` | Biome, ESLint (Next rules), wording/fact lints, commitlint on PR title; Go: `gofmt -l`, `go vet ./...`, golangci-lint v2.15.0 |
+| `typecheck` | `tsc --noEmit` all TS projects; `go build ./...` and the generated-code drift check |
+| `unit` | Vitest (TS), `go test -race ./...` (Go, incl. integration on embedded Postgres 16), with coverage gates ([TESTING](TESTING.md) §10) |
+| `golden` | rules + fees + journey golden suites (EC-01..EC-30) on the Go engine and the TS mirror, plus the parity diff. Required for any change under `rulepacks/`, `tests/golden/`, `services/api/internal/{rules,journey,clock,domain}/`, `packages/rules/` |
+| `contract` | adapter contract tests (`go test -run Contract`; mock adapters always; real adapters on nightly) |
 | `replay` | game-core determinism + replay fixtures (browser build vs score-verifier build) |
 | `e2e` | Playwright + axe on the three deep slices (all stages on nightly) |
-| `evals` | ADK eval sets for changed agents/prompts (`ai/**`, `adapters/outbound/ai/**`) |
+| `evals` | Go eval harness (`go test -tags evals`) for changed agents/prompts (`ai/**`, `services/api/internal/adapters/ai/**`) |
 | `size` | `size-limit` (Lite < 300 KB) + Lighthouse CI budget |
-| `security` | `pnpm audit --prod`, `pip-audit`, `bandit`, `detect-secrets`, OpenAPI breaking-change diff |
+| `security` | `pnpm audit --prod`, `govulncheck ./...`, `gosec` (via golangci-lint), `detect-secrets`, OpenAPI breaking-change diff |
+
+The exact job names live in `.github/workflows/ci.yml`. The single required status check is `ci-gate`, which aggregates them ([CI/CD](../05-ops/CICD.md)).
 
 ### 4.3 PR template (`.github/pull_request_template.md`)
 ```markdown
@@ -158,7 +194,7 @@ Refs:
 - [ ] No fee/age/date/score computed outside rules engine / case clock / game-core
 - [ ] No ₹ literal, no banned wording (D-19)
 - [ ] No new PII; or PRIVACY data inventory updated
-- [ ] Under-18 gate respected (no AI, telemetry, streaks, squads)
+- [ ] Family mode respected (D-13 revised): AI works for every user; a minor's case needs the parent's consent; no analytics, behavioural tracking or ads on a child's data; squads/share cards only with the parent's consent
 - [ ] AI changes: eval suite green, no new tools that submit/pay/book
 
 ## Rollout
@@ -195,20 +231,26 @@ Team handles are placeholders until the GitHub org/team names are fixed (owner: 
 /services/score-verifier/           @margdarshak/games @margdarshak/backend
 /apps/web/src/features/games/       @margdarshak/games
 
-# Backend
+# Backend (Go)
 /services/api/                      @margdarshak/backend
-/services/api/src/margdarshak/domain/rules/   @margdarshak/backend @margdarshak/rules
-/services/api/src/margdarshak/domain/fees/    @margdarshak/backend @margdarshak/rules
-/services/workflows/                @margdarshak/backend
+/services/api/go.mod                @margdarshak/backend-platform
+/services/api/go.sum                @margdarshak/backend-platform
+/services/api/migrations/           @margdarshak/backend-platform
+/services/api/internal/rules/       @margdarshak/backend @margdarshak/rules
+/services/api/internal/privacy/     @margdarshak/backend @margdarshak/tech-lead
 /api/openapi.yaml                   @margdarshak/backend @margdarshak/frontend
+
+# Render Workflows tasks (TypeScript)
+/services/workflows/                @margdarshak/backend @margdarshak/ops
 
 # Rules data (maker-checker also enforced in the studio)
 /rulepacks/                         @margdarshak/rules
+/tests/golden/                      @margdarshak/rules
 /packages/rules/                    @margdarshak/rules
 
 # AI
 /ai/                                @margdarshak/ai
-/services/api/src/margdarshak/adapters/outbound/ai/   @margdarshak/ai
+/services/api/internal/adapters/ai/ @margdarshak/ai
 
 # Automation and infra
 /n8n/                               @margdarshak/ops
@@ -251,9 +293,17 @@ SemVer meaning for the product: MAJOR = breaking API (`/v2`) or data contract; M
 ---
 
 ## 7. Dependencies and generated code
-- Exact versions in `package.json` and `pyproject.toml` (see the files); lockfiles committed.
-- Renovate (Phase 1–2: weekly, grouped, automerge for patch devDependencies only; Phase 3+: + security PRs immediately). Major upgrades of Next, React, HeroUI, Phaser, ADK, `render-sdk` require an ADR note.
-- `pnpm gen:api` regenerates `packages/api-client` from `api/openapi.yaml`; `pnpm gen:rules` regenerates `packages/rules` types from `rulepacks/schema/`. CI fails on drift.
+- Exact versions in `package.json` (see the file) and in `services/api/go.mod` (Go modules are always exact). Lockfiles are committed: `pnpm-lock.yaml` and `go.sum`.
+- Only the BE-platform owner runs `go get` / `go mod tidy` during P0, so `go.mod` never conflicts (BUILD_CONVENTIONS §3). Others request a new module in their PR description.
+- Renovate:
+  - Phase 1–2: weekly, grouped, automerge for patch devDependencies only.
+  - Phase 3+: also security PRs immediately.
+  - It covers both the npm and the `gomod` managers.
+  - Major upgrades of Next, React, HeroUI, Phaser, ADK for Go (`google.golang.org/adk`), `google.golang.org/genai`, `@renderinc/sdk`, pgx or chi require an ADR note.
+- Code generation (CI fails on drift):
+  - `pnpm gen:api` regenerates `packages/api-client` from `api/openapi.yaml`.
+  - `pnpm gen:rules` regenerates `packages/rules` types from `rulepacks/schema/`.
+  - `cd services/api && go generate ./...` regenerates the Go server interfaces and models (oapi-codegen v2.8.0) and the typed queries (sqlc v1.31.1).
 - Never commit: `.env*` (except `.env.example`), secrets, real participant data, raw (unblurred) clips, n8n credentials, model API keys. `detect-secrets` baseline is committed and must stay clean.
 
 ---
@@ -268,7 +318,7 @@ SemVer meaning for the product: MAJOR = breaking API (`/v2`) or data contract; M
 ## 9. Hackathon build (Phase 1–2) vs Production (Phase 3+)
 | Area | Phase 1–2 | Phase 3+ |
 |---|---|---|
-| Approvals | 1 reviewer (module owner) | 2 for `domain/`, `rulepacks/`, auth, AI prompts, infra |
+| Approvals | 1 reviewer (module owner) | 2 for `services/api/internal/{domain,rules,privacy}/`, `rulepacks/`, auth, AI prompts, infra |
 | Deploy | Auto-deploy `main` to Render | Tag-based promotion dev → staging → prod; change advisory for state tenants |
 | Signing | Not required | Signed commits and tags (Sigstore/gitsign), SBOM per release |
 | Release cadence | As needed | Fortnightly; rule packs on their own cadence with notice to users (EC-27) |

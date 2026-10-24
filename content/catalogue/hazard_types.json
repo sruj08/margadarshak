@@ -1,0 +1,221 @@
+{
+  "$schema": "../schema/hazard-types.schema.json",
+  "file_kind": "hazard_types",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "NAZAR §3.3 enum with debrief mapping. Rule mapping follows DEBRIEF_SPEC §2.1 (pedestrian types → RR-PED-001, junction types → RR-JCT-001, truck types → RR-HVY-001); surface_hazard → RR-SRF-001 is an addition (the rule text describes that hazard). Types with no matching catalogue rule carry none, so the debrief cites UNKNOWN for them.",
+  "hazard_types": [
+    {
+      "hazard_type": "bus_stop_pedestrian",
+      "label": {
+        "en": "a person stepping out at a bus stop",
+        "hi": "बस स्टॉप पर सड़क पर आता व्यक्ति"
+      },
+      "definition_en": "a person steps out from behind or in front of a stopped bus",
+      "module_ids": ["M18"],
+      "skill_id": "SK-M18",
+      "rule_ids": ["RR-PED-001"],
+      "occlusion_drill_id": "DR-NAZ-OCCL-BUS_STOP_PEDESTRIAN",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "door_opening",
+      "label": {
+        "en": "a parked car's door opening",
+        "hi": "खड़ी कार का खुलता दरवाज़ा"
+      },
+      "definition_en": "a parked car door opens into the lane",
+      "module_ids": ["M5", "M17"],
+      "skill_id": "SK-M5",
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-DOOR_OPENING",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "auto_cut_in",
+      "label": {
+        "en": "an auto-rickshaw cutting in",
+        "hi": "अचानक सामने आता ऑटो-रिक्शा"
+      },
+      "definition_en": "an auto-rickshaw changes lane or stops abruptly in front",
+      "module_ids": ["M5"],
+      "skill_id": "SK-M5",
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-AUTO_CUT_IN",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "wrong_side_2w",
+      "label": {
+        "en": "a two-wheeler coming the wrong way",
+        "hi": "उल्टी दिशा से आता दोपहिया"
+      },
+      "definition_en": "a two-wheeler approaches against traffic",
+      "module_ids": ["M9"],
+      "skill_id": "SK-M9",
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-WRONG_SIDE_2W",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "cattle_animal",
+      "label": {
+        "en": "an animal moving into the road",
+        "hi": "सड़क पर आता जानवर"
+      },
+      "definition_en": "cattle, dogs or other animals move into the path",
+      "module_ids": ["M18"],
+      "skill_id": "SK-M18",
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-CATTLE_ANIMAL",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "child_school",
+      "label": {
+        "en": "a child near a school gate",
+        "hi": "स्कूल गेट के पास बच्चा"
+      },
+      "definition_en": "a child near a school gate moves toward the road",
+      "module_ids": ["M18"],
+      "skill_id": "SK-M18",
+      "rule_ids": ["RR-PED-001"],
+      "occlusion_drill_id": "DR-NAZ-OCCL-CHILD_SCHOOL",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "pedestrian_median",
+      "label": {
+        "en": "a person crossing from the median",
+        "hi": "डिवाइडर से सड़क पार करता व्यक्ति"
+      },
+      "definition_en": "a pedestrian steps off a median or crosses mid-block",
+      "module_ids": ["M18"],
+      "skill_id": "SK-M18",
+      "rule_ids": ["RR-PED-001"],
+      "occlusion_drill_id": "DR-NAZ-OCCL-PEDESTRIAN_MEDIAN",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "vehicle_pulling_out",
+      "label": {
+        "en": "a vehicle pulling out",
+        "hi": "किनारे से निकलता वाहन"
+      },
+      "definition_en": "a vehicle pulls out from a side road, parking or a driveway",
+      "module_ids": ["M6"],
+      "skill_id": "SK-M6",
+      "rule_ids": ["RR-JCT-001"],
+      "occlusion_drill_id": "DR-NAZ-OCCL-VEHICLE_PULLING_OUT",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "truck_left_turn",
+      "label": {
+        "en": "a truck or bus turning left",
+        "hi": "बाएँ मुड़ता ट्रक या बस"
+      },
+      "definition_en": "a truck or bus indicates or turns left across the rider's path",
+      "module_ids": ["M4"],
+      "skill_id": "SK-M4",
+      "rule_ids": ["RR-HVY-001"],
+      "occlusion_drill_id": "DR-NAZ-OCCL-TRUCK_LEFT_TURN",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "junction_emerging",
+      "label": {
+        "en": "a vehicle coming out at a junction",
+        "hi": "चौराहे पर निकलता वाहन"
+      },
+      "definition_en": "a vehicle emerges at an uncontrolled junction",
+      "module_ids": ["M6"],
+      "skill_id": "SK-M6",
+      "rule_ids": ["RR-JCT-001"],
+      "occlusion_drill_id": "DR-NAZ-OCCL-JUNCTION_EMERGING",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "overtaking_oncoming",
+      "label": {
+        "en": "an oncoming vehicle overtaking into your lane",
+        "hi": "आपकी लेन में ओवरटेक करता सामने का वाहन"
+      },
+      "definition_en": "an oncoming vehicle overtakes into the rider's lane",
+      "module_ids": ["M7"],
+      "skill_id": "SK-M7",
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-OVERTAKING_ONCOMING",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "parked_vehicle_hidden",
+      "label": {
+        "en": "someone hidden by a parked vehicle",
+        "hi": "खड़ी गाड़ी के पीछे छिपा कोई"
+      },
+      "definition_en": "a road user hidden by a parked vehicle appears",
+      "module_ids": ["M6", "M18"],
+      "skill_id": "SK-M6",
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-PARKED_VEHICLE_HIDDEN",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "cyclist",
+      "label": {
+        "en": "a cyclist swerving",
+        "hi": "लहराता साइकिल सवार"
+      },
+      "definition_en": "a cyclist wobbles, turns or swerves",
+      "module_ids": ["M18"],
+      "skill_id": "SK-M18",
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-CYCLIST",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "surface_hazard",
+      "label": {
+        "en": "a pothole, bump or water on the road",
+        "hi": "सड़क पर गड्ढा, ब्रेकर या पानी"
+      },
+      "definition_en": "pothole, unmarked speed breaker, gravel or water that forces an action",
+      "module_ids": ["M17"],
+      "skill_id": "SK-M17",
+      "rule_ids": ["RR-SRF-001"],
+      "occlusion_drill_id": "DR-NAZ-OCCL-SURFACE_HAZARD",
+      "mock_eligible": true,
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "hazard_type": "other",
+      "label": {
+        "en": "a road hazard",
+        "hi": "सड़क का कोई ख़तरा"
+      },
+      "definition_en": "a curator-described hazard (not for mocks until typed)",
+      "module_ids": [],
+      "skill_id": null,
+      "rule_ids": [],
+      "occlusion_drill_id": "DR-NAZ-OCCL-OTHER",
+      "mock_eligible": false,
+      "hi_review_status": "pending_native_review"
+    }
+  ]
+}

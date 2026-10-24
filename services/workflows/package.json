@@ -1,0 +1,29 @@
+{
+  "name": "@margdarshak/workflows",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Render Workflows tasks for Margdarshak (TypeScript SDK). Thin orchestrators: every decision and DB write is an HMAC-signed call to the Go API (/internal/job-steps/{step}).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/main.js",
+  "engines": {
+    "node": ">=22.12.0 <23"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "node --experimental-strip-types --conditions=margdarshak-source src/main.ts",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --experimental-strip-types --conditions=margdarshak-source \"test/**/*.test.ts\"",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "@google/genai": "catalog:",
+    "@margdarshak/clip-pipeline": "workspace:*",
+    "@renderinc/sdk": "1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

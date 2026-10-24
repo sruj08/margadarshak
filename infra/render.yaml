@@ -6,7 +6,7 @@
 # Facts this file relies on (from the spec page, 2026-10-23):
 #   - service types: web | pserv | worker | cron | keyvalue | workflow
 #   - region values: oregon | ohio | virginia | frankfurt | singapore (no India region)
-#   - workflow services: runtime node|python only; `region` REQUIRED; `plan`, `previews`,
+#   - workflow services: runtime node (we use TypeScript, ADR-0005) or Render's other SDK runtime; `region` REQUIRED; `plan`, `previews`,
 #     `preDeployCommand` and Docker fields NOT supported (compute plan is set per task in code).
 #   - new compute plan IDs (renamed 26 Aug 2026, "no changes to pricing"):
 #       starter -> 0.5c-512mb, standard -> 1c-2g, pro -> 2c-4g (https://render.com/docs/compute-plans-update)
@@ -18,8 +18,12 @@
 # [unverified, owner: Ops lead, 2026-10-24 H0] The spec page did not document a start-command
 # field for workflow services. We use `startCommand` (the dashboard calls it "Start command",
 # see research/B-sponsors.md §1 "Deploy"). If `render blueprint validate` rejects it, create the
-# workflow service with `render workflows create ... --run-command "python main.py"` and delete
-# the block below.
+# workflow service with `render workflows create ... --run-command "node services/workflows/dist/main.js"`
+# and delete the block below.
+#
+# Languages (ADR-0011, ADR-0005): the API is Go 1.27 (one static binary in a distroless image);
+# Render Workflows tasks are TypeScript (`@renderinc/sdk` 1.4.0) in services/workflows; the score
+# verifier is Node. No Python service exists.
 #
 # DATA: the hackathon deployment holds SYNTHETIC data only. Render has no India region, so we
 # use Singapore (closest; D-17, war-room G4). Production for a state runs on MeghRaj/NIC or a
@@ -68,6 +72,13 @@ envVarGroups:
       - key: DATA_CLASS
         value: synthetic-only           # banner + guard: refuses real Aadhaar-like input (EC-20)
 
+  # P2: the secret the API signs compute calls with and the score verifier checks (decision D1).
+  # One generated value shared by both services (fromService cannot read another service's secret).
+  - name: margdarshak-internal
+    envVars:
+      - key: VERIFIER_SHARED_SECRET
+        generateValue: true             # the API reads it as SCORE_VERIFIER_SHARED_SECRET (alias VERIFIER_SHARED_SECRET)
+
 services:
   # -------------------------------------------------------------------------
   # 1. Citizen PWA (Next.js 16, standalone output)
@@ -107,17 +118,24 @@ services:
         generateValue: true
 
   # -------------------------------------------------------------------------
-  # 2. API (Python 3.12, FastAPI, ADK agents, adapters) - the one backend (D-17)
+  # 2. API (Go 1.27: chi, pgx + sqlc, goose, ADK for Go agents, adapters) - the one backend (D-17, ADR-0011)
+  #    runtime: docker = the same distroless image we ship to a state cloud. Native alternative:
+  #      runtime: go
+  #      buildCommand: cd services/api && go build -trimpath -tags timetzdata -o bin/api ./cmd/api
+  #      startCommand: ./services/api/bin/api serve
+  #    (then RULEPACK_DIR/PROMPT_DIR must point at ./rulepacks and ./ai/prompts in the checkout).
   # -------------------------------------------------------------------------
   - type: web
     name: margdarshak-api
     runtime: docker
     region: singapore
-    plan: 1c-2g                        # legacy "standard": ADK + Pydantic + SQLAlchemy need >512 MB
+    plan: 0.5c-512mb                   # legacy "starter": one static Go binary (pgx pool, ADK/genai Go) fits well under
+                                       # 512 MB with GOMEMLIMIT=400MiB; re-check under the k6 burst (PERFORMANCE.md) and
+                                       # move to 1c-2g if RSS > 70 % or p95 slips
     dockerfilePath: ./infra/docker/api.Dockerfile
     dockerContext: .
     healthCheckPath: /v1/health         # API-64
-    preDeployCommand: alembic -c alembic.ini upgrade head   # image WORKDIR is /app/services/api
+    preDeployCommand: /app/api migrate up   # goose migrations embedded in the binary (distroless: no shell)
     numInstances: 1
     autoDeployTrigger: off
     buildFilter:
@@ -125,11 +143,16 @@ services:
         - services/api/**
         - rulepacks/**
         - ai/prompts/**
+        - content/curriculum/**
+        - content/generated/**
         - infra/docker/api.Dockerfile
     envVars:
       - fromGroup: margdarshak-shared
+      - fromGroup: margdarshak-internal  # VERIFIER_SHARED_SECRET (compute calls are HMAC-signed)
       - key: PORT
         value: "8000"
+      - key: GOMEMLIMIT
+        value: 400MiB                   # soft heap limit below the 512 MB plan; GC works harder instead of OOM
       - key: OTEL_SERVICE_NAME
         value: margdarshak-api
       - key: DATABASE_URL
@@ -146,15 +169,33 @@ services:
           name: margdarshak-score-verifier
           type: pserv
           property: hostport
+      - key: SCORE_VERIFIER_TIMEOUT
+        value: 2s                       # one compute call, retry included; API-35 stores pending_verification past it
+      - key: CONTENT_DIR
+        value: /app/content             # curriculum/*.json (API-30) and generated/game-items.json (API-34), in the image
+      - key: OBJECT_STORE
+        value: mock                     # mock (API filesystem, /mock/media/) | r2: switch once the R2_* keys below are set
+      - key: MEDIA_PUBLIC_BASE_URL
+        sync: false                     # CDN host of the public clip bucket (r2); empty = presigned URLs
+      - key: MEDIA_URL_TTL
+        value: 2h
+      - key: N8N_CLIP_READY_PATH
+        value: /webhook/md/clip-ready   # W08 clip review queue
+      - key: N8N_STUDY_WEBHOOK_PATH
+        value: /webhook/md/session-end  # W14 field-test capture
       - key: WORKFLOW_SLUG
         fromService:
           name: margdarshak-workflows
           type: workflow
           property: slug                # task slug = {WORKFLOW_SLUG}/{task_name}
       - key: JOB_RUNNER
-        value: render_workflows         # JobRunner port; production = temporal (INFRASTRUCTURE.md §4.5)
+        value: render_workflows         # JobRunner port: inline | render_workflows | temporal (production, INFRASTRUCTURE.md §4.5)
       - key: RENDER_API_KEY
-        sync: false                     # used by render_sdk RenderAsync to start task runs
+        sync: false                     # Go adapter internal/jobs/renderworkflows: POST https://api.render.com/v1/task-runs
+                                        # {task: "<WORKFLOW_SLUG>/<task>", input: [...], idempotencyKey} -> 202 TaskRun;
+                                        # GET /v1/task-runs/{id} is polled into job_runs (no completion webhook)
+      - key: INTERNAL_HMAC_SECRET
+        sync: false                     # verifies HMAC on /internal/job-steps/* calls from the Workflows tasks (same value there)
       - key: GEMINI_API_KEY
         sync: false                     # PAID tier only (D-13, war-room G8)
       - key: GEMINI_MODEL_DEBRIEF
@@ -222,61 +263,74 @@ services:
       paths:
         - services/score-verifier/**
         - packages/game-core/**
+        - packages/gamification/**
+        - packages/clip-pipeline/**
+        - packages/content/**
+        - content/**
+        - rulepacks/**
         - infra/docker/score-verifier.Dockerfile
         - pnpm-lock.yaml
     envVars:
       - fromGroup: margdarshak-shared
+      - fromGroup: margdarshak-internal  # VERIFIER_SHARED_SECRET, the value the API signs with
       - key: PORT
         value: "8081"
       - key: OTEL_SERVICE_NAME
         value: margdarshak-score-verifier
-      - key: VERIFIER_SHARED_SECRET
-        generateValue: true             # copy to the API's env after first sync (fromService cannot read secrets)
+      - key: VERIFIER_BODY_LIMIT_BYTES
+        value: "1048576"                # 512 KB replays plus inline clip documents exceed the 256 KB default
+      - key: VERIFIER_CONTENT_DIR
+        value: /app/content             # written by `build:content` in the image build (server LL keys, formats)
 
   # -------------------------------------------------------------------------
-  # 4. Render Workflows (Python SDK `render>=1.0.1`) - durable jobs (D-15)
-  #    Tasks: clip_ingest (headline), clip_finalize, case_clock_sweep,
-  #           debrief_fanout, field_stats_nightly, rulepack_reevaluate
+  # 4. Render Workflows (TypeScript SDK `@renderinc/sdk` 1.4.0) - durable jobs (D-15, ADR-0005)
+  #    Tasks: clip_ingest (headline), clip_finalize, case_clock_sweep (+ clock_batch subtask),
+  #           session_debrief, debrief_backfill, nightly_stats, rulepack_reevaluate,
+  #           user_export, user_delete, replay_pending_sessions
+  #    Tasks are thin TS orchestrators (retries, fan-out with Promise.all over ctx.run):
+  #      - media steps run inside the task: ffmpeg transcode, face/plate blur (onnxruntime-node,
+  #        YuNet + plate model), flash check; they read/write R2 directly;
+  #      - every business step (clock batches, debrief, AI window proposals, stats, rule-pack
+  #        re-evaluation, export/delete, n8n hand-offs) is a call to the Go API over the private
+  #        network: POST http://$API_INTERNAL_HOSTPORT/internal/job-steps/{step} with HMAC
+  #        (INTERNAL_HMAC_SECRET). The API owns the database, Gemini and n8n; this service has
+  #        NO DATABASE_URL, no Gemini key and no n8n secret.
+  #    Build: services/workflows is the pnpm workspace member @margdarshak/workflows (its owner adds
+  #    it to pnpm-workspace.yaml), so the build runs from the repo root (no rootDir).
   # -------------------------------------------------------------------------
   - type: workflow
     name: margdarshak-workflows
-    runtime: python
+    runtime: node
     region: singapore                  # REQUIRED for workflows
-    rootDir: services/workflows
-    buildCommand: pip install --no-cache-dir -r requirements.txt
-    startCommand: python main.py        # main.py calls app.start(); see [unverified] note in the header
+    buildCommand: corepack enable && pnpm install --frozen-lockfile --filter "@margdarshak/workflows..." && pnpm --filter @margdarshak/workflows build
+    startCommand: node services/workflows/dist/main.js   # registers tasks; the SDK task server auto-starts. See [unverified] note in the header
     envVars:
       - fromGroup: margdarshak-shared
       - key: OTEL_SERVICE_NAME
         value: margdarshak-workflows
-      - key: DATABASE_URL
-        fromDatabase:
-          name: margdarshak-db
-          property: connectionString
       - key: API_INTERNAL_HOSTPORT
         fromService:
           name: margdarshak-api
           type: web
           property: hostport
-      - key: SCORE_VERIFIER_HOSTPORT
-        fromService:
-          name: margdarshak-score-verifier
-          type: pserv
-          property: hostport
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: GEMINI_MODEL_VISION
-        value: gemini-3.8-flash
-      - key: N8N_BASE_URL
-        sync: false
-      - key: N8N_HMAC_SECRET
-        sync: false
+      - key: INTERNAL_HMAC_SECRET
+        sync: false                     # same value as the API's INTERNAL_HMAC_SECRET
+      - key: INTERNAL_BEARER_TOKEN
+        sync: false                     # one of the API's INTERNAL_BEARER_TOKENS: /internal/job-steps/* checks bearer + HMAC (N8N_WORKFLOWS §1.2)
       - key: R2_ACCOUNT_ID
         sync: false
       - key: R2_ACCESS_KEY_ID
         sync: false
       - key: R2_SECRET_ACCESS_KEY
         sync: false
+      - key: R2_BUCKET_CLIPS
+        value: margdarshak-clips-public
+      - key: R2_BUCKET_INGEST
+        value: margdarshak-clips-ingest
+      - key: FFMPEG_PATH
+        sync: false                     # clip_ingest transcode (workstream G)
+      - key: BLUR_MODEL_DIR
+        sync: false                     # clip_ingest face/plate models (workstream G)
       - key: FAULT_INJECTION_CLIP_BLUR
         value: "off"                    # "once" makes blur fail on 1st attempt: visible retry for the demo (D-15)
 

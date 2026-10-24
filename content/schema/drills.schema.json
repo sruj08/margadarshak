@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://margdarshak.example/content/schema/drills.schema.json",
+  "title": "Drill ID catalogue (DEBRIEF_SPEC §4)",
+  "description": "content/catalogue/drills.json. Deep links margdarshak://play/<gameId>?drill=<DR-ID>&level=<n>.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "file_kind": {
+      "type": "string",
+      "const": "drills"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}\\.\\d+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "published"]
+    },
+    "licence": {
+      "type": "string",
+      "const": "CC-BY-4.0"
+    },
+    "attribution": {
+      "type": "string",
+      "const": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "drills": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "drill_id": {
+            "type": "string",
+            "pattern": "^DR-[A-Z]{2,3}-[A-Z0-9_-]+$"
+          },
+          "game_id": {
+            "type": "string",
+            "enum": [
+              "nazar",
+              "stopping_distance",
+              "blind_spot",
+              "junction_scan",
+              "track_twin",
+              "helmet_fit",
+              "golden_hour",
+              "night_glare",
+              "hill_road",
+              "ll_sim"
+            ]
+          },
+          "opens": {
+            "type": "string",
+            "minLength": 1
+          },
+          "levels": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "range"
+                  },
+                  "min": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "max": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                },
+                "required": ["kind", "min", "max"],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "mock"
+                  }
+                },
+                "required": ["kind"],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "none"
+                  }
+                },
+                "required": ["kind"],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "deeplink": {
+            "type": "string",
+            "pattern": "^margdarshak:\\/\\/play\\/[a-z_]+\\?drill=DR-[A-Z0-9_-]+(&level=\\{level\\})?$"
+          },
+          "hazard_type": {
+            "type": "string",
+            "enum": [
+              "bus_stop_pedestrian",
+              "door_opening",
+              "auto_cut_in",
+              "wrong_side_2w",
+              "cattle_animal",
+              "child_school",
+              "pedestrian_median",
+              "vehicle_pulling_out",
+              "truck_left_turn",
+              "junction_emerging",
+              "overtaking_oncoming",
+              "parked_vehicle_hidden",
+              "cyclist",
+              "surface_hazard",
+              "other"
+            ]
+          },
+          "sign_family": {
+            "type": "string",
+            "enum": ["MANDATORY", "CAUTIONARY", "INFORMATORY", "MARKINGS", "SIGNALS"]
+          },
+          "topic": {
+            "type": "string",
+            "enum": ["LL1", "LL2", "LL3", "LL4"]
+          },
+          "skill_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^SK-(LL[0-4]|M([1-9]|1\\d|2[0-2])|DL1)$"
+            }
+          },
+          "why": {
+            "type": "object",
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hi": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": ["en", "hi"],
+            "additionalProperties": false
+          },
+          "availability": {
+            "type": "string",
+            "enum": ["phase_1_2", "phase_3_plus"]
+          },
+          "template_only": {
+            "type": "boolean"
+          },
+          "review_status": {
+            "type": "string",
+            "enum": ["draft", "in_review", "approved"]
+          },
+          "hi_review_status": {
+            "type": "string",
+            "enum": ["pending_native_review", "approved"]
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "drill_id",
+          "game_id",
+          "opens",
+          "levels",
+          "deeplink",
+          "skill_ids",
+          "why",
+          "availability",
+          "template_only",
+          "review_status",
+          "hi_review_status"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["file_kind", "version", "status", "licence", "attribution", "drills"],
+  "additionalProperties": false
+}

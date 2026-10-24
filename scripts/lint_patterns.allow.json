@@ -1,0 +1,4 @@
+{
+  "$comment": "Waivers for lint_patterns (MD-235). Each entry needs a path (file, or folder ending in /), the DP rule id, a reason and the product lead's sign-off in the PR plus a CHANGELOG line (GAMIFICATION_ENGINE §12).",
+  "entries": []
+}

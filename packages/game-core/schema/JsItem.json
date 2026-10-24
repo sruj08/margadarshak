@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "junction": {
+      "type": "string",
+      "enum": ["T", "4arm"]
+    },
+    "threatSide": {
+      "type": "string",
+      "enum": ["right", "left"]
+    },
+    "occluded": {
+      "type": "boolean"
+    },
+    "creepClearDm": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "traffic": {
+      "maxItems": 16,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Za-z0-9_.:@-]+$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "car",
+              "two_wheeler",
+              "auto",
+              "truck",
+              "bus",
+              "pedestrian",
+              "cyclist",
+              "wrong_side_rider"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": ["right", "left"]
+          },
+          "spawnMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1200000
+          },
+          "spawnJitterMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "distAtSpawnM": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 500
+          },
+          "speedMps": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 30
+          }
+        },
+        "required": [
+          "agentId",
+          "kind",
+          "side",
+          "spawnMs",
+          "spawnJitterMs",
+          "distAtSpawnM",
+          "speedMps"
+        ]
+      }
+    },
+    "pedestrianOnCrossing": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "fromMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1200000
+            },
+            "toMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1200000
+            }
+          },
+          "required": ["fromMs", "toMs"]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "vehicleInJunction": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "fromMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1200000
+            },
+            "toMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1200000
+            }
+          },
+          "required": ["fromMs", "toMs"]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "junction",
+    "threatSide",
+    "occluded",
+    "creepClearDm",
+    "traffic",
+    "pedestrianOnCrossing",
+    "vehicleInJunction"
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/JsItem.json",
+  "title": "JsItem"
+}

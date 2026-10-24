@@ -10,7 +10,7 @@
 1. **Code decides; AI narrates.** Eligibility, fees, timelines, scores, the scam verdict, golden hour and the class planner are deterministic code (D-09). The model chooses IDs from closed lists and writes glue text.
 2. **No invented facts, structurally.** Closed outputs, number provenance, a no-digits rule in narration, and `UNKNOWN` as a first-class answer (04 §2). We prefer "we don't know" to a plausible guess.
 3. **AI only where a form, table or rule can't do the job** (04's rule). Every AI feature has a non-AI fallback that says the same facts.
-4. **Adults only, on the paid tier.** No AI for under-18s. No real person's data on the free tier (04 §0.1–0.2; D-13).
+4. **AI for everyone, on the paid tier (D-13 revised).** Every AI feature is available to every user. A learner under 18 uses it inside a parent's account (family mode) with the parent's consent, and a child's data is never used for profiling or ads. No real person's data on the free tier (04 §0.1–0.2).
 5. **Minimum data.** No Aadhaar, OTP, biometrics or face to any model. No audio or images stored. Telemetry is bounded and pseudonymous.
 6. **Private and face-saving.** Fails and weak spots are shown to the user only. No public loss, no shame, no fear (05; 08 §4.10).
 7. **Honest about limits.** On every AI surface: "AI can't book, pay or submit." Every rule shows `source` + `verified_on`. Every game is labelled "practice and familiarisation, not certification" (D-11).
@@ -66,7 +66,7 @@ Scale: **L0** = no AI. **L1** = AI suggests and a human decides every time. **L2
 **What we can and can't measure.**
 - We don't collect caste, religion or income, and we won't.
 - Gender is optional on the form (F-05) and is **never** sent to any model.
-- So fairness is measured on **inputs we control**: language, accent, script, name origin, region, disability modes, age group (adults) and device class.
+- So fairness is measured on **inputs we control**: language, accent, script, name origin, region, disability modes, age group and device class.
 
 ### 4.1 Slices and metrics
 
@@ -104,7 +104,7 @@ Scale: **L0** = no AI. **L1** = AI suggests and a human decides every time. **L2
 
 | # | Scenario | Who | Control |
 |---|---|---|---|
-| MU-01 | A minor uses the AI by lying about age | P-07 | Server-side DOB from the case; year-only Aadhaar treated with the latest birthday (EC-01). Residual risk logged as R-04/R-13; parental-consent flow is roadmap |
+| MU-01 | A minor lies about age to open their own account instead of family mode | P-07 | Server-side DOB from the case; year-only Aadhaar treated with the latest birthday (EC-01); declaration screen; family mode gives the same full product, including AI, so there is no reason to lie. Provider terms on minors: R-13 |
 | MU-02 | An agent/dalal uses voice or the decoder to run many clients' cases | P-04 misuse | Helper mode needs recorded consent per applicant (EC-25); rate limits per device; AI never touches Sarathi; consent revocation cascades |
 | MU-03 | Someone extracts the answer key via the tutor | learners, coaching shops | Tutor works only on the user's own answered item; variants (3–6 per concept); answer-key requests flagged by P4 |
 | MU-04 | Prompt injection to make the app state a fake fee or "no test needed" | scammers | Closed outputs, provenance, no rupee literals, judge; scam checker flags "no test needed" |
@@ -169,8 +169,8 @@ Further points the summaries mention, and our response:
 
 ## 8. Legal touchpoints for AI (summary; detail in docs/06-security-compliance)
 
-- **Gemini API terms:** 18+, no clients "likely to be accessed by" under-18s, paid tier for privacy (04 §0.1–0.2). The open question is logged as R-13.
-- **DPDP Act 2023 + Rules 2025:** purpose-bound consent per AI feature (`ai_coach`, `voice`, `voice_fill`, `decoder`, `sign_snap`, `commentary`); children = under 18; no tracking of children (s.9(3)). Wording: "built to DPDP Rules", never "DPDP-compliant" (D-19).
+- **Gemini API terms:** the account holder is 18+; paid tier for privacy (04 §0.1–0.2). The terms on services likely accessed by under-18s are residual risk R-13 (RISK_REGISTER, legal lead).
+- **DPDP Act 2023 + Rules 2025:** purpose-bound consent per AI feature (`ai_coach`, `voice`, `voice_fill`, `decoder`, `sign_snap`, `commentary`); children = under 18: verifiable parental consent through family mode (s.9(1)) and no tracking, profiling or targeted ads on children's data (s.9(3)). Wording: "built to DPDP Rules", never "DPDP-compliant" (D-19).
 - **Aadhaar Act:** no Aadhaar numbers, OTPs or biometrics, ever (D-07).
 - **Online Gaming Act 2025:** stake-free educational games; the AI never awards anything redeemable.
 - **CCPA dark-pattern guidelines 2023:** the coach never uses false urgency, nagging or confirm-shaming (08 §4.10).
@@ -180,7 +180,7 @@ Further points the summaries mention, and our response:
 
 | Topic | Hackathon | Production |
 |---|---|---|
-| Age gate | DOB-based server gate | Plus a legal opinion on "likely accessed" (R-13); verifiable parental consent flow for any minor feature (still no AI) |
+| Family mode (D-13 revised) | Adult account holder; parent's consent artefacts (`acting_for` = parent, declaration) | Rule 10 parental verification via DigiLocker or details already held; R-13 closed by the legal lead |
 | Fairness | Eval-set slices | Quarterly external audit; published summary |
 | Grievance | Email + form | Named grievance officer, SLA, AI-harm category in the dashboard |
 | Providers | Gemini Developer API (paid), Sarvam | Vertex AI India region under enterprise terms (legal review), Bhashini where proven |

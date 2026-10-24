@@ -1,7 +1,7 @@
 # Content Style
 > Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Content lead · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [Design system](DESIGN_SYSTEM.md) · [Accessibility](ACCESSIBILITY.md) · [Localization](LOCALIZATION.md) (glossary §10) · [UI spec](UI_SPEC.md) · [Prompts](../04-ai/PROMPTS.md) · [Privacy](../06-security-compliance/PRIVACY.md) · [Compliance](../06-security-compliance/COMPLIANCE.md)
-> Inputs: `research/ps1-deep/05-psychology.md` (the evidence for every tone rule here), `06-design-language.md` §B12, `war-room/margdarshak-verification.md` D-01, D-05, D-06, D-09, D-10, D-13, D-14, D-19.
+> Inputs: `research/ps1-deep/05-psychology.md` (the evidence for every tone rule here), `06-design-language.md` §B12, `war-room/margdarshak-verification.md` D-01, D-05, D-06, D-09, D-10, D-13 (revised 23 Oct 2026), D-14, D-19.
 > **Hindi strings in this file are drafts.** Every one needs native review (LOCALIZATION §11) before it ships [reviewer: Hindi native speaker on the team; due 2026-10-24].
 
 ---
@@ -310,11 +310,11 @@ Pattern: **Title** (what) · **Fix** (what to do) · source chip · confidence.
 | MC-234 | Freeze applied (silent; shown later) | We used a rest day for {weekday}. You have {freezes} left this month. | {weekday} के लिए हमने आराम का दिन इस्तेमाल किया। इस महीने आपके पास {freezes} बचे हैं। |
 | MC-235 | Streak end (test day) | Your practice streak ends here, and that's the point. Good luck on the road. | आपकी अभ्यास स्ट्रीक यहीं पूरी होती है, और यही मक़सद था। सड़क पर ध्यान से चलें। |
 | MC-236 | Squad | Your squad spots hazards together. No rankings, just a shared score. | आपकी टीम मिलकर ख़तरे पहचानती है। कोई रैंकिंग नहीं, बस साझा स्कोर। |
-| MC-237 | Under 18 | Streaks and squads are for 18+. Your lessons and mock tests are all here. | स्ट्रीक और टीम 18+ के लिए हैं। आपके पाठ और मॉक टेस्ट सब यहाँ हैं। |
+| MC-237 | Family mode: squad or share card (D-13 revised) | Squads and share cards need your parent's OK. Ask them to turn it on in Family settings. | टीम और शेयर कार्ड के लिए आपके माता-पिता की मंज़ूरी चाहिए। उनसे फ़ैमिली सेटिंग में इसे चालू करने को कहें। |
 
 > **Banned streak copy:** "You lost your streak", "Don't break your streak!", sad faces, or any countdown to streak loss (R9, CCPA).
 
-### 5.16 AI surfaces (D-09, D-10, D-13; EC-20, EC-29)
+### 5.16 AI surfaces (D-09, D-10, D-13 revised; EC-20, EC-29)
 | ID | Surface | EN | HI (draft) |
 |---|---|---|---|
 | MC-250 | AI chip | AI | AI |
@@ -327,7 +327,7 @@ Pattern: **Title** (what) · **Fix** (what to do) · source chip · confidence.
 | MC-257 | "I don't know" (allowed answer) | I don't know that for {state} yet. Please confirm at your RTO. | {state} के लिए यह मुझे अभी नहीं पता। कृपया अपने आरटीओ से पक्का करें। |
 | MC-258 | PII typed (EC-20) | We removed a number that looked like an Aadhaar number or OTP. Never share these, here or anywhere. | हमने एक नंबर हटा दिया जो आधार नंबर या OTP जैसा लग रहा था। इन्हें कहीं भी, किसी से साझा न करें। |
 | MC-259 | AI unavailable (EC-29) | Our AI is resting right now. You're seeing a standard summary instead. Your scores are the same. | हमारा AI अभी आराम कर रहा है। आपको सामान्य सारांश दिख रहा है। आपके स्कोर वही हैं। |
-| MC-260 | Under 18 (D-13) | AI features are for 18+, under our AI provider's terms. Everything else works for you. | हमारे AI प्रदाता की शर्तों के अनुसार AI सुविधाएँ 18+ के लिए हैं। बाकी सब आपके लिए चलता है। |
+| MC-260 | Family mode (D-13 revised) | You're learning in {account_holder}'s account (family mode). Every feature works for you, AI included, with their consent. | आप {account_holder} के अकाउंट में सीख रहे हैं (फ़ैमिली मोड)। उनकी सहमति से हर सुविधा, AI समेत, आपके लिए चलती है। |
 | MC-261 | Mic privacy chip | Mic on · not stored | माइक चालू · सेव नहीं होता |
 | MC-262 | Fill confirmation | Filled your {field_name}. OK? | आपका {field_name} भर दिया। ठीक है? |
 | MC-263 | Didn't catch | Say it again, or type it. | फिर से बोलिए, या लिख दीजिए। |
@@ -378,12 +378,12 @@ Pattern: **Title** (what) · **Fix** (what to do) · source chip · confidence.
 |---|---|---|---|
 | MC-320 | Save my case | Save your plan and answers so you can continue on any device. We keep them for {retention}. Delete any time. | अपनी योजना और जवाब सेव करें ताकि किसी भी डिवाइस पर आगे बढ़ सकें। हम इन्हें {retention} तक रखते हैं। कभी भी डिलीट करें। |
 | MC-321 | WhatsApp reminders | Send reminders about your dates to {phone_masked}, at most 1 a day. Reply STOP any time. | आपकी तारीख़ों के रिमाइंडर {phone_masked} पर भेजें, दिन में ज़्यादा से ज़्यादा 1। कभी भी STOP लिखें। |
-| MC-322 | Voice guide | Process your voice to understand what you ask. Audio goes to {voice_processors} and isn't stored by us. 18+ only. | आप क्या पूछ रहे हैं, यह समझने के लिए आपकी आवाज़ प्रोसेस करें। ऑडियो {voice_processors} को जाता है और हम इसे सेव नहीं करते। सिर्फ़ 18+। |
-| MC-323 | AI debrief and tutor | Let AI write your practice feedback from your scores. Your name, phone and documents are never sent. 18+ only. | AI को आपके स्कोर से अभ्यास की प्रतिक्रिया लिखने दें। आपका नाम, फ़ोन और दस्तावेज़ कभी नहीं भेजे जाते। सिर्फ़ 18+। |
-| MC-324 | Practice data | Keep your practice history (scores, topics) to plan your reviews. 18+ only. | आपके रिवीज़न की योजना के लिए अभ्यास का इतिहास (स्कोर, विषय) रखें। सिर्फ़ 18+। |
+| MC-322 | Voice guide | Process your voice to understand what you ask. Audio goes to {voice_processors} and isn't stored by us. | आप क्या पूछ रहे हैं, यह समझने के लिए आपकी आवाज़ प्रोसेस करें। ऑडियो {voice_processors} को जाता है और हम इसे सेव नहीं करते। |
+| MC-323 | AI debrief and tutor | Let AI write your practice feedback from your scores. Your name, phone and documents are never sent. | AI को आपके स्कोर से अभ्यास की प्रतिक्रिया लिखने दें। आपका नाम, फ़ोन और दस्तावेज़ कभी नहीं भेजे जाते। |
+| MC-324 | Practice data | Keep your practice history (scores, topics) to plan your reviews. | आपके रिवीज़न की योजना के लिए अभ्यास का इतिहास (स्कोर, विषय) रखें। |
 | MC-325 | Field study (F-57) | Take part in our study of hazard spotting. We use an anonymous ID. You can leave and delete your data any time. 18+ only. | ख़तरा पहचान पर हमारे अध्ययन में हिस्सा लें। हम एक गुमनाम ID इस्तेमाल करते हैं। आप कभी भी छोड़ सकते हैं और अपना डेटा डिलीट कर सकते हैं। सिर्फ़ 18+। |
 | MC-326 | Helper link | Let {helper_name} help with your application (MC-301). | {helper_name} को आपके आवेदन में मदद करने दें (MC-301)। |
-| MC-327 | Guardian (16–17, EC-05) | Your guardian's consent is needed for a moped licence. Margdarshak shows you the plan only; it doesn't keep a history for under-18s. | मोपेड लाइसेंस के लिए अभिभावक की सहमति ज़रूरी है। मार्गदर्शक आपको सिर्फ़ योजना दिखाता है; 18 से कम उम्र के लिए इतिहास नहीं रखता। |
+| MC-327 | Guardian (16–17, EC-05; family mode, D-13 revised) | Your guardian's consent is needed for a moped licence. Your case lives in your parent's account, and their consent covers every feature, AI included. | मोपेड लाइसेंस के लिए अभिभावक की सहमति ज़रूरी है। आपका केस आपके माता-पिता के अकाउंट में रहता है, और उनकी सहमति हर सुविधा पर लागू होती है, AI समेत। |
 | MC-328 | Analytics notice (no consent toggle: no PII, aggregated, F-55) | We count how screens are used, without names or numbers, to make Margdarshak easier. | मार्गदर्शक को आसान बनाने के लिए हम बिना नाम या नंबर के गिनते हैं कि स्क्रीन कैसे इस्तेमाल होती हैं। |
 | MC-329 | Withdraw | Turn this off any time in Privacy. | इसे कभी भी प्राइवेसी में बंद करें। |
 
@@ -423,7 +423,7 @@ Variables are formatted server-side. **No personal data beyond the date** appear
 2. **Tone instruction** given to every agent: "calm guide, आप in Hindi, ≤ 2 sentences, never fear, never shame, never mention death or crashes, never say 'safe', 'official', 'verified' or 'guaranteed'."
 3. The validator rejects outputs that contain banned words (§8) or digits. Rejected outputs fall back to the template version (EC-29).
 4. Every AI surface shows `AIChip` + MC-252 or MC-253.
-5. Under 18: no AI text anywhere; templates only (D-13).
+5. AI text is the same for every user, including a learner under 18 in family mode (D-13 revised). Copy addressed to a minor never uses fear, shame or comparison, as everywhere else.
 
 ---
 
@@ -497,7 +497,7 @@ Variables are formatted server-side. **No personal data beyond the date** appear
 - [ ] Source chip where a rule is stated.
 - [ ] Works read aloud.
 - [ ] Hindi reviewed natively (LOCALIZATION §11).
-- [ ] Under-18 variant considered.
+- [ ] Family-mode variant considered (learner under 18 in a parent's account; squad/share copy asks for the parent's OK).
 - [ ] Fits at 200% text and in the +40% pseudo-locale.
 
 ---

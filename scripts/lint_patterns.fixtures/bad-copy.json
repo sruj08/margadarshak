@@ -1,0 +1,12 @@
+{
+  "slots": {
+    "urgent": "Hurry! Only 3 slots left today.",
+    "urgentHi": "जल्दी करें, स्लॉट भर रहे हैं"
+  },
+  "consent": {
+    "decline": "No, I like paying agents",
+    "trick": "Don't not send me updates"
+  },
+  "squad": { "nudge": "Asha beat you this week" },
+  "nazar": { "fear": "One second late and you will die" }
+}

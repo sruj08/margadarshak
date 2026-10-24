@@ -1,0 +1,5 @@
+# Local caches: embedded-postgres binaries and dev data (never committed)
+.cache/
+reports/
+*.test
+*.out

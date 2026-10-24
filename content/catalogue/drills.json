@@ -1,0 +1,1236 @@
+{
+  "$schema": "../schema/drills.schema.json",
+  "file_kind": "drills",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "DEBRIEF_SPEC §4 with DR-NAZ-OCCL-<TYPE> expanded to one drill per NAZAR §3.3 hazard type (TYPE = hazard_type upper-cased, the convention game-core emits). availability marks drills whose game is not built in Phase 1–2 (GAME_DESIGN §1.4: G8/G9 storyboard only, G5 car segments later); coach and voice allowlists only take phase_1_2 drills.",
+  "drills": [
+    {
+      "drill_id": "DR-NAZ-OCCL-BUS_STOP_PEDESTRIAN",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type bus_stop_pedestrian",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-BUS_STOP_PEDESTRIAN&level={level}",
+      "hazard_type": "bus_stop_pedestrian",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "Short bus-stop clips that pause just before someone steps out.",
+        "hi": "बस स्टॉप की छोटी क्लिप, जो किसी के सड़क पर आने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-DOOR_OPENING",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type door_opening",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-DOOR_OPENING&level={level}",
+      "hazard_type": "door_opening",
+      "skill_ids": ["SK-M5"],
+      "why": {
+        "en": "Clips past parked cars that pause just before a door opens.",
+        "hi": "खड़ी कारों के पास की क्लिप, जो दरवाज़ा खुलने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-AUTO_CUT_IN",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type auto_cut_in",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-AUTO_CUT_IN&level={level}",
+      "hazard_type": "auto_cut_in",
+      "skill_ids": ["SK-M5"],
+      "why": {
+        "en": "Clips with autos ahead that pause just before one cuts in.",
+        "hi": "आगे चलते ऑटो की क्लिप, जो किसी ऑटो के अचानक सामने आने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-WRONG_SIDE_2W",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type wrong_side_2w",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-WRONG_SIDE_2W&level={level}",
+      "hazard_type": "wrong_side_2w",
+      "skill_ids": ["SK-M9"],
+      "why": {
+        "en": "Clips that pause just before a two-wheeler appears on the wrong side.",
+        "hi": "ऐसी क्लिप जो उल्टी दिशा से दोपहिया दिखने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-CATTLE_ANIMAL",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type cattle_animal",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-CATTLE_ANIMAL&level={level}",
+      "hazard_type": "cattle_animal",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "Clips that pause just before an animal moves into the road.",
+        "hi": "ऐसी क्लिप जो किसी जानवर के सड़क पर आने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-CHILD_SCHOOL",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type child_school",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-CHILD_SCHOOL&level={level}",
+      "hazard_type": "child_school",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "School-gate clips that pause just before a child moves toward the road.",
+        "hi": "स्कूल गेट की क्लिप, जो बच्चे के सड़क की ओर बढ़ने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-PEDESTRIAN_MEDIAN",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type pedestrian_median",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-PEDESTRIAN_MEDIAN&level={level}",
+      "hazard_type": "pedestrian_median",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "Clips that pause just before someone steps off the median.",
+        "hi": "ऐसी क्लिप जो किसी के डिवाइडर से उतरने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-VEHICLE_PULLING_OUT",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type vehicle_pulling_out",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-VEHICLE_PULLING_OUT&level={level}",
+      "hazard_type": "vehicle_pulling_out",
+      "skill_ids": ["SK-M6"],
+      "why": {
+        "en": "Clips that pause just before a vehicle pulls out from the side.",
+        "hi": "ऐसी क्लिप जो किसी वाहन के किनारे से निकलने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-TRUCK_LEFT_TURN",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type truck_left_turn",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-TRUCK_LEFT_TURN&level={level}",
+      "hazard_type": "truck_left_turn",
+      "skill_ids": ["SK-M4"],
+      "why": {
+        "en": "Clips that pause just before a truck or bus turns left.",
+        "hi": "ऐसी क्लिप जो ट्रक या बस के बाएँ मुड़ने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-JUNCTION_EMERGING",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type junction_emerging",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-JUNCTION_EMERGING&level={level}",
+      "hazard_type": "junction_emerging",
+      "skill_ids": ["SK-M6"],
+      "why": {
+        "en": "Junction clips that pause just before a vehicle comes out.",
+        "hi": "चौराहे की क्लिप, जो किसी वाहन के निकलने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-OVERTAKING_ONCOMING",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type overtaking_oncoming",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-OVERTAKING_ONCOMING&level={level}",
+      "hazard_type": "overtaking_oncoming",
+      "skill_ids": ["SK-M7"],
+      "why": {
+        "en": "Clips that pause just before an oncoming vehicle pulls out to overtake.",
+        "hi": "ऐसी क्लिप जो सामने के वाहन के ओवरटेक के लिए निकलने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-PARKED_VEHICLE_HIDDEN",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type parked_vehicle_hidden",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-PARKED_VEHICLE_HIDDEN&level={level}",
+      "hazard_type": "parked_vehicle_hidden",
+      "skill_ids": ["SK-M6"],
+      "why": {
+        "en": "Clips that pause just before someone appears from behind a parked vehicle.",
+        "hi": "ऐसी क्लिप जो खड़ी गाड़ी के पीछे से किसी के निकलने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-CYCLIST",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type cyclist",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-CYCLIST&level={level}",
+      "hazard_type": "cyclist",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "Clips that pause just before a cyclist wobbles or turns.",
+        "hi": "ऐसी क्लिप जो साइकिल सवार के लहराने या मुड़ने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-SURFACE_HAZARD",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type surface_hazard",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-SURFACE_HAZARD&level={level}",
+      "hazard_type": "surface_hazard",
+      "skill_ids": ["SK-M17"],
+      "why": {
+        "en": "Clips that pause just before a pothole, bump or water patch.",
+        "hi": "ऐसी क्लिप जो गड्ढे, ब्रेकर या पानी से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-OCCL-OTHER",
+      "game_id": "nazar",
+      "opens": "learn mode: 3 occlusion clips of hazard_type other",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-OCCL-OTHER&level={level}",
+      "hazard_type": "other",
+      "notes": "Curator-typed 'other' clips; never used in mocks (NAZAR §3.3). Kept so every hazard type has its occlusion drill.",
+      "skill_ids": [],
+      "why": {
+        "en": "Clips that pause just before a mixed set of hazards develops.",
+        "hi": "ऐसी क्लिप जो अलग-अलग तरह के ख़तरे बनने से ठीक पहले रुकती हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-QUIET",
+      "game_id": "nazar",
+      "opens": "practice: 2 quiet clips + 1 hazard clip (calm tapping)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 3
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-QUIET&level={level}",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "Quiet clips with one real hazard, to practise tapping only when something develops.",
+        "hi": "शांत क्लिप और एक असली ख़तरा, ताकि आप तभी टैप करें जब सच में कुछ बन रहा हो।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-CALM",
+      "game_id": "nazar",
+      "opens": "practice: \"one tap per hazard\" coaching set",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 3
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-CALM&level={level}",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "A coaching set on one calm tap for each hazard.",
+        "hi": "हर ख़तरे पर एक शांत टैप का अभ्यास।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-MOCK",
+      "game_id": "nazar",
+      "opens": "a fresh Kerala-format mock (unseen clips)",
+      "levels": {
+        "kind": "mock"
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-MOCK",
+      "skill_ids": [],
+      "why": {
+        "en": "A fresh mock in Kerala's announced format (as reported), with clips you haven't seen.",
+        "hi": "केरल के घोषित फ़ॉर्मैट (जैसा बताया गया) में नया मॉक, ऐसी क्लिप के साथ जो आपने नहीं देखीं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NAZ-COMM",
+      "game_id": "nazar",
+      "opens": "commentary on 1 clip (online, every user; record-then-score, D-12)",
+      "levels": {
+        "kind": "range",
+        "min": 2,
+        "max": 4
+      },
+      "deeplink": "margdarshak://play/nazar?drill=DR-NAZ-COMM&level={level}",
+      "skill_ids": ["SK-M18"],
+      "why": {
+        "en": "Say out loud what you see on one clip; it trains you to name hazards early.",
+        "hi": "एक क्लिप पर जो दिखे वह बोलकर बताएँ; इससे ख़तरों को जल्दी पहचानने की आदत बनती है।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-SD-PREDICT",
+      "game_id": "stopping_distance",
+      "opens": "round 1 at dry",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 4
+      },
+      "deeplink": "margdarshak://play/stopping_distance?drill=DR-SD-PREDICT&level={level}",
+      "skill_ids": ["SK-M1"],
+      "why": {
+        "en": "Predict the stopping distance on a dry road, then see the real one.",
+        "hi": "सूखी सड़क पर रुकने की दूरी का अंदाज़ा लगाएँ, फिर असली दूरी देखें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-SD-PREDICT-WET",
+      "game_id": "stopping_distance",
+      "opens": "round 1 at wet",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 4
+      },
+      "deeplink": "margdarshak://play/stopping_distance?drill=DR-SD-PREDICT-WET&level={level}",
+      "skill_ids": ["SK-M1", "SK-M16"],
+      "why": {
+        "en": "Predict the stopping distance on a wet road, then compare it with the real one.",
+        "hi": "गीली सड़क पर रुकने की दूरी का अंदाज़ा लगाएँ, फिर असली दूरी से मिलाएँ।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-SD-STREET",
+      "game_id": "stopping_distance",
+      "opens": "round 2 residential street",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 4
+      },
+      "deeplink": "margdarshak://play/stopping_distance?drill=DR-SD-STREET&level={level}",
+      "skill_ids": ["SK-M1", "SK-M2"],
+      "why": {
+        "en": "A residential street where you choose when to brake.",
+        "hi": "रिहायशी गली, जहाँ आप तय करते हैं कि ब्रेक कब लगाना है।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-SD-SIGHT-DRY",
+      "game_id": "stopping_distance",
+      "opens": "round 3 (dry)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/stopping_distance?drill=DR-SD-SIGHT-DRY&level={level}",
+      "skill_ids": ["SK-M1"],
+      "why": {
+        "en": "Pick a speed for how far you can see, on a dry road.",
+        "hi": "सूखी सड़क पर, जितनी दूर दिखे उसके हिसाब से रफ़्तार चुनें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-SD-SIGHT-WET",
+      "game_id": "stopping_distance",
+      "opens": "round 3 (wet)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/stopping_distance?drill=DR-SD-SIGHT-WET&level={level}",
+      "skill_ids": ["SK-M1", "SK-M16"],
+      "why": {
+        "en": "Pick a speed for how far you can see, on a wet road.",
+        "hi": "गीली सड़क पर, जितनी दूर दिखे उसके हिसाब से रफ़्तार चुनें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-BS-PLACE",
+      "game_id": "blind_spot",
+      "opens": "Part A (place the two-wheeler)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/blind_spot?drill=DR-BS-PLACE&level={level}",
+      "skill_ids": ["SK-M4"],
+      "why": {
+        "en": "Place the bike outside each no-zone around a truck or bus.",
+        "hi": "ट्रक या बस के हर नो-ज़ोन से बाहर बाइक रखने का अभ्यास।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-BS-RIDE",
+      "game_id": "blind_spot",
+      "opens": "Part B (ride)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/blind_spot?drill=DR-BS-RIDE&level={level}",
+      "skill_ids": ["SK-M4"],
+      "why": {
+        "en": "Ride past a truck and stay where the driver can see you.",
+        "hi": "ट्रक के पास से निकलें और वहाँ रहें जहाँ ड्राइवर आपको देख सके।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-BS-RIDE-LEFTTURN",
+      "game_id": "blind_spot",
+      "opens": "Part B variant: a truck indicating left",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/blind_spot?drill=DR-BS-RIDE-LEFTTURN&level={level}",
+      "skill_ids": ["SK-M4", "SK-M5"],
+      "why": {
+        "en": "A truck signals left; practise holding back until the turn is done.",
+        "hi": "ट्रक बायाँ इंडिकेटर देता है; मोड़ पूरा होने तक पीछे रुकने का अभ्यास।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-BS-MIRROR",
+      "game_id": "blind_spot",
+      "opens": "Part B variant: lane changes with mirror checks",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/blind_spot?drill=DR-BS-MIRROR&level={level}",
+      "skill_ids": ["SK-M4"],
+      "why": {
+        "en": "Lane changes where you check the mirror before you move.",
+        "hi": "लेन बदलने का अभ्यास, जिसमें हिलने से पहले शीशा देखें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-JS-SCAN",
+      "game_id": "junction_scan",
+      "opens": "focused junction items: scan right, left, right",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/junction_scan?drill=DR-JS-SCAN&level={level}",
+      "skill_ids": ["SK-M6"],
+      "why": {
+        "en": "Junctions where you look right, left and right again before going.",
+        "hi": "ऐसे चौराहे, जहाँ निकलने से पहले दाएँ, बाएँ और फिर दाएँ देखना है।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-JS-GAP",
+      "game_id": "junction_scan",
+      "opens": "focused junction items: gap acceptance",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/junction_scan?drill=DR-JS-GAP&level={level}",
+      "skill_ids": ["SK-M6"],
+      "why": {
+        "en": "Choose only gaps you can complete before traffic reaches you.",
+        "hi": "सिर्फ़ उतना फ़ासला चुनें जिसमें आप ट्रैफ़िक के पहुँचने से पहले निकल सकें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-JS-CREEP",
+      "game_id": "junction_scan",
+      "opens": "focused junction items: occluded view, creep and peek",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/junction_scan?drill=DR-JS-CREEP&level={level}",
+      "skill_ids": ["SK-M6"],
+      "why": {
+        "en": "Junctions with a blocked view, where you creep forward to see.",
+        "hi": "ऐसे चौराहे जहाँ नज़र रुकी हो और आपको धीरे-धीरे बढ़कर देखना हो।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-JS-YIELD",
+      "game_id": "junction_scan",
+      "opens": "focused junction items: yielding to pedestrians and vehicles in the junction",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/junction_scan?drill=DR-JS-YIELD&level={level}",
+      "skill_ids": ["SK-M6", "SK-M18"],
+      "why": {
+        "en": "Junctions with people crossing and vehicles already inside.",
+        "hi": "ऐसे चौराहे जहाँ लोग पार कर रहे हों और वाहन पहले से अंदर हों।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-TT-FIG8-SLOW",
+      "game_id": "track_twin",
+      "opens": "track segment: slow figure-8 (2W)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/track_twin?drill=DR-TT-FIG8-SLOW&level={level}",
+      "skill_ids": ["SK-DL1"],
+      "why": {
+        "en": "A slow figure-of-eight run, keeping both feet up.",
+        "hi": "धीमा, आठ के आकार का चक्कर, दोनों पैर ऊपर रखते हुए।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-TT-FIG8-WIDE",
+      "game_id": "track_twin",
+      "opens": "track segment: wide-line figure-8 (2W)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/track_twin?drill=DR-TT-FIG8-WIDE&level={level}",
+      "skill_ids": ["SK-DL1"],
+      "why": {
+        "en": "A figure-of-eight run on a wider line, clear of lines and cones.",
+        "hi": "चौड़ी लाइन पर आठ के आकार का चक्कर, लाइनों और कोन से दूर।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-TT-TIMED",
+      "game_id": "track_twin",
+      "opens": "track segment: full layout inside the time limit",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/track_twin?drill=DR-TT-TIMED&level={level}",
+      "skill_ids": ["SK-DL1"],
+      "why": {
+        "en": "A full practice-layout run inside the time limit, without rushing.",
+        "hi": "समय-सीमा के भीतर पूरा अभ्यास ट्रैक, बिना जल्दबाज़ी के।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-TT-GRADIENT",
+      "game_id": "track_twin",
+      "opens": "track segment: car gradient start",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/track_twin?drill=DR-TT-GRADIENT&level={level}",
+      "notes": "Car track content is Phase 3+ (GAME_DESIGN §1.4: Phase 1–2 is the 2W figure-8 only).",
+      "skill_ids": ["SK-DL1"],
+      "why": {
+        "en": "Car gradient starts without rolling back.",
+        "hi": "चढ़ाई पर कार को पीछे लुढ़काए बिना शुरू करना।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-TT-REVPARK",
+      "game_id": "track_twin",
+      "opens": "track segment: car reverse park",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/track_twin?drill=DR-TT-REVPARK&level={level}",
+      "notes": "Car track content is Phase 3+ (GAME_DESIGN §1.4).",
+      "skill_ids": ["SK-DL1"],
+      "why": {
+        "en": "Car reverse parking into a bay on the practice layout.",
+        "hi": "अभ्यास ट्रैक पर कार को रिवर्स करके पार्क करना।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-HF-STRAP",
+      "game_id": "helmet_fit",
+      "opens": "self-check set: strap and two-finger check",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 3
+      },
+      "deeplink": "margdarshak://play/helmet_fit?drill=DR-HF-STRAP&level={level}",
+      "skill_ids": ["SK-M3"],
+      "why": {
+        "en": "Go through the strap and two-finger check step by step.",
+        "hi": "स्ट्रैप और दो उँगली की जाँच, एक-एक कदम।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-HF-ISI",
+      "game_id": "helmet_fit",
+      "opens": "quiz set: ISI labels",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 3
+      },
+      "deeplink": "margdarshak://play/helmet_fit?drill=DR-HF-ISI&level={level}",
+      "skill_ids": ["SK-M3"],
+      "why": {
+        "en": "Spot genuine and fake ISI labels on helmets.",
+        "hi": "हेलमेट पर असली और नकली ISI लेबल पहचानें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-HF-PILLION",
+      "game_id": "helmet_fit",
+      "opens": "quiz set: pillion and child helmets",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 3
+      },
+      "deeplink": "margdarshak://play/helmet_fit?drill=DR-HF-PILLION&level={level}",
+      "skill_ids": ["SK-M3", "SK-M13"],
+      "why": {
+        "en": "Questions on helmets for pillions and children.",
+        "hi": "पीछे बैठी सवारी और बच्चों के हेलमेट पर सवाल।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-GH-ORDER",
+      "game_id": "golden_hour",
+      "opens": "scenario replay: put the steps in order",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 1
+      },
+      "deeplink": "margdarshak://play/golden_hour?drill=DR-GH-ORDER&level={level}",
+      "notes": "Template only (D-09, D-14); 'Draft, not medical advice' until medical sign-off.",
+      "skill_ids": ["SK-M19"],
+      "why": {
+        "en": "Replay the scene and put the steps in order.",
+        "hi": "दृश्य फिर से खेलें और कदम सही क्रम में रखें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": true,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-GH-MYTHS",
+      "game_id": "golden_hour",
+      "opens": "myths set about helping after a crash",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 1
+      },
+      "deeplink": "margdarshak://play/golden_hour?drill=DR-GH-MYTHS&level={level}",
+      "notes": "Template only. Myth answers cite RR-GHR-001 (s.134A, verified=false): legal review pending.",
+      "skill_ids": ["SK-M19"],
+      "why": {
+        "en": "Myths and facts about helping after a road accident.",
+        "hi": "सड़क हादसे के बाद मदद करने से जुड़े मिथक और तथ्य।"
+      },
+      "availability": "phase_1_2",
+      "template_only": true,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NG-DIP",
+      "game_id": "night_glare",
+      "opens": "level set: dipping for oncoming traffic",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/night_glare?drill=DR-NG-DIP&level={level}",
+      "skill_ids": ["SK-M8"],
+      "why": {
+        "en": "Dip the beam in time for oncoming traffic.",
+        "hi": "सामने से आते वाहन के लिए समय पर बीम डिप करें।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NG-GLARE",
+      "game_id": "night_glare",
+      "opens": "level set: glare (left edge, ease off)",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/night_glare?drill=DR-NG-GLARE&level={level}",
+      "skill_ids": ["SK-M8"],
+      "why": {
+        "en": "Look to the left edge and ease off when dazzled.",
+        "hi": "चकाचौंध होने पर बाएँ किनारे की ओर देखें और रफ़्तार कम करें।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NG-RANGE",
+      "game_id": "night_glare",
+      "opens": "level set: speed within headlight range",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/night_glare?drill=DR-NG-RANGE&level={level}",
+      "skill_ids": ["SK-M8"],
+      "why": {
+        "en": "Choose a speed that keeps you within your lights.",
+        "hi": "ऐसी रफ़्तार चुनें कि आप अपनी लाइट की पहुँच में रहें।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-NG-FOG",
+      "game_id": "night_glare",
+      "opens": "level set: fog",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/night_glare?drill=DR-NG-FOG&level={level}",
+      "skill_ids": ["SK-M8", "SK-M16"],
+      "why": {
+        "en": "Fog runs on low beam with a longer gap.",
+        "hi": "कोहरे में लो बीम और ज़्यादा फ़ासले के साथ चलना।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-HR-GEAR",
+      "game_id": "hill_road",
+      "opens": "level set: low-gear descents",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/hill_road?drill=DR-HR-GEAR&level={level}",
+      "skill_ids": ["SK-M14"],
+      "why": {
+        "en": "Downhill runs in a low gear, easy on the brakes.",
+        "hi": "नीचे के गियर में ढलान उतरना, ब्रेक पर कम ज़ोर।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-HR-YIELD",
+      "game_id": "hill_road",
+      "opens": "level set: narrow-section encounters",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/hill_road?drill=DR-HR-YIELD&level={level}",
+      "skill_ids": ["SK-M14"],
+      "why": {
+        "en": "Narrow sections where you wait at a widening.",
+        "hi": "तंग हिस्से, जहाँ आप चौड़ी जगह पर रुककर इंतज़ार करते हैं।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-HR-BENDS",
+      "game_id": "hill_road",
+      "opens": "level set: blind bends",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/hill_road?drill=DR-HR-BENDS&level={level}",
+      "skill_ids": ["SK-M14"],
+      "why": {
+        "en": "Blind bends with the horn and no overtaking.",
+        "hi": "अंधे मोड़: हॉर्न दें और ओवरटेक नहीं।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-HR-TRIP",
+      "game_id": "hill_road",
+      "opens": "trip-plan pre-game with a labelled sample advisory",
+      "levels": {
+        "kind": "range",
+        "min": 1,
+        "max": 5
+      },
+      "deeplink": "margdarshak://play/hill_road?drill=DR-HR-TRIP&level={level}",
+      "skill_ids": ["SK-M15"],
+      "why": {
+        "en": "Plan a hill trip from a sample advisory and choose where to stop.",
+        "hi": "सैंपल एडवाइज़री से पहाड़ी सफ़र की योजना बनाएँ और रुकने की जगह चुनें।"
+      },
+      "availability": "phase_3_plus",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-TOPIC-LL1",
+      "game_id": "ll_sim",
+      "opens": "due concepts in topic LL1",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-TOPIC-LL1",
+      "topic": "LL1",
+      "skill_ids": ["SK-LL1"],
+      "why": {
+        "en": "Questions due for review on road signs and markings.",
+        "hi": "रिवीज़न के लिए तैयार सवाल: सड़क संकेत और मार्किंग।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-TOPIC-LL2",
+      "game_id": "ll_sim",
+      "opens": "due concepts in topic LL2",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-TOPIC-LL2",
+      "topic": "LL2",
+      "skill_ids": ["SK-LL2"],
+      "why": {
+        "en": "Questions due for review on rules of the road.",
+        "hi": "रिवीज़न के लिए तैयार सवाल: सड़क के नियम।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-TOPIC-LL3",
+      "game_id": "ll_sim",
+      "opens": "due concepts in topic LL3",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-TOPIC-LL3",
+      "topic": "LL3",
+      "skill_ids": ["SK-LL3"],
+      "why": {
+        "en": "Questions due for review on driving and hand signals.",
+        "hi": "रिवीज़न के लिए तैयार सवाल: ड्राइविंग और हाथ के संकेत।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-TOPIC-LL4",
+      "game_id": "ll_sim",
+      "opens": "due concepts in topic LL4",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-TOPIC-LL4",
+      "topic": "LL4",
+      "skill_ids": ["SK-LL4"],
+      "why": {
+        "en": "Questions due for review on documents and duties.",
+        "hi": "रिवीज़न के लिए तैयार सवाल: दस्तावेज़ और कर्तव्य।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-SIGNS-MANDATORY",
+      "game_id": "ll_sim",
+      "opens": "due concepts in sign family MANDATORY",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-SIGNS-MANDATORY",
+      "sign_family": "MANDATORY",
+      "skill_ids": ["SK-LL1"],
+      "why": {
+        "en": "Mandatory signs: read the symbol inside the circle, not just the shape.",
+        "hi": "अनिवार्य संकेत: सिर्फ़ गोल आकार नहीं, अंदर का निशान पढ़ें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-SIGNS-CAUTIONARY",
+      "game_id": "ll_sim",
+      "opens": "due concepts in sign family CAUTIONARY",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-SIGNS-CAUTIONARY",
+      "sign_family": "CAUTIONARY",
+      "skill_ids": ["SK-LL1"],
+      "why": {
+        "en": "Cautionary signs: read the symbol inside the triangle.",
+        "hi": "चेतावनी संकेत: त्रिकोण के अंदर का निशान पढ़ें।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-SIGNS-INFORMATORY",
+      "game_id": "ll_sim",
+      "opens": "due concepts in sign family INFORMATORY",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-SIGNS-INFORMATORY",
+      "sign_family": "INFORMATORY",
+      "skill_ids": ["SK-LL1"],
+      "why": {
+        "en": "Informatory signs: what each blue board points you to.",
+        "hi": "सूचना संकेत: हर नीला बोर्ड आपको किस चीज़ की ओर बताता है।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-SIGNS-MARKINGS",
+      "game_id": "ll_sim",
+      "opens": "due concepts in sign family MARKINGS",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-SIGNS-MARKINGS",
+      "sign_family": "MARKINGS",
+      "skill_ids": ["SK-LL1"],
+      "why": {
+        "en": "Road markings: the lines and crossings, and what they ask of you.",
+        "hi": "सड़क की मार्किंग: लाइनें, क्रॉसिंग और उनका मतलब।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-SIGNS-SIGNALS",
+      "game_id": "ll_sim",
+      "opens": "due concepts in sign family SIGNALS",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-SIGNS-SIGNALS",
+      "sign_family": "SIGNALS",
+      "skill_ids": ["SK-LL1"],
+      "why": {
+        "en": "Traffic lights, steady and flashing.",
+        "hi": "ट्रैफ़िक लाइटें, स्थिर और चमकती हुई।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-CALIB",
+      "game_id": "ll_sim",
+      "opens": "calibration set (confidence before feedback)",
+      "levels": {
+        "kind": "none"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-CALIB",
+      "skill_ids": [],
+      "why": {
+        "en": "A set where you rate how sure you are before you see the answer.",
+        "hi": "ऐसा सेट जिसमें जवाब देखने से पहले बताना है कि आप कितने पक्के हैं।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "drill_id": "DR-LL-MOCK",
+      "game_id": "ll_sim",
+      "opens": "a mock in the state format from the rule pack (unseen variants)",
+      "levels": {
+        "kind": "mock"
+      },
+      "deeplink": "margdarshak://play/ll_sim?drill=DR-LL-MOCK",
+      "skill_ids": ["SK-LL0"],
+      "why": {
+        "en": "A fresh mock in your state's format from the rule pack.",
+        "hi": "रूल पैक से आपके राज्य के फ़ॉर्मैट में नया मॉक।"
+      },
+      "availability": "phase_1_2",
+      "template_only": false,
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    }
+  ]
+}

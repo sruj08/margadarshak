@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "flags": {
+      "maxItems": 64,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 32
+      }
+    },
+    "trust": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "timingMode": {
+      "type": "string",
+      "enum": ["rvfc", "fallback", "sim", "none"]
+    },
+    "provisional": {
+      "type": "boolean"
+    }
+  },
+  "required": ["flags", "trust", "timingMode", "provisional"],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/IntegrityReport.json",
+  "title": "IntegrityReport"
+}

@@ -1,0 +1,299 @@
+{
+  "$schema": "../schema/illustrations.schema.json",
+  "file_kind": "illustrations",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "LL3 pictures. Hand signals follow the signal schedule as commonly taught for left-hand traffic (right arm out of the driver's side), not yet checked against the fetched MV (Driving) Regulations 2017 text; three views per signal so position memorising fails (CURRICULUM LL3). Illustration review must check left-hand-traffic correctness. Alt text describes the gesture, never its meaning.",
+  "illustrations": [
+    {
+      "illustration_id": "ILL-HS-SLOW-REAR",
+      "subject": "hand_signal",
+      "depicts": "slow_down",
+      "view": "rear",
+      "alt": {
+        "en": "Rider seen from behind: right arm stretched out sideways, palm facing down, moving up and down",
+        "hi": "पीछे से दिखता सवार: दायाँ हाथ बगल में फैला, हथेली नीचे की ओर, ऊपर-नीचे हिलता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-SLOW-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-SLOW-SIDE",
+      "subject": "hand_signal",
+      "depicts": "slow_down",
+      "view": "side",
+      "alt": {
+        "en": "Rider seen from the side: right arm stretched out sideways, palm facing down, moving up and down",
+        "hi": "बगल से दिखता सवार: दायाँ हाथ बगल में फैला, हथेली नीचे की ओर, ऊपर-नीचे हिलता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-SLOW-SIDE.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-SLOW-FRONT",
+      "subject": "hand_signal",
+      "depicts": "slow_down",
+      "view": "front",
+      "alt": {
+        "en": "Rider seen from the front: right arm stretched out sideways, palm facing down, moving up and down",
+        "hi": "सामने से दिखता सवार: दायाँ हाथ बगल में फैला, हथेली नीचे की ओर, ऊपर-नीचे हिलता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-SLOW-FRONT.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-STOP-REAR",
+      "subject": "hand_signal",
+      "depicts": "stop",
+      "view": "rear",
+      "alt": {
+        "en": "Rider seen from behind: right forearm raised straight up from the elbow, palm facing forward",
+        "hi": "पीछे से दिखता सवार: दाईं बाँह कोहनी से सीधी ऊपर उठी, हथेली आगे की ओर"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-STOP-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-STOP-SIDE",
+      "subject": "hand_signal",
+      "depicts": "stop",
+      "view": "side",
+      "alt": {
+        "en": "Rider seen from the side: right forearm raised straight up from the elbow, palm facing forward",
+        "hi": "बगल से दिखता सवार: दाईं बाँह कोहनी से सीधी ऊपर उठी, हथेली आगे की ओर"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-STOP-SIDE.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-STOP-FRONT",
+      "subject": "hand_signal",
+      "depicts": "stop",
+      "view": "front",
+      "alt": {
+        "en": "Rider seen from the front: right forearm raised straight up from the elbow, palm facing forward",
+        "hi": "सामने से दिखता सवार: दाईं बाँह कोहनी से सीधी ऊपर उठी, हथेली आगे की ओर"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-STOP-FRONT.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-RIGHT-REAR",
+      "subject": "hand_signal",
+      "depicts": "turn_right",
+      "view": "rear",
+      "alt": {
+        "en": "Rider seen from behind: right arm stretched straight out sideways, palm facing forward, held still",
+        "hi": "पीछे से दिखता सवार: दायाँ हाथ बगल में सीधा फैला, हथेली आगे की ओर, स्थिर"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-RIGHT-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-RIGHT-SIDE",
+      "subject": "hand_signal",
+      "depicts": "turn_right",
+      "view": "side",
+      "alt": {
+        "en": "Rider seen from the side: right arm stretched straight out sideways, palm facing forward, held still",
+        "hi": "बगल से दिखता सवार: दायाँ हाथ बगल में सीधा फैला, हथेली आगे की ओर, स्थिर"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-RIGHT-SIDE.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-RIGHT-FRONT",
+      "subject": "hand_signal",
+      "depicts": "turn_right",
+      "view": "front",
+      "alt": {
+        "en": "Rider seen from the front: right arm stretched straight out sideways, palm facing forward, held still",
+        "hi": "सामने से दिखता सवार: दायाँ हाथ बगल में सीधा फैला, हथेली आगे की ओर, स्थिर"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-RIGHT-FRONT.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-LEFT-REAR",
+      "subject": "hand_signal",
+      "depicts": "turn_left",
+      "view": "rear",
+      "alt": {
+        "en": "Rider seen from behind: right arm stretched out and moving in an anticlockwise circle",
+        "hi": "पीछे से दिखता सवार: दायाँ हाथ फैला हुआ और घड़ी की उल्टी दिशा में गोल घूमता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-LEFT-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-LEFT-SIDE",
+      "subject": "hand_signal",
+      "depicts": "turn_left",
+      "view": "side",
+      "alt": {
+        "en": "Rider seen from the side: right arm stretched out and moving in an anticlockwise circle",
+        "hi": "बगल से दिखता सवार: दायाँ हाथ फैला हुआ और घड़ी की उल्टी दिशा में गोल घूमता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-LEFT-SIDE.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-LEFT-FRONT",
+      "subject": "hand_signal",
+      "depicts": "turn_left",
+      "view": "front",
+      "alt": {
+        "en": "Rider seen from the front: right arm stretched out and moving in an anticlockwise circle",
+        "hi": "सामने से दिखता सवार: दायाँ हाथ फैला हुआ और घड़ी की उल्टी दिशा में गोल घूमता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-LEFT-FRONT.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-OVERTAKE-REAR",
+      "subject": "hand_signal",
+      "depicts": "allow_overtake",
+      "view": "rear",
+      "alt": {
+        "en": "Rider seen from behind: right arm held out below shoulder level, swinging backward and forward",
+        "hi": "पीछे से दिखता सवार: दायाँ हाथ कंधे से नीचे फैला, आगे-पीछे झूलता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-OVERTAKE-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-OVERTAKE-SIDE",
+      "subject": "hand_signal",
+      "depicts": "allow_overtake",
+      "view": "side",
+      "alt": {
+        "en": "Rider seen from the side: right arm held out below shoulder level, swinging backward and forward",
+        "hi": "बगल से दिखता सवार: दायाँ हाथ कंधे से नीचे फैला, आगे-पीछे झूलता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-OVERTAKE-SIDE.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-HS-OVERTAKE-FRONT",
+      "subject": "hand_signal",
+      "depicts": "allow_overtake",
+      "view": "front",
+      "alt": {
+        "en": "Rider seen from the front: right arm held out below shoulder level, swinging backward and forward",
+        "hi": "सामने से दिखता सवार: दायाँ हाथ कंधे से नीचे फैला, आगे-पीछे झूलता हुआ"
+      },
+      "asset": {
+        "path": "illustrations/ILL-HS-OVERTAKE-FRONT.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-VL-BRAKE-REAR",
+      "subject": "vehicle_lights",
+      "depicts": "brake_lights",
+      "view": "rear",
+      "alt": {
+        "en": "Rear of a car with both red rear lamps glowing brightly",
+        "hi": "कार का पिछला हिस्सा, दोनों लाल पिछली बत्तियाँ तेज़ चमकती हुई"
+      },
+      "asset": {
+        "path": "illustrations/ILL-VL-BRAKE-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-VL-HAZARD-REAR",
+      "subject": "vehicle_lights",
+      "depicts": "hazard_lights",
+      "view": "rear",
+      "alt": {
+        "en": "Rear of a car with both amber side lamps blinking together",
+        "hi": "कार का पिछला हिस्सा, दोनों पीली साइड बत्तियाँ एक साथ जलती-बुझती"
+      },
+      "asset": {
+        "path": "illustrations/ILL-VL-HAZARD-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "illustration_id": "ILL-VL-LEFTIND-REAR",
+      "subject": "vehicle_lights",
+      "depicts": "left_indicator",
+      "view": "rear",
+      "alt": {
+        "en": "Rear of a scooter with the amber lamp on its left side blinking",
+        "hi": "स्कूटर का पिछला हिस्सा, बाईं ओर की पीली बत्ती जलती-बुझती"
+      },
+      "asset": {
+        "path": "illustrations/ILL-VL-LEFTIND-REAR.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    }
+  ]
+}

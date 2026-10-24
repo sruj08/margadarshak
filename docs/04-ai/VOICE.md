@@ -1,7 +1,7 @@
 # Voice Guide: UX and Technology (F-30, M-01, M-08)
 > Project: Margdarshak · Owner: AI lead + Design lead · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [AGENTS §3.1](AGENTS.md#31-voiceguideagent-m-01) · [MODELS](MODELS.md) · [PROMPTS](PROMPTS.md) · [AI_EVALS](AI_EVALS.md) · [UI_SPEC](../02-design/UI_SPEC.md) · [ACCESSIBILITY](../02-design/ACCESSIBILITY.md) · [LOCALIZATION](../02-design/LOCALIZATION.md) · `ai/prompts/voice_guide_agent.md` · `ai/evals/voice_nav_30.jsonl`
-> Sources: 04 §0.3–0.4, §1.5, §1.9, §3.1, §3.8; 08 §5.7; D-09, D-12, D-13, D-21.
+> Sources: 04 §0.3–0.4, §1.5, §1.9, §3.1, §3.8; 08 §5.7; D-09, D-12, D-13 revised, D-21.
 
 ---
 
@@ -22,7 +22,7 @@
 > **hi:** "मैं Margdarshak में रास्ता दिखा सकता हूँ और फ़ॉर्म भरने में मदद कर सकता हूँ। मैं Sarathi पर जमा, भुगतान या बुकिंग नहीं कर सकता।"
 > **en:** "I can find screens and help fill forms in Margdarshak. I can't submit, pay or book on Sarathi."
 
-**Who gets it:** adults only (18+, server-side gate, [AGENTS §7](AGENTS.md#7-under-18-gating)), with the `voice` consent. Field-fill needs a separate `voice_fill` consent.
+**Who gets it:** every user (D-13 revised; a learner under 18 through a parent's account in family mode, [AGENTS §7](AGENTS.md#7-family-mode-and-consent-gate-d-13-revised)), with the `voice` consent (the parent's, for a family member's case). Field-fill needs a separate `voice_fill` consent.
 
 ---
 
@@ -55,7 +55,7 @@
 
 The chip is truthful because:
 1. The microphone stream goes browser → our WebSocket → Gemini Live (or Saaras), and we store no audio (04 §3.1 Privacy: "Audio is streamed and not stored").
-2. Transcripts stay only inside the ADK session, which is deleted after 24 h [D]. The user can turn them off: "Don't keep captions" ([AGENTS §5](AGENTS.md#5-session-and-memory-policy)).
+2. Transcripts stay only inside the in-memory ADK session (`session.InMemoryService()`), which ends with the connection and is never kept beyond 24 h [D]. The user can turn them off: "Don't keep captions" ([AGENTS §5](AGENTS.md#5-session-and-memory-policy)).
 3. Gemini is on the paid tier, where prompts aren't used for product improvement (04 §0.2).
 4. The mic is released on the Listening → Idle transition. Chrome's own mic indicator then disappears; QA verifies this.
 
@@ -106,20 +106,20 @@ The chip is truthful because:
 ```mermaid
 sequenceDiagram
   participant B as Browser (AudioWorklet)
-  participant API as FastAPI /v1/voice (API-40)
-  participant ADK as ADK run_live + LiveRequestQueue
-  participant G as Gemini Live (MD_MODEL_VOICE_LIVE)
-  B->>API: WS upgrade (session cookie) → AgeGate + consent
-  API->>ADK: runner.run_live(session, live_request_queue)
+  participant API as Go API /v1/voice (API-40, gorilla/websocket)
+  participant ADK as ADK for Go Runner.RunLive + LiveSession
+  participant G as Gemini Live (GEMINI_MODEL_LIVE)
+  B->>API: WS upgrade (session cookie) → consent gate (holder's or parent's)
+  API->>ADK: liveSess, events, err := runner.RunLive(ctx, userID, sessionID, agent.LiveRunConfig{...})
   loop every 20 ms
     B->>API: PCM16 16 kHz mono frame
-    API->>ADK: live_request_queue.send_realtime(blob)
+    API->>ADK: liveSess.Send(agent.LiveRequest{RealtimeInput: &genai.Blob{MIMEType: audio/pcm 16 kHz, Data: frame}})
     ADK->>G: realtime input
   end
   G-->>ADK: input transcription (partial/final)
   ADK-->>API: event(input_transcript) → PiiGate on transcript
   G-->>ADK: function_call navigate/set_field/get_rule
-  ADK->>ADK: before_tool_callback validators → tool → after_tool_callback(numbers)
+  ADK->>ADK: BeforeToolCallbacks validators → tool → AfterToolCallbacks(numbers)
   ADK-->>API: tool result → UI action event (open screen / show confirm card)
   G-->>ADK: audio 24 kHz + output transcription
   ADK-->>API: audio chunks + caption (ProvenancePlugin on output transcription)
@@ -142,13 +142,13 @@ sequenceDiagram
 
 **Session limits.**
 - 15 min audio-only per session; ~10 min connection lifetime (04 §1.5).
-- We **rotate the connection at 9 min** using session resumption, with context-window compression enabled.
+- We **rotate the connection at 9 min** using session resumption (`agent.LiveRunConfig.SessionResumption`, a `*genai.SessionResumptionConfig`), with context-window compression enabled. ADK for Go v1.9 `LiveRunConfig` has no compression field (genai's `LiveConnectConfig.ContextWindowCompression` does), so confirm at H0 how to pass it through [unverified; owner AI lead].
 - At 14 min the agent says "हम थोड़ी देर में फिर से शुरू करेंगे", and the session ends cleanly at 15.
 - A per-user monthly cap of 10 min on the free plan (`MD_VOICE_MONTHLY_CAP_MIN`, 04 §5). At the cap, the orb turns into the search box with "आज की आवाज़ की सीमा पूरी हुई".
 
 **Languages.** Native audio models switch language automatically and accept no language code, so the system instruction restricts replies to Hindi, English and Hinglish (04 §1.5). Other detected languages get: "अभी मैं हिंदी और अंग्रेज़ी में बात कर सकता हूँ।"
 
-**Model.** `gemini-3.8-live` via env, fallback `gemini-2.5-flash-native-audio-preview-12-2025`. ADK 2.12 support for 3.8 Live is unknown, so the H0 smoke test decides (04 §6 Q1).
+**Model.** `gemini-3.8-live` via env, fallback `gemini-2.5-flash-native-audio-preview-12-2025`. ADK for Go v1.9 support for 3.8 Live is unknown, so the H0 smoke test decides (04 §6 Q1).
 
 **Keys.** The browser never holds a Google key; the WS terminates at our API. Any client-direct design would need ephemeral tokens (04 §1.5).
 
@@ -157,7 +157,7 @@ sequenceDiagram
 | Segment | Target p50 | Target p90 | How we measure |
 |---|---|---|---|
 | End of speech → VAD end-of-turn | silence window (700 ms) | 800 ms | server timestamps |
-| Model first audio byte after end-of-turn | < 600 ms [D] | < 1.2 s [D] | ADK event timestamps |
+| Model first audio byte after end-of-turn | < 600 ms [D] | < 1.2 s [D] | ADK `session.Event` timestamps |
 | Network (Render Singapore ↔ Jammu 4G) | ≤ 150 ms [D] | ≤ 300 ms [D] | client RTT ping on the WS |
 | **Voice round-trip (end of speech → first audio heard)** | **< 1.5 s** (04 §3.1) | < 2.5 s [D] | `voice_rtt_ms` metric, H0 + 6 h on Jio and Airtel, mid-range Android Chrome |
 | Tool call (navigate/set_field) | < 50 ms | < 120 ms | span |
@@ -173,7 +173,7 @@ sequenceDiagram
   participant B as Browser
   participant API as /v1/voice?lang=doi
   participant S as Sarvam Saaras v3 (doi-IN, streaming WS)
-  participant T as ADK text graph (gemini-3.1-flash-lite)
+  participant T as ADK for Go text turn, Runner.Run (gemini-3.1-flash-lite)
   participant TT as Sarvam Bulbul v3 (hi-IN)
   B->>API: PCM frames (push-to-talk default)
   API->>S: stream audio
@@ -197,7 +197,7 @@ sequenceDiagram
 
 ### 3.4 Path C: text fallback (always available)
 
-The same `voice_guide_agent` and tools over `gemini-3.1-flash-lite`, behind a plain search box with `lookup_screen` synonyms (hi/en/hinglish/doi). With AI off (u18, no consent, EC-29), only `lookup_screen` runs (deterministic).
+The same `voice_guide_agent` and tools over `gemini-3.1-flash-lite`, behind a plain search box with `lookup_screen` synonyms (hi/en/hinglish/doi). With AI off (no consent, EC-29), only `lookup_screen` runs (deterministic).
 
 **Triggers for falling back to text:**
 1. Mic permission denied or no `getUserMedia`.

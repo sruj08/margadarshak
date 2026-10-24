@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://margdarshak.example/content/schema/allowlists.schema.json",
+  "title": "Per-agent ID allowlists (generated)",
+  "description": "content/generated/allowlists.json, written by packages/content scripts/gen-allowlists.ts.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "file_kind": {
+      "type": "string",
+      "const": "allowlists"
+    },
+    "generator": {
+      "type": "string",
+      "const": "@margdarshak/content allowlists v1"
+    },
+    "licence": {
+      "type": "string",
+      "const": "CC-BY-4.0"
+    },
+    "inputs": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "citable_rule": {
+          "type": "string",
+          "const": "verified && kind != 'medical'"
+        },
+        "explanations": {
+          "type": "string",
+          "const": "review_status == 'approved' && hi_review_status == 'approved'"
+        },
+        "drills_for_coach_and_voice": {
+          "type": "string",
+          "const": "availability == 'phase_1_2'"
+        },
+        "template_only_games_excluded_from_ai": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "nazar",
+              "stopping_distance",
+              "blind_spot",
+              "junction_scan",
+              "track_twin",
+              "helmet_fit",
+              "golden_hour",
+              "night_glare",
+              "hill_road",
+              "ll_sim"
+            ]
+          }
+        }
+      },
+      "required": [
+        "citable_rule",
+        "explanations",
+        "drills_for_coach_and_voice",
+        "template_only_games_excluded_from_ai"
+      ],
+      "additionalProperties": false
+    },
+    "debrief_agent": {
+      "type": "object",
+      "properties": {
+        "finding_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+          }
+        },
+        "rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^RR-[A-Z][A-Z0-9]{1,3}-\\d{3}$"
+          }
+        },
+        "drill_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^DR-[A-Z]{2,3}-[A-Z0-9_-]+$"
+          }
+        },
+        "fact_keys": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,23}$"
+            }
+          }
+        }
+      },
+      "required": ["finding_ids", "rule_ids", "drill_ids", "fact_keys"],
+      "additionalProperties": false
+    },
+    "tutor_agent": {
+      "type": "object",
+      "properties": {
+        "explanation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^EX-C-(LL[0-4]|M([1-9]|1\\d|2[0-2])|DL1)-\\d{3}$"
+          }
+        },
+        "rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^RR-[A-Z][A-Z0-9]{1,3}-\\d{3}$"
+          }
+        }
+      },
+      "required": ["explanation_ids", "rule_ids"],
+      "additionalProperties": false
+    },
+    "voice_guide_agent": {
+      "type": "object",
+      "properties": {
+        "get_rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^RR-[A-Z][A-Z0-9]{1,3}-\\d{3}$"
+          }
+        },
+        "open_drill_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^DR-[A-Z]{2,3}-[A-Z0-9_-]+$"
+          }
+        }
+      },
+      "required": ["get_rule_ids", "open_drill_ids"],
+      "additionalProperties": false
+    },
+    "coach_agent": {
+      "type": "object",
+      "properties": {
+        "drill_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^DR-[A-Z]{2,3}-[A-Z0-9_-]+$"
+          }
+        }
+      },
+      "required": ["drill_ids"],
+      "additionalProperties": false
+    },
+    "sign_snap": {
+      "type": "object",
+      "properties": {
+        "sign_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^SIGN-(MAN|CAU|INF|MRK|SIG)-\\d{3}$"
+          }
+        }
+      },
+      "required": ["sign_ids"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "file_kind",
+    "generator",
+    "licence",
+    "inputs",
+    "policy",
+    "debrief_agent",
+    "tutor_agent",
+    "voice_guide_agent",
+    "coach_agent",
+    "sign_snap"
+  ],
+  "additionalProperties": false
+}

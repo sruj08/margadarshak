@@ -1,0 +1,461 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: Margdarshak Government Adapter Socket (proposed)
+  version: 0.1.0
+  summary: The open adapter specification a State Transport Department or NIC implements so the Margdarshak core can read status, accept prefill, read slots and results, and point to an issued DL.
+  description: |
+    MD-044 / F-56 / D-02 / D-08. This is the government-side contract of Margdarshak's ports
+    (SarathiPort Mode B, SlotPort, DigiLockerPort pointer, AadhaarOfflinePort state service,
+    PaymentPort reconciliation). It is a **proposed** contract: nothing here claims that Sarathi
+    or any state system exposes these endpoints today. Implemented by the State/NIC, not by Nestiq.
+
+    Margdarshak is an independent prototype by team Chanakya. Not affiliated with MoRTH, NIC,
+    NeGD or any State Transport Department.
+
+    Rules every implementation obeys (GOVERNMENT_ADOPTION §3.1):
+    * No Aadhaar number, VID, OTP, biometric or face image ever crosses this interface. Schemas
+      below have no field that could hold one, and `additionalProperties: false` keeps it so.
+    * Read-only for slots: there is no booking operation (D-08). No scraping, no bots.
+    * Every write carries an `Idempotency-Key`; replays return the original result.
+    * Every call carries the citizen's consent artefact reference (`X-Consent-Id`, E-15).
+    * Errors are RFC 9457 `application/problem+json`.
+    * Webhooks to Margdarshak are signed: `Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(secret, t + "." + body)>`,
+      300 s window, replays rejected.
+    * The core's contract suite (services/api/internal/ports/contracttest) must pass against the
+      state's staging before activation (maker-checker in core.tenant_adapter_config).
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+servers:
+  - url: https://adapter.{tenant}.example.invalid/v1
+    description: Placeholder. Hosted by the State/NIC inside the government network.
+    variables:
+      tenant:
+        default: in-jk
+security:
+  - mtls: []
+    clientCredentials: [adapter.read]
+tags:
+  - name: sarathi
+    description: Application status, prefill, test results (SarathiPort Mode B)
+  - name: slots
+    description: Office list and read-only slot availability (SlotPort)
+  - name: licences
+    description: Issued DL pointer (DigiLocker URI) and minimal facts (DigiLockerPort)
+  - name: identity
+    description: Aadhaar offline verification run by the state (AadhaarOfflinePort state_service)
+  - name: payments
+    description: Fee payment reconciliation by receipt (PaymentPort state_gateway)
+
+paths:
+  /applications/{appRef}/status:
+    get:
+      tags: [sarathi]
+      operationId: getApplicationStatus
+      summary: Current status of an application, mapped to the Margdarshak stage vocabulary
+      parameters:
+        - $ref: '#/components/parameters/AppRef'
+        - $ref: '#/components/parameters/ConsentId'
+      responses:
+        '200':
+          description: Status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApplicationStatus' }
+              example: { app_ref: JK/LL/2026/000123, stage: S3, status_code: Fee Paid - LL Test Pending, payment: confirmed, as_of: '2026-10-24T03:30:00Z' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503': { $ref: '#/components/responses/Unavailable' }
+
+  /applications/prefill:
+    post:
+      tags: [sarathi]
+      operationId: acceptPrefill
+      summary: Accept non-personal prefill values for a new application; the citizen completes eKYC, OTP, payment and submission on Sarathi
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/ConsentId'
+      security:
+        - mtls: []
+          clientCredentials: [adapter.write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PrefillRequest' }
+            example: { case_ref: cas_01JB8ZCQ4TXK2M7N9PRSVWYZAB, state: JK, office_code: JK02, classes: [MCWG, LMV-NT], test_language: hi }
+      responses:
+        '202':
+          description: Prefill stored on the state side; the citizen continues on Sarathi
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrefillAccepted' }
+              example: { prefill_ref: PF-7Q2K, continue_url: 'https://sarathi.parivahan.gov.in/', expires_at: '2026-10-25T03:30:00Z' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /applications/{appRef}/test-results:
+    get:
+      tags: [sarathi]
+      operationId: listTestResults
+      summary: LL / DL test results per class (fail reason codes, never free text)
+      parameters:
+        - $ref: '#/components/parameters/AppRef'
+        - $ref: '#/components/parameters/ConsentId'
+      responses:
+        '200':
+          description: Results
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                additionalProperties: false
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/TestResult' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /offices:
+    get:
+      tags: [slots]
+      operationId: listOffices
+      summary: RTOs, ARTOs and accredited centres of the state
+      responses:
+        '200':
+          description: Offices
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                additionalProperties: false
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/Office' } }
+
+  /offices/{officeCode}/slots:
+    get:
+      tags: [slots]
+      operationId: listSlots
+      summary: Slot availability, read-only (booking stays on Sarathi; there is no booking operation)
+      parameters:
+        - { name: officeCode, in: path, required: true, schema: { type: string, pattern: '^[A-Z0-9-]{2,16}$' } }
+        - { name: kind, in: query, required: true, schema: { $ref: '#/components/schemas/SlotKind' } }
+        - { name: from, in: query, required: true, schema: { type: string, format: date } }
+        - { name: to, in: query, required: true, schema: { type: string, format: date }, description: At most 31 days after from }
+      responses:
+        '200':
+          description: Slots
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [office_code, as_of, items]
+                additionalProperties: false
+                properties:
+                  office_code: { type: string }
+                  as_of: { type: string, format: date-time }
+                  items: { type: array, items: { $ref: '#/components/schemas/Slot' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /licences/pointer:
+    post:
+      tags: [licences]
+      operationId: getLicencePointer
+      summary: Pointer to the citizen's issued DL in DigiLocker plus minimal facts (classes, validity, last 4); the document itself never crosses
+      parameters:
+        - $ref: '#/components/parameters/ConsentId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [app_ref]
+              additionalProperties: false
+              properties:
+                app_ref: { type: string, maxLength: 32 }
+      responses:
+        '200':
+          description: Pointer
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LicencePointer' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /verifications/aadhaar-offline:
+    post:
+      tags: [identity]
+      operationId: verifyAadhaarOffline
+      summary: The state runs Secure QR / Paperless XML verification (OVSE duties stay with the state) and returns derived facts only
+      parameters:
+        - $ref: '#/components/parameters/ConsentId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [kind, artefact]
+              properties:
+                kind: { type: string, enum: [secure_qr, paperless_xml_zip] }
+                artefact: { type: string, contentMediaType: application/octet-stream, description: Processed in memory and discarded }
+                share_code: { type: string, writeOnly: true, description: Used in memory only; never stored or logged }
+                expected_state: { type: string, pattern: '^[A-Z]{2}$' }
+      responses:
+        '200':
+          description: Derived facts
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OfflineVerdict' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+
+  /payments/{intentRef}/status:
+    get:
+      tags: [payments]
+      operationId: getPaymentStatus
+      summary: Reconcile a fee payment by Margdarshak intent reference (the state gateway collects; Margdarshak never does)
+      parameters:
+        - { name: intentRef, in: path, required: true, schema: { type: string, pattern: '^pay_[0-9A-Z]{6,26}$' } }
+      responses:
+        '200':
+          description: Payment status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaymentStatus' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+webhooks:
+  applicationStatusChanged:
+    post:
+      operationId: onApplicationStatusChanged
+      summary: The state notifies Margdarshak of a status change (signed)
+      parameters:
+        - $ref: '#/components/parameters/Signature'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ApplicationStatus' }
+      responses:
+        '204': { description: Accepted (idempotent by Idempotency-Key) }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  testResultRecorded:
+    post:
+      operationId: onTestResultRecorded
+      parameters:
+        - $ref: '#/components/parameters/Signature'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TestResult' }
+      responses:
+        '204': { description: Accepted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  paymentReconciled:
+    post:
+      operationId: onPaymentReconciled
+      parameters:
+        - $ref: '#/components/parameters/Signature'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PaymentStatus' }
+      responses:
+        '204': { description: Accepted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+components:
+  securitySchemes:
+    mtls:
+      type: mutualTLS
+      description: Mutual TLS inside the government network (certificates issued by the state / NIC).
+    clientCredentials:
+      type: oauth2
+      description: OAuth 2.0 client credentials issued to the Margdarshak deployment by the state.
+      flows:
+        clientCredentials:
+          tokenUrl: https://adapter.example.invalid/oauth2/token
+          scopes:
+            adapter.read: Read status, slots, results and pointers
+            adapter.write: Submit prefill
+
+  parameters:
+    AppRef:
+      name: appRef
+      in: path
+      required: true
+      schema: { type: string, maxLength: 32, pattern: '^[A-Za-z0-9/-]{4,32}$' }
+    ConsentId:
+      name: X-Consent-Id
+      in: header
+      required: true
+      description: The citizen's consent artefact (E-15) covering this call
+      schema: { type: string, pattern: '^cns_[0-9A-Z]{6,26}$' }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, minLength: 16, maxLength: 64 }
+    Signature:
+      name: Margdarshak-Signature
+      in: header
+      required: true
+      schema: { type: string, pattern: '^t=[0-9]+,v1=[0-9a-f]{64}$' }
+
+  responses:
+    NotFound:
+      description: Not found, or the consent does not cover it
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Conflict:
+      description: Idempotency key reused with a different body
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unprocessable:
+      description: Validation failed (including prohibited data)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unauthorized:
+      description: Signature or credentials rejected
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unavailable:
+      description: Upstream down; Margdarshak shows the outage state and keeps drafts (EC-11)
+      headers:
+        Retry-After: { schema: { type: integer } }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        detail: { type: string }
+        code: { type: string }
+        retryable: { type: boolean }
+    Stage:
+      type: string
+      enum: [S2, S3, S4, S5, S6, S6F, S7, unknown]
+    ApplicationStatus:
+      type: object
+      required: [app_ref, stage, status_code, as_of]
+      additionalProperties: false
+      properties:
+        app_ref: { type: string, maxLength: 32 }
+        stage: { $ref: '#/components/schemas/Stage' }
+        status_code: { type: string, maxLength: 120, description: "The state system's own status text, unmodified" }
+        payment: { type: string, enum: [none, pending, confirmed] }
+        as_of: { type: string, format: date-time }
+    VehicleClass:
+      type: string
+      enum: [MC50CC, MCWOG, MCWG, LMV-NT, LMV-TR, E-RICKSHAW, E-CART, MGV, HGMV, HPMV, HTV, ADAPTED]
+    PrefillRequest:
+      type: object
+      description: Non-personal values only. Name, relation name, address and every identity number stay with the citizen.
+      required: [case_ref, state, classes]
+      additionalProperties: false
+      properties:
+        case_ref: { type: string, pattern: '^cas_[0-9A-Z]{6,26}$' }
+        state: { type: string, pattern: '^[A-Z]{2}$' }
+        office_code: { type: string, maxLength: 16 }
+        classes: { type: array, minItems: 1, items: { $ref: '#/components/schemas/VehicleClass' } }
+        test_language: { type: string, maxLength: 8 }
+    PrefillAccepted:
+      type: object
+      required: [prefill_ref, continue_url, expires_at]
+      additionalProperties: false
+      properties:
+        prefill_ref: { type: string, maxLength: 32 }
+        continue_url: { type: string, format: uri }
+        expires_at: { type: string, format: date-time }
+    TestResult:
+      type: object
+      required: [app_ref, test, class_code, attempted_on, result]
+      additionalProperties: false
+      properties:
+        app_ref: { type: string, maxLength: 32 }
+        test: { type: string, enum: [ll, dl, hpt] }
+        class_code: { $ref: '#/components/schemas/VehicleClass' }
+        attempted_on: { type: string, format: date }
+        result: { type: string, enum: [pass, fail, absent, unknown] }
+        reason_codes: { type: array, items: { type: string, pattern: '^[A-Z0-9_]{2,40}$' } }
+        attempt_no: { type: integer, minimum: 1 }
+    Office:
+      type: object
+      required: [office_code, kind, name, district]
+      additionalProperties: false
+      properties:
+        office_code: { type: string, maxLength: 16 }
+        kind: { type: string, enum: [rto, arto, adtc, csc, adtt] }
+        name: { type: string }
+        district: { type: string }
+        lat: { type: number }
+        lng: { type: number }
+    SlotKind:
+      type: string
+      enum: [ll_test, dl_test_2w, dl_test_4w]
+    Slot:
+      type: object
+      required: [date, kind, capacity, available]
+      additionalProperties: false
+      properties:
+        date: { type: string, format: date }
+        kind: { $ref: '#/components/schemas/SlotKind' }
+        window: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]-[0-2][0-9]:[0-5][0-9]$' }
+        capacity: { type: integer, minimum: 0 }
+        available: { type: integer, minimum: 0 }
+    LicencePointer:
+      type: object
+      required: [digilocker_uri, classes, valid_to_non_transport, number_last4]
+      additionalProperties: false
+      properties:
+        digilocker_uri: { type: string, pattern: '^in\.gov\.transport-DRVLC-[A-Z0-9]{6,20}$', description: DigiLocker issued URI (pointer only) }
+        classes: { type: array, items: { $ref: '#/components/schemas/VehicleClass' } }
+        issued_on: { type: string, format: date }
+        valid_to_non_transport: { type: string, format: date }
+        valid_to_transport: { type: string, format: date }
+        number_last4: { type: string, pattern: '^[0-9A-Z]{4}$' }
+    AgeBand:
+      type: string
+      enum: [under_16, '16_17', '18_25', '26_40', '41_60', 60_plus]
+    OfflineVerdict:
+      type: object
+      description: Derived facts only. There is no field that can hold an Aadhaar number, name, address or photo.
+      required: [signature_valid, retained_fields]
+      additionalProperties: false
+      properties:
+        signature_valid: { type: boolean }
+        age_band: { $ref: '#/components/schemas/AgeBand' }
+        dob_precision: { type: string, enum: [day, year_only] }
+        address_state_matches: { type: boolean }
+        relation_line_present: { type: boolean }
+        reference_hash: { type: string, pattern: '^sha256:[0-9a-f]{16,64}$' }
+        retained_fields: { type: array, items: { type: string } }
+    PaymentStatus:
+      type: object
+      required: [intent_ref, status, collected_by]
+      additionalProperties: false
+      properties:
+        intent_ref: { type: string, pattern: '^pay_[0-9A-Z]{6,26}$' }
+        status: { type: string, enum: [pending, success, failed, expired] }
+        receipt_number: { type: string, maxLength: 40 }
+        amount_paise: { type: integer, minimum: 1 }
+        collected_by: { type: string, const: state_gateway }
+        at: { type: string, format: date-time }

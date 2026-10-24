@@ -1,30 +1,48 @@
-# pnpm workspaces for Margdarshak (TypeScript side of the monorepo).
-# Python services (services/api, services/workflows) are managed by uv, not pnpm.
+# pnpm workspaces for Margdarshak (TypeScript side of the monorepo; Turborepo runs the pipelines).
+# The API (services/api) is Go and is managed by the Go toolchain, not pnpm (ADR-0011, BUILD_CONVENTIONS §1).
 packages:
-  - "apps/*"                    # @margdarshak/web (citizen PWA), @margdarshak/console
-  - "packages/*"                # @margdarshak/ui, game-core, rules, api-client
-  - "services/score-verifier"   # Node replay service importing @margdarshak/game-core
-  - "tests/e2e"                 # @margdarshak/e2e (Playwright + axe)
+  - "apps/*" # @margdarshak/web (citizen PWA), @margdarshak/console
+  - "packages/*" # @margdarshak/ui, game-core, rules (zero-dep TS mirror), api-client
+  - "services/score-verifier" # Node replay service importing @margdarshak/game-core
+  - "services/workflows" # Render Workflows tasks (TS SDK)
+  - "tests/e2e" # @margdarshak/e2e (Playwright + axe)
+
+# pnpm 11 build-script allowlist (replaces package.json "pnpm.onlyBuiltDependencies").
+# lefthook is deliberately not allowed: install hooks explicitly with `pnpm exec lefthook install`.
+allowBuilds:
+  "@biomejs/biome": true
+  esbuild: true
+  sharp: true
+  "@parcel/watcher": true
+  unrs-resolver: true
+  "@swc/core": false
+  lefthook: false
+  "@google/genai": false
+  protobufjs: false
+
+# Several pins below were published in the week of 2026-10-23; keep the release-age gate off for the
+# build and turn it on (4320 = 3 days) in Phase 3.
+minimumReleaseAge: 0
 
 # Shared exact versions for packages used by several workspaces (pnpm catalogs).
-# Workspaces reference them as "catalog:" so upgrades happen in one place.
+# Workspaces reference them as "catalog:" so upgrades happen in one place. Re-pinned 2026-10-23 (MD-008).
 catalog:
   next: 16.4.3
   react: 19.3.1
   react-dom: 19.3.1
   "@types/react": 19.3.0
+  "@types/react-dom": 19.3.0
+  "@types/node": 22.20.5
   typescript: 6.0.3
   zod: 4.6.7
   "@heroui/react": 3.2.6
   "@heroui/styles": 3.2.6
   tailwindcss: 4.3.3
   "@tailwindcss/postcss": 4.3.3
+  postcss: 8.5.31
   tailwind-variants: 3.3.1
   next-intl: 4.14.9
   "@tanstack/react-query": 5.104.5
-  "@tanstack/react-query-persist-client": 5.104.5
-  "@tanstack/query-async-storage-persister": 5.104.5
-  "@tanstack/react-query-devtools": 5.104.5
   zustand: 5.0.16
   motion: 14.6.0
   "@serwist/turbopack": 9.5.13
@@ -41,15 +59,13 @@ catalog:
   openapi-fetch: 0.17.0
   openapi-typescript: 7.13.0
   web-vitals: 6.2.3
-  "@sentry/nextjs": 11.9.0
   "@playwright/test": 1.64.1
   "@axe-core/playwright": 4.14.0
   "@testing-library/react": 16.3.3
+  "@vitejs/plugin-react": 6.1.2
+  jsdom: 30.1.3
+  vitest: 5.0.5
+  "@vitest/coverage-v8": 5.0.5
   fast-check: 4.10.2
+  "@google/genai": 2.28.0
   msw: 3.0.3
-  eslint: 10.13.0
-  eslint-config-next: 16.4.3
-  "@next/bundle-analyzer": 16.4.3
-
-# Supply-chain hygiene (Phase 3+): enable `minimumReleaseAge: 4320` (3 days) once the pins above are
-# older than that; several pins were published in the week of 2026-10-23, so it stays off for the build.

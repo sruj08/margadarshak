@@ -1,0 +1,202 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M19",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Golden hour and Good Samaritan",
+    "hi": "गोल्डन आवर और नेक मददगार"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Thin (one scenario, 'draft' label)",
+  "skill_id": "SK-M19",
+  "game_ids": ["golden_hour"],
+  "drill_ids": ["DR-GH-ORDER", "DR-GH-MYTHS"],
+  "rule_ids": ["RR-GHR-001", "RR-GHR-002", "RR-GHR-003", "RR-GHR-004", "RR-ACC-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M19-1",
+      "text": {
+        "en": "Get the order right: make the scene safe, call 112 (or 108), don't remove a helmet if a neck injury is possible, control bleeding, keep the person warm and talk to them, hand over.",
+        "hi": "क्रम सही रखें: जगह सुरक्षित करें, 112 (या 108) पर कॉल करें, गर्दन में चोट की आशंका हो तो हेलमेट न उतारें, बहता ख़ून रोकें, व्यक्ति को गर्म रखें और उससे बात करें, मदद आने पर सौंपें।"
+      }
+    },
+    {
+      "id": "LO-M19-2",
+      "text": {
+        "en": "Know you are protected when you help (s.134A), so fear doesn't stop you.",
+        "hi": "जानें कि मदद करने पर आपको सुरक्षा मिलती है (s.134A), ताकि डर आपको न रोके।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M19-1",
+      "title": {
+        "en": "Four steps",
+        "hi": "चार कदम"
+      }
+    },
+    {
+      "id": "LS-M19-2",
+      "title": {
+        "en": "What the police may and may not ask you",
+        "hi": "पुलिस आपसे क्या पूछ सकती है और क्या नहीं"
+      }
+    },
+    {
+      "id": "LS-M19-3",
+      "title": {
+        "en": "One-tap 112",
+        "hi": "एक टैप में 112"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M19-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Hit-and-run accounted for 31,209 deaths (18.1%) in 2023 and 34,030 (19.2%) in 2024.",
+        "hi": "हिट-एंड-रन में 2023 में 31,209 (18.1%) और 2024 में 34,030 (19.2%) मौतें हुईं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 1.5 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "MoRTH, Road Accidents in India 2024 (RAI24), summary (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M19-2",
+      "kind": "evidence",
+      "text": {
+        "en": "74% of bystanders say they are unlikely to help, and 88% of them fear police and legal hassles.",
+        "hi": "74% राहगीर कहते हैं कि वे शायद मदद नहीं करेंगे, और उनमें से 88% पुलिस और क़ानूनी झंझट से डरते हैं।"
+      },
+      "sources": [
+        {
+          "title": "SaveLIFE Foundation, Impediments to Bystander Care in India",
+          "url": "https://savelifefoundation.org/wp-content/uploads/2024/06/Impediments-to-Bystander-Care-in-India-National-Study-on-Impact-of-Good-Samaritan-Law.pdf",
+          "grade": "S",
+          "pin_status": "pinned",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M19-3",
+      "kind": "law",
+      "text": {
+        "en": "A person who helps a road accident victim in good faith is protected (Good Samaritan provision).",
+        "hi": "जो व्यक्ति नेक नीयत से सड़क हादसे के घायल की मदद करता है, उसे सुरक्षा मिलती है (नेक मददगार प्रावधान)।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.134A (not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-GHR-001"
+    },
+    {
+      "id": "KF-M19-4",
+      "kind": "medical",
+      "text": {
+        "en": "First-aid order: scene safe, call, don't remove a helmet if a neck injury is possible, control bleeding, keep warm and talk, hand over. Draft until medical sign-off.",
+        "hi": "प्राथमिक उपचार का क्रम: जगह सुरक्षित, कॉल, गर्दन में चोट की आशंका हो तो हेलमेट न उतारें, बहता ख़ून रोकें, गर्म रखें और बात करें, मदद को सौंपें। चिकित्सा जाँच तक यह मसौदा है।"
+      },
+      "sources": [
+        {
+          "title": "Medical reviewer sign-off required (CURRICULUM M19)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "low",
+      "verified": false,
+      "rule_id": "RR-GHR-003"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M19-1",
+      "myth": {
+        "en": "If you take an injured person to hospital, you get stuck with the police case.",
+        "hi": "घायल को अस्पताल ले जाने पर आप पुलिस केस में फँस जाते हैं।"
+      },
+      "correction": {
+        "en": "The Good Samaritan provision protects people who help in good faith.",
+        "hi": "नेक मददगार प्रावधान नेक नीयत से मदद करने वालों की रक्षा करता है।"
+      },
+      "rule_id": "RR-GHR-001"
+    },
+    {
+      "id": "MC-M19-2",
+      "myth": {
+        "en": "Take the helmet off so they can breathe.",
+        "hi": "हेलमेट उतार दें ताकि वे साँस ले सकें।"
+      },
+      "correction": {
+        "en": "If the neck might be hurt, leave the helmet on and keep the head still.",
+        "hi": "अगर गर्दन में चोट हो सकती है, तो हेलमेट न उतारें और सिर को स्थिर रखें।"
+      },
+      "rule_id": "RR-GHR-003"
+    }
+  ],
+  "concepts": {
+    "target": 7,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G7 ≥ 80 with no critical error (Golden Hour Ready badge, only after medical sign-off).",
+      "hi": "बिना गंभीर ग़लती के G7 ≥ 80 (गोल्डन आवर रेडी बैज, सिर्फ़ चिकित्सा जाँच के बाद)।"
+    },
+    "readiness": "road",
+    "item_refs": []
+  },
+  "review": {
+    "needs": [
+      "Medical review is mandatory: a qualified reviewer (MBBS doctor or certified EMS trainer) signs off the protocol, each step's wording in EN and HI, and the 'not medical training' disclaimer; until then lessons and G7 show 'Draft, not medical advice'",
+      "Legal review of the s.134A wording",
+      "Rah-Veer reward and cashless-treatment amounts excluded until re-verified (D-12, D-25)"
+    ],
+    "medical_review_required": true,
+    "draft_label_until_reviewed": true,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

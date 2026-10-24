@@ -1,0 +1,47 @@
+{
+  "name": "@margdarshak/content",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Zod schemas, typed loaders, validators, the LL question-bank split and the AI allowlist generator for Margdarshak's learning content (content/: LL bank, curriculum, debrief catalogues).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "margdarshak-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "margdarshak-source": "./src/node.ts",
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "test": "node --test --experimental-strip-types \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "gen:schemas": "node --experimental-strip-types scripts/gen-schemas.ts",
+    "gen:allowlists": "node --experimental-strip-types scripts/gen-allowlists.ts",
+    "validate": "node --experimental-strip-types scripts/validate.ts",
+    "split:questions": "node --experimental-strip-types scripts/split-questions.ts",
+    "gen:client-bank": "node --experimental-strip-types scripts/gen-client-bank.ts",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "gen:nazar-schema": "node --experimental-strip-types scripts/gen-nazar-schema.ts"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

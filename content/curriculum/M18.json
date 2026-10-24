@@ -1,0 +1,139 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M18",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Pedestrians, animals and rural roads",
+    "hi": "पैदल यात्री, जानवर और गाँव की सड़कें"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Via Nazar",
+  "skill_id": "SK-M18",
+  "game_ids": ["nazar", "junction_scan"],
+  "drill_ids": [
+    "DR-NAZ-OCCL-BUS_STOP_PEDESTRIAN",
+    "DR-NAZ-OCCL-CHILD_SCHOOL",
+    "DR-NAZ-OCCL-PEDESTRIAN_MEDIAN",
+    "DR-NAZ-OCCL-CATTLE_ANIMAL",
+    "DR-NAZ-OCCL-CYCLIST"
+  ],
+  "rule_ids": ["RR-PED-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M18-1",
+      "text": {
+        "en": "Anticipate pedestrians at bus stops, markets and school gates.",
+        "hi": "बस स्टॉप, बाज़ार और स्कूल गेट पर पैदल यात्रियों का पहले से अंदाज़ा लगाएँ।"
+      }
+    },
+    {
+      "id": "LO-M18-2",
+      "text": {
+        "en": "Read cattle and dog behaviour.",
+        "hi": "मवेशियों और कुत्तों का बर्ताव पढ़ें।"
+      }
+    },
+    {
+      "id": "LO-M18-3",
+      "text": {
+        "en": "Slow through villages.",
+        "hi": "गाँवों से धीमे निकलें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M18-1",
+      "title": {
+        "en": "People and animals on the road",
+        "hi": "सड़क पर लोग और जानवर"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M18-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Pedestrians were 35,221 deaths (20.4%) in 2023; 68.5% of road deaths (1,18,411) were rural; there is no national breakout for animal collisions.",
+        "hi": "2023 में 35,221 (20.4%) मौतें पैदल यात्रियों की थीं; 68.5% सड़क मौतें (1,18,411) गाँवों में हुईं; जानवरों से टक्कर की कोई राष्ट्रीय गिनती नहीं है।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 4.4; §7.1 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M18-2",
+      "kind": "practice",
+      "text": {
+        "en": "Expect people stepping out at bus stops, markets and school gates; slow down there.",
+        "hi": "बस स्टॉप, बाज़ार और स्कूल गेट पर लोगों के अचानक सड़क पर आने की उम्मीद रखें; वहाँ धीमे चलें।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M18 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-PED-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M18-1",
+      "myth": {
+        "en": "Pedestrians will wait for you.",
+        "hi": "पैदल यात्री आपके लिए रुकेंगे।"
+      },
+      "correction": {
+        "en": "People step out from behind buses and stalls without looking; expect it and slow down.",
+        "hi": "लोग बिना देखे बसों और ठेलों के पीछे से निकल आते हैं; इसकी उम्मीद रखें और धीमे हों।"
+      },
+      "rule_id": "RR-PED-001"
+    }
+  ],
+  "concepts": {
+    "target": 5,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Hazard-type mastery ≥ 0.8.",
+      "hi": "ख़तरे के प्रकार पर महारत ≥ 0.8।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Clip two-rater agreement"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

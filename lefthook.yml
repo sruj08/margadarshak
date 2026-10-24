@@ -1,0 +1,20 @@
+# Git hooks (MD-010). Install once per clone: `pnpm exec lefthook install`.
+# Hooks are fast and local; CI runs the same gates in full.
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{js,mjs,cjs,ts,tsx,json,jsonc,css}"
+      run: pnpm exec biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+    copy-lint:
+      glob: "{apps/*/messages/*.json,apps/*/src/**/*.{ts,tsx},packages/ui/src/**/*.{ts,tsx},ai/prompts/**,n8n/workflows/**}"
+      run: node scripts/lint_wording.mjs {staged_files} && node scripts/lint_fee_literals.mjs {staged_files}
+    gofmt:
+      glob: "services/api/**/*.go"
+      run: gofmt -l {staged_files} | (! grep .)
+    secrets:
+      run: (command -v gitleaks >/dev/null 2>&1 && gitleaks protect --staged --redact) || echo "gitleaks not installed locally; CI secret scan still runs"
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}

@@ -2,7 +2,7 @@
 id: PRM-TUTOR
 version: 1.0.0
 agent: TutorAgent (M-04)
-model_env: MD_MODEL_TUTOR            # default gemini-3.1-flash-lite
+model_env: GEMINI_MODEL_TUTOR            # default gemini-3.1-flash-lite
 output_schema: margdarshak_ai.schemas.TutorDraft
 state_inputs: [item, reviewed_explanations, allowed_rule_ids, locale, confidence, canary]
 temperature: 0.2

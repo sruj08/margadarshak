@@ -1,76 +1,82 @@
 # CI/CD
-> Project: Margdarshak · Owner: Ops lead (Team Chanakya) · Status: Draft v0.1 · Last updated: 2026-10-23
-> Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [INFRASTRUCTURE](INFRASTRUCTURE.md) · [DEPLOYMENT](DEPLOYMENT.md) · [OBSERVABILITY](OBSERVABILITY.md) · [RUNBOOK](RUNBOOK.md) · [TESTING](../03-engineering/TESTING.md) · [AI_EVALS](../04-ai/AI_EVALS.md) · [SECURITY_ARCHITECTURE](../06-security-compliance/SECURITY_ARCHITECTURE.md)
+> Project: Margdarshak · Owner: Ops lead (Team Chanakya) · Status: Draft v0.2 (Go backend, ADR-0011) · Last updated: 2026-10-23
+> Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [INFRASTRUCTURE](INFRASTRUCTURE.md) · [DEPLOYMENT](DEPLOYMENT.md) · [OBSERVABILITY](OBSERVABILITY.md) · [RUNBOOK](RUNBOOK.md) · [TESTING](../03-engineering/TESTING.md) · [BACKEND](../03-engineering/BACKEND.md) · [AI_EVALS](../04-ai/AI_EVALS.md) · [SECURITY_ARCHITECTURE](../06-security-compliance/SECURITY_ARCHITECTURE.md)
 > Real files: [`ci.yml`](../../.github/workflows/ci.yml) · [`evals.yml`](../../.github/workflows/evals.yml) · [`security.yml`](../../.github/workflows/security.yml) · [`deploy.yml`](../../.github/workflows/deploy.yml) · [`render.yaml`](../../infra/render.yaml) · [`infra/docker/`](../../infra/docker/)
 
 ## 0. Summary
+- **Two languages, no Python.** The API (`services/api`) is **Go 1.27** (ADR-0011, supersedes ADR-0002). Everything else is **TypeScript**: `apps/*`, `packages/*`, the score verifier and the Render Workflows tasks (`services/workflows`, `@renderinc/sdk` 1.4.0). CI therefore has one Go track and one TS track that meet at the golden-rules parity check.
 - **Four workflows.** `ci.yml` (quality and correctness), `evals.yml` (the AI gate, D-10), `security.yml` (secrets, dependencies, SAST, containers, IaC, DAST) and `deploy.yml` (Render for the hackathon, Helm for a state).
 - **One required check.** `ci-gate` aggregates every CI job, so branch protection names one status and never goes stale when a job is renamed.
+- **No Docker needed for Go tests.** Integration tests run against a real Postgres 16 started in-process by `github.com/fergusstrange/embedded-postgres` v1.34.0 (binaries cached in `~/.embedded-postgres-go`). Docker is used only for the image smoke builds, the compose-based e2e job and a few scanners.
 - **What makes this pipeline Margdarshak-specific**, beyond a normal web app's:
-  1. **golden rules tests**: fees, eligibility and timelines must match the rule pack for every edge case (EC-01..EC-30);
+  1. **golden rules tests**: fees, eligibility and timelines must match the rule pack for every edge case (EC-01..EC-30), with the **same JSON fixtures** run by the Go engine and its TS mirror;
   2. **adapter contract tests**: mock and real government adapters pass the same suite (F-56);
   3. **game determinism**: same seed + same events ⇒ the same `SessionResult` hash on client and server (the anti-cheat basis);
   4. **an AI evals gate**: ≥ 30 cases per agent, zero invented numbers (D-10);
   5. **wording and rupee-literal lint** (D-06, D-19).
-- **CI never touches a real government system, real users or Gemini.** All adapters are `mock`, `AI_MODE=template` and the data is synthetic. Model calls happen only in `evals.yml`, on a paid-tier eval key with a ₹ spend cap.
+- **CI never touches a real government system, real users or Gemini.** All adapters are `mock`, `AI_MODE=template`, `JOB_RUNNER=inline` and the data is synthetic. Model calls happen only in `evals.yml`, on a paid-tier eval key with a ₹ spend cap.
 
 ## 1. Pipeline diagram
 ```mermaid
 flowchart LR
   subgraph PR["Pull request / push to main"]
     direction LR
-    L1["lint + typecheck TS<br/>ESLint, Prettier, tsc,<br/>wording + ₹-literal ban"] --> U1[unit TS<br/>vitest + coverage]
-    L2[lint + typecheck PY<br/>ruff, mypy] --> U2[unit PY<br/>pytest, no network]
-    U1 & U2 --> GR[golden rules<br/>fees, eligibility,<br/>EC-01..EC-30, TS=PY parity]
+    L1["lint + typecheck TS<br/>Biome, ESLint (Next apps), tsc,<br/>wording + ₹-literal ban"] --> U1[unit TS<br/>Vitest + coverage<br/>incl. workflows tasks]
+    L2["lint + vet Go<br/>gofmt, go vet, golangci-lint,<br/>codegen drift, govulncheck"] --> U2["unit Go<br/>go test -short -race"]
+    U1 & U2 --> GR[golden rules<br/>fees, eligibility,<br/>EC-01..EC-30, Go = TS parity]
     U2 --> AC[adapter contracts<br/>7 adapters × mock,deeplink<br/>+ no-Aadhaar DTO guard]
     U1 --> GD[game determinism<br/>replay hash match,<br/>60/30 fps, anti-cheat]
-    U2 --> AI[api integration<br/>PG16 + Valkey, Alembic up/down/up,<br/>OpenAPI diff]
+    U2 --> AI["api integration<br/>embedded PG16 + Valkey,<br/>goose up/down/up, OpenAPI diff"]
     L1 --> BW["web build<br/>Lite &lt; 300 KB budget"]
     BW & AI & GR & AC & GD --> E2E[e2e Playwright<br/>+ axe WCAG 2.1 AA<br/>low-end + desktop]
     DS[docker smoke<br/>hadolint, build, non-root]
     E2E & DS --> GATE{{ci-gate}}
   end
   subgraph EV["evals.yml (AI paths, nightly)"]
-    O[offline guardrails<br/>validator, templates, PII,<br/>age gate] --> M[adk eval × 4 agents<br/>paid key, ₹ cap] --> R[PR comment]
+    O[offline guardrails<br/>validator, templates, PII,<br/>consent / family mode] --> M["Go eval harness × 4 agents<br/>go test -tags evals<br/>paid key, ₹ cap"] --> R[PR comment]
   end
   subgraph SEC["security.yml (PR, main, weekly)"]
-    G[gitleaks] ; P[pip-audit] ; N[pnpm audit + licences] ; Q[CodeQL ×3] ; T[Trivy config + image + SBOM] ; Z[ZAP baseline<br/>staging, weekly]
+    G[gitleaks] ; V[govulncheck + go-licenses] ; N[pnpm audit + licences] ; Q["CodeQL ×3<br/>go, js-ts, actions"] ; T[Trivy config + image + SBOM] ; Z[ZAP baseline<br/>staging, weekly]
   end
   GATE -->|"main, success"| D
   M -.->|"must not be failed"| D
   subgraph D["deploy.yml"]
     direction TB
-    RA[Render: verifier → API + Alembic → Workflows → web] --> SM[smoke + warm-up] --> TAG[release summary]
+    RA["Render: verifier → API + goose migrate → Workflows (Node) → web"] --> SM[smoke + warm-up] --> TAG[release summary]
     RB[gov-tenant: build → cosign sign → attest → mirror to state registry] --> APPROVE{{GitHub Environment<br/>required reviewers}} --> HELM[helm upgrade --atomic<br/>self-hosted runner in state network]
   end
 ```
 
 ## 2. Stages and gates
+All Go steps run in `services/api` with `actions/setup-go@v7` reading `go-version-file: services/api/go.mod` (`go 1.27.0`) and caching on `services/api/go.sum`. TS steps use `pnpm/action-setup@v4` (version from `packageManager`) and Node 22.
+
 | # | Stage (job) | Tool, pinned | What it proves | Gate (fails the PR) | Typical time |
 |---|---|---|---|---|---|
-| 1 | `lint-ts` | ESLint 9 + `@typescript-eslint`, Prettier 3, `tsc --noEmit` (strict), `scripts/ci/check-wording.mjs` | Code style; **13 CCPA dark patterns banned by lint** (F-26); no hard-coded ₹ string in UI, prompts, n8n templates (D-06); no banned words "official", "first", "DPDP-compliant", "integrated with Sarathi", "lives saved", "Saarthi", "STQC-certified", "verified licence", "safe" as a scam verdict (D-19) | any error or warning (`--max-warnings=0`) | 2–3 min |
-| 2 | `lint-py` | ruff 0.13, mypy 1.18 (`--strict` on `app/`) | Python style and types in `services/api` and `services/workflows` | any error | 1–2 min |
-| 3 | `unit-ts` | Vitest 3 + `@vitest/coverage-v8` | `@margdarshak/game-core` scoring, `@margdarshak/rules` evaluation, UI components | coverage: game-core ≥ 90 % lines, rules ≥ 95 %, ui ≥ 70 % | 2–4 min |
-| 4 | `unit-py` | pytest 8, pytest-socket, pytest-cov | services, ADK graph nodes (with stubbed model), validator, JobRunner port with a fake runner | coverage ≥ 80 %; **any network call fails** | 2–3 min |
-| 5 | `golden-rules` | pytest + Vitest on one fixture set (`tests/golden/rules/*.yaml`) | (a) every rule row has `source`, `verified_on`, `confidence` (D-05); (b) **fee maths**: one class = LL ₹150 + LL test ₹50 + DL test ₹300 + DL ₹200 = **₹700**, card **₹200**, second class ≈ **+₹450** (CMVR r.32, `fees.json`); (c) eligibility per class incl. EC-05 (16–17 → MC50CC only), EC-06 (transport < 20), EC-21; (d) timelines: LL 6 months, 30-day wait, 7-day retest (EC-08), EC-07, EC-16 renewal > 1 year late ⇒ retest; (e) EC-27 rule-pack change re-evaluates open cases; (f) Python and TS engines produce **byte-identical JSON** | any mismatch; any row older than 120 days without re-verification | 2 min |
-| 6 | `adapter-contracts` | pytest `-m contract`, matrix of 7 adapters | `SarathiAdapter`, `DigiLockerAdapter`, `AadhaarOfflineAdapter`, `BhashiniAdapter`, `PaymentAdapter`, `NotificationAdapter`, `SlotAdapter`: mock and deeplink pass the **same** suite a real adapter must pass (F-56, 07 §B1). DTO guard: no field named or shaped like an Aadhaar number, OTP, biometric or face-match (D-07) | any failed contract; any forbidden field | 1–2 min |
+| 1 | `lint-ts` | Biome 2.6 (`pnpm biome check .`), ESLint (Next.js apps only), `tsc --noEmit` (strict, every workspace incl. `services/workflows`), `scripts/ci/check-wording.mjs` | Code style; **13 CCPA dark patterns banned by lint** (F-26); no hard-coded ₹ string in UI, prompts, n8n templates (D-06); no banned words "official", "first", "DPDP-compliant", "integrated with Sarathi", "lives saved", "Saarthi", "STQC-certified", "verified licence", "safe" as a scam verdict (D-19) | any error or warning (`--max-warnings=0`) | 2–3 min |
+| 2 | `lint-go` | `go mod tidy` diff, `gofmt -l`, `go vet`, `go generate` drift (oapi-codegen v2.8.0 + sqlc v1.31.1), golangci-lint v2.15.0 (`services/api/.golangci.yml`), govulncheck v1.9.0 | Go formatting, vet, lint (incl. `depguard` import boundaries: pure packages never import `net/http`, pgx, chi, ADK or genai); the committed generated code (`services/api/api/` from `api/openapi.yaml`, `internal/store/sqlcgen`) matches its sources; no reachable known vulnerability | any finding; any diff after `go generate` or `go mod tidy` | 2–3 min |
+| 3 | `unit-ts` | Vitest 5 + `@vitest/coverage-v8` | `@margdarshak/game-core` scoring, `@margdarshak/rules` evaluation, UI components, Workflows tasks with `@renderinc/sdk` mocked | coverage: game-core ≥ 90 % lines, rules ≥ 95 %, ui ≥ 70 % | 2–4 min |
+| 4 | `unit-go` | `go test -short -race -count=1 -coverprofile` (testify v1.12.1) | domain, rules engine, journey state machine, case clock, PII redactor, handlers on fakes, ADK agents with a stubbed model, JobRunner port with the inline runner; `-short` skips the embedded-Postgres tests | any failure or race; coverage: `internal/domain`, `internal/journey`, `internal/clock` ≥ 90 %, `internal/rules` ≥ 95 % | 2–3 min |
+| 5 | `golden-rules` | `go test ./internal/rules/ -run Golden` + `pnpm --filter @margdarshak/rules test:golden` (`node --test --experimental-strip-types`) on one fixture set (`tests/golden/rules/*.json`) | (a) every rule row has `source`, `verified_on`, `confidence` (D-05; `TestRulepackSchema`, `TestRulepackProvenance`); (b) **fee maths**: one class = LL ₹150 + LL test ₹50 + DL test ₹300 + DL ₹200 = **₹700**, card **₹200**, second class ≈ **+₹450** (CMVR r.32, `fees.json`, integer paise); (c) eligibility per class incl. EC-05 (16–17 → MC50CC only), EC-06 (transport < 20), EC-21; (d) timelines: LL 6 months, 30-day wait, 7-day retest (EC-08), EC-07, EC-16 renewal > 1 year late ⇒ retest; (e) EC-27 rule-pack change re-evaluates open cases; (f) the Go engine (authoritative) and the TS mirror write outputs to `tests/golden/rules/.out/{go,ts}` and these are **byte-identical JSON** | any mismatch; any row older than 120 days without re-verification | 2 min |
+| 6 | `adapter-contracts` | `go test ./internal/adapters/... -run Contract`, matrix of 7 adapters (`CONTRACT_ADAPTER`, `CONTRACT_IMPLS=mock,deeplink`) | Sarathi, DigiLocker, Aadhaar-offline, Bhashini, Payment, Notification and Slot adapters: mock and deeplink pass the **same** suite a real adapter must pass (F-56, 07 §B1). DTO guard `TestNoForbiddenFields` (reflection over every adapter DTO): no field named or shaped like an Aadhaar number, OTP, biometric or face-match (D-07) | any failed contract; any forbidden field | 1–2 min |
 | 7 | `game-determinism` | Vitest + `services/score-verifier` CLI | Golden sessions (Nazar, Junction Scan, Stopping Distance, Blind Spot, Track Twin, LL simulator) replay to the **same SHA-256** of `SessionResult` on client build and verifier, with rendering at 60 and 30 fps; anti-cheat: spam taps penalised, pattern clicking scores 0 (Kerala format, F-23), device clock skew ignored (EC-15), buffering uses `video.currentTime` (EC-18) | hash mismatch; anti-cheat case passes when it should fail | 2 min |
-| 8 | `api-integration` | Postgres 16 + Valkey 8 service containers, Alembic, oasdiff v1.11 | Migrations up → down 1 → up; single Alembic head; expand/contract lint; HMAC on `/internal/*`; idempotency keys; Live Intel k ≥ 5 (D-14); under-18 gates (D-13); OpenAPI generated from FastAPI equals `api/openapi.yaml`; **no breaking change** vs `main` | any failure; breaking OpenAPI change without a `/v2` | 4–6 min |
+| 8 | `api-integration` | embedded-postgres v1.34.0 (Postgres 16, in-process), Valkey 8 service container, goose v3.29.0, oasdiff v1.11 | goose migrations up → down 1 → up on a throwaway database (`TestMigrationsUpDownUp`); expand/contract lint on new `migrations/*.sql` (no `DROP TABLE/COLUMN` or `RENAME` in the same release); full `go test -race ./...` incl. integration: HMAC on `/internal/*`, idempotency keys, Live Intel k ≥ 5 (D-14), Postgres RLS per tenant, family-mode parental consent (D-13 revised); **no breaking OpenAPI change** vs `main`. Contract-first: handlers are generated from `api/openapi.yaml`, so "spec equals code" is enforced by the codegen drift check in `lint-go` | any failure; breaking OpenAPI change without a `/v2` | 4–6 min |
 | 9 | `build-web` | `next build` (Next.js 16), `scripts/ci/check-bundle-budget.mjs` | The PWA builds; **Lite route first load < 300 KB gzip** (F-51); per-game chunk ≤ 350 KB gzip (08 §1.3) | budget exceeded | 3–5 min |
-| 10 | `e2e` (matrix: `mobile-chrome-lowend`, `desktop-chrome`) | Playwright 1.5x + `@axe-core/playwright` 4.10 on `infra/docker/compose.yaml` | Journeys S0–S9 on mocks; the three deep slices (plan → LL application → check answers; Nazar + debrief; stage-aware home + case clock); EC screens (EC-09 payment pending, EC-11 Sarathi outage banner, EC-14 helper "clear device", EC-20 Aadhaar redaction, EC-29 AI down ⇒ template card); the non-affiliation footer on every page (D-01); axe on every visited page (`wcag2a`, `wcag2aa`, `wcag21aa`); low-end profile throttled to slow-3G | any failed test; **any serious or critical axe violation** | 8–12 min |
-| 11 | `docker-smoke` | hadolint 2.12, Buildx | The three images build, run as uid 10001, pass Dockerfile lint | any failure | 4–8 min (cached) |
+| 10 | `e2e` (matrix: `mobile-chrome-lowend`, `desktop-chrome`) | Playwright 1.64 + `@axe-core/playwright` 4.14 on `infra/docker/compose.yaml` (goose `migrate` job, then `/app/seed --profile demo --synthetic`) | Journeys S0–S9 on mocks; the three deep slices (plan → LL application → check answers; Nazar + debrief; stage-aware home + case clock); EC screens (EC-09 payment pending, EC-11 Sarathi outage banner, EC-14 helper "clear device", EC-20 Aadhaar redaction, EC-29 AI down ⇒ template card); the non-affiliation footer on every page (D-01); axe on every visited page (`wcag2a`, `wcag2aa`, `wcag21aa`); low-end profile throttled to slow-3G | any failed test; **any serious or critical axe violation** | 8–12 min |
+| 11 | `docker-smoke` | hadolint 2.12, Buildx | The three images build (api = Go multi-stage → distroless static), run as uid 10001, pass Dockerfile lint. Runs on PRs that touch `infra/docker/**` or `services/api/**`, and always on `main` | any failure | 3–6 min (cached) |
 | — | `ci-gate` | shell | aggregates 1–11 | any `failure`/`cancelled` | < 10 s |
 
-**Target wall-clock for a PR: ≤ 15 minutes** (parallel jobs, uv + pnpm caches, Buildx GHA cache).
+**Target wall-clock for a PR: ≤ 15 minutes** (parallel jobs, Go module + build cache via setup-go, embedded-Postgres binary cache, pnpm cache, Buildx GHA cache).
 
 ### 2.1 AI evals gate (`evals.yml`)
-Runs on PRs touching `ai/**`, `services/api/app/agents/**`, `services/api/app/ai/**` or `rulepacks/**`, on push to `main` for AI paths, and nightly at 02:00 IST.
+Runs on PRs touching `ai/**`, `services/api/internal/adapters/ai/**`, `services/api/internal/privacy/**` or `rulepacks/**`, on push to `main` for AI paths, and nightly at 02:00 IST.
+
+ADK for Go (`google.golang.org/adk` v1.9.0) has no `adk eval` CLI, so the evals are a Go test harness behind the `evals` build tag: `go test -tags evals -count=1 ./internal/adapters/ai/evals/...`. It reads the JSONL suites in `ai/evals/` (`EVAL_SUITE_DIR`), runs each agent through an ADK `runner.Runner` (`EVAL_MODE=model`) or only the deterministic layers (`EVAL_MODE=offline`), applies the thresholds in `ai/evals/thresholds.yaml`, compares with the `origin/main` baseline and writes `.ci/evals/<agent>.summary.json`.
 
 | Job | Model? | Checks | Gate |
 |---|---|---|---|
-| `offline-guardrails` | no | eval sets well-formed with ≥ 30 cases per agent (D-10); the validator rejects digits outside `{{fact:*}}`, unknown finding/rule/drill IDs and `verified:false` rules (08 §5.5); every `finding_id × locale` has a template (08 §5.6); PII redaction of Aadhaar-like numbers, OTPs, phones and UPI IDs before any model call (EC-20); under-18 and no-consent requests never reach a model (D-13) | 100 % |
-| `model-evals` (debrief M-02, coach M-03, tutor M-04, screen decoder M-05) | Gemini paid tier, eval project | `adk eval` with `hallucinations_v1`, `safety_v1`, rubric criteria; then `app.ai.evals.gate` adds Margdarshak metrics | schema-valid 100 %; **invented numbers 0**; rule-ID precision ≥ 95 %; top-finding coverage 100 %; hallucination flags 0; safety 0; fallback < 5 %; no metric regresses > 2 points vs `main`; spend ≤ ₹150 per run |
-| `nightly-multimodal` | yes | clip-window proposer (M-06) vs two-rater gold windows ±1 s; sign snap (M-07) top-1 ≥ 0.90; model-ID drift (pinned model still listed and not legacy) | report + alert on regression |
+| `offline-guardrails` | no | eval sets well-formed with ≥ 30 cases per agent (D-10, `TestEvalSetsWellFormed`); the validator rejects digits outside `{{fact:*}}`, unknown finding/rule/drill IDs and `verified:false` rules (08 §5.5); every `finding_id × locale` has a template (08 §5.6, EC-29); PII redaction of Aadhaar-like numbers (Verhoeff), OTPs, phones and UPI IDs before any model call (EC-20); a request without the purpose consent, or a family-mode minor's case without the parent's recorded consent, never reaches a model (D-13 revised: AI is for every user, consent is what is checked) | 100 % |
+| `model-evals` (debrief M-02, coach M-03, tutor M-04, screen decoder M-05) | Gemini paid tier, eval project | `TestAgentEvals/<agent>`: hallucination and safety rubrics plus Margdarshak metrics (provenance, rule-ID precision, top-finding coverage, fallback, cost) | schema-valid 100 %; **invented numbers 0**; rule-ID precision ≥ 95 %; top-finding coverage 100 %; hallucination flags 0; safety 0; fallback < 5 %; no metric regresses > 2 points vs `main`; spend ≤ ₹150 per run |
+| `nightly-multimodal` | yes | clip-window proposer (M-06) vs two-rater gold windows ±1 s (`TestClipWindows`); sign snap (M-07) top-1 ≥ 0.90 (`TestSignSnap`); model-ID drift (pinned model still listed and not legacy, `TestModelDrift`, warn only) | report + alert on regression |
 | `report` | — | posts a PR comment table: cases, schema, invented numbers, rule-ID precision, fallback, ₹ spent, PASS/FAIL | — |
 
 Fork PRs never get the Gemini key. A maintainer adds the `run-evals` label to run the model job. `deploy.yml` refuses a commit whose `evals` run **failed** (an absent run, because no AI path changed, is allowed).
@@ -79,22 +85,23 @@ Fork PRs never get the Gemini key. A maintainer adds the `run-evals` label to ru
 | Scan | Tool and version | Scope | Fails on |
 |---|---|---|---|
 | Secrets | gitleaks v8.28 (CLI in Docker) | PR diff; **full history** weekly | any finding |
-| Python deps | pip-audit 2.9 (OSV) over `uv export` of `services/api` and `services/workflows` | locked prod deps | any known vulnerability (`--strict`) |
-| Node deps | `pnpm audit --prod --audit-level high` | prod deps | high/critical |
+| Go deps | govulncheck v1.9.0 (Go vulnerability database, call-graph reachability) | `services/api` modules + standard library | any reachable known vulnerability |
+| Go licences | go-licenses v2.0.1 `check --disallowed_types=forbidden,restricted` | `services/api` dependency graph | AGPL/SSPL/BUSL-class licences |
+| Node deps | `pnpm audit --prod --audit-level high` | prod deps (apps, packages, score verifier, workflows tasks) | high/critical |
 | Licences | license-checker-rseidelsohn 4.4 + `dependency-review-action` | shipped deps | AGPL-3.0, SSPL-1.0, BUSL-1.1 (we ship Apache-2.0, 07 §B5) |
-| SAST | CodeQL `security-extended` for `javascript-typescript`, `python`, `actions` | whole repo | alerts triaged in code scanning; high blocks merge via ruleset |
+| SAST | CodeQL `security-extended` for `go` (autobuild), `javascript-typescript`, `actions` | whole repo | alerts triaged in code scanning; high blocks merge via ruleset |
 | IaC / config | Trivy v0.67 `config` | Dockerfiles, `render.yaml`, `compose.yaml`, Helm (rendered in Phase 3) | HIGH/CRITICAL |
-| Images | Trivy `image` (OS + library, ignore-unfixed) | api, web, score-verifier | HIGH/CRITICAL |
+| Images | Trivy `image` (OS + library, ignore-unfixed; reads Go module info embedded in the API binary) | api, web, score-verifier | HIGH/CRITICAL |
 | SBOM | Trivy CycloneDX | each image | artefact kept 90 days for the **STQC / CERT-In pre-audit pack** (D-18) |
 | DAST | OWASP ZAP baseline v0.14 (passive) | staging web URL, weekly | report-only; triaged weekly |
 
 ## 3. Environments
 | Env | Purpose | Where | Data | Adapters | AI | Deploy trigger | Protection |
 |---|---|---|---|---|---|---|---|
-| **dev** | each developer's machine | `docker compose -f infra/docker/compose.yaml up` (+ `render workflows dev` for real task runs on :8120, B-sponsors §1) | synthetic seed (`python -m app.seed --profile demo --synthetic`) | mock | `template` by default; `live` with a personal paid key | manual | none |
+| **dev** | each developer's machine | No Docker required: `go run ./cmd/api` in `services/api` against a local or embedded Postgres 16 + `pnpm dev` for the web (see ENVIRONMENT_SETUP). Optional: `docker compose -f infra/docker/compose.yaml up`; `render workflows dev -- <start command>` in `services/workflows` for real task runs on :8120 | synthetic seed (`go run ./cmd/seed --profile demo --synthetic`) | mock | `template` by default; `live` with a personal paid key | manual | none |
 | **ci** | ephemeral | GitHub-hosted `ubuntu-24.04` runners | synthetic fixtures | mock, deeplink | `template` (evals.yml uses the eval key) | every PR | — |
 | **staging** | rehearsal of the demo and of migrations | Render, Singapore, separate services suffixed `-staging` (second Blueprint, `infra/render.staging.yaml`, created at H0) | synthetic | mock | live (paid tier, low quota) | `deploy.yml` → `render-staging` (manual) | GitHub Environment `staging` |
-| **hackathon-prod** | the judged live URL | Render, Singapore (`infra/render.yaml`) | **synthetic only** + consented field-study rows (18+, pseudonymous, D-22) | mock (Sarathi Mode A hand-off) | live, paid tier | automatic after `ci` passes on `main` | Environment `hackathon-prod`; deploy freeze 60 min before judging (RUNBOOK §8) |
+| **hackathon-prod** | the judged live URL | Render, Singapore (`infra/render.yaml`) | **synthetic only** + consented field-study rows (pseudonymous; a learner under 18 only inside a parent's account with parental consent, D-13 revised, D-22) | mock (Sarathi Mode A hand-off) | live, paid tier | automatic after `ci` passes on `main` | Environment `hackathon-prod`; deploy freeze 60 min before judging (RUNBOOK §8) |
 | **state-tenant** (`prod-gov-<tenant>`, e.g. `prod-gov-jk`) | a State Transport Department's production | Kubernetes on MeghRaj/NIC or a MeitY-empanelled CSP, India region (Helm, `infra/helm/`) | real citizens under the state's DPDP notice | per tenant: `sarathi=deeplink→real`, `digilocker=real`, `payment=sarathi-redirect`, `notification=mgov` | Vertex AI in an Indian region [unverified], per-tenant kill switch | `deploy.yml` → `gov-tenant`, **release tag vX.Y.Z only** | Environment with **required reviewers** (state nodal officer + Nestiq ops lead), self-hosted runner inside the state network, images cosign-verified |
 
 Promotion path: `dev → ci → staging → hackathon-prod`. For government: `vX.Y.Z tag → staging (state UAT namespace) → prod-gov-<tenant>`, the same image digests moving forward; nothing is rebuilt between environments.
@@ -102,9 +109,9 @@ Promotion path: `dev → ci → staging → hackathon-prod`. For government: `vX
 ## 4. Secrets handling
 | Secret | Lives in | Used by | Rotation |
 |---|---|---|---|
-| `RENDER_API_KEY` | GitHub Environment secret (`hackathon-prod`, `staging`) and Render env (`sync: false`) | deploy.yml (trigger deploys), API (start Workflows runs via `render_sdk`) | after the event; on any leak |
-| `GEMINI_API_KEY` (prod) / `GEMINI_API_KEY_EVALS` | Render env / GitHub Environment `ai-evals` | API, Workflows / evals.yml | 90 days; separate projects so an eval leak can't spend prod quota |
-| `N8N_HMAC_SECRET` ⇄ n8n Variable `MD_HMAC_SECRET` | Render env + n8n Variables | backend ⇄ n8n signing | after the event |
+| `RENDER_API_KEY` | GitHub Environment secret (`hackathon-prod`, `staging`) and Render env (`sync: false`) | deploy.yml (trigger deploys); the Go API's Render Workflows JobRunner (`POST https://api.render.com/v1/task-runs` with `Authorization: Bearer`) | after the event; on any leak |
+| `GEMINI_API_KEY` (prod) / `GEMINI_API_KEY_EVALS` | Render env / GitHub Environment `ai-evals` | API (ADK for Go + `google.golang.org/genai`), Workflows tasks / evals.yml | 90 days; separate projects so an eval leak can't spend prod quota |
+| `N8N_HMAC_SECRET` ⇄ n8n Variable `MD_HMAC_SECRET` | Render env + n8n Variables | backend ⇄ n8n signing; Workflows tasks → API job steps | after the event |
 | `CONTACT_ENCRYPTION_KEY` (E-14) | Render env; production: state KMS via External Secrets | API | yearly + envelope re-encryption |
 | `SESSION_SIGNING_KEY`, `NEXTAUTH_SECRET`, `VERIFIER_SHARED_SECRET` | `generateValue: true` in render.yaml | API, web, verifier | redeploy regenerates only if the key is deleted |
 | R2 keys | Render env | API, Workflows | after the event |
@@ -126,7 +133,7 @@ Rules:
 | Situation | Action | Time |
 |---|---|---|
 | Bad web/API deploy on Render | Render dashboard → service → **Events → Rollback** to the last live deploy; or re-run `deploy.yml` with `ref=<previous sha>` | 1–3 min |
-| Bad migration | Migrations are expand/contract, so the previous code still runs on the expanded schema. Roll back the code first, then `alembic downgrade -1` only if the revision is marked reversible and no contract step ran | 5–10 min |
+| Bad migration | Migrations are expand/contract, so the previous code still runs on the expanded schema. Roll back the code first, then `/app/api migrate down` (goose, one step) only if the migration's `-- +goose Down` is marked reversible and no contract step ran | 5–10 min |
 | Bad rule pack (wrong fee or rule) | Rule packs are **data**: switch the tenant's `rulepack_version` to the previous signed version in the rule-pack studio (F-42), no deploy needed; RUNBOOK PB-04 | < 5 min |
 | Bad prompt / model ID | env var `GEMINI_MODEL_*` back to the previous value, or flag `ai_debrief=off` ⇒ template cards (EC-29) | < 2 min |
 | Bad n8n workflow | n8n keeps workflow versions; deactivate and restore the previous version; the backend outbox keeps undelivered messages | < 5 min |
@@ -138,41 +145,48 @@ Rules:
 - Government: only tags, with a change ticket that links the CI run, the evals summary, the SBOMs, the Trivy reports and the rule-pack diff.
 
 ## 8. Supply-chain hardening checklist
-- [ ] Pin every `uses:` to a commit SHA (H0, owner Ops lead, 2026-10-24); Dependabot for `github-actions`, `npm`, `pip`/`uv`, `docker`.
-- [ ] Pin base images by digest in the Dockerfiles once the first green build lands.
-- [ ] `--frozen-lockfile` (pnpm) and `--frozen` (uv) everywhere; no `latest` tags.
+- [ ] Pin every `uses:` to a commit SHA (H0, owner Ops lead, 2026-10-24); Dependabot for `github-actions`, `gomod` (`services/api`), `npm`, `docker`.
+- [ ] Pin base images by digest in the Dockerfiles once the first green build lands (`golang:1.27-bookworm` build stage, `gcr.io/distroless/static-debian12` runtime for the API).
+- [ ] `--frozen-lockfile` (pnpm) everywhere; Go: `go.sum` committed, `GOFLAGS=-mod=readonly` in builds, `go mod tidy` diff checked in `lint-go`, checksum database on (`GONOSUMDB` empty); tools run as `go run module@vX.Y.Z` (exact versions, never `@latest`).
 - [ ] cosign keyless signing + `actions/attest-build-provenance` for government images; `cosign verify` before mirroring into a state registry.
 - [ ] Branch protection on `main`: `ci-gate` required, 1 review, linear history, no force-push.
 - [ ] CODEOWNERS: `rulepacks/**` → rules owner + a second reviewer (maker-checker mirrors F-42); `ai/prompts/**` → AI lead; `.github/**`, `infra/**` → Ops lead.
 
-## 9. Scripts referenced by the workflows (built in Phase 1, see BACKLOG)
-| Script / module | Purpose |
+## 9. Scripts and tests referenced by the workflows (built in Phase 1, see BACKLOG)
+| Script / test | Purpose |
 |---|---|
 | `scripts/ci/check-wording.mjs` | banned words (D-19) and rupee literals (D-06) in UI strings, prompts, n8n JSON and rule-pack copy. Context-aware: "first" is banned only as a claim ("first-ever", "India's first"); an allow-list covers "first name", "first load", "first-launch disclaimer"; "safe" is banned only in scam-verdict strings; "official" is allowed only inside quoted source titles in rule rows. Rupee amounts may appear only in `fees.json` / rule packs |
 | `scripts/ci/check-bundle-budget.mjs` | Lite < 300 KB, game chunk ≤ 350 KB (gzip) |
-| `scripts/ci/diff-golden.mjs` | Python vs TS golden output parity |
+| `scripts/ci/diff-golden.mjs` | Go vs TS golden output parity (`tests/golden/rules/.out/go` vs `.out/ts`) |
 | `scripts/ci/axe-gate.mjs` | aggregate axe JSON; fail on serious/critical |
-| `app.rules.validate` | rule-pack schema + provenance + staleness |
-| `app.adapters.lint_dto` | forbidden identity fields in adapter DTOs |
-| `app.db.migration_lint` | expand/contract rules for Alembic revisions |
-| `app.openapi_export` | FastAPI → OpenAPI 3.1, compared with `api/openapi.yaml` |
-| `app.ai.evals.{check_sets,gate,clip_windows,sign_snap,model_drift}` | AI eval gates |
+| `go generate ./...` (in `services/api`) | oapi-codegen v2.8.0 (`chi-server` + `strict-server` + models from `api/openapi.yaml` into `services/api/api/`) and sqlc v1.31.1 (`internal/store/sqlcgen`); CI fails on any diff |
+| `internal/rules`: `TestRulepackSchema`, `TestRulepackProvenance`, `TestGolden*` | rule-pack JSON Schema + provenance + staleness (`RULEPACK_MAX_VERIFICATION_AGE_DAYS`); golden fixtures from `GOLDEN_DIR`, outputs to `GOLDEN_OUT` |
+| `internal/adapters`: `TestContract*`, `TestNoForbiddenFields` | contract suites per adapter (`CONTRACT_ADAPTER`, `CONTRACT_IMPLS`); forbidden identity fields in adapter DTOs (D-07) |
+| `migrations`: `TestMigrationsUpDownUp` | goose up → down 1 → up on embedded Postgres 16 |
+| inline shell in `ci.yml` (`api-integration`) | expand/contract lint on new goose SQL files |
+| `internal/adapters/ai/evals` (build tag `evals`): `TestEvalSetsWellFormed`, `TestAgentEvals`, `TestClipWindows`, `TestSignSnap`, `TestModelDrift` | AI eval gates (env `EVAL_SUITE_DIR`, `EVAL_MODE`, `EVAL_AGENT`, `EVAL_THRESHOLDS`, `EVAL_MAX_INR`, `EVAL_OUT`) |
 | `services/score-verifier/dist/cli/replay.js` | replay golden sessions and compare hashes |
+| `/app/api migrate up` and `/app/seed` (in the API image) | goose migrations (Render `preDeployCommand`, compose `migrate` job, Helm pre-upgrade Job); synthetic demo seed |
 
 ## 10. Validation of these files (done 2026-10-23)
-- All four workflow files, `infra/render.yaml` and `infra/docker/compose.yaml` parse with PyYAML 6.0.3; every `needs:` points at an existing job.
-- **actionlint v1.7.7** reports no errors on all four workflows (shellcheck integration off).
+- **actionlint v1.7.12** (`go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12`, built with go1.27.0) reports **0 errors** on all four workflows after the Go migration. shellcheck and pyflakes were not installed, so the shell-script checks inside `run:` blocks were skipped; re-run with shellcheck at H0.
+- Every `needs:` points at an existing job (actionlint checks this); `ci-gate` lists all 11 required jobs.
+- Versions used in the files were checked on 2026-10-23: golangci-lint v2.15.0, govulncheck (`golang.org/x/vuln`) v1.9.0 and go-licenses v2.0.1 on proxy.golang.org; `actions/setup-go` v7.0.0 and `golangci/golangci-lint-action` v9.3.0 are the latest GitHub releases.
 - `render.yaml` follows the field list on https://render.com/docs/blueprint-spec (fetched 2026-10-23). One field is [unverified]: `startCommand` on a `workflow` service (owner Ops lead; check with `render blueprint validate` at H0).
+- The tests, test names and env variables in §9 are a **contract the Go code must meet**. Caution: `go test -run X` with no matching test exits 0 ("no tests to run"), so a missing test is **not** caught by CI. The owners (BE-platform, RULES, AI) add them in P0/P1 and the Ops lead checks the `-v` logs for the expected test names (tracked in BACKLOG). Steps that depend on packages that do not exist yet (`./migrations/...`, `./internal/adapters/ai/evals/...`) fail with "no Go files" until they are created.
 
 ## Appendix A: the workflow files, inline
-These copies are generated from `.github/workflows/*.yml` and `infra/render.yaml` on 2026-10-23. **The files in the repo win** if they ever differ.
+These copies are generated from `.github/workflows/*.yml` and `infra/render.yaml` on 2026-10-23 (regenerated after the Go switch, ADR-0011). **The files in the repo win** if they ever differ.
 
 ### `.github/workflows/ci.yml`
 ```yaml
 # Margdarshak CI: every PR and every push to main.
 # Stages: lint -> typecheck -> unit -> golden rules -> adapter contracts -> game determinism
-#         -> API integration (Postgres 16 + migrations + OpenAPI diff) -> web build + Lite budget
-#         -> e2e (Playwright) + axe -> docker build smoke -> ci-gate (the single required check)
+#         -> API integration (embedded Postgres 16 + goose migrations + OpenAPI diff)
+#         -> web build + Lite budget -> e2e (Playwright) + axe -> docker build smoke
+#         -> ci-gate (the single required check)
+# Languages: Go 1.27 for services/api (ADR-0011); TypeScript for apps/*, packages/*,
+# services/score-verifier and services/workflows (Render Workflows tasks, @renderinc/sdk).
 # AI evals live in evals.yml, security scans in security.yml, deploys in deploy.yml.
 # Spec: docs/05-ops/CICD.md. Action versions are tags; pin to commit SHAs at H0 (CICD.md §8).
 name: ci
@@ -192,9 +206,8 @@ concurrency:
 
 env:
   NODE_VERSION: "22"
-  PNPM_VERSION: "10.18.0"
-  PYTHON_VERSION: "3.12"
-  UV_VERSION: "0.8.17"
+  GOLANGCI_LINT_VERSION: "v2.15.0"
+  GOVULNCHECK_VERSION: "v1.9.0"
   TZ: UTC
   # CI never talks to Gemini, n8n, Render or any government system; all adapters are mocks.
   AI_MODE: template
@@ -216,7 +229,8 @@ jobs:
       pull-requests: read
     outputs:
       ts: ${{ steps.filter.outputs.ts }}
-      py: ${{ steps.filter.outputs.py }}
+      go: ${{ steps.filter.outputs.go }}
+      workflows: ${{ steps.filter.outputs.workflows }}
       rules: ${{ steps.filter.outputs.rules }}
       game: ${{ steps.filter.outputs.game }}
       web: ${{ steps.filter.outputs.web }}
@@ -232,16 +246,18 @@ jobs:
               - 'apps/**'
               - 'packages/**'
               - 'services/score-verifier/**'
+              - 'services/workflows/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
-            py:
+            go:
               - 'services/api/**'
+              - 'tests/golden/**'
+            workflows:
               - 'services/workflows/**'
-              - 'tests/**'
             rules:
               - 'rulepacks/**'
               - 'packages/rules/**'
-              - 'services/api/app/rules/**'
+              - 'services/api/internal/rules/**'
               - 'tests/golden/rules/**'
             game:
               - 'packages/game-core/**'
@@ -257,7 +273,7 @@ jobs:
               - 'infra/docker/**'
 
   # ---------------------------------------------------------------------------
-  # 1. Lint + typecheck (TypeScript)
+  # 1. Lint + typecheck (TypeScript: apps, packages, score-verifier, workflows tasks)
   # ---------------------------------------------------------------------------
   lint-ts:
     name: lint + typecheck (ts)
@@ -267,55 +283,59 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+      - uses: pnpm/action-setup@v4   # pnpm version comes from "packageManager" in package.json
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: ESLint (incl. no-dark-patterns + no-rupee-literal custom rules)
-        run: pnpm -r --if-present lint --max-warnings=0
-      - name: Prettier
-        run: pnpm prettier --check .
-      - name: TypeScript (tsc --noEmit, strict)
+      - name: Biome (lint + format, whole repo)
+        run: pnpm biome check .
+      - name: ESLint (Next.js apps only; no-dark-patterns + no-rupee-literal custom rules)
+        run: pnpm -r --filter "./apps/**" --if-present lint --max-warnings=0
+      - name: TypeScript (tsc --noEmit, strict; includes services/workflows once it exists)
         run: pnpm -r --if-present typecheck
       - name: Wording bans (D-19) + rupee literals (D-06) in UI strings, messages and prompts
         run: node scripts/ci/check-wording.mjs --paths apps packages ai/prompts n8n/workflows rulepacks --fail-on-match
 
   # ---------------------------------------------------------------------------
-  # 2. Lint + typecheck (Python)
+  # 2. Lint + vet + codegen drift + vulnerabilities (Go: services/api)
   # ---------------------------------------------------------------------------
-  lint-py:
-    name: lint + typecheck (py)
+  lint-go:
+    name: lint + vet (go)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-      - name: Sync api deps
-        working-directory: services/api
-        run: uv sync --frozen
-      - name: Ruff lint
-        working-directory: services/api
-        run: uv run ruff check --output-format=github .
-      - name: Ruff format
-        working-directory: services/api
-        run: uv run ruff format --check .
-      - name: mypy (strict on app/, adapters/ and rules/)
-        working-directory: services/api
-        run: uv run mypy app
-      - name: Sync + lint workflows service
-        working-directory: services/workflows
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
+      - name: go mod tidy is clean
         run: |
-          uv sync --frozen
-          uv run ruff check --output-format=github .
-          uv run mypy .
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+      - name: gofmt (must print nothing)
+        run: |
+          out="$(gofmt -l .)"
+          if [ -n "$out" ]; then echo "::error::gofmt needed on:"; echo "$out"; exit 1; fi
+      - name: go vet
+        run: go vet ./...
+      - name: Codegen drift (oapi-codegen from api/openapi.yaml + sqlc; generated code is committed)
+        run: |
+          go generate ./...
+          git diff --exit-code
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          working-directory: services/api
+          args: --timeout=5m
+      - name: govulncheck (reachable vulnerabilities in Go deps + stdlib)
+        run: go run "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}" ./...
 
   # ---------------------------------------------------------------------------
   # 3. Unit tests
@@ -328,14 +348,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Vitest with coverage (game-core >= 90 % lines, rules >= 95 %, ui >= 70 %)
+      - name: Vitest with coverage (game-core >= 90 % lines, rules >= 95 %, ui >= 70 %; workflows tasks with @renderinc/sdk mocked)
         run: pnpm -r --if-present test -- --coverage --reporter=default --reporter=junit --outputFile=reports/junit.xml
       - uses: actions/upload-artifact@v4
         if: always()
@@ -346,103 +364,112 @@ jobs:
             **/coverage/coverage-summary.json
           retention-days: 14
 
-  unit-py:
-    name: unit (py, pytest)
-    needs: lint-py
+  unit-go:
+    name: unit (go test -short -race)
+    needs: lint-go
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-      - working-directory: services/api
-        run: uv sync --frozen
-      - name: pytest unit (pytest-socket blocks network)
-        working-directory: services/api
-        run: uv run pytest -m "unit" --disable-socket --allow-unix-socket --cov=app --cov-report=xml --cov-fail-under=80 --junitxml=reports/junit.xml
-      - name: workflows tasks unit tests (render_sdk mocked)
-        working-directory: services/workflows
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
+      - name: go test (unit only; -short skips the embedded-Postgres integration tests)
         run: |
-          uv sync --frozen
-          uv run pytest -m "unit" --disable-socket
+          mkdir -p reports
+          set -o pipefail
+          go test -short -race -count=1 -coverprofile=reports/coverage.out ./... 2>&1 | tee reports/unit.txt
+      - name: Coverage gates (internal/domain, journey, clock >= 90 %; internal/rules >= 95 %; TESTING.md §10)
+        run: |
+          go tool cover -func=reports/coverage.out | tail -n 1
+          check() {
+            pkg="$1"; min="$2"
+            pct=$(go tool cover -func=reports/coverage.out | grep "/internal/${pkg}/" | awk '{gsub("%","",$3); s+=$3; n++} END {if (n>0) printf "%.1f", s/n; else print "100"}')
+            echo "internal/${pkg}: ${pct}% (min ${min}%)"
+            if awk -v p="$pct" -v m="$min" 'BEGIN { exit !(p+0 < m+0) }'; then
+              echo "::error::coverage of internal/${pkg} is ${pct}% (< ${min}%)"; return 1
+            fi
+          }
+          check domain 90 && check journey 90 && check clock 90 && check rules 95
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: unit-py-reports
+          name: unit-go-reports
           path: services/api/reports/
           retention-days: 14
 
   # ---------------------------------------------------------------------------
   # 4. Golden rules tests: fees, eligibility, timelines, EC-01..EC-30
-  #    The SAME fixtures run against the Python engine and the TS @margdarshak/rules package.
+  #    The SAME JSON fixtures (tests/golden/rules) run against the Go engine and the TS mirror.
   # ---------------------------------------------------------------------------
   golden-rules:
     name: golden rules (fees, eligibility, EC-01..EC-30)
-    needs: [unit-py, unit-ts]
+    needs: [unit-go, unit-ts]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
       - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - working-directory: services/api
-        run: uv sync --frozen
       - name: Rule-pack schema + provenance (every row has source, verified_on, confidence; D-05)
         working-directory: services/api
-        run: uv run python -m app.rules.validate --dir ../../rulepacks --require-provenance --fail-on-expired-verification-days 120
-      - name: Golden fixtures, Python engine
+        env:
+          RULEPACK_DIR: ${{ github.workspace }}/rulepacks
+          RULEPACK_MAX_VERIFICATION_AGE_DAYS: "120"
+        run: go test -count=1 ./internal/rules/ -run 'TestRulepackSchema|TestRulepackProvenance' -v
+      - name: Golden fixtures, Go engine (authoritative)
         working-directory: services/api
-        run: uv run pytest ../../tests/golden/rules -m golden --junitxml=reports/golden-rules-py.xml
-      - name: Golden fixtures, TS engine (parity)
+        env:
+          GOLDEN_DIR: ${{ github.workspace }}/tests/golden/rules
+          GOLDEN_OUT: ${{ github.workspace }}/tests/golden/rules/.out/go
+        run: go test -count=1 ./internal/rules/ -run Golden -v
+      - name: Golden fixtures, TS mirror (parity; node --test --experimental-strip-types)
+        env:
+          GOLDEN_OUT: ${{ github.workspace }}/tests/golden/rules/.out/ts
         run: pnpm --filter @margdarshak/rules test:golden
       - name: Cross-engine parity diff (byte-equal JSON outputs)
-        run: node scripts/ci/diff-golden.mjs tests/golden/rules/.out/py tests/golden/rules/.out/ts
+        run: node scripts/ci/diff-golden.mjs tests/golden/rules/.out/go tests/golden/rules/.out/ts
 
   # ---------------------------------------------------------------------------
   # 5. Adapter contract tests (F-56): mock adapters must pass the same suite real ones will
   # ---------------------------------------------------------------------------
   adapter-contracts:
     name: adapter contracts (mock + deeplink)
-    needs: unit-py
+    needs: unit-go
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        adapter: [sarathi, digilocker, aadhaar_offline, bhashini, payment, notification, slot]
+        adapter: [sarathi, digilocker, aadhaaroffline, bhashini, payment, notification, slot]
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-      - working-directory: services/api
-        run: uv sync --frozen
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
       - name: Contract suite for ${{ matrix.adapter }}
-        working-directory: services/api
-        run: >
-          uv run pytest ../../tests/contract/adapters
-          -m contract -k "${{ matrix.adapter }}"
-          --adapter-impl=mock,deeplink
-          --junitxml=reports/contract-${{ matrix.adapter }}.xml
+        env:
+          CONTRACT_ADAPTER: ${{ matrix.adapter }}
+          CONTRACT_IMPLS: mock,deeplink
+        run: go test -count=1 ./internal/adapters/... -run Contract -v
       - name: Guard - no Aadhaar number / OTP / biometric field in any adapter DTO (D-07)
-        working-directory: services/api
-        run: uv run python -m app.adapters.lint_dto --forbid aadhaar_number,otp,biometric,face_match
+        run: go test -count=1 ./internal/adapters/ -run TestNoForbiddenFields -v
 
   # ---------------------------------------------------------------------------
   # 6. Game determinism: same seed + same events => identical SessionResult hash,
@@ -456,8 +483,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -473,67 +498,66 @@ jobs:
         run: pnpm --filter @margdarshak/game-core test -- --run tests/anticheat
 
   # ---------------------------------------------------------------------------
-  # 7. API integration: real Postgres 16 + Valkey, migrations up/down, OpenAPI breaking-change diff
+  # 7. API integration: embedded Postgres 16 (real Postgres, no Docker service needed),
+  #    goose migrations up/down/up, integration tests, OpenAPI breaking-change diff.
   # ---------------------------------------------------------------------------
   api-integration:
-    name: api integration (pg16, migrations, openapi)
-    needs: [unit-py]
+    name: api integration (embedded pg16, goose, openapi)
+    needs: [unit-go]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     services:
-      postgres:
-        image: postgres:16-bookworm
-        env:
-          POSTGRES_DB: margdarshak
-          POSTGRES_USER: margdarshak
-          POSTGRES_PASSWORD: ci-only
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd "pg_isready -U margdarshak"
-          --health-interval 5s --health-timeout 3s --health-retries 20
       kv:
         image: valkey/valkey:8-bookworm
         ports: ["6379:6379"]
     env:
-      DATABASE_URL: postgresql+psycopg://margdarshak:ci-only@localhost:5432/margdarshak
       REDIS_URL: redis://localhost:6379/0
       N8N_HMAC_SECRET: ci-only-hmac
       CONTACT_ENCRYPTION_KEY: Y2ktb25seS1jb250YWN0LWtleS0zMi1ieXRlcy0tLS0=
       SESSION_SIGNING_KEY: ci-only-session
+      RULEPACK_DIR: ${{ github.workspace }}/rulepacks
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-      - working-directory: services/api
-        run: uv sync --frozen
-      - name: Migrations up -> down 1 -> up (reversibility of the newest revision)
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
+      - name: Cache embedded-postgres binaries (Postgres 16)
+        uses: actions/cache@v4
+        with:
+          path: ~/.embedded-postgres-go
+          key: embedded-pg16-${{ runner.os }}-${{ hashFiles('services/api/go.sum') }}
+          restore-keys: embedded-pg16-${{ runner.os }}-
+      - name: goose migrations up -> down 1 -> up on a throwaway embedded Postgres (reversibility)
+        working-directory: services/api
+        run: go test -count=1 ./migrations/... -run TestMigrationsUpDownUp -v
+      - name: Expand/contract lint (no DROP/RENAME in the same release as code that stops using it)
+        run: |
+          git diff --name-only --diff-filter=AM origin/main...HEAD -- 'services/api/migrations/*.sql' > new_migrations.txt || true
+          cat new_migrations.txt
+          if [ -s new_migrations.txt ] && xargs grep -nEi '^[[:space:]]*(drop[[:space:]]+(table|column)|alter[[:space:]]+table[[:space:]]+[^[:space:]]+[[:space:]]+rename)' < new_migrations.txt; then
+            echo "::error::Destructive DDL in a new migration: ship it as a separate contract release (DEPLOYMENT.md §6)"; exit 1
+          fi
+      - name: Integration tests on embedded Postgres 16 (HMAC on /internal/*, idempotency keys, k>=5 Live Intel, family-mode consent, RLS)
         working-directory: services/api
         run: |
-          uv run alembic upgrade head
-          uv run alembic downgrade -1
-          uv run alembic upgrade head
-      - name: Expand/contract lint (no DROP/RENAME in the same release as code that stops using it)
-        working-directory: services/api
-        run: uv run python -m app.db.migration_lint --since origin/main
-      - name: Single head check
-        working-directory: services/api
-        run: test "$(uv run alembic heads | wc -l)" -eq 1
-      - name: Integration tests (HMAC on /internal/*, idempotency keys, k>=5 Live Intel, age gates)
-        working-directory: services/api
-        run: uv run pytest -m "integration" --junitxml=reports/integration.xml
-      - name: Export OpenAPI from the app and compare with api/openapi.yaml
-        working-directory: services/api
-        run: uv run python -m app.openapi_export --out ../../.ci/openapi.generated.yaml --check-against ../../api/openapi.yaml
+          mkdir -p reports
+          set -o pipefail
+          go test -race -count=1 ./... 2>&1 | tee reports/integration.txt
       - name: OpenAPI breaking-change diff vs main (oasdiff)
         if: github.event_name == 'pull_request'
         run: |
+          mkdir -p .ci
           git show origin/main:api/openapi.yaml > .ci/openapi.main.yaml || exit 0
           docker run --rm -v "$PWD:/w" -w /w tufin/oasdiff:v1.11.7 breaking .ci/openapi.main.yaml api/openapi.yaml --fail-on ERR
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-integration-reports
+          path: services/api/reports/
+          retention-days: 14
 
   # ---------------------------------------------------------------------------
   # 8. Web build + performance budget (Lite mode < 300 KB first load, F-51)
@@ -546,8 +570,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -587,17 +609,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Start stack (mock adapters, AI_MODE=template, synthetic seed)
+      - name: Start stack (mock adapters, AI_MODE=template, goose migrate job, synthetic seed)
         run: |
           docker compose -f infra/docker/compose.yaml up --build -d --wait api web
-          docker compose -f infra/docker/compose.yaml exec -T api python -m app.seed --profile demo --synthetic
+          docker compose -f infra/docker/compose.yaml run --rm api /app/seed --profile demo --synthetic
       - name: Install Playwright browsers
         run: pnpm --filter @margdarshak/e2e exec playwright install --with-deps chromium
       - name: Playwright (journeys S0-S9, three deep slices, EC screens) + axe on every page
@@ -628,7 +648,7 @@ jobs:
   docker-smoke:
     name: docker build smoke
     needs: changes
-    if: needs.changes.outputs.docker == 'true' || github.event_name != 'pull_request'
+    if: needs.changes.outputs.docker == 'true' || needs.changes.outputs.go == 'true' || github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -658,7 +678,7 @@ jobs:
   ci-gate:
     name: ci-gate
     if: always()
-    needs: [lint-ts, lint-py, unit-ts, unit-py, golden-rules, adapter-contracts, game-determinism, api-integration, build-web, e2e, docker-smoke]
+    needs: [lint-ts, lint-go, unit-ts, unit-go, golden-rules, adapter-contracts, game-determinism, api-integration, build-web, e2e, docker-smoke]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any required job failed or was cancelled (skipped by path filter is OK)
@@ -672,9 +692,11 @@ jobs:
 
 ### `.github/workflows/evals.yml`
 ```yaml
-# Margdarshak AI evals gate (D-10): >= 30 cases per agent, run with ADK `adk eval`.
+# Margdarshak AI evals gate (D-10): >= 30 cases per agent, run by the Go eval harness
+# (`go test -tags evals ./internal/adapters/ai/evals/...`; ADK for Go has no `adk eval` CLI).
 #   - offline job: validators, provenance guard, template fallback, PII redaction. No model, no secret.
 #   - model job:   real Gemini (PAID tier key, D-13) for M-02..M-05 (+ M-06/M-07 nightly).
+# Suites: ai/evals/*.jsonl (debrief_150, decoder_30, tutor_30, voice_nav_30, ...).
 # Gates (from docs/04-ai/AI_EVALS.md and research 08 §5.9):
 #   schema-valid after validator 100 % · invented numbers 0 · rule-ID precision >= 95 %
 #   top-finding coverage 100 % · hallucinations_v1 flagged 0 · safety_v1 + banned-phrase 0
@@ -687,8 +709,8 @@ on:
   pull_request:
     paths:
       - "ai/**"
-      - "services/api/app/agents/**"
-      - "services/api/app/ai/**"
+      - "services/api/internal/adapters/ai/**"
+      - "services/api/internal/privacy/**"
       - "rulepacks/**"
       - ".github/workflows/evals.yml"
     types: [opened, synchronize, reopened, labeled]
@@ -696,8 +718,7 @@ on:
     branches: [main]
     paths:
       - "ai/**"
-      - "services/api/app/agents/**"
-      - "services/api/app/ai/**"
+      - "services/api/internal/adapters/ai/**"
   schedule:
     - cron: "30 20 * * *"   # 02:00 IST nightly: full suite incl. vision/video agents + drift check
   workflow_dispatch:
@@ -719,9 +740,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PYTHON_VERSION: "3.12"
-  UV_VERSION: "0.8.17"
   TZ: UTC
+  EVAL_SUITE_DIR: ${{ github.workspace }}/ai/evals
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -733,38 +753,39 @@ jobs:
     timeout-minutes: 15
     env:
       AI_MODE: template
+      EVAL_MODE: offline
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-      - working-directory: services/api
-        run: uv sync --frozen
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
       - name: Eval sets are well-formed and big enough (>= 30 cases per agent)
-        working-directory: services/api
-        run: uv run python -m app.ai.evals.check_sets --dir ../../ai/evals --min-cases 30
+        env:
+          EVAL_MIN_CASES: "30"
+        run: go test -tags evals -count=1 ./internal/adapters/ai/evals/... -run TestEvalSetsWellFormed -v
       - name: Validator rejects digits outside {{fact:*}}, unknown IDs, unverified rules (08 §5.5)
-        working-directory: services/api
-        run: uv run pytest ../../tests/ai/validator -m "ai_offline" --junitxml=reports/validator.xml
-      - name: Template fallback renders for every finding_id x locale (en, hi)
-        working-directory: services/api
-        run: uv run pytest ../../tests/ai/templates -m "ai_offline"
-      - name: PII redaction (Aadhaar-like 12 digits, OTP, phone, UPI) before any model call (EC-20)
-        working-directory: services/api
-        run: uv run pytest ../../tests/ai/pii -m "ai_offline"
-      - name: Under-18 / no-consent never reaches a model (D-13)
-        working-directory: services/api
-        run: uv run pytest ../../tests/ai/age_gate -m "ai_offline"
+        run: go test -count=1 ./internal/adapters/ai/... -run 'Validator|Provenance' -v
+      - name: Template fallback renders for every finding_id x locale (en, hi) (EC-29)
+        run: go test -count=1 ./internal/adapters/ai/... -run TemplateFallback -v
+      - name: PII redaction (Aadhaar-like 12 digits with Verhoeff, OTP, phone, UPI) before any model call (EC-20)
+        run: go test -count=1 ./internal/privacy/... ./internal/adapters/ai/... -run 'Redact|EC20' -v
+      - name: No consent / no parental consent for a family-mode minor case never reaches a model (D-13 revised)
+        run: go test -count=1 ./internal/adapters/ai/... ./internal/privacy/... -run 'Consent|FamilyMode' -v
+      - name: Offline eval pass (validators + guard + fallback over every suite, no model)
+        run: go test -tags evals -count=1 ./internal/adapters/ai/evals/... -v
       - name: No rupee literal or banned wording in prompts (D-06, D-19)
+        working-directory: .
         run: node scripts/ci/check-wording.mjs --paths ai/prompts --fail-on-match
 
   # ---------------------------------------------------------------------------
   # Model evals: real Gemini, paid tier. Skipped on fork PRs unless labelled.
   # ---------------------------------------------------------------------------
   model-evals:
-    name: adk eval (${{ matrix.agent }})
+    name: model evals (${{ matrix.agent }})
     needs: offline-guardrails
     if: >
       github.event_name != 'pull_request' ||
@@ -778,64 +799,46 @@ jobs:
       max-parallel: 2                # respect Gemini RPM on the eval project
       matrix:
         agent: [debrief, coach, tutor, screen_decoder]
-        include:
-          - agent: debrief
-            evalset: ai/evals/debrief.evalset.json
-            config: ai/evals/debrief.test_config.json
-          - agent: coach
-            evalset: ai/evals/coach.evalset.json
-            config: ai/evals/coach.test_config.json
-          - agent: tutor
-            evalset: ai/evals/tutor.evalset.json
-            config: ai/evals/tutor.test_config.json
-          - agent: screen_decoder
-            evalset: ai/evals/screen_decoder.evalset.json
-            config: ai/evals/screen_decoder.test_config.json
     env:
-      GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY_EVALS }}
-      GOOGLE_GENAI_USE_VERTEXAI: "FALSE"
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_EVALS }}
+      GOOGLE_GENAI_USE_VERTEXAI: "false"
       GEMINI_MODEL_DEBRIEF: ${{ vars.GEMINI_MODEL_DEBRIEF || 'gemini-3.1-flash-lite' }}
       GEMINI_MODEL_VISION: ${{ vars.GEMINI_MODEL_VISION || 'gemini-3.8-flash' }}
       EVAL_MAX_INR: ${{ github.event.inputs.max_inr || '150' }}
+      EVAL_MODE: model
       AI_MODE: live
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-      - working-directory: services/api
-        run: uv sync --frozen
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
       - name: Skip if the agent is not selected (workflow_dispatch)
         id: sel
+        env:
+          WANT: ${{ github.event.inputs.agents }}
+          AGENT: ${{ matrix.agent }}
         run: |
-          want="${{ github.event.inputs.agents }}"
-          if [ -n "$want" ] && ! echo ",$want," | grep -q ",${{ matrix.agent }},"; then
+          if [ -n "$WANT" ] && ! echo ",$WANT," | grep -q ",${AGENT},"; then
             echo "skip=true" >> "$GITHUB_OUTPUT"; else echo "skip=false" >> "$GITHUB_OUTPUT"; fi
-      - name: adk eval ${{ matrix.agent }}
+      - name: Eval ${{ matrix.agent }} + Margdarshak gates (provenance, rule-ID precision, coverage, fallback, cost)
         if: steps.sel.outputs.skip == 'false'
-        working-directory: services/api
+        env:
+          EVAL_AGENT: ${{ matrix.agent }}
+          EVAL_THRESHOLDS: ${{ github.workspace }}/ai/evals/thresholds.yaml
+          EVAL_BASELINE_REF: origin/main
+          EVAL_MAX_REGRESSION_PTS: "2"
+          EVAL_OUT: ${{ github.workspace }}/.ci/evals/${{ matrix.agent }}.summary.json
         run: |
           mkdir -p ../../.ci/evals
-          uv run adk eval app/agents/${{ matrix.agent }} ../../${{ matrix.evalset }} \
-            --config_file_path ../../${{ matrix.config }} \
-            --print_detailed_results | tee ../../.ci/evals/${{ matrix.agent }}.log
-      - name: Margdarshak gates (provenance, rule-ID precision, coverage, fallback, cost)
-        if: steps.sel.outputs.skip == 'false'
-        working-directory: services/api
-        run: >
-          uv run python -m app.ai.evals.gate
-          --agent ${{ matrix.agent }}
-          --evalset ../../${{ matrix.evalset }}
-          --results ../../.ci/evals/${{ matrix.agent }}.log
-          --thresholds ../../ai/evals/thresholds.yaml
-          --baseline-ref origin/main
-          --max-regression-pts 2
-          --max-inr "$EVAL_MAX_INR"
-          --out ../../.ci/evals/${{ matrix.agent }}.summary.json
+          set -o pipefail
+          go test -tags evals -count=1 -timeout 25m ./internal/adapters/ai/evals/... -run "TestAgentEvals/${EVAL_AGENT}" -v \
+            | tee "../../.ci/evals/${EVAL_AGENT}.log"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -851,27 +854,33 @@ jobs:
     timeout-minutes: 45
     environment: ai-evals
     env:
-      GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY_EVALS }}
-      GOOGLE_GENAI_USE_VERTEXAI: "FALSE"
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_EVALS }}
+      GOOGLE_GENAI_USE_VERTEXAI: "false"
+      GEMINI_MODEL_DEBRIEF: ${{ vars.GEMINI_MODEL_DEBRIEF || 'gemini-3.1-flash-lite' }}
+      GEMINI_MODEL_VISION: ${{ vars.GEMINI_MODEL_VISION || 'gemini-3.8-flash' }}
       EVAL_MAX_INR: "300"
+      EVAL_MODE: model
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-      - working-directory: services/api
-        run: uv sync --frozen
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
       - name: Clip-window proposer vs two-rater gold windows (+-1 s tolerance)
-        working-directory: services/api
-        run: uv run python -m app.ai.evals.clip_windows --gold ../../ai/evals/clip_windows.gold.json --tolerance-s 1.0 --max-inr "$EVAL_MAX_INR"
-      - name: Sign snap vs sign catalogue (top-1 accuracy, "unknown" allowed)
-        working-directory: services/api
-        run: uv run python -m app.ai.evals.sign_snap --gold ../../ai/evals/sign_snap.gold.json --min-top1 0.90
-      - name: Model-ID drift check (pinned env models still listed, not legacy)
-        working-directory: services/api
-        run: uv run python -m app.ai.evals.model_drift --models "$GEMINI_MODEL_DEBRIEF,$GEMINI_MODEL_VISION" --warn-only
+        env:
+          EVAL_TOLERANCE_S: "1.0"
+        run: go test -tags evals -count=1 -timeout 30m ./internal/adapters/ai/evals/... -run TestClipWindows -v
+      - name: Sign snap vs sign catalogue (top-1 accuracy >= 0.90, "unknown" allowed)
+        env:
+          EVAL_MIN_TOP1: "0.90"
+        run: go test -tags evals -count=1 ./internal/adapters/ai/evals/... -run TestSignSnap -v
+      - name: Model-ID drift check (pinned env models still listed, not legacy; warn only)
+        env:
+          EVAL_WARN_ONLY: "true"
+        run: go test -tags evals -count=1 ./internal/adapters/ai/evals/... -run TestModelDrift -v
 
   report:
     name: eval summary
@@ -908,8 +917,8 @@ jobs:
 ```yaml
 # Margdarshak security scans (secure SDLC; OWASP ASVS L2 evidence for the STQC/CERT-In pre-audit pack)
 #   secrets:      gitleaks (full history on schedule, diff on PR)
-#   deps:         pip-audit (api + workflows), pnpm audit (prod deps), GitHub dependency review
-#   SAST:         CodeQL (javascript-typescript, python, actions)
+#   deps:         govulncheck (Go api), pnpm audit (prod deps incl. services/workflows), GitHub dependency review
+#   SAST:         CodeQL (go, javascript-typescript, actions)
 #   containers:   Trivy image scan (api, web, score-verifier) + SBOM (CycloneDX via Trivy)
 #   IaC/config:   Trivy config (Dockerfiles, render.yaml, Helm chart, compose)
 #   DAST:         OWASP ZAP baseline against staging (schedule / manual only)
@@ -933,9 +942,7 @@ concurrency:
 
 env:
   NODE_VERSION: "22"
-  PNPM_VERSION: "10.18.0"
-  PYTHON_VERSION: "3.12"
-  UV_VERSION: "0.8.17"
+  GOVULNCHECK_VERSION: "v1.9.0"
   TRIVY_VERSION: "v0.67.2"
 
 jobs:
@@ -962,25 +969,25 @@ jobs:
           sarif_file: gitleaks.sarif
           category: gitleaks
 
-  pip-audit:
-    name: python deps (pip-audit)
+  govulncheck:
+    name: go deps (govulncheck)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        project: [services/api, services/workflows]
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Export locked requirements
-        working-directory: ${{ matrix.project }}
-        run: uv export --frozen --no-dev --no-emit-project --format requirements-txt -o /tmp/req.txt
-      - name: pip-audit (OSV + PyPI advisories)
-        run: uvx pip-audit==2.9.0 -r /tmp/req.txt --strict --vulnerability-service osv --desc on --progress-spinner off
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
+      - name: govulncheck (Go vulnerability database; reachable symbols in deps + stdlib fail the job)
+        run: go run "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}" ./...
+      - name: Licence allowlist for Go modules (Apache-2.0 compatible; no AGPL/SSPL/BUSL)
+        run: |
+          go run github.com/google/go-licenses/v2@v2.0.1 check ./... \
+            --disallowed_types=forbidden,restricted --ignore github.com/sruj08/margadarshak
 
   pnpm-audit:
     name: node deps (pnpm audit)
@@ -988,9 +995,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+      - uses: pnpm/action-setup@v4   # pnpm version from "packageManager"
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -1025,13 +1030,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [javascript-typescript, python, actions]
+        language: [go, javascript-typescript, actions]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v7
+        if: matrix.language == 'go'
+        with:
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          build-mode: none
+          build-mode: ${{ matrix.language == 'go' && 'autobuild' || 'none' }}   # Go has no build-mode none
           queries: security-extended
       - uses: github/codeql-action/analyze@v3
         with:
@@ -1139,7 +1149,9 @@ jobs:
 # Margdarshak deploy pipeline (docs/05-ops/DEPLOYMENT.md)
 #   Track A, hackathon (Render, Singapore, synthetic data):
 #     main green on ci + evals -> trigger Render deploys (API first; its preDeployCommand runs
-#     Alembic) -> wait for "live" -> smoke tests -> warm-up -> tag release.
+#     goose migrations via `/app/api migrate up`) -> wait for "live" -> smoke tests -> warm-up.
+#   Services: api (Go 1.27, Docker, distroless), score-verifier (Node), workflows (Render
+#     Workflows, Node runtime, TypeScript tasks with @renderinc/sdk), web (Next.js).
 #   Track B, production for a state tenant (Docker + Helm on MeghRaj/NIC or a MeitY-empanelled
 #     CSP, India region): build -> sign (cosign keyless) -> SBOM attest -> push to GHCR ->
 #     mirror into the state registry -> helm upgrade --atomic from a self-hosted runner INSIDE the
@@ -1261,13 +1273,13 @@ jobs:
           EOS
           chmod +x /tmp/render_deploy.sh
       # Order matters for zero downtime (expand/contract migrations, DEPLOYMENT.md §6):
-      # 1) score-verifier (backward compatible replays) 2) API (runs Alembic in preDeployCommand)
-      # 3) workflows (tasks read the new schema) 4) web (calls the new API).
+      # 1) score-verifier (backward compatible replays) 2) API (runs goose migrations in preDeployCommand)
+      # 3) workflows (TS tasks call the new API job steps) 4) web (calls the new API).
       - name: Deploy score-verifier
         run: /tmp/render_deploy.sh "$SVC_VERIFIER" score-verifier
-      - name: Deploy API (+ Alembic upgrade head via preDeployCommand)
+      - name: Deploy API (+ goose migrate up via preDeployCommand /app/api migrate up)
         run: /tmp/render_deploy.sh "$SVC_API" api
-      - name: Deploy Render Workflows service
+      - name: Deploy Render Workflows service (Node runtime, TypeScript tasks)
         # [unverified, owner Ops lead, H0] that POST /services/{id}/deploys accepts a workflow
         # service id. Fallback: `render workflows` CLI or autoDeployTrigger: checksPass on it.
         run: /tmp/render_deploy.sh "$SVC_WORKFLOWS" workflows
@@ -1433,7 +1445,7 @@ jobs:
           helm diff upgrade margdarshak infra/helm/margdarshak -n "$KUBE_NAMESPACE" \
             -f infra/helm/margdarshak/values.yaml -f "infra/helm/tenants/values-${TENANT}.yaml" \
             --set global.imageRegistry="$STATE_REGISTRY" --set global.imageTag="${{ needs.gate.outputs.sha }}" || true
-      - name: helm upgrade --atomic (pre-upgrade hook runs Alembic as a Job; rolling update maxUnavailable 0)
+      - name: helm upgrade --atomic (pre-upgrade hook Job runs /app/api migrate up; rolling update maxUnavailable 0)
         run: |
           helm upgrade --install margdarshak infra/helm/margdarshak \
             -n "$KUBE_NAMESPACE" --create-namespace \
@@ -1462,7 +1474,7 @@ jobs:
 # Facts this file relies on (from the spec page, 2026-10-23):
 #   - service types: web | pserv | worker | cron | keyvalue | workflow
 #   - region values: oregon | ohio | virginia | frankfurt | singapore (no India region)
-#   - workflow services: runtime node|python only; `region` REQUIRED; `plan`, `previews`,
+#   - workflow services: runtime node (we use TypeScript, ADR-0005) or Render's other SDK runtime; `region` REQUIRED; `plan`, `previews`,
 #     `preDeployCommand` and Docker fields NOT supported (compute plan is set per task in code).
 #   - new compute plan IDs (renamed 26 Aug 2026, "no changes to pricing"):
 #       starter -> 0.5c-512mb, standard -> 1c-2g, pro -> 2c-4g (https://render.com/docs/compute-plans-update)
@@ -1474,8 +1486,12 @@ jobs:
 # [unverified, owner: Ops lead, 2026-10-24 H0] The spec page did not document a start-command
 # field for workflow services. We use `startCommand` (the dashboard calls it "Start command",
 # see research/B-sponsors.md §1 "Deploy"). If `render blueprint validate` rejects it, create the
-# workflow service with `render workflows create ... --run-command "python main.py"` and delete
-# the block below.
+# workflow service with `render workflows create ... --run-command "node services/workflows/dist/main.js"`
+# and delete the block below.
+#
+# Languages (ADR-0011, ADR-0005): the API is Go 1.27 (one static binary in a distroless image);
+# Render Workflows tasks are TypeScript (`@renderinc/sdk` 1.4.0) in services/workflows; the score
+# verifier is Node. No Python service exists.
 #
 # DATA: the hackathon deployment holds SYNTHETIC data only. Render has no India region, so we
 # use Singapore (closest; D-17, war-room G4). Production for a state runs on MeghRaj/NIC or a
@@ -1563,17 +1579,24 @@ services:
         generateValue: true
 
   # -------------------------------------------------------------------------
-  # 2. API (Python 3.12, FastAPI, ADK agents, adapters) - the one backend (D-17)
+  # 2. API (Go 1.27: chi, pgx + sqlc, goose, ADK for Go agents, adapters) - the one backend (D-17, ADR-0011)
+  #    runtime: docker = the same distroless image we ship to a state cloud. Native alternative:
+  #      runtime: go
+  #      buildCommand: cd services/api && go build -trimpath -tags timetzdata -o bin/api ./cmd/api
+  #      startCommand: ./services/api/bin/api serve
+  #    (then RULEPACK_DIR/PROMPT_DIR must point at ./rulepacks and ./ai/prompts in the checkout).
   # -------------------------------------------------------------------------
   - type: web
     name: margdarshak-api
     runtime: docker
     region: singapore
-    plan: 1c-2g                        # legacy "standard": ADK + Pydantic + SQLAlchemy need >512 MB
+    plan: 0.5c-512mb                   # legacy "starter": one static Go binary (pgx pool, ADK/genai Go) fits well under
+                                       # 512 MB with GOMEMLIMIT=400MiB; re-check under the k6 burst (PERFORMANCE.md) and
+                                       # move to 1c-2g if RSS > 70 % or p95 slips
     dockerfilePath: ./infra/docker/api.Dockerfile
     dockerContext: .
     healthCheckPath: /v1/health         # API-64
-    preDeployCommand: alembic -c alembic.ini upgrade head   # image WORKDIR is /app/services/api
+    preDeployCommand: /app/api migrate up   # goose migrations embedded in the binary (distroless: no shell)
     numInstances: 1
     autoDeployTrigger: off
     buildFilter:
@@ -1586,6 +1609,8 @@ services:
       - fromGroup: margdarshak-shared
       - key: PORT
         value: "8000"
+      - key: GOMEMLIMIT
+        value: 400MiB                   # soft heap limit below the 512 MB plan; GC works harder instead of OOM
       - key: OTEL_SERVICE_NAME
         value: margdarshak-api
       - key: DATABASE_URL
@@ -1608,9 +1633,13 @@ services:
           type: workflow
           property: slug                # task slug = {WORKFLOW_SLUG}/{task_name}
       - key: JOB_RUNNER
-        value: render_workflows         # JobRunner port; production = temporal (INFRASTRUCTURE.md §4.5)
+        value: render_workflows         # JobRunner port: inline | render_workflows | temporal (production, INFRASTRUCTURE.md §4.5)
       - key: RENDER_API_KEY
-        sync: false                     # used by render_sdk RenderAsync to start task runs
+        sync: false                     # Go adapter internal/jobs/renderworkflows: POST https://api.render.com/v1/task-runs
+                                        # {task: "<WORKFLOW_SLUG>/<task>", input: [...], idempotencyKey} -> 202 TaskRun;
+                                        # GET /v1/task-runs/{id} is polled into job_runs (no completion webhook)
+      - key: INTERNAL_HMAC_SECRET
+        sync: false                     # verifies HMAC on /internal/job-steps/* calls from the Workflows tasks (same value there)
       - key: GEMINI_API_KEY
         sync: false                     # PAID tier only (D-13, war-room G8)
       - key: GEMINI_MODEL_DEBRIEF
@@ -1690,43 +1719,38 @@ services:
         generateValue: true             # copy to the API's env after first sync (fromService cannot read secrets)
 
   # -------------------------------------------------------------------------
-  # 4. Render Workflows (Python SDK `render>=1.0.1`) - durable jobs (D-15)
-  #    Tasks: clip_ingest (headline), clip_finalize, case_clock_sweep,
-  #           debrief_fanout, field_stats_nightly, rulepack_reevaluate
+  # 4. Render Workflows (TypeScript SDK `@renderinc/sdk` 1.4.0) - durable jobs (D-15, ADR-0005)
+  #    Tasks: clip_ingest (headline), clip_finalize, case_clock_sweep (+ clock_batch subtask),
+  #           session_debrief, debrief_backfill, nightly_stats, rulepack_reevaluate,
+  #           user_export, user_delete, replay_pending_sessions
+  #    Tasks are thin TS orchestrators (retries, fan-out with Promise.all over ctx.run):
+  #      - media steps run inside the task: ffmpeg transcode, face/plate blur (onnxruntime-node,
+  #        YuNet + plate model), flash check; they read/write R2 directly;
+  #      - every business step (clock batches, debrief, AI window proposals, stats, rule-pack
+  #        re-evaluation, export/delete, n8n hand-offs) is a call to the Go API over the private
+  #        network: POST http://$API_INTERNAL_HOSTPORT/internal/job-steps/{step} with HMAC
+  #        (INTERNAL_HMAC_SECRET). The API owns the database, Gemini and n8n; this service has
+  #        NO DATABASE_URL, no Gemini key and no n8n secret.
+  #    Build: services/workflows is the pnpm workspace member @margdarshak/workflows (its owner adds
+  #    it to pnpm-workspace.yaml), so the build runs from the repo root (no rootDir).
   # -------------------------------------------------------------------------
   - type: workflow
     name: margdarshak-workflows
-    runtime: python
+    runtime: node
     region: singapore                  # REQUIRED for workflows
-    rootDir: services/workflows
-    buildCommand: pip install --no-cache-dir -r requirements.txt
-    startCommand: python main.py        # main.py calls app.start(); see [unverified] note in the header
+    buildCommand: corepack enable && pnpm install --frozen-lockfile --filter "@margdarshak/workflows..." && pnpm --filter @margdarshak/workflows build
+    startCommand: node services/workflows/dist/main.js   # registers tasks; the SDK task server auto-starts. See [unverified] note in the header
     envVars:
       - fromGroup: margdarshak-shared
       - key: OTEL_SERVICE_NAME
         value: margdarshak-workflows
-      - key: DATABASE_URL
-        fromDatabase:
-          name: margdarshak-db
-          property: connectionString
       - key: API_INTERNAL_HOSTPORT
         fromService:
           name: margdarshak-api
           type: web
           property: hostport
-      - key: SCORE_VERIFIER_HOSTPORT
-        fromService:
-          name: margdarshak-score-verifier
-          type: pserv
-          property: hostport
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: GEMINI_MODEL_VISION
-        value: gemini-3.8-flash
-      - key: N8N_BASE_URL
-        sync: false
-      - key: N8N_HMAC_SECRET
-        sync: false
+      - key: INTERNAL_HMAC_SECRET
+        sync: false                     # same value as the API's INTERNAL_HMAC_SECRET
       - key: R2_ACCOUNT_ID
         sync: false
       - key: R2_ACCESS_KEY_ID

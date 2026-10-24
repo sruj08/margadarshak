@@ -1,7 +1,7 @@
 # Game SDK: the common contract every game plugs into
 > Project: Margdarshak · Owner: Learning & Games lead (game-core owner) · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [GAME_DESIGN](GAME_DESIGN.md) · [DEBRIEF_SPEC](DEBRIEF_SPEC.md) · [GAMIFICATION_ENGINE](GAMIFICATION_ENGINE.md) · [NAZAR](NAZAR.md) · [CURRICULUM](CURRICULUM.md) · [game-core README](../../packages/game-core/README.md) · [Architecture](../03-engineering/ARCHITECTURE.md) · [API spec](../03-engineering/API_SPEC.md) · [Data model](../03-engineering/DATA_MODEL.md)
-> Features: F-22, F-23, F-24, F-25, F-26, F-51, F-52 · Entities: E-16 GameSession, E-17 GameEvent, E-18 TopicMastery, E-19 Debrief, E-20 Clip · APIs: API-34, API-35, API-36, API-37 · Directives: D-09, D-10, D-11, D-13, D-21
+> Features: F-22, F-23, F-24, F-25, F-26, F-51, F-52 · Entities: E-16 GameSession, E-17 GameEvent, E-18 TopicMastery, E-19 Debrief, E-20 Clip · APIs: API-34, API-35, API-36, API-37 · Directives: D-09, D-10, D-11, D-13 revised, D-21
 
 ---
 
@@ -25,7 +25,7 @@ flowchart LR
     G --> CS[game-core scoring<br/>client preview]
   end
   subgraph Server["Backend (Render, Singapore in hackathon)"]
-    A[FastAPI<br/>API-34 / API-35 / API-36]
+    A[Go API<br/>API-34 / API-35 / API-36]
     V[Score verifier<br/>Node 20 + game-core]
     DB[(Postgres 16<br/>E-16, E-17, E-18, E-19)]
     WF[Render Workflow<br/>debrief fan-out]
@@ -56,8 +56,8 @@ Research file `08-game-ai-n8n.md` §1.3 sketched four packages (`game-sdk`, `sco
 | `@margdarshak/game-core/integrity` | common integrity checks, trust computation, replay comparison | Node (and browser for preview) |
 | `@margdarshak/game-core/learning` | evidence → FSRS rating mapping, mastery, Readiness, Brier, overconfidence (wraps `ts-fsrs`) | browser, Node |
 | `@margdarshak/game-core/gamification` | XP, diminishing returns, rank gates, streak state machine, badge evaluators | browser, Node |
-| `@margdarshak/game-core/debrief` | findings ranking, facts formatting per locale, template renderer, shared validator rule spec (JSON) | browser, Node; the Python validator reads the same JSON spec |
-| `@margdarshak/game-core/fixtures` | golden replay vectors per game (inputs + seed → expected `SessionResult`) | tests in TS **and** Python |
+| `@margdarshak/game-core/debrief` | findings ranking, facts formatting per locale, template renderer, shared validator rule spec (JSON) | browser, Node; the Go validator reads the same JSON spec |
+| `@margdarshak/game-core/fixtures` | golden replay vectors per game (inputs + seed → expected `SessionResult`) | tests in TS **and** Go (via the verifier) |
 
 Package API in prose: [`packages/game-core/README.md`](../../packages/game-core/README.md).
 
@@ -97,8 +97,8 @@ export const GameManifest = z.object({
   drillIds: z.array(z.string().regex(/^DR-[A-Z]{2,3}-[A-Z0-9-]+$/)),              // drill catalogue (DEBRIEF_SPEC §4)
   modes: z.array(z.enum(["learn", "practice", "mock", "pair"])).min(1),
   debriefMode: z.enum(["ai_or_template", "template_only"]),  // G9 Golden Hour = template_only (D-09)
-  minUserBand: z.enum(["u18", "adult"]),                     // who may open it at all
-  u18Behaviour: z.enum(["local_only", "blocked"]),           // see §8
+  minUserBand: z.literal("u18"),                            // D-13 revised: every game is open to every user
+  u18Behaviour: z.literal("full"),                          // D-13 revised: family mode gets the full game; see §8
   offline: z.boolean(),
   liteMode: z.enum(["full", "decision_variant", "none"]),    // 2G / Lite (F-51, EC-19)
   a11yModes: z.array(A11yMode).min(3),                       // every game supports ≥ no_audio, colour_safe, tap_only
@@ -126,18 +126,18 @@ export const GameManifest = z.object({
 
 ### 2.2 Manifest values per game (hackathon)
 
-| Code | gameId | engine | modules | modes | debriefMode | minUserBand / u18 | liteMode | Depth (Phase 1–2) |
+| Code | gameId | engine | modules | modes | debriefMode | minUserBand / u18Behaviour | liteMode | Depth (Phase 1–2) |
 |---|---|---|---|---|---|---|---|---|
-| G1 | `nazar` | video_svg | M5, M6, M8, M18 (+M4, M16 by clip tag) | learn, practice, mock, pair | ai_or_template | adult / blocked in mock & commentary; learn = local_only | decision_variant (still frames) | **Deep** |
-| G2 | `stopping_distance` | video_svg (SVG + Motion) | M1, M2, M16 | learn, practice | ai_or_template | u18 / local_only | full (SVG is light) | **Deep** |
-| G3 | `blind_spot` | phaser4 | M4, M5 | learn, practice | ai_or_template | u18 / local_only | decision_variant | **Deep** (Part A + short Part B) |
-| G4 | `junction_scan` | phaser4 | M6, M18 | practice | ai_or_template | u18 / local_only | decision_variant | Thin (1 level) |
-| G5 | `track_twin` | phaser4 | DL1 (driving-test familiarisation), M1 | practice | ai_or_template | u18 / local_only | decision_variant (explainer quiz) | Thin (figure-8 only) |
-| G6 | `helmet_fit` | react_mediapipe | M3, M13 | learn, practice | ai_or_template | u18 / local_only (no camera for u18 by default, see §8) | full (no-camera path) | Thin |
-| G7 | `golden_hour` | react_dom | M19 | learn, practice | **template_only** | u18 / local_only | full | Thin (1 scenario, "draft" label until medical sign-off) |
-| G8 | `night_glare` | phaser4 | M8, M16 | practice | ai_or_template | u18 / local_only | decision_variant | Slide / storyboard |
-| G9 | `hill_road` | phaser4 | M14, M15 | practice | ai_or_template | u18 / local_only | decision_variant | Slide / J&K storyboard |
-| G10 | `ll_sim` | react_dom | LL0–LL4 | learn, practice, mock | ai_or_template | u18 / local_only | full | **Deep** |
+| G1 | `nazar` | video_svg | M5, M6, M8, M18 (+M4, M16 by clip tag) | learn, practice, mock, pair | ai_or_template | u18 / full (pair mode on a minor's profile needs the parent's squad consent) | decision_variant (still frames) | **Deep** |
+| G2 | `stopping_distance` | video_svg (SVG + Motion) | M1, M2, M16 | learn, practice | ai_or_template | u18 / full | full (SVG is light) | **Deep** |
+| G3 | `blind_spot` | phaser4 | M4, M5 | learn, practice | ai_or_template | u18 / full | decision_variant | **Deep** (Part A + short Part B) |
+| G4 | `junction_scan` | phaser4 | M6, M18 | practice | ai_or_template | u18 / full | decision_variant | Thin (1 level) |
+| G5 | `track_twin` | phaser4 | DL1 (driving-test familiarisation), M1 | practice | ai_or_template | u18 / full | decision_variant (explainer quiz) | Thin (figure-8 only) |
+| G6 | `helmet_fit` | react_mediapipe | M3, M13 | learn, practice | ai_or_template | u18 / full (camera frames never leave the device, see §8) | full (no-camera path) | Thin |
+| G7 | `golden_hour` | react_dom | M19 | learn, practice | **template_only** | u18 / full | full | Thin (1 scenario, "draft" label until medical sign-off) |
+| G8 | `night_glare` | phaser4 | M8, M16 | practice | ai_or_template | u18 / full | decision_variant | Slide / storyboard |
+| G9 | `hill_road` | phaser4 | M14, M15 | practice | ai_or_template | u18 / full | decision_variant | Slide / J&K storyboard |
+| G10 | `ll_sim` | react_dom | LL0–LL4 | learn, practice, mock | ai_or_template | u18 / full | full | **Deep** |
 
 > **Code numbering note.** Research `08` numbered games G1 Nazar, G2 Junction, G3 Stopping, G4 Blind Spot, G5 Track, G6 Night, G7 Hill, G8 Helmet, G9 Golden Hour, G10 LL. The task brief for this folder orders them Nazar, Stopping Distance, Blind Spot, Junction Scan, Track Test Twin, Helmet Fit, Golden Hour, Night & Glare, Hill Road, LL Test Simulator. **This folder uses the brief's order for the G-codes** (table above), and every cross-reference uses the `gameId` string, which never changes. Finding prefixes (`NAZ_`, `SD_`, `BS_`, `JS_`, `TT_`, `HF_`, `GH_`, `NG_`, `HR_`, `LL_`) are keyed to the game, not the number. Reported as an inconsistency to the PM.
 
@@ -150,7 +150,7 @@ export const SessionContext = z.object({
   sid: z.string().uuid(),
   gameId: GameId,
   mode: z.enum(["learn", "practice", "mock", "pair"]),
-  userBand: z.enum(["u18", "adult"]),         // derived server-side from DOB; never the DOB itself
+  userBand: z.enum(["u18", "adult"]),         // derived server-side from DOB; never the DOB itself. u18 = family mode; games behave the same (D-13 revised)
   locale: z.enum(["en", "hi"]),               // F-50: EN + HI in full; Dogri is voice-in only (D-21)
   a11y: z.object({
     modes: z.array(A11yMode),
@@ -193,8 +193,8 @@ stateDiagram-v2
   ItemVoided --> Running: next item
   Running --> Ended: end with completed, quit or timeout
   Paused --> Ended: abandoned after 10 min hidden
-  Ended --> Submitting: online & adult
-  Ended --> LocalOnly: u18 or debrief offline
+  Ended --> Submitting: online
+  Ended --> LocalOnly: offline (queued, syncs later)
   Submitting --> Verified: API-35 200 (server SessionResult)
   Submitting --> Queued: network error (retry with backoff)
   Queued --> Submitting: online event
@@ -208,7 +208,7 @@ stateDiagram-v2
 | Interface | Methods | Notes |
 |---|---|---|
 | `GameModule` (implemented by each game) | `init(ctx, recorder)`, `start()`, `pause()`, `resume()`, `end(reason)`, `getPreview(): SessionResultPreview`, `destroy()` | `pause()` is mandatory on `visibilitychange` (08 §2.1). Games may not call `fetch` or storage APIs; they talk only to the recorder |
-| `GameHost` (implemented by `apps/web`) | `loadGame(manifest)`, `createSession(gameId, mode)`, `submit(sid)`, `getDebrief(sid)`, `onA11yChange()` | The host owns networking, consent and age gating |
+| `GameHost` (implemented by `apps/web`) | `loadGame(manifest)`, `createSession(gameId, mode)`, `submit(sid)`, `getDebrief(sid)`, `onA11yChange()` | The host owns networking, consent and family-mode consent checks (squads, pair, share) |
 | `EventRecorder` | `emit(type, payload, {mt?})`, `sample(stream, value)` (10 Hz quantised), `flush()` | Assigns `seq`, `t`; enforces bounds (§5.4); writes to the IndexedDB queue |
 | `MediaClock` (video games) | `onFrame(cb)` using `requestVideoFrameCallback`, fallback to `currentTime` | Sets `timingMode` = `rvfc` or `fallback` (08 §1.3) |
 
@@ -219,7 +219,7 @@ sequenceDiagram
   autonumber
   participant U as Kabir (P-01)
   participant W as Web host
-  participant API as FastAPI
+  participant API as Go API
   participant V as Verifier (Node, game-core)
   participant DB as Postgres
   participant WF as Render Workflow (debrief)
@@ -241,7 +241,7 @@ sequenceDiagram
   API->>WF: enqueue debrief(sid)
   API-->>W: 200 {result (server), integrity.trust, debrief:"pending"}
   W->>U: score reveal from server result + template card immediately
-  WF->>AI: facts + allowed IDs (adult, AI consent on)
+  WF->>AI: facts + allowed IDs (AI consent on)
   AI-->>WF: DebriefDraft (IDs + digit-free text)
   WF->>WF: validate → render, or template fallback
   WF->>DB: E-19 Debrief
@@ -253,10 +253,10 @@ sequenceDiagram
 
 | API | Request (key fields) | Response (key fields) | Errors | Rate limit (hackathon) |
 |---|---|---|---|---|
-| API-34 `POST /v1/games/{gameId}/sessions` | `mode`, `a11yModes[]`, `offlineSeed?` | `sid`, `seed`, `items[]`, `difficulty`, `scoringVersion`, `nonce`, `expiresAt` (server time + 60 min), `label` | 403 `AGE_GATE` (u18 for adult-only modes), 409 `NO_UNSEEN_CLIPS` (Nazar mock bank exhausted), 422 bad mode | 30 / user / hour |
+| API-34 `POST /v1/games/{gameId}/sessions` | `mode`, `a11yModes[]`, `offlineSeed?` | `sid`, `seed`, `items[]`, `difficulty`, `scoringVersion`, `nonce`, `expiresAt` (server time + 60 min), `label` | 403 `PARENT_CONSENT_REQUIRED` (pair mode on a minor's profile before the parent consents to squads, D-13 revised), 409 `NO_UNSEEN_CLIPS` (Nazar mock bank exhausted), 422 bad mode | 30 / user / hour |
 | API-35 `POST /v1/games/sessions/{id}/complete` | `events` (gzip+base64 delta-encoded), `clientResult`, `clientDigest` (SHA-256 of canonical events), `nonce` | `result` (server `SessionResult`), `integrity`, `xpAwarded`, `badgesAwarded[]`, `debrief: "pending"|"ready"` | 409 `ALREADY_COMPLETED` (idempotent: returns the stored result), 410 `SESSION_EXPIRED`, 413 `TOO_MANY_EVENTS`, 422 `SCHEMA` | 30 / user / hour |
 | API-36 `GET /v1/games/sessions/{id}/debrief` | none | `DebriefCard` (see DEBRIEF_SPEC §7) | 404 until ready (client keeps the template card) | 120 / user / hour |
-| API-37 `GET /v1/nazar/clips` | `purpose=pack|learn` | signed URLs, sizes, sha256 (never hazard windows for mock clips) | 403 u18 for mock | 10 / user / hour |
+| API-37 `GET /v1/nazar/clips` | `purpose=pack|learn` | signed URLs, sizes, sha256 (never hazard windows for mock clips) | — | 10 / user / hour |
 
 Idempotency: API-35 is idempotent on `sid`; repeating it returns the stored server result. Event sync is idempotent on `(sid, seq)`.
 
@@ -354,7 +354,7 @@ export const EventBase = z.object({
 
 ```mermaid
 flowchart TD
-  A[API-35 received] --> B{Zod/Pydantic schema valid?<br/>seq strictly increasing?<br/>digest matches?}
+  A[API-35 received] --> B{Zod / Go strict-decode schema valid?<br/>seq strictly increasing?<br/>digest matches?}
   B -- no --> R1[422 SCHEMA, session marked invalid]
   B -- yes --> C{nonce valid & not expired?<br/>sid owned by caller?}
   C -- no --> R2[410 / 403]
@@ -373,14 +373,14 @@ flowchart TD
 
 - **The server result always wins.** The client score is a preview that makes the reveal instant; when the server answer arrives (usually under a second), the UI reconciles silently if they differ. The user never sees "cheating detected".
 - **Verifier service:** a Node 20 service (`services/score-verifier`) that imports the exact `@margdarshak/game-core` version named in the session's `scoringVersion`. It keeps the last two minor versions loaded so sessions started before a deploy still verify (§9).
-- **Python never re-implements scoring.** The FastAPI backend calls the verifier over an internal HTTP endpoint (`POST /verify`, HMAC-signed, private network on Render). Golden vectors in `fixtures/` are also run from Python CI against the verifier container to catch contract drift. (Research `08` §1.3 allowed a Python re-implementation; PROJECT_BRIEF §8 chose the Node verifier, and this doc follows the brief.)
+- **The Go backend never re-implements scoring.** The Go API (ADR-0011) calls the verifier over an internal HTTP endpoint (`POST /verify`, HMAC-signed, private network on Render). Golden vectors in `fixtures/` are also run from the Go contract tests (`go test ./internal/adapters/scoring/... -run Contract`) against the verifier to catch contract drift. (Research `08` §1.3 allowed a backend re-implementation; PROJECT_BRIEF §8 chose the Node verifier, and this doc follows the brief.)
 - **Verifier down** (R-05, R-11): API-35 still returns 202 with the client preview marked `provisional: true`; a retry Workflow verifies within 15 minutes. Provisional sessions do not count toward the Nazar Score, badges or share cards until verified.
 
 ### 6.4 What counts where (eligibility)
 
 | Use | Requires |
 |---|---|
-| FSRS evidence (E-18), XP | any verified session, or a local session for u18 (device only) |
+| FSRS evidence (E-18), XP | any verified session (family mode included) |
 | Readiness Score (F-21) | verified sessions; offline sessions count after sync and replay |
 | Nazar Score (share card, Practice Record) | mode `mock`, `seedOrigin: server`, clips unseen by this user, `trust ≥ 0.6`, `timingMode: rvfc` (08 §1.3: fallback timing keeps its score but is not eligible for percentiles), verified |
 | Percentiles | as Nazar Score, plus a baseline of ≥ 200 verified mocks (GAMIFICATION_ENGINE §9) |
@@ -412,23 +412,23 @@ flowchart TD
 - **2 consecutive item passes → level + 1; 1 fail → level − 1** (floored at 1, capped at 5). A 2-down/1-up transformed rule converges near **70.7%** success (Levitt 1971) [K], which sits in the "desirable difficulty" zone.
 - "Pass" per item is defined by each game (GAME_DESIGN §x.7). Mock mode **does not** adapt: it draws a fixed difficulty mix from the rule pack (Kerala mode: clips spread across curator difficulty 2–4 [D]).
 - FSRS (`game-core/learning`) picks **which** concept or hazard type is due; the staircase picks **how hard** the scene is. They never fight: the item selector first filters to due concepts, then picks the variant or scene nearest the current level.
-- Staircase state is stored in E-18 for adults; on device only for u18.
+- Staircase state is stored in E-18 for every user, family mode included.
 
 ---
 
-## 8. Age bands, consent and offline (D-13, P-07, EC-05, EC-14, EC-19)
+## 8. Family mode, consent and offline (D-13 revised, P-07, EC-05, EC-14, EC-19)
 
-| Capability | Adult (verified DOB ≥ 18) | Under 18 (P-07 Rahul) |
+| Capability | Account holder (adult) | Minor's profile in family mode (P-07 Rahul, inside the parent's account) |
 |---|---|---|
-| Play games | yes | yes, for games with `minUserBand: u18` |
-| Server session (API-34/35) | yes | **no**: session lives on the device only (`u18Behaviour: local_only`) |
-| Telemetry leaves the device | yes (bounded, no PII) | **never** |
-| Scoring | server replay, server wins | on device with the same `game-core` functions |
-| Debrief | AI (M-02) if "AI coach" consent is on, else template | **template only**, rendered on device |
-| FSRS / readiness | server (E-18) + device cache | device only (IndexedDB), cleared by "Clear this device" |
-| XP, ranks, streaks, squads, badges, share cards | yes | **none** (no streaks, no squads per D-13; no XP history) |
-| Nazar mock / commentary | yes | **blocked** (Nazar *learn* still-frame lessons allowed locally) |
-| Helmet Fit camera | on-device only | camera path off by default; checklist path offered (guardian may enable; frames never leave the device either way) |
+| Play games | yes, every game and mode | yes, every game and mode (D-13 revised) |
+| Server session (API-34/35) | yes | yes (`u18Behaviour: full`) |
+| Telemetry leaves the device | yes (bounded, no PII) | yes, same bounded allowlist; never used for behavioural tracking, profiling or ads (DPDP s.9(3)) |
+| Scoring | server replay, server wins | same |
+| Debrief | AI (M-02) if "AI coach" consent is on, else template | same; the parent gives the "AI coach" consent |
+| FSRS / readiness | server (E-18) + device cache | same |
+| XP, ranks, streaks, squads, badges, share cards | yes | XP, ranks, streaks and badges yes; squads, pair mode and share cards only after the parent consents |
+| Nazar mock / commentary | yes | yes |
+| Helmet Fit camera | on-device only | on-device only; the parent's consent covers the camera prompt; checklist path offered |
 
 - **Consent:** a separate "AI coach" consent (DEPA-style artefact, E-15, API-60) controls whether facts go to Gemini. Turning it off switches to templates without losing anything.
 - **Shared phone / cyber café (EC-14):** Helper mode never opens games under the applicant's profile; "Clear this device" deletes the IndexedDB queue, local FSRS state and cached clips.
@@ -513,8 +513,8 @@ export const SessionResult = z.object({
 
 | Test | Tool | Gate |
 |---|---|---|
-| Schema round-trip Zod → JSON Schema → Pydantic | `z.toJSONSchema()` (Zod 4) or `zod-to-json-schema`; `datamodel-code-generator` → Pydantic v2 | CI fails on any diff between generated models and committed ones |
-| Golden replay vectors (≥ 5 per game: strong, medium, weak, critical-fault, edge) | Vitest (TS) + pytest calling the verifier container | 100% exact match |
+| Schema round-trip Zod → JSON Schema → OpenAPI → Go | `z.toJSONSchema()` (Zod 4); the schemas are referenced from `api/openapi.yaml` and oapi-codegen generates the Go types | CI fails on any diff between generated code and committed code (`go generate ./... && git diff --exit-code`) |
+| Golden replay vectors (≥ 5 per game: strong, medium, weak, critical-fault, edge) | Vitest (TS) + `go test` contract tests calling the verifier | 100% exact match |
 | Cross-engine determinism | Playwright runs the same vectors in Chromium, WebKit and Firefox and compares with Node | 100% match for sim games |
 | Property tests (taps never increase a pattern-voided clip score; score ∈ [0, max]; adding a false alarm never raises a score) | `fast-check` | pass |
 | Bounds and PII | a test that feeds every event type with extra keys (must reject) and scans schemas for banned field names (`name`, `dob`, `phone`, `aadhaar`, `lat`, `lng`, `email`) | pass |

@@ -2,7 +2,7 @@
 id: PRM-SIGNSNAP
 version: 1.0.0
 agent: SignSnap (M-07)
-model_env: MD_MODEL_VISION           # default gemini-3.6-flash
+model_env: GEMINI_MODEL_VISION           # default gemini-3.6-flash
 output_schema: margdarshak_ai.schemas.SignDraft
 state_inputs: [shortlist, canary]
 temperature: 0.0

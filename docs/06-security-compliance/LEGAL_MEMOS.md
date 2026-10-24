@@ -120,7 +120,7 @@ Format: **Question → Short answer → Facts and sources → Analysis → What 
 
 **Question.** Can a learner app with 16–17-year-old users use the Gemini API?
 
-**Short answer.** Only for adults, only on the paid tier, and with an open question about the "likely to be accessed by" clause that counsel must answer before launch.
+**Short answer.** Yes, on the paid tier, with adult account holders. Under D-13 revised (23 Oct 2026) every AI feature is available to every user; a learner under 18 uses the product inside a parent's account (family mode). The "likely to be accessed by" clause stays a residual risk (R-13) for the legal lead.
 
 **Facts (quoted from [Gemini API Additional Terms](https://ai.google.dev/gemini-api/terms), last updated 2026-04-28, fetched 2026-10-23).**
 - "You must be 18 years of age or older to use the APIs."
@@ -131,13 +131,13 @@ Format: **Question → Short answer → Facts and sources → Analysis → What 
 - "Don't rely on the Services for medical, mental health, legal, financial, or other professional advice."
 - A developer forum thread raises exactly our case (general-audience app with an adult-only AI feature) ([forum](https://discuss.ai.google.dev/t/age-restrictions-in-gemini-api-terms-general-audience-app-rated-3-with-an-adult-only-ai-feature/179916)); no authoritative answer recorded (`04-ai-adk-gemini.md` §0.1).
 
-**Analysis.** The core users are 18–19 (P-01, P-02). 16–17-year-olds are a legitimate minority (≤ 50 cc class). Gating AI server-side to verified-by-declaration 18+ addresses the first clause; whether the **client** (the app) is "likely to be accessed by" minors is a fact question, and an honest reading says some minors will access the app. Mitigations reduce but may not remove the risk: the AI features are a separate, adult-only area; minors are routed to a rules-only mode; no AI call is ever made for a minor's request. DPDP s.9 independently requires us not to track minors.
+**Analysis.** The core users are 18–19 (P-01, P-02). 16–17-year-olds are a legitimate minority (≤ 50 cc class). The account holder is always an adult who accepts the terms and gives consent; a learner under 18 uses Margdarshak on a parent's phone, inside the parent's account, with DPDP verifiable parental consent (s.9(1), Rule 10). DPDP s.9(3) independently requires no behavioural tracking, profiling or targeted ads on a child's data. Residual risk R-13: Gemini API Additional Terms (https://ai.google.dev/gemini-api/terms) and Google Cloud Service Specific Terms, generative AI "Age Restrictions" (https://cloud.google.com/terms/service-terms) restrict use in services likely to be accessed by individuals under 18. Our model: adult account holders; minors use the product inside a parent's account (family mode). Owner: legal lead — confirm the position with Google, or add a provider that permits minors, before public launch.
 
 **What we do.**
-- *Hackathon build:* server-side `age_band=18_plus` + `PUR-AI-FEATURES` consent before any Gemini/Sarvam call (SECURITY §3.3); paid tier before any real user (field study included); free tier for synthetic data only; AI never gives legal/medical advice (golden hour static, letters templated).
-- *Production:* counsel opinion; option A: Vertex AI enterprise terms in an Indian region (data residency page lists Mumbai `asia-south1` for several Gemini models; check current models); option B: route AI through Bhashini/local Indic models behind the AI port for any surface minors could reach.
+- *Hackathon build:* adult account holder + `PUR-AI-FEATURES` consent (`acting_for` = parent for a family member's case) before any Gemini/Sarvam call (SECURITY §3.3); paid tier before any real user (field study included); free tier for synthetic data only; AI never gives legal/medical advice (golden hour static, letters templated).
+- *Production:* the legal lead closes R-13 before public launch; option A: Vertex AI enterprise terms in an Indian region (data residency page lists Mumbai `asia-south1` for several Gemini models; check current models); option B: add a provider that permits minors (for example Bhashini/local Indic models) behind the AI port.
 
-**Status.** VERIFIED (terms text). Open question logged as R-13. Owner AI + LC.
+**Status.** VERIFIED (terms text). Residual risk R-13 (legal lead). Owner AI + LC.
 
 ---
 

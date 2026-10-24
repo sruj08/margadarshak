@@ -50,7 +50,7 @@ The moat is threefold:
 | P-04 | **Helper** | Elder sibling or cyber-café/CSC operator who fills forms for others, with recorded consent. |
 | P-05 | **Driving-school owner** | Runs a school near the RTO. Wants students and must now give hazard training in Kerala. |
 | P-06 | **RTO officer / Transport Commissioner** | Wants fewer counter queries, fewer re-tests and visibility of where applications stall. |
-| P-07 | **Rahul** (edge) | 17. Only a ≤50 cc gearless licence is possible, with guardian consent. Rules-only features: no AI, no telemetry, no streaks. |
+| P-07 | **Rahul** (edge) | 17. Only a ≤50 cc gearless licence is possible, with guardian consent. Uses Margdarshak on his parent's phone, inside the parent's account (family mode); gets the full product, including every AI feature. |
 
 ## 5. Product flow (stages S0–S9) and features
 **Stages:**
@@ -87,12 +87,12 @@ The moat is threefold:
 | F-14 | **Approval tracker + escalation letter**: facts only, the user approves and sends; DigiLocker pointer when issued | S7 | Should |
 | F-15 | **New-rider year**:<br>• voluntary novice pledge<br>• phone-free riding guidance<br>• monthly hazard refresher<br>• first night/highway missions<br>• first-vehicle checklist (ABS/CBS, Bharat NCAP, ISI helmet, third-party + ₹15 lakh PA cover, PUC, RC check)<br>• challan check link + fake e-challan/APK scam shield<br>• golden-hour card (static content, D-14) | S8 | Should |
 | F-16 | **Renew / fix**: renewal reminders (no grace period since 2019; more than 1 year late means a retest), add a class, address change, duplicate, IDP. Shown only to DL holders. | S9 | Should (surface) |
-| F-17 | **Family and Helper mode**: manage a parent's case; cyber-café helper with recorded consent; "clear this device"; minor-riding (s.199A) awareness for parents | Cross | Should (surface) |
+| F-17 | **Family and Helper mode**: manage a parent's case or a 16–17-year-old's case (family mode, D-13 revised); cyber-café helper with recorded consent; "clear this device"; minor-riding (s.199A) awareness for parents | Cross | Should (surface) |
 | F-20 | **Learn hub**: LL syllabus + road-safety curriculum (22 modules from MoRTH data). Question variants so memorising fails; FSRS spaced repetition. | S3–S4 | Must |
 | F-21 | **Test Readiness Score** = 100 × weighted topic mastery − calibration penalty. Shown as "78 = knowledge 84 − calibration 6". The 85 gate is advisory, with "book anyway" always visible. | S3–S6 | Must |
 | F-22 | **LL Test Simulator**: the state's real format from config (timer, count, pass mark), with a guided first run | S3 | Must |
 | F-23 | **Nazar hazard perception** on real Indian clips, in Kerala's announced format: 10 clips × 10 marks, pass 60, UK-style 5-band scoring, pattern-clicking scores zero. Plus the clip pipeline. | S4 | Must (hero) |
-| F-24 | **Simulation mini-games** (under-18: play runs locally with no server session or stored score, D-13):<br>• Stopping Distance<br>• Blind Spot (truck/bus)<br>• Junction Scan<br>• Track Test Twin (figure-8, reverse park, gradient start)<br>• Helmet Fit (on-device camera)<br>• Golden Hour (first-aid decisions)<br>• Night & Glare<br>• Hill Road (J&K)<br>No speed or stunt content, false alarms penalised, no stakes (D-11) | S4 | Must: Stopping Distance, Blind Spot, Junction Scan, Track Test Twin deep (plus Nazar F-23 and the LL simulator F-22); Should: the rest |
+| F-24 | **Simulation mini-games** (available to everyone; a 16–17-year-old learner plays inside a parent's account, D-13 revised):<br>• Stopping Distance<br>• Blind Spot (truck/bus)<br>• Junction Scan<br>• Track Test Twin (figure-8, reverse park, gradient start)<br>• Helmet Fit (on-device camera)<br>• Golden Hour (first-aid decisions)<br>• Night & Glare<br>• Hill Road (J&K)<br>No speed or stunt content, false alarms penalised, no stakes (D-11) | S4 | Must: Stopping Distance, Blind Spot, Junction Scan, Track Test Twin deep (plus Nazar F-23 and the LL simulator F-22); Should: the rest |
 | F-25 | **AI Debrief**: after every session, "how you did · where you lacked · what you could have done · your next drill". Code computes every number; Gemini only narrates, choosing IDs from allowlists (D-09). The commentary mode is recorded, then scored (D-12). | S3–S8 | Must |
 | F-26 | **Gamification engine**:<br>• XP for learning only, diminishing after 45 min/day<br>• ranks gated by mastery<br>• weekly repairable streaks<br>• co-op squads<br>• 9 badges, "Khud Licence" shown as self-declared<br>• share cards<br>• the 13 CCPA dark patterns banned by lint | S3–S8 | Must |
 | F-27 | **Road Sign Snap**: point the camera at a sign → meaning + add it to your deck | S3 | Could |
@@ -108,7 +108,7 @@ The moat is threefold:
 | F-51 | **Lite mode / offline PWA**: < 300 KB first load, offline mock tests and cached clips | Cross | Must |
 | F-52 | **Accessibility**: WCAG 2.1 AA / GIGW 3.0 / UX4G, screen readers, no-audio games, photosensitivity-safe, 48 px targets | Cross | Must |
 | F-53 | **Notifications**: WhatsApp (templates), email, web push; SMS only after TRAI DLT registration (D-16) | Cross | Must |
-| F-54 | **Privacy centre**: consent records (DEPA-style artefacts), export, delete, grievance officer; minor gating | Cross | Must |
+| F-54 | **Privacy centre**: consent records (DEPA-style artefacts), export, delete, grievance officer; parental consent for a learner aged 16–17 managed in a parent's account | Cross | Must |
 | F-55 | **Privacy-preserving analytics** (no PII, aggregated) | Cross | Must |
 | F-56 | **Government adapter layer** (plug-and-play): SarathiAdapter, DigiLockerAdapter, AadhaarOfflineAdapter (**mock-only** in Margdarshak; real offline QR/XML verification brings OVSE duties, so in government mode it runs through the state), BhashiniAdapter, PaymentAdapter, NotificationAdapter, SlotAdapter, each with mock and real implementations passing the same contract tests | Platform | Must |
 | F-57 | **Field-study module**: journey-test lab (unbranded replica of the observed Sarathi sequence), Nazar study, pre-registered hypotheses | Evidence | Must |
@@ -125,7 +125,7 @@ The moat is threefold:
 ## 6. Domain ontology (Palantir-style; full model in DATA_MODEL)
 | ID | Object | Purpose |
 |---|---|---|
-| E-01 | Applicant (User) | Pseudonymous person; age band; language; flags (minor, helper) |
+| E-01 | Applicant (User) | Pseudonymous account holder (an adult); age band; language; flags (helper); a case may belong to a family member, including a learner aged 16–17 |
 | E-02 | Case | One licence journey; stage; state; classes; path; dates |
 | E-03 | ClassSelection | Vehicle class per case (MC50CC, MCWOG, MCWG, LMV-NT, transport classes) |
 | E-04 | LearnerLicenceMirror | User-entered or adapter-fetched LL facts (issue/expiry); never the LL number in clear |
@@ -179,10 +179,10 @@ The moat is threefold:
 | Web app | **Next.js 16** (App Router, React 19, TypeScript), Tailwind CSS 4, **HeroUI v3** (team's Vakyam stack), Motion (Framer), Rive (voice orb, track explainer), Lottie (celebrations only), next-intl, Serwist PWA |
 | Game layer | **Phaser 4** for the top-down sims; HTML video + SVG + React for Nazar, Stopping Distance, Golden Hour and the LL simulator; **MediaPipe** on device for Helmet Fit; `@margdarshak/game-core` (pure TS scoring + Game SDK contract, Zod) |
 | Learning | **ts-fsrs** (pinned 5.x) for spaced repetition; Brier-score calibration |
-| API backend | **Python 3.12, FastAPI**, Pydantic v2, SQLAlchemy 2 + Alembic, **PostgreSQL 16**, Redis/Key Value (rate limits, sessions) |
+| API backend | **Go 1.27** (switched from Python on 23 Oct 2026, ADR-0011): chi v5 router, contract-first handlers generated from `api/openapi.yaml` (oapi-codegen), pgx v5 + sqlc, goose migrations, **PostgreSQL 16** (tests use embedded Postgres, no Docker needed), Redis/Key Value (rate limits, sessions), slog with PII redaction, OpenTelemetry |
 | Score verifier | Node service running `game-core` to replay sessions server-side and overwrite client scores (anti-cheat) |
-| AI | **Google ADK 2.12 (Python)**: VoiceGuideAgent (live), DebriefAgent, CoachAgent, TutorAgent, ScreenDecoderAgent; **Gemini** models (§10); Sarvam Saaras (Dogri ASR); provenance validator + ADK PII plugin |
-| Durable jobs | **Render Workflows (Python SDK)**: clip pipeline (headline), case-clock sweep, debrief fan-out, nightly stats. n8n triggers the scheduled ones. |
+| AI | **Google ADK for Go (`google.golang.org/adk` v1.9.x, `RunLive` for voice) + Go Gemini SDK (`google.golang.org/genai` v1.76.x, Live API)**: VoiceGuideAgent (live), DebriefAgent, CoachAgent, TutorAgent, ScreenDecoderAgent; **Gemini** models (§10); Sarvam Saaras (Dogri ASR); provenance validator + ADK PII plugin |
+| Durable jobs | **Render Workflows (TypeScript SDK `@renderinc/sdk`)** in `services/workflows`; the Go API starts runs through the JobRunner port: clip pipeline (headline), case-clock sweep, debrief fan-out, nightly stats. n8n triggers the scheduled ones. |
 | Automation | **n8n Pro**: 15 workflows (messaging edge, schedules, moderation queues, approvals, digests, field-test export); never business logic (D-16) |
 | Storage | Cloudflare R2 (blurred clips, static assets) in the hackathon; an Indian object store in production |
 | Auth | Anonymous device session → optional account (email magic link / Google); helper links with consent. Production: DigiLocker OAuth (PKCE) / Jan Parichay via adapters. |
@@ -232,7 +232,7 @@ Further cases from product research (EC-21..EC-30):
 ## 10. AI models (IDs pinned at H0 against `04-ai-adk-gemini.md`; model names live in env vars)
 | ID | Agent / model | Job | Guardrail |
 |---|---|---|---|
-| M-01 | VoiceGuideAgent: ADK live + Gemini Live native-audio (Hindi/English) | Navigation and field-fill by voice | No submit/pay/book; rule-ID answers only; 18+ only |
+| M-01 | VoiceGuideAgent: ADK live + Gemini Live native-audio (Hindi/English) | Navigation and field-fill by voice | No submit/pay/book; rule-ID answers only; available to everyone |
 | M-02 | DebriefAgent: Gemini Flash-Lite | Narrates deterministic findings (how you did, gaps, what to do, next drill) | Chooses IDs from per-request allowlists; no digits in model text; validator; template fallback |
 | M-03 | CoachAgent: Gemini Flash-Lite | Weekly plan wording | Same as M-02 |
 | M-04 | TutorAgent: Gemini Flash-Lite | Picks one offline-reviewed explanation for a wrong answer and writes a short bridge sentence | Never writes new explanations at runtime |
@@ -247,7 +247,7 @@ Further cases from product research (EC-21..EC-30):
 **Cross-cutting AI rules:**
 - Code computes every number; Gemini only narrates (D-09).
 - Provenance guard plus ADK evals of at least 30 cases per agent (D-10).
-- Under-18 users get no AI, no telemetry and no streaks; real users run on the paid Gemini tier (D-13).
+- **AI for everyone (D-13 revised, 23 Oct 2026):** every AI feature is available across the whole product, for every user. Learners under 18 use Margdarshak on a parent's or guardian's phone, inside the parent's account (family mode); the account holder is the adult who consents (DPDP verifiable parental consent). No behavioural tracking or targeted ads on a child's data. Real users run on the paid Gemini tier.
 
 ## 11. Legal and compliance frame (detail in docs/06-security-compliance)
 - **Data protection:**
@@ -268,7 +268,7 @@ Further cases from product research (EC-21..EC-30):
   - Online Gaming Act 2025: no stakes or prizes.
   - CCPA dark-pattern guidelines 2023.
   - IT Rules 2021 (intermediary duties for Live Intel).
-  - Gemini API terms: 18+, paid tier.
+  - Gemini API / Vertex AI terms: the account holder must be 18+ and services "likely to be accessed by individuals under the age of 18" are restricted. Our model: accounts are held by adults; a minor's case lives in the parent's account. Residual risk R-13 is owned by the legal lead, who confirms the position with Google (or adds a provider that permits minors) before public launch. Paid tier.
   - TRAI DLT before SMS.
   - Motor Vehicles Act and CMVR as the rule sources.
   - Impersonation: no emblem, "not affiliated".
@@ -287,7 +287,7 @@ All three are pre-registered in `HYPOTHESES.md` at the confirmed start. We never
 | R-01 | Scope explosion |
 | R-02 | Seen as the 27th Parivahan redesign |
 | R-03 | Legal overclaim on stage |
-| R-04 | AI error, or a minor reaching the AI |
+| R-04 | AI error (wrong or unsafe output) |
 | R-05 | Fragile multi-service stack |
 | R-06 | Too few usable Nazar clips |
 | R-07 | Field recruitment shortfall |
@@ -296,7 +296,7 @@ All three are pre-registered in `HYPOTHESES.md` at the confirmed start. We never
 | R-10 | Kerala HPT stayed |
 | R-11 | Cold start or outage during judging |
 | R-12 | Bystander privacy in clips |
-| R-13 | Gemini terms (18+) / data on the free tier |
+| R-13 | Gemini/Vertex terms on services likely accessed by under-18s (we serve minors through adult family accounts) / data on the free tier |
 | R-14 | Disputed hackathon start time and the "built during the event" rule |
 
 ## 14. Hackathon constraints (the build plan is phase-based; time is managed by the team)
@@ -311,7 +311,7 @@ All three are pre-registered in `HYPOTHESES.md` at the confirmed start. We never
 | Nazar scoring | UK-style 5 bands per hazard (F-23); the field kit was updated to match before any data is collected |
 | Nazar spam-tap rule | More than 3 taps per second voids the clip (config value) |
 | Streaks | Weekly, repairable, silent when broken |
-| Under-18 users | No squads, no AI, no telemetry, no streaks; games run locally (D-13) |
+| Under-18 learners (D-13 revised) | Full product including all AI features, through a parent's account (family mode) with parental consent; no behavioural tracking or targeted ads on children's data; squads and share cards only with the parent's consent |
 | Badges | 9 slots; slot 7 has Night and Hill variants |
 | "Verified" wording | Never used for user records; use "counted" / "checked" |
 | Golden Hour | Template only, no AI; draft label until medical review |
@@ -326,15 +326,15 @@ All three are pre-registered in `HYPOTHESES.md` at the confirmed start. We never
 | Trust strip | "Designed to UX4G and GIGW 3.0 guidelines", never wording that reads as certification |
 | Clip pipeline | Split for Workflows limits: `clip_ingest` run → human two-rater wait in n8n (W08) → `clip_finalize` run |
 | Notifications fallback | Email + web push sent by the backend; SMS only after TRAI DLT |
-| Voice field-fill | Dictating your own name/address sends speech to Gemini; this is a documented exception behind separate consent (18+ only) |
+| Voice field-fill | Dictating your own name/address sends speech to Gemini; this is a documented exception behind separate consent (the account holder consents, including for a family member's case) |
 | Rule IDs | `rulepacks/` is the canonical rule-ID source; AI allowlists are generated from it |
-| AI hosting | Agents run inside the FastAPI service on Render (hackathon); Cloud Run or Vertex AI India region as the production alternative |
+| AI hosting | Agents run inside the Go API service on Render (hackathon); Cloud Run or Vertex AI India region as the production alternative |
 | Packages | `packages/game-core` (single game package), `packages/ui` (tokens), `packages/rules` (rule-pack schemas), `packages/api-client` (generated from `api/openapi.yaml`) |
 | Derived stages | LL_EXPIRING and similar warnings are derived `displayStage` values, not stored stages |
 | Nazar spam rule | >3 taps in any 1 s, or >(2 × hazards + 4) taps in a clip, scores the clip 0 |
 | JSON casing | snake_case on the wire; the generated `packages/api-client` maps to camelCase |
 | Production job runner | JobRunner port: Render Workflows (hackathon) → **Temporal** (production) → inline (dev/CI) |
-| Node exception to D-17 | The score verifier is the single Node service (it runs `game-core` so client and server scoring are identical); all other backend code is Python |
+| Languages (D-17 revised) | Backend API in **Go**; web, console, score verifier (runs `game-core` so client and server scoring are identical) and Render Workflows tasks in **TypeScript**. No Python. The rules engine is authoritative in Go, with a conformance-tested TypeScript mirror for offline plan cards |
 | Log retention | Application/security logs kept ≥1 year (DPDP Rule 8); 180 days of them held in India (CERT-In) |
 | Case events (API-15) | ll_application_started, handoff_done, payment_pending, payment_confirmed, ll_issued, ll_test_failed, slot_booked, test_failed, test_passed, approved, card_received, reapply, renewed |
 | Extra endpoints | API-06..09 auth · API-23 tenant config · API-24 payment callback · API-58 helper links · proposed (`x-proposed` in OpenAPI): API-18 Aadhaar offline (mock), API-19 payment intents, API-21/22 DigiLocker, API-56 admin moderation, API-59 `/v1/me`, `POST /v1/voice/ticket` |

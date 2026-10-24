@@ -55,7 +55,7 @@ Chosen option: **1**, because it makes the honest claim ("we ship the socket and
 - Bad, because more deployables, network hops and on-call surface in 48 h (R-05).
 
 ## Validation
-- CI: every port's suite runs against mock and recorded-real adapters on every PR; `import-linter` forbids `domain` → adapters imports.
+- CI: every port's suite runs against mock and recorded-real adapters on every PR; `depguard` (golangci-lint) plus a `go list -deps` architecture test forbid `internal/domain` → adapters imports (ADR-0011).
 - Demo: switch the JK tenant's Sarathi adapter between `mock` and `deeplink` live without a deploy.
 
 ## Links

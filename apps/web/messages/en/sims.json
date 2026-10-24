@@ -1,0 +1,217 @@
+{
+  "meta": {
+    "hiReview": "source"
+  },
+  "canvas": {
+    "loading": "Loading the game",
+    "lost": "The phone reset the game's graphics. Nothing is lost.",
+    "continue": "Tap to continue"
+  },
+  "sd": {
+    "name": "Stopping distance",
+    "title": "Stopping distance",
+    "practise": "Knowing how far you need to stop at 40, 60 and 80 km/h, dry and wet.",
+    "scored": "Your guesses (30), stopping before the child in the street (20) and the speed you choose for the road you can see (50). A slower choice never costs a point; a faster one is never rewarded.",
+    "controls": "Slider or − and + buttons; a full-width BRAKE button (Space or Enter). One hand.",
+    "teachingLine": "Teaching values: reaction {rt} s, road grip {dry} dry and {wet} wet. Real roads vary.",
+    "modes": {
+      "practice": "Practice",
+      "practiceLine": "Three rounds, feedback after each answer",
+      "learn": "Learn",
+      "learnLine": "The same rounds with a hint on how the distance is made up"
+    },
+    "roundOf": "Round {r} of {n}",
+    "noRounds": "This session has no rounds to play.",
+    "wet": "Wet road",
+    "dry": "Dry road",
+    "at": "{kmh} km/h · {surface}",
+    "street": "Street with parked cars · {surface}",
+    "bend": "Bend ahead · {surface}",
+    "q": {
+      "where": "Where would you stop?",
+      "street": "Pick your speed for this street.",
+      "react": "Tap BRAKE the moment a child steps out."
+    },
+    "strip": {
+      "title": "Road from your bike, {kmh} km/h, {surface}",
+      "street": "Street with parked cars, {surface}",
+      "sight": "Road to a bend {x} m ahead, {surface}",
+      "you": "You",
+      "metres": "metres (0 to {m})"
+    },
+    "hint": "Before you brake you keep moving for about {rt} s. Braking distance grows with the square of your speed.",
+    "guessLabel": "Your guess",
+    "metres": "{m} m",
+    "less": "{m} m less",
+    "more": "{m} m more",
+    "lock": "Lock my guess",
+    "think": "Before you brake: {m} m",
+    "braking": "Braking: {m} m",
+    "result1": "You guessed {g} m. Real: about {t} m.",
+    "teaching": "Teaching values: reaction {rt} s, road grip {mu}. Real roads vary.",
+    "next": "Next",
+    "speedLabel": "Your speed",
+    "kmh": "{kmh} km/h",
+    "slower": "{kmh} km/h slower",
+    "faster": "{kmh} km/h faster",
+    "ride": "Ride at this speed",
+    "typical": "No timed tap: use a typical {s} s reaction",
+    "riding": "Riding at {kmh} km/h…",
+    "childOut": "A child steps out!",
+    "btnBrake": "BRAKE",
+    "early": "That was before anything happened. Let's try again.",
+    "retry": "Ride again",
+    "tooEarly": "Braking before anything happens doesn't count as a stop.",
+    "noBrake": "You didn't brake before reaching the place the child stepped out.",
+    "usedTypical": "This used a typical reaction time of {s} s, not yours.",
+    "rt": "Your reaction: {s} s (not scored)",
+    "stopAt": "With that reaction you need {m} m to stop. The child stepped out {child} m ahead.",
+    "moving": "You'd still be moving at about {kmh} km/h where the child stepped out.",
+    "stopped": "You stopped about {m} m before the child.",
+    "who": {
+      "below_50": "WHO: below 50 km/h the risk to a pedestrian is under 20%.",
+      "between_50_80": "WHO gives no figure between 50 and 80 km/h; at 80 km/h it is about 60%.",
+      "80_plus": "WHO: at 80 km/h the risk to a pedestrian is about 60%."
+    },
+    "speedNote": "A slower speed gives you more room. It never costs points.",
+    "choose": "You can see {x} m ahead. What's the fastest you can go and still stop?",
+    "needAt": "At {kmh} km/h you need about {m} m to stop. You can see {x} m.",
+    "tooFast": "You'd need more road than you can see.",
+    "withinSight": "You could stop within the road you can see.",
+    "maxSafe": "For {x} m of clear road, {kmh} km/h was the most you could stop from.",
+    "results": {
+      "skill": "Stopping distance · speed and grip",
+      "estimation": "Guesses: {v} of {max}",
+      "no_collision": "Stopping in the street: {v} of {max}",
+      "speed_for_sight": "Speed for the road you can see: {v} of {max}",
+      "note": "Your reaction time is shown in the rounds but never scored."
+    }
+  },
+  "bs": {
+    "name": "Blind Spot · Trucks and buses",
+    "title": "Blind Spot",
+    "practise": "Knowing where a truck driver can't see you, and how to stay out of those zones.",
+    "scored": "Placing the bike where the driver can see you (30), time out of the blind zones (30), a mirror check before you move (15) and holding back when the truck turns left (25). Passing on the left of a turning truck makes the ride score 0.",
+    "controls": "Tap a numbered spot, then Place here. On the ride: Move left, Centre, Move right, Mirror check and Hold back (keys ← ↓ → M H). One hand.",
+    "zonesNote": "Zones vary by vehicle and mirrors; these are illustrative.",
+    "modes": {
+      "practice": "Practice",
+      "practiceLine": "Placement, then a short ride",
+      "learn": "Learn",
+      "learnLine": "The same, with the mirror rule before each placement"
+    },
+    "decisionLink": "Decision version: picture choices, no moving game",
+    "decisionNote": "A different format: you place the bike on a still picture, plan your ride, then watch it play out. Scored the same way, but not the same skill as riding it.",
+    "partA": "Part A · Position {k} of {n}",
+    "partB": "Part B · Highway",
+    "vehicle": {
+      "truck": "truck",
+      "bus": "bus",
+      "tanker": "tanker"
+    },
+    "prompt": {
+      "wait_behind_at_light": "Where would you wait behind it at a red light?",
+      "truck_about_to_turn_left": "It's about to turn left. Where do you ride?",
+      "beside_in_slow_traffic": "Slow traffic beside it. Where do you ride?",
+      "about_to_overtake": "You're about to overtake it. Where are you before you pass?",
+      "stopped_ahead_of_truck": "You stop ahead of it at a signal. Where do you stop?"
+    },
+    "q": "Where can the driver see you in his mirror?",
+    "spotsLegend": "Pick a spot",
+    "spot": {
+      "aheadFar": "Spot {n}: well ahead of the front",
+      "aheadNear": "Spot {n}: just in front of the bumper",
+      "leftFront": "Spot {n}: beside the cab, on its left",
+      "leftRear": "Spot {n}: beside the back, on its left",
+      "rightNear": "Spot {n}: close beside it, on its right",
+      "rightOut": "Spot {n}: one lane over, on its right",
+      "behindNear": "Spot {n}: close behind it",
+      "behindFar": "Spot {n}: well behind it"
+    },
+    "dragHint": "Or drag the bike on the picture.",
+    "place": "Place here",
+    "cansee": "Right: he can see you in his mirror.",
+    "cantsee": "He can't see you here.",
+    "rule": "If you can't see the driver in his mirror, he can't see you.",
+    "zoneLabel": "Can't see you",
+    "nextPos": "Next position",
+    "next": "Next",
+    "ride": {
+      "ready": "Ride behind a truck on the highway. Choose where you ride, check the mirror before you move, and hold back when it turns left. Your speed is automatic.",
+      "go": "Start the ride",
+      "moveLeft": "Move left",
+      "centre": "Centre",
+      "moveRight": "Move right",
+      "legend": "Your position",
+      "pos": {
+        "kerb": "On the truck's left side",
+        "left": "Left of your lane",
+        "centre": "Centre of your lane",
+        "right": "Right of your lane"
+      },
+      "mirror": "Mirror check",
+      "mirrorYes": "Driver visible: yes",
+      "mirrorNo": "Driver visible: no",
+      "mirrorNone": "No truck in the mirror",
+      "hold": "Hold back",
+      "holding": "Holding back",
+      "indicating": "Truck indicating LEFT",
+      "left": "LEFT",
+      "inZone": "In a blind zone: the driver can't see you.",
+      "clear": "The driver can see you.",
+      "gone": "The truck turned off.",
+      "done": "Ride over.",
+      "crit": "The truck was turning left. Never pass on the left of a turning truck.",
+      "you": "You"
+    },
+    "canvas": {
+      "partA": "Top-down view of a {vehicle} with eight numbered spots around it",
+      "partB": "Top-down view of the highway, the truck and your bike"
+    },
+    "plan": {
+      "title": "Plan your ride",
+      "follow": {
+        "q": "You're riding behind a truck on the highway. Where do you ride?",
+        "back": "Centre of my lane, well back",
+        "beside": "Left of my lane, closing up beside it",
+        "kerb": "The gap on the truck's left side"
+      },
+      "lane": {
+        "q": "Later you move across your lane. What do you do first?",
+        "mirror": "Check my mirror, then move",
+        "no_mirror": "Just move"
+      },
+      "turn": {
+        "q": "The truck indicates left at a junction. Do you:",
+        "hold": "Hold back behind it",
+        "pass_left": "Keep going on its left",
+        "pass_right": "Keep going on its right"
+      },
+      "start": "Watch the ride",
+      "watching": "Your ride plays out with the choices you made.",
+      "pick": "Choose one"
+    },
+    "results": {
+      "skill": "Blind spots · trucks and buses",
+      "placement": "Placement: {v} of {max}",
+      "no_zone_time": "Out of the blind zones: {v} of {max}",
+      "mirror_checks": "Mirror before moving: {v} of {max}",
+      "hold_back": "Holding back at the turn: {v} of {max}",
+      "critical": "The ride scored 0: passing on the left of a turning truck."
+    },
+    "partAShort": "Part A",
+    "partBShort": "Part B",
+    "noItems": "This session has no items to play."
+  },
+  "runs": {
+    "title": "Your runs on this phone",
+    "loading": "Loading your runs",
+    "empty": "No runs on this phone yet. Your first one will appear here.",
+    "error": "Couldn't read your runs on this phone. Your progress is saved.",
+    "retry": "Try again",
+    "row": "{date}: {pct} out of 100",
+    "rowPending": "{date}: score after it's checked",
+    "provisional": "provisional",
+    "checked": "checked"
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M3",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Helmet: wear it, fit it, strap it",
+    "hi": "हेलमेट: पहनें, सही नाप, स्ट्रैप बाँधें"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "2W",
+  "deep_content_classes": ["MCWOG", "MCWG"],
+  "available_to": "all",
+  "phase_1_2_depth": "Thin (framing + checklist + quiz)",
+  "skill_id": "SK-M3",
+  "game_ids": ["helmet_fit"],
+  "drill_ids": ["DR-HF-STRAP", "DR-HF-ISI", "DR-HF-PILLION"],
+  "rule_ids": ["RR-HLM-001", "RR-HLM-002", "RR-HLM-003"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M3-1",
+      "text": {
+        "en": "Choose an ISI-marked helmet (IS 4151) and tell a genuine mark from a fake.",
+        "hi": "ISI मार्क वाला हेलमेट (IS 4151) चुनें और असली मार्क को नकली से अलग पहचानें।"
+      }
+    },
+    {
+      "id": "LO-M3-2",
+      "text": {
+        "en": "Get a correct fit (snug, no rocking) and fasten the strap with the two-finger check.",
+        "hi": "सही फ़िटिंग पाएँ (कसा हुआ, हिलता नहीं) और दो उँगली की जाँच के साथ स्ट्रैप बाँधें।"
+      }
+    },
+    {
+      "id": "LO-M3-3",
+      "text": {
+        "en": "Insist on helmets for pillions and children.",
+        "hi": "पीछे बैठी सवारी और बच्चों के लिए हेलमेट पर ज़ोर दें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M3-1",
+      "title": {
+        "en": "Fit and strap",
+        "hi": "फ़िटिंग और स्ट्रैप"
+      }
+    },
+    {
+      "id": "LS-M3-2",
+      "title": {
+        "en": "Real vs fake ISI label",
+        "hi": "असली बनाम नकली ISI लेबल"
+      }
+    },
+    {
+      "id": "LS-M3-3",
+      "title": {
+        "en": "Full-face vs open-face",
+        "hi": "फ़ुल-फ़ेस बनाम ओपन-फ़ेस"
+      }
+    },
+    {
+      "id": "LS-M3-4",
+      "title": {
+        "en": "Pillion and child",
+        "hi": "पीछे की सवारी और बच्चे"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M3-1",
+      "kind": "evidence",
+      "text": {
+        "en": "54,568 riders were killed without a helmet in 2023 (drivers 39,160; pillions 15,408).",
+        "hi": "2023 में बिना हेलमेट के 54,568 सवारों की मौत हुई (चलाने वाले 39,160; पीछे बैठे 15,408)।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.3 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M3-2",
+      "kind": "evidence",
+      "text": {
+        "en": "In a hospital study only 45% of riders had the helmet properly fastened.",
+        "hi": "एक अस्पताल के अध्ययन में सिर्फ़ 45% सवारों का हेलमेट ठीक से बँधा था।"
+      },
+      "sources": [
+        {
+          "title": "PMC6182975 (hospital study on helmet fastening)",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6182975",
+          "grade": "P",
+          "pin_status": "pinned",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-HLM-003"
+    },
+    {
+      "id": "KF-M3-3",
+      "kind": "law",
+      "text": {
+        "en": "The rider and the pillion must wear a protective helmet.",
+        "hi": "चलाने वाले और पीछे बैठी सवारी, दोनों को सुरक्षात्मक हेलमेट पहनना ज़रूरी है।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.129 (not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-HLM-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M3-1",
+      "myth": {
+        "en": "An unfastened helmet still protects you.",
+        "hi": "बिना बँधा हेलमेट भी बचाता है।"
+      },
+      "correction": {
+        "en": "An unfastened helmet can come off; fasten the strap so two fingers fit under it.",
+        "hi": "बिना बँधा हेलमेट निकल सकता है; स्ट्रैप इतना बाँधें कि नीचे दो उँगलियाँ आएँ।"
+      },
+      "rule_id": "RR-HLM-003"
+    },
+    {
+      "id": "MC-M3-2",
+      "myth": {
+        "en": "Pillions don't need helmets on short trips.",
+        "hi": "छोटे सफ़र में पीछे बैठी सवारी को हेलमेट की ज़रूरत नहीं।"
+      },
+      "correction": {
+        "en": "Rider and pillion both wear one, on every trip.",
+        "hi": "चलाने वाले और पीछे बैठी सवारी, दोनों हर सफ़र में हेलमेट पहनें।"
+      },
+      "rule_id": "RR-HLM-001"
+    }
+  ],
+  "concepts": {
+    "target": 7,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G6 ≥ 80 (camera or no-camera path, same cap) and FSRS mastery ≥ 0.8.",
+      "hi": "G6 ≥ 80 (कैमरे के साथ या बिना, एक जैसी सीमा) और FSRS महारत ≥ 0.8।"
+    },
+    "readiness": "road",
+    "item_refs": []
+  },
+  "review": {
+    "needs": [
+      "Legal check of s.129 text and exemptions",
+      "BIS standard citation (IS 4151)",
+      "Photo consent for team-shot label images"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

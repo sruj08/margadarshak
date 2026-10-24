@@ -1,0 +1,110 @@
+{
+  "cases": [
+    {
+      "id": "ERR-unknown-state",
+      "description": "No pack for the state",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "XX", "dob": "2000-01-01", "vehicles": ["car"] },
+      "expect_error": { "code": "UNKNOWN_STATE", "field": "state" }
+    },
+    {
+      "id": "ERR-invalid-as-of",
+      "description": "as_of must be YYYY-MM-DD",
+      "refs": ["EC-15"],
+      "input": { "as_of": "23/10/2026", "state": "JK", "dob": "2000-01-01", "vehicles": ["car"] },
+      "expect_error": { "code": "INVALID_AS_OF", "field": "as_of" }
+    },
+    {
+      "id": "ERR-invalid-dob",
+      "description": "31 Feb is not a date",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2000-02-31", "vehicles": ["car"] },
+      "expect_error": { "code": "INVALID_DOB", "field": "dob" }
+    },
+    {
+      "id": "ERR-invalid-dob-precision",
+      "description": "dob_precision is day or year",
+      "refs": ["EC-01"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2000-01-01",
+        "dob_precision": "month",
+        "vehicles": ["car"]
+      },
+      "expect_error": { "code": "INVALID_DOB_PRECISION", "field": "dob_precision" }
+    },
+    {
+      "id": "ERR-dob-after-as-of",
+      "description": "DOB in the future",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2027-01-01", "vehicles": ["car"] },
+      "expect_error": { "code": "DOB_AFTER_AS_OF", "field": "dob" }
+    },
+    {
+      "id": "ERR-unknown-vehicle",
+      "description": "Unknown picture key",
+      "refs": ["F-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2000-01-01",
+        "vehicles": ["spaceship"]
+      },
+      "expect_error": { "code": "UNKNOWN_VEHICLE", "field": "vehicles" }
+    },
+    {
+      "id": "ERR-unknown-class",
+      "description": "Unknown class code",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2000-01-01", "classes": ["PSV-X"] },
+      "expect_error": { "code": "UNKNOWN_CLASS", "field": "classes" }
+    },
+    {
+      "id": "ERR-no-classes",
+      "description": "No vehicle and no class",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2000-01-01", "vehicles": [] },
+      "expect_error": { "code": "NO_CLASSES", "field": "vehicles" }
+    },
+    {
+      "id": "ERR-ll-issued-in-future",
+      "description": "LL issue date after as_of",
+      "refs": ["EC-22"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2000-01-01",
+        "vehicles": ["car"],
+        "ll_issued_on": "2026-11-01"
+      },
+      "expect_error": { "code": "INVALID_DATE", "field": "ll_issued_on" }
+    },
+    {
+      "id": "ERR-unknown-disability",
+      "description": "Disability values are a closed list",
+      "refs": ["EC-13"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2000-01-01",
+        "vehicles": ["car"],
+        "disability": ["unknown_value"]
+      },
+      "expect_error": { "code": "UNKNOWN_DISABILITY", "field": "disability" }
+    },
+    {
+      "id": "ERR-year-only-bad-year",
+      "description": "Year-only DOB must be 4 digits",
+      "refs": ["EC-01"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "08",
+        "dob_precision": "year",
+        "vehicles": ["car"]
+      },
+      "expect_error": { "code": "INVALID_DOB", "field": "dob" }
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M9",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Wrong side and shortcuts",
+    "hi": "उल्टी दिशा और शॉर्टकट"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Nazar clips only",
+  "skill_id": "SK-M9",
+  "game_ids": ["nazar"],
+  "drill_ids": ["DR-NAZ-OCCL-WRONG_SIDE_2W"],
+  "rule_ids": ["RR-WRG-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M9-1",
+      "text": {
+        "en": "Never ride the wrong way; take the legal U-turn.",
+        "hi": "कभी उल्टी दिशा में न चलें; सही U-टर्न लें।"
+      }
+    },
+    {
+      "id": "LO-M9-2",
+      "text": {
+        "en": "Anticipate wrong-side riders as a hazard.",
+        "hi": "उल्टी दिशा से आने वालों को ख़तरे के रूप में पहले से पहचानें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M9-1",
+      "title": {
+        "en": "The shortcut maths",
+        "hi": "शॉर्टकट का हिसाब"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M9-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Wrong-side riding and lane indiscipline were recorded in 9,432 deaths (5.5%) in 2023; Punjab recorded 522 wrong-side deaths.",
+        "hi": "2023 में उल्टी दिशा और लेन तोड़ने को 9,432 मौतों (5.5%) में दर्ज किया गया; पंजाब में उल्टी दिशा से 522 मौतें दर्ज हुईं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.1 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Annex 35 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M9-2",
+      "kind": "law",
+      "text": {
+        "en": "Keep left; never ride against traffic.",
+        "hi": "बाईं ओर चलें; कभी ट्रैफ़िक के उल्टा न चलें।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-WRG-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M9-1",
+      "myth": {
+        "en": "A short wrong-side ride saves real time.",
+        "hi": "थोड़ी दूर उल्टी दिशा में चलने से काफ़ी समय बचता है।"
+      },
+      "correction": {
+        "en": "The time saved is small and the exposure to head-on traffic is large; take the legal U-turn.",
+        "hi": "बचा समय थोड़ा होता है और सामने के ट्रैफ़िक का जोखिम बड़ा; सही U-टर्न लें।"
+      },
+      "rule_id": "RR-WRG-001"
+    }
+  ],
+  "concepts": {
+    "target": 3,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Scenario choice ≥ 80%.",
+      "hi": "परिदृश्य वाले सवाल ≥ 80%।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Tone review (no shaming)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

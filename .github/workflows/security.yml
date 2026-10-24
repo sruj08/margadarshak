@@ -1,7 +1,7 @@
 # Margdarshak security scans (secure SDLC; OWASP ASVS L2 evidence for the STQC/CERT-In pre-audit pack)
 #   secrets:      gitleaks (full history on schedule, diff on PR)
-#   deps:         pip-audit (api + workflows), pnpm audit (prod deps), GitHub dependency review
-#   SAST:         CodeQL (javascript-typescript, python, actions)
+#   deps:         govulncheck (Go api), pnpm audit (prod deps incl. services/workflows), GitHub dependency review
+#   SAST:         CodeQL (go, javascript-typescript, actions)
 #   containers:   Trivy image scan (api, web, score-verifier) + SBOM (CycloneDX via Trivy)
 #   IaC/config:   Trivy config (Dockerfiles, render.yaml, Helm chart, compose)
 #   DAST:         OWASP ZAP baseline against staging (schedule / manual only)
@@ -25,9 +25,7 @@ concurrency:
 
 env:
   NODE_VERSION: "22"
-  PNPM_VERSION: "10.18.0"
-  PYTHON_VERSION: "3.12"
-  UV_VERSION: "0.8.17"
+  GOVULNCHECK_VERSION: "v1.9.0"
   TRIVY_VERSION: "v0.67.2"
 
 jobs:
@@ -54,25 +52,25 @@ jobs:
           sarif_file: gitleaks.sarif
           category: gitleaks
 
-  pip-audit:
-    name: python deps (pip-audit)
+  govulncheck:
+    name: go deps (govulncheck)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        project: [services/api, services/workflows]
+    defaults:
+      run:
+        working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-go@v7
         with:
-          version: ${{ env.UV_VERSION }}
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Export locked requirements
-        working-directory: ${{ matrix.project }}
-        run: uv export --frozen --no-dev --no-emit-project --format requirements-txt -o /tmp/req.txt
-      - name: pip-audit (OSV + PyPI advisories)
-        run: uvx pip-audit==2.9.0 -r /tmp/req.txt --strict --vulnerability-service osv --desc on --progress-spinner off
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
+      - name: govulncheck (Go vulnerability database; reachable symbols in deps + stdlib fail the job)
+        run: go run "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}" ./...
+      - name: Licence allowlist for Go modules (Apache-2.0 compatible; no AGPL/SSPL/BUSL)
+        run: |
+          go run github.com/google/go-licenses/v2@v2.0.1 check ./... \
+            --disallowed_types=forbidden,restricted --ignore github.com/sruj08/margadarshak
 
   pnpm-audit:
     name: node deps (pnpm audit)
@@ -80,9 +78,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
+      - uses: pnpm/action-setup@v4   # pnpm version from "packageManager"
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -117,13 +113,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [javascript-typescript, python, actions]
+        language: [go, javascript-typescript, actions]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v7
+        if: matrix.language == 'go'
+        with:
+          go-version-file: services/api/go.mod
+          cache-dependency-path: services/api/go.sum
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          build-mode: none
+          build-mode: ${{ matrix.language == 'go' && 'autobuild' || 'none' }}   # Go has no build-mode none
           queries: security-extended
       - uses: github/codeql-action/analyze@v3
         with:
@@ -219,7 +220,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.14.0
         with:
           target: ${{ vars.STAGING_WEB_URL }}
-          rules_file_name: .zap/rules.tsv
+          # No .zap/rules.tsv yet: every rule reports at its default level (add the file to tune).
           cmd_options: "-a -j"
           allow_issue_writing: true
           issue_title: "ZAP baseline findings (staging)"

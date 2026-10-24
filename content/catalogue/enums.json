@@ -1,0 +1,540 @@
+{
+  "$schema": "../schema/enums.schema.json",
+  "file_kind": "enums",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "Labels for enum-valued facts (DEBRIEF_SPEC §5.2): every enum or enum_list fact a finding declares has its labels here, with value sets taken from what game-core emits (src/scoring, src/schema) or, for games game-core does not score yet, from GAME_DESIGN. hazard_type labels live in hazard_types.json. sign_family values are upper case, as game-core emits them. enum_list facts travel as one comma-separated string. pattern_drill: false marks a value with no pattern-expanded drill (LL0: the scorer names DR-LL-MOCK). Hindi awaits native review.",
+  "enums": [
+    {
+      "fact_key": "surface",
+      "values": [
+        {
+          "value": "dry",
+          "label": {
+            "en": "dry road",
+            "hi": "सूखी सड़क"
+          }
+        },
+        {
+          "value": "wet",
+          "label": {
+            "en": "wet road",
+            "hi": "गीली सड़क"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "topic",
+      "values": [
+        {
+          "value": "LL0",
+          "label": {
+            "en": "the test format",
+            "hi": "टेस्ट का फ़ॉर्मैट"
+          },
+          "pattern_drill": false
+        },
+        {
+          "value": "LL1",
+          "label": {
+            "en": "road signs and markings",
+            "hi": "सड़क संकेत और मार्किंग"
+          }
+        },
+        {
+          "value": "LL2",
+          "label": {
+            "en": "rules of the road",
+            "hi": "सड़क के नियम"
+          }
+        },
+        {
+          "value": "LL3",
+          "label": {
+            "en": "driving and hand signals",
+            "hi": "ड्राइविंग और हाथ के संकेत"
+          }
+        },
+        {
+          "value": "LL4",
+          "label": {
+            "en": "documents and duties",
+            "hi": "दस्तावेज़ और कर्तव्य"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "sign_family",
+      "values": [
+        {
+          "value": "MANDATORY",
+          "label": {
+            "en": "mandatory signs",
+            "hi": "अनिवार्य संकेत"
+          }
+        },
+        {
+          "value": "CAUTIONARY",
+          "label": {
+            "en": "cautionary signs",
+            "hi": "चेतावनी संकेत"
+          }
+        },
+        {
+          "value": "INFORMATORY",
+          "label": {
+            "en": "informatory signs",
+            "hi": "सूचना संकेत"
+          }
+        },
+        {
+          "value": "MARKINGS",
+          "label": {
+            "en": "road markings",
+            "hi": "सड़क की मार्किंग"
+          }
+        },
+        {
+          "value": "SIGNALS",
+          "label": {
+            "en": "traffic lights",
+            "hi": "ट्रैफ़िक लाइटें"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "vehicle_type",
+      "values": [
+        {
+          "value": "truck",
+          "label": {
+            "en": "truck",
+            "hi": "ट्रक"
+          }
+        },
+        {
+          "value": "bus",
+          "label": {
+            "en": "bus",
+            "hi": "बस"
+          }
+        },
+        {
+          "value": "tanker",
+          "label": {
+            "en": "tanker",
+            "hi": "टैंकर"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "truck_signal",
+      "values": [
+        {
+          "value": "left",
+          "label": {
+            "en": "left",
+            "hi": "बाएँ"
+          }
+        },
+        {
+          "value": "right",
+          "label": {
+            "en": "right",
+            "hi": "दाएँ"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "probe_label",
+      "values": [
+        {
+          "value": "wait_behind_at_light",
+          "label": {
+            "en": "waiting behind it at a light",
+            "hi": "बत्ती पर उसके पीछे रुकते समय"
+          }
+        },
+        {
+          "value": "truck_about_to_turn_left",
+          "label": {
+            "en": "when it was about to turn left",
+            "hi": "जब वह बाएँ मुड़ने वाला था"
+          }
+        },
+        {
+          "value": "beside_in_slow_traffic",
+          "label": {
+            "en": "riding beside it in slow traffic",
+            "hi": "धीमे ट्रैफ़िक में उसके बगल में चलते समय"
+          }
+        },
+        {
+          "value": "about_to_overtake",
+          "label": {
+            "en": "just before overtaking it",
+            "hi": "उसे ओवरटेक करने से ठीक पहले"
+          }
+        },
+        {
+          "value": "stopped_ahead_of_truck",
+          "label": {
+            "en": "stopping just ahead of it",
+            "hi": "उसके ठीक आगे रुकते समय"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "threat_side",
+      "values": [
+        {
+          "value": "right",
+          "label": {
+            "en": "right",
+            "hi": "दाईं ओर"
+          }
+        },
+        {
+          "value": "left",
+          "label": {
+            "en": "left",
+            "hi": "बाईं ओर"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "last_look",
+      "values": [
+        {
+          "value": "right",
+          "label": {
+            "en": "right",
+            "hi": "दाईं ओर"
+          }
+        },
+        {
+          "value": "left",
+          "label": {
+            "en": "left",
+            "hi": "बाईं ओर"
+          }
+        },
+        {
+          "value": "none",
+          "label": {
+            "en": "neither side",
+            "hi": "किसी ओर नहीं"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "yield_missed",
+      "values": [
+        {
+          "value": "pedestrian",
+          "label": {
+            "en": "a person crossing",
+            "hi": "सड़क पार करते व्यक्ति"
+          }
+        },
+        {
+          "value": "vehicle_in_junction",
+          "label": {
+            "en": "a vehicle already in the junction",
+            "hi": "जंक्शन में पहले से मौजूद वाहन"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "fault",
+      "values": [
+        {
+          "value": "off_track",
+          "label": {
+            "en": "you went off the track",
+            "hi": "आप ट्रैक से बाहर चले गए"
+          }
+        },
+        {
+          "value": "timeout",
+          "label": {
+            "en": "the run went well past the time limit",
+            "hi": "चक्कर समय-सीमा से बहुत आगे निकल गया"
+          }
+        },
+        {
+          "value": "line_touch",
+          "label": {
+            "en": "a line touch",
+            "hi": "लाइन छूना"
+          }
+        },
+        {
+          "value": "cone",
+          "label": {
+            "en": "a cone touch",
+            "hi": "कोन छूना"
+          }
+        },
+        {
+          "value": "foot_down",
+          "label": {
+            "en": "a foot down",
+            "hi": "पैर ज़मीन पर लगना"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "fault_location",
+      "values": [
+        {
+          "value": "loop_left",
+          "label": {
+            "en": "the left loop",
+            "hi": "बाएँ लूप"
+          }
+        },
+        {
+          "value": "loop_right",
+          "label": {
+            "en": "the right loop",
+            "hi": "दाएँ लूप"
+          }
+        },
+        {
+          "value": "crossing",
+          "label": {
+            "en": "the crossing point",
+            "hi": "बीच के क्रॉसिंग"
+          }
+        },
+        {
+          "value": "entry",
+          "label": {
+            "en": "the entry",
+            "hi": "शुरुआत"
+          }
+        },
+        {
+          "value": "exit",
+          "label": {
+            "en": "the exit",
+            "hi": "निकास"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "impact_band",
+      "values": [
+        {
+          "value": "below_50",
+          "label": {
+            "en": "below 50 km/h",
+            "hi": "50 किमी/घंटा से कम"
+          }
+        },
+        {
+          "value": "between_50_80",
+          "label": {
+            "en": "between 50 and 80 km/h",
+            "hi": "50 से 80 किमी/घंटा के बीच"
+          }
+        },
+        {
+          "value": "80_plus",
+          "label": {
+            "en": "80 km/h or more",
+            "hi": "80 किमी/घंटा या ज़्यादा"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "kerala_status",
+      "values": [
+        {
+          "value": "announced",
+          "label": {
+            "en": "announced",
+            "hi": "घोषित"
+          }
+        },
+        {
+          "value": "in_force",
+          "label": {
+            "en": "in force",
+            "hi": "लागू"
+          }
+        },
+        {
+          "value": "on_hold",
+          "label": {
+            "en": "on hold",
+            "hi": "रुका हुआ"
+          }
+        },
+        {
+          "value": "stayed",
+          "label": {
+            "en": "stayed by a court",
+            "hi": "अदालत से रोका गया"
+          }
+        },
+        {
+          "value": "postponed",
+          "label": {
+            "en": "postponed",
+            "hi": "टाला गया"
+          }
+        },
+        {
+          "value": "withdrawn",
+          "label": {
+            "en": "withdrawn",
+            "hi": "वापस लिया गया"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "format_source",
+      "values": [
+        {
+          "value": "rule_pack_verified",
+          "label": {
+            "en": "your state's format from the rule pack",
+            "hi": "रूल पैक में दिया आपके राज्य का फ़ॉर्मैट"
+          }
+        },
+        {
+          "value": "default_assumption",
+          "label": {
+            "en": "a default practice format",
+            "hi": "अभ्यास का डिफ़ॉल्ट फ़ॉर्मैट"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "step",
+      "values": [
+        {
+          "value": "strap",
+          "label": {
+            "en": "strap",
+            "hi": "पट्टा बाँधने"
+          }
+        },
+        {
+          "value": "two_finger",
+          "label": {
+            "en": "two-finger check",
+            "hi": "दो उँगली की जाँच"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "quiz_wrong_families",
+      "values": [
+        {
+          "value": "isi_label",
+          "label": {
+            "en": "spotting a genuine ISI label",
+            "hi": "असली ISI लेबल की पहचान"
+          }
+        },
+        {
+          "value": "helmet_type",
+          "label": {
+            "en": "full-face and open-face helmets",
+            "hi": "फ़ुल-फ़ेस और ओपन-फ़ेस हेलमेट"
+          }
+        },
+        {
+          "value": "pillion_child",
+          "label": {
+            "en": "pillion and child helmets",
+            "hi": "पीछे की सवारी और बच्चों के हेलमेट"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "beam",
+      "values": [
+        {
+          "value": "low",
+          "label": {
+            "en": "low beam",
+            "hi": "लो बीम"
+          }
+        },
+        {
+          "value": "high",
+          "label": {
+            "en": "high beam",
+            "hi": "हाई बीम"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "fact_key": "trip_plan_parts",
+      "values": [
+        {
+          "value": "advisory",
+          "label": {
+            "en": "checking the road status advisory",
+            "hi": "सड़क की स्थिति की सलाह देखना"
+          }
+        },
+        {
+          "value": "daylight_departure",
+          "label": {
+            "en": "leaving in the daylight window",
+            "hi": "दिन की रोशनी में निकलना"
+          }
+        },
+        {
+          "value": "safe_stop",
+          "label": {
+            "en": "planning a stop away from loose slopes",
+            "hi": "ढीली ढलानों से दूर रुकने की योजना"
+          }
+        }
+      ],
+      "hi_review_status": "pending_native_review"
+    }
+  ]
+}

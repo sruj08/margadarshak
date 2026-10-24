@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "rule_id": {
+      "type": "string",
+      "pattern": "^LLT-[A-Z]{2,7}$"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[A-Z]{2,7}$"
+    },
+    "known": {
+      "type": "boolean"
+    },
+    "questions": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 40
+    },
+    "pass": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 40
+    },
+    "per_q_timer_s": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 600
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "total_timer_s": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 7200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "verified_on": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "rule_id",
+    "state",
+    "known",
+    "questions",
+    "pass",
+    "per_q_timer_s",
+    "total_timer_s",
+    "source_url",
+    "verified_on",
+    "confidence"
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/LlExamFormat.json",
+  "title": "LlExamFormat"
+}

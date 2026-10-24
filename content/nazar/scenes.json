@@ -1,0 +1,1336 @@
+{
+  "$schema": "./scenes.schema.json",
+  "file_kind": "nazar_scenes",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "ADR-0013: scene catalogue for the AI-generated Nazar clip bank (hackathon build). Every scene is fictional and is rendered by a video model with the guardrails of ai/prompts/clip_generator.md; every clip is labelled AI-generated and SynthID-watermarked. Nominal onsets are hints for raters; two human raters set every scoring window. Hindi cue text pending native review.",
+  "promptId": "PRM-CLIPGEN",
+  "promptVersion": "1.0.0",
+  "disclosure": "ai_generated",
+  "hi_review_status": "pending_native_review",
+  "scenes": [
+    {
+      "sceneId": "SCN-001",
+      "revision": 1,
+      "hazardType": "bus_stop_pedestrian",
+      "pov": "2W",
+      "setting": "metro_arterial",
+      "roadType": "urban_arterial",
+      "region": "Indian metro",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 30,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A wide four-lane city road with a painted median, shops set back behind a footpath, light mixed traffic of cars, scooters and auto-rickshaws.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides in the left lane behind a hatchback at a steady distance. Shop awnings and trees pass on the left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "Ahead on the left, a plain white city bus without any markings slows and stops at a roofed bus shelter. The scooter keeps its lane, a little to the right of the bus."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "As the scooter draws level with the rear of the stopped bus, a pair of feet becomes visible under the front of the bus. A young man in a grey shirt then steps out from in front of the bus towards the road, looking the other way.",
+          "hazardBegins": true,
+          "cueAtS": 2
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter eases off and slows well before him. The man notices, steps back to the bus's edge and waits; the scooter passes slowly and the road ahead is clear."
+        }
+      ],
+      "cue": {
+        "en": "Feet visible under the front of the stopped bus",
+        "hi": "रुकी बस के आगे के हिस्से के नीचे पैर दिख रहे हैं"
+      },
+      "difficulty": 3,
+      "occlusion": true
+    },
+    {
+      "sceneId": "SCN-002",
+      "revision": 1,
+      "hazardType": "bus_stop_pedestrian",
+      "pov": "4W",
+      "setting": "kerala_town",
+      "roadType": "urban_arterial",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "rain",
+      "speedKmh": 25,
+      "leadInS": 14,
+      "targetDurationS": 30,
+      "scene": "A two-lane town road in a green Kerala town with coconut palms, tiled roofs and small shop fronts without readable boards; people with umbrellas on the footpath.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives slowly behind a scooter rider in a raincoat; wipers sweep the windscreen and puddles reflect the shops."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "On the left, a plain cream-coloured bus without markings stands at a stop with its door open. The scooter ahead turns off into a side lane, leaving the lane clear."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Close to the bus's front corner, the tip of a black umbrella and then a woman's sandals appear. She steps off the kerb in front of the bus, umbrella low, without looking.",
+          "hazardBegins": true,
+          "cueAtS": 2
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The car slows to a crawl and holds back; the woman crosses to the median and the car moves on gently."
+        }
+      ],
+      "cue": {
+        "en": "An umbrella tip and sandals at the bus's front corner",
+        "hi": "बस के आगे के कोने पर छाते की नोक और चप्पलें"
+      },
+      "difficulty": 4,
+      "occlusion": true
+    },
+    {
+      "sceneId": "SCN-003",
+      "revision": 1,
+      "hazardType": "door_opening",
+      "pov": "2W",
+      "setting": "kerala_town",
+      "roadType": "market_street",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "overcast",
+      "speedKmh": 20,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A narrow market street in a Kerala town, a row of parked cars along the left kerb, fruit stalls and tiled roofs behind them, a few pedestrians on the edge.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides slowly along the street, keeping about one door's width from the parked cars on the left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "A parked silver sedan ahead has a driver sitting inside; his head turns and his hand rises to the door handle."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The sedan's driver door starts to swing open into the scooter's path, the gap at its edge widening.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter has already eased off and moved slightly right; the driver sees it, holds the door half open and waits. The scooter passes and the street continues."
+        }
+      ],
+      "cue": {
+        "en": "The driver in a parked car reaches for the door handle",
+        "hi": "खड़ी कार में बैठा ड्राइवर दरवाज़े के हैंडल की ओर हाथ बढ़ाता है"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-004",
+      "revision": 1,
+      "hazardType": "door_opening",
+      "pov": "4W",
+      "setting": "metro_residential",
+      "roadType": "residential_lane",
+      "region": "Indian metro",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "dusk",
+      "weather": "clear",
+      "speedKmh": 20,
+      "leadInS": 13,
+      "targetDurationS": 30,
+      "scene": "A tree-lined residential lane in a large Indian city at dusk, apartment gates on both sides, cars parked along the right edge, street lights coming on.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car moves slowly down the lane with its headlights on; a man walks a dog on the far side."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "Ahead on the right, a parked taxi without markings has its brake lights flick on and its interior light comes on."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "The taxi's rear door begins to open into the lane and a passenger's leg appears.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The car slows and keeps to the left; the passenger steps out and closes the door. The car continues down the lane."
+        }
+      ],
+      "cue": {
+        "en": "The interior light comes on in a parked taxi",
+        "hi": "खड़ी टैक्सी के अंदर की लाइट जलती है"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-005",
+      "revision": 1,
+      "hazardType": "auto_cut_in",
+      "pov": "2W",
+      "setting": "metro_arterial",
+      "roadType": "urban_arterial",
+      "region": "Indian metro",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 30,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A busy six-lane city road with a metro viaduct overhead on concrete pillars, cars and auto-rickshaws in all lanes.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides in the middle lane behind a small van, keeping a steady gap."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "In the left lane, a green and yellow auto-rickshaw without any markings drifts close to the lane line; its front wheel turns slightly towards the scooter's lane."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The auto-rickshaw swings into the gap in front of the scooter without signalling, to pick up a passenger waving from the right.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter has already eased off and leaves room; the auto-rickshaw settles in front and slows. The scooter keeps its distance behind it."
+        }
+      ],
+      "cue": {
+        "en": "An auto-rickshaw's front wheel turns towards your lane",
+        "hi": "ऑटो-रिक्शा का अगला पहिया आपकी लेन की ओर मुड़ता है"
+      },
+      "difficulty": 2,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-006",
+      "revision": 1,
+      "hazardType": "auto_cut_in",
+      "pov": "4W",
+      "setting": "small_town_market",
+      "roadType": "market_street",
+      "region": "North Indian town",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "dusk",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 14,
+      "targetDurationS": 30,
+      "scene": "A small North Indian town's market road at dusk, single-storey shops with their lights on, handcarts at the edge and slow traffic.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives slowly behind a cyclist who keeps to the left edge."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Parked at the left kerb, an auto-rickshaw without markings has its driver glancing back over his shoulder, front wheel turned out."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The auto-rickshaw pulls off the kerb and cuts across into the car's lane in a wide arc.",
+          "hazardBegins": true,
+          "cueAtS": 2
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The car brakes gently and holds back; the auto-rickshaw completes its turn into the lane and moves off ahead."
+        }
+      ],
+      "cue": {
+        "en": "A parked auto's driver glances back with the wheel turned out",
+        "hi": "खड़े ऑटो का ड्राइवर पीछे देखता है, पहिया बाहर की ओर मुड़ा है"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-007",
+      "revision": 1,
+      "hazardType": "wrong_side_2w",
+      "pov": "2W",
+      "setting": "jk_town",
+      "roadType": "urban_arterial",
+      "region": "Jammu and Kashmir",
+      "tenantTags": ["JK"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 30,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A divided city road in a Jammu-style town with low hills in the distance, a raised median with small shrubs, shops and a temple-style roof far off without readable signs.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides in the left lane of the divided road behind a car."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "Far ahead in the same lane, a single headlight appears, coming towards the scooter close to the left edge."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A motorcycle rider is riding the wrong way down the left edge of the lane, coming straight towards the scooter.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter slows and moves slightly right within its lane; the wrong-side rider passes on the left at low speed. The lane ahead is clear."
+        }
+      ],
+      "cue": {
+        "en": "A single headlight coming towards you in your own lane",
+        "hi": "आपकी ही लेन में सामने से आती एक हेडलाइट"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-008",
+      "revision": 1,
+      "hazardType": "wrong_side_2w",
+      "pov": "4W",
+      "setting": "kerala_rural",
+      "roadType": "rural_road",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "rain",
+      "speedKmh": 30,
+      "leadInS": 14,
+      "targetDurationS": 30,
+      "scene": "A narrow rural road in Kerala between paddy fields and coconut palms, a canal on one side, light rain and a wet road.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives steadily along the road; wipers on; a bus shelter with a tin roof passes on the left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Ahead, near a bend, a scooter rider in a raincoat appears close to the car's side of the road, moving towards it."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter keeps coming on the wrong side, its rider looking down to avoid the rain.",
+          "hazardBegins": true,
+          "cueAtS": 2
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The car slows and moves left onto the edge; the rider looks up, moves back to their own side and passes. The car continues."
+        }
+      ],
+      "cue": {
+        "en": "A scooter near the bend on your side of the road",
+        "hi": "मोड़ के पास आपकी तरफ़ एक स्कूटर"
+      },
+      "difficulty": 4,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-009",
+      "revision": 1,
+      "hazardType": "cattle_animal",
+      "pov": "2W",
+      "setting": "jk_hill_road",
+      "roadType": "hill_road",
+      "region": "Jammu and Kashmir",
+      "tenantTags": ["JK"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A two-lane hill road in Jammu and Kashmir with pine trees, a stone wall on the hill side and a steel barrier on the valley side, mountains in the distance.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter climbs gently around a wide bend, keeping left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "On the grassy verge on the left, two cows graze; one lifts its head and turns towards the road."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The nearer cow steps off the verge and walks slowly across the scooter's lane.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter slows to walking pace and waits; the cow crosses to the far side and the scooter rides on."
+        }
+      ],
+      "cue": {
+        "en": "A cow on the verge lifts its head towards the road",
+        "hi": "किनारे पर खड़ी गाय सिर उठाकर सड़क की ओर मुड़ती है"
+      },
+      "difficulty": 2,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-010",
+      "revision": 1,
+      "hazardType": "cattle_animal",
+      "pov": "4W",
+      "setting": "kerala_rural",
+      "roadType": "rural_road",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "dawn",
+      "weather": "haze",
+      "speedKmh": 35,
+      "leadInS": 15,
+      "targetDurationS": 32,
+      "scene": "A rural road in Kerala at dawn with light haze over paddy fields, rubber trees on one side and almost no traffic.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives along the empty road in soft morning light."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "At the edge of a field on the right, a goat and a dog stand near the road; the dog's ears prick up."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The dog trots out across the road towards the far side, the goat following a few steps behind.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The car slows smoothly and lets both cross; they reach the far verge and the car carries on."
+        }
+      ],
+      "cue": {
+        "en": "A dog at the field edge pricks up its ears",
+        "hi": "खेत के किनारे खड़ा कुत्ता कान खड़े करता है"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-011",
+      "revision": 1,
+      "hazardType": "child_school",
+      "pov": "2W",
+      "setting": "school_zone",
+      "roadType": "school_zone",
+      "region": "North Indian town",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 20,
+      "leadInS": 14,
+      "targetDurationS": 30,
+      "scene": "A school zone on a town road in the afternoon, a school gate on the left with a painted crossing, parked school vans and parents waiting under trees.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides slowly past a speed-calming hump, the school wall on the left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Between two parked school vans, a small football rolls out onto the road edge."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A schoolchild in a uniform runs from between the vans towards the ball, near the kerb.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The scooter slows almost to a stop; a crossing guide in a reflective vest raises a hand and the child stops at the kerb and waits. The scooter moves on slowly."
+        }
+      ],
+      "cue": {
+        "en": "A ball rolls out from between parked vans",
+        "hi": "खड़ी वैनों के बीच से गेंद लुढ़ककर बाहर आती है"
+      },
+      "difficulty": 3,
+      "occlusion": true
+    },
+    {
+      "sceneId": "SCN-012",
+      "revision": 1,
+      "hazardType": "child_school",
+      "pov": "4W",
+      "setting": "school_zone",
+      "roadType": "school_zone",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "rain",
+      "speedKmh": 20,
+      "leadInS": 14,
+      "targetDurationS": 30,
+      "scene": "A school gate on a Kerala town road in the rain, children in raincoats with parents and umbrellas, a painted crossing ahead.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car moves slowly towards the school; wipers on; parents hold umbrellas at the gate."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A group of children waits at the kerb; one small child at the front lets go of an adult's hand and leans forward."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The child takes two quick steps onto the crossing, umbrella tilted, before the adult reaches out.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The car has already slowed and stops before the crossing; the adult takes the child's hand and they cross together. The car moves on."
+        }
+      ],
+      "cue": {
+        "en": "A child at the kerb lets go of an adult's hand",
+        "hi": "किनारे पर खड़ा बच्चा बड़े का हाथ छोड़ देता है"
+      },
+      "difficulty": 4,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-013",
+      "revision": 1,
+      "hazardType": "pedestrian_median",
+      "pov": "2W",
+      "setting": "metro_arterial",
+      "roadType": "urban_arterial",
+      "region": "Indian metro",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "dusk",
+      "weather": "clear",
+      "speedKmh": 35,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A wide city road at dusk with a low median planted with shrubs, offices with lit windows on both sides and steady traffic with headlights on.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides in the right-hand lane next to the median, behind a car at a safe distance."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "On the median ahead, a man with a backpack stands between the shrubs, looking across the scooter's lane."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "He steps down from the median into the scooter's lane to cross, glancing at the far side.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter slows and moves left; the man reaches the far lane edge and the scooter passes behind him."
+        }
+      ],
+      "cue": {
+        "en": "A man standing on the median looks across your lane",
+        "hi": "डिवाइडर पर खड़ा आदमी आपकी लेन के पार देखता है"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-014",
+      "revision": 1,
+      "hazardType": "pedestrian_median",
+      "pov": "4W",
+      "setting": "jk_town",
+      "roadType": "highway",
+      "region": "Jammu and Kashmir",
+      "tenantTags": ["JK"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 40,
+      "leadInS": 15,
+      "targetDurationS": 32,
+      "scene": "A four-lane highway passing the edge of a Jammu-region town, a metal median fence with a gap, roadside dhabas without readable boards and hills behind.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives in the left lane of the highway with light traffic."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Ahead, at a gap in the median fence, two women carrying shopping bags wait to cross."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The women step through the gap into the right lane and begin walking towards the car's lane.",
+          "hazardBegins": true,
+          "cueAtS": 2
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The car slows steadily; the women stop at the lane line and wait, and the car passes at low speed."
+        }
+      ],
+      "cue": {
+        "en": "People waiting at a gap in the median fence",
+        "hi": "डिवाइडर की रेलिंग के गैप पर खड़े लोग"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-015",
+      "revision": 1,
+      "hazardType": "vehicle_pulling_out",
+      "pov": "2W",
+      "setting": "small_town_market",
+      "roadType": "market_street",
+      "region": "North Indian town",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A small-town main road lined with shops and a fuel station forecourt without brand signs, mixed traffic of scooters, tractors and cars.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides along the main road behind a tractor that turns off to the left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "At the fuel station exit on the left, a white van's front edges forward and stops at the road edge."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The van pulls out from the forecourt into the scooter's lane, turning right across it.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter brakes gently and waits; the van completes its turn and drives off. The scooter continues."
+        }
+      ],
+      "cue": {
+        "en": "A van's front edges forward at the fuel station exit",
+        "hi": "पेट्रोल पंप के निकास पर वैन का अगला हिस्सा आगे खिसकता है"
+      },
+      "difficulty": 2,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-016",
+      "revision": 1,
+      "hazardType": "vehicle_pulling_out",
+      "pov": "4W",
+      "setting": "kerala_town",
+      "roadType": "urban_arterial",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "rain",
+      "speedKmh": 25,
+      "leadInS": 13,
+      "targetDurationS": 30,
+      "scene": "A Kerala town road in the rain, a church compound wall on one side and a narrow side lane between houses on the other.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives along the wet road; wipers on; a man under an umbrella walks on the left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "From the narrow side lane on the left, the glow of headlights appears on the wet wall."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "A small car noses out of the side lane into the main road, its driver peering through a misted window.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The car slows and leaves room; the small car pulls out fully and drives ahead. The car follows at a distance."
+        }
+      ],
+      "cue": {
+        "en": "Headlight glow on the wall of a side lane",
+        "hi": "साइड गली की दीवार पर हेडलाइट की चमक"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-017",
+      "revision": 1,
+      "hazardType": "truck_left_turn",
+      "pov": "2W",
+      "setting": "jk_town",
+      "roadType": "urban_arterial",
+      "region": "Jammu and Kashmir",
+      "tenantTags": ["JK"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A junction on a city road in a Jammu-region town, a large goods truck without any markings in the left lane, shops on the corner.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides in the left lane, a few lengths behind a slow goods truck."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The truck drifts slightly to the right and its left indicator starts blinking as it nears the junction."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The truck begins a wide left turn, its rear wheels cutting across the space beside it on the left.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter stays well back behind the truck and does not move up its left side; the truck completes the turn and the scooter rides straight on."
+        }
+      ],
+      "cue": {
+        "en": "The truck drifts right with its left indicator on",
+        "hi": "ट्रक बाईं इंडिकेटर जलाकर थोड़ा दाईं ओर खिसकता है"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-018",
+      "revision": 1,
+      "hazardType": "truck_left_turn",
+      "pov": "4W",
+      "setting": "metro_arterial",
+      "roadType": "urban_arterial",
+      "region": "Indian metro",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "dusk",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 14,
+      "targetDurationS": 30,
+      "scene": "A busy city junction at dusk, a long trailer truck without markings ahead in the middle lane, street lights on and traffic signals green.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car follows the trailer truck in the middle lane with headlights on."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The truck slows and swings out to the right a little; its left indicator blinks faintly under dust."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The truck turns left across the left lane into a side road, its trailer sweeping wide.",
+          "hazardBegins": true,
+          "cueAtS": 2
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The car slows and waits behind; the trailer clears the junction and the car continues straight."
+        }
+      ],
+      "cue": {
+        "en": "The truck swings right before a junction",
+        "hi": "चौराहे से पहले ट्रक दाईं ओर झूलता है"
+      },
+      "difficulty": 4,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-019",
+      "revision": 1,
+      "hazardType": "junction_emerging",
+      "pov": "2W",
+      "setting": "kerala_town",
+      "roadType": "residential_lane",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A residential road in a Kerala town with high laterite compound walls and gates, a T-junction ahead on the left hidden by a wall and a mango tree.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides along the quiet road between compound walls."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "Ahead on the left, the wall ends at a side road; the shadow of a moving vehicle shows on the road at the corner."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A scooter rider emerges from the hidden side road into the main road without stopping.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The camera scooter has slowed and waits; the other rider turns and rides away ahead. The road continues."
+        }
+      ],
+      "cue": {
+        "en": "A moving shadow at a hidden side-road corner",
+        "hi": "छिपी हुई साइड सड़क के कोने पर हिलती परछाईं"
+      },
+      "difficulty": 3,
+      "occlusion": true
+    },
+    {
+      "sceneId": "SCN-020",
+      "revision": 1,
+      "hazardType": "overtaking_oncoming",
+      "pov": "2W",
+      "setting": "jk_hill_road",
+      "roadType": "hill_road",
+      "region": "Jammu and Kashmir",
+      "tenantTags": ["JK"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 13,
+      "targetDurationS": 30,
+      "scene": "A winding two-lane mountain road in Jammu and Kashmir with deodar trees, a rock face on the left and a valley on the right behind a barrier.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides uphill, keeping left, around a gentle bend."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "Coming downhill, a slow bus without markings appears; behind it, the nose of a car pokes out to its right."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "The car pulls out to overtake the bus and comes up the scooter's side of the road.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter slows and keeps tight to the left; the car finishes passing the bus and returns to its own side. The scooter rides on."
+        }
+      ],
+      "cue": {
+        "en": "A car's nose pokes out behind an oncoming bus",
+        "hi": "सामने से आती बस के पीछे से कार का अगला हिस्सा बाहर निकलता है"
+      },
+      "difficulty": 4,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-021",
+      "revision": 1,
+      "hazardType": "overtaking_oncoming",
+      "pov": "4W",
+      "setting": "kerala_highway",
+      "roadType": "highway",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "dusk",
+      "weather": "clear",
+      "speedKmh": 50,
+      "leadInS": 15,
+      "targetDurationS": 32,
+      "scene": "A two-lane state highway in Kerala at dusk with coconut palms, a broken centre line and oncoming headlights.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives steadily in its lane with headlights on, light oncoming traffic."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "In the oncoming lane, a slow lorry approaches; a pair of headlights behind it moves out towards the centre line."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "An oncoming car pulls out past the lorry and comes into the car's lane.",
+          "hazardBegins": true,
+          "cueAtS": 2
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The car eases off and moves to the left edge; the overtaking car completes the pass and returns to its lane. The highway ahead is clear."
+        }
+      ],
+      "cue": {
+        "en": "Headlights behind an oncoming lorry move out to the centre",
+        "hi": "सामने आती लॉरी के पीछे की हेडलाइटें बीच की ओर निकलती हैं"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-022",
+      "revision": 1,
+      "hazardType": "parked_vehicle_hidden",
+      "pov": "4W",
+      "setting": "metro_residential",
+      "roadType": "residential_lane",
+      "region": "Indian metro",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 20,
+      "leadInS": 13,
+      "targetDurationS": 30,
+      "scene": "A city residential street with a parked delivery truck without markings on the left, apartment gates and two-wheelers parked along the walls.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives slowly down the street, a delivery truck parked ahead on the left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "Under the truck's body, a turning front wheel of a scooter is visible on the far side."
+        },
+        {
+          "kind": "extension",
+          "durationS": 7,
+          "prompt": "A scooter rider rolls out from behind the parked truck into the car's lane.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The car has slowed and stops briefly; the rider looks, moves ahead into the lane and rides away. The car follows."
+        }
+      ],
+      "cue": {
+        "en": "A scooter wheel moving under the parked truck",
+        "hi": "खड़े ट्रक के नीचे से स्कूटर का पहिया हिलता दिखता है"
+      },
+      "difficulty": 4,
+      "occlusion": true
+    },
+    {
+      "sceneId": "SCN-023",
+      "revision": 1,
+      "hazardType": "cyclist",
+      "pov": "2W",
+      "setting": "kerala_town",
+      "roadType": "urban_arterial",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "rain",
+      "speedKmh": 25,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A town road in Kerala in the rain, a cyclist with a plastic sheet over his shoulders riding near the left edge, puddles along the edge.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter follows the cyclist at a distance in light rain."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "Ahead of the cyclist, a wide puddle covers the left edge of the road."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The cyclist swerves out to the right around the puddle, into the middle of the lane.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter has slowed and stays behind him; the cyclist moves back to the edge and the scooter passes with a wide gap."
+        }
+      ],
+      "cue": {
+        "en": "A wide puddle ahead of the cyclist at the road edge",
+        "hi": "साइकिल सवार के आगे सड़क के किनारे बड़ा गड्ढा भरा पानी"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-024",
+      "revision": 1,
+      "hazardType": "surface_hazard",
+      "pov": "2W",
+      "setting": "jk_hill_road",
+      "roadType": "hill_road",
+      "region": "Jammu and Kashmir",
+      "tenantTags": ["JK"],
+      "timeOfDay": "day",
+      "weather": "overcast",
+      "speedKmh": 20,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A hill road in Jammu and Kashmir after rain, overcast sky, a wet rock face on the left and a barrier on the valley side.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides slowly downhill around a bend, keeping left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "Ahead, the road surface changes: a darker patch, and small stones scattered from the rock face."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A stretch of loose gravel and running water covers the left half of the lane.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter slows well before it, rides straight and upright through the edge of the patch at walking pace, and continues on clean road."
+        }
+      ],
+      "cue": {
+        "en": "A darker patch and small stones on the road ahead",
+        "hi": "आगे सड़क पर गहरा धब्बा और छोटे पत्थर"
+      },
+      "difficulty": 3,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-025",
+      "revision": 1,
+      "hazardType": "other",
+      "pov": "2W",
+      "setting": "small_town_market",
+      "roadType": "market_street",
+      "region": "North Indian town",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 20,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A crowded small-town bazaar road with vegetable handcarts along the edge, awnings without readable words and slow mixed traffic.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides slowly through the bazaar behind a cycle-rickshaw."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "On the left, a vendor grips the handles of a loaded vegetable cart and looks over his shoulder."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The vendor pushes the handcart off the kerb into the scooter's lane to cross the road.",
+          "hazardBegins": true,
+          "cueAtS": 1
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The scooter slows and waits; the cart rolls across to the other side and the scooter rides on."
+        }
+      ],
+      "cue": {
+        "en": "A vendor grips his handcart and looks over his shoulder",
+        "hi": "ठेलेवाला अपना ठेला पकड़कर कंधे के ऊपर से पीछे देखता है"
+      },
+      "difficulty": 2,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-101",
+      "revision": 1,
+      "hazardType": "quiet",
+      "pov": "2W",
+      "setting": "kerala_town",
+      "roadType": "residential_lane",
+      "region": "Kerala",
+      "tenantTags": ["KL"],
+      "timeOfDay": "day",
+      "weather": "clear",
+      "speedKmh": 25,
+      "leadInS": 12,
+      "targetDurationS": 30,
+      "scene": "A calm backwater town road in Kerala beside a canal, houseboats moored far off, palms and tiled roofs, very light traffic.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides along the canal road at a steady pace."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A cyclist ahead keeps to the left edge; the scooter passes with a wide gap on an empty stretch."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Two pedestrians walk on the footpath away from the road; a car comes the other way in its own lane."
+        },
+        {
+          "kind": "extension",
+          "durationS": 6,
+          "prompt": "The road curves gently along the canal; nothing changes."
+        }
+      ],
+      "cue": {
+        "en": "No hazard develops: traffic keeps its lanes",
+        "hi": "कोई खतरा नहीं बनता: सब अपनी लेन में रहते हैं"
+      },
+      "difficulty": 1,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-102",
+      "revision": 1,
+      "hazardType": "quiet",
+      "pov": "4W",
+      "setting": "metro_arterial",
+      "roadType": "urban_arterial",
+      "region": "Indian metro",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "dusk",
+      "weather": "clear",
+      "speedKmh": 35,
+      "leadInS": 12,
+      "targetDurationS": 32,
+      "scene": "A wide city road at dusk with orderly traffic, street lights on and offices with lit windows.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car drives in the middle lane behind a hatchback at a safe distance."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Traffic flows steadily; scooters keep to the left lane and an auto-rickshaw stays in its lane."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The car passes under a pedestrian bridge; people cross above, none near the road."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The traffic signal ahead stays green and the car continues at the same pace."
+        }
+      ],
+      "cue": {
+        "en": "No hazard develops: steady traffic",
+        "hi": "कोई खतरा नहीं बनता: यातायात सामान्य रहता है"
+      },
+      "difficulty": 1,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-103",
+      "revision": 1,
+      "hazardType": "quiet",
+      "pov": "2W",
+      "setting": "jk_hill_road",
+      "roadType": "hill_road",
+      "region": "Jammu and Kashmir",
+      "tenantTags": ["JK"],
+      "timeOfDay": "day",
+      "weather": "overcast",
+      "speedKmh": 25,
+      "leadInS": 12,
+      "targetDurationS": 24,
+      "scene": "A quiet hill road in Jammu and Kashmir under an overcast sky, pine forest, a barrier on the valley side and no other traffic for a while.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The scooter rides uphill around wide bends, keeping left."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A car comes downhill in its own lane and passes."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "Sheep graze far up the slope behind a fence, well away from the road."
+        }
+      ],
+      "cue": {
+        "en": "No hazard develops: animals stay behind the fence",
+        "hi": "कोई खतरा नहीं बनता: जानवर बाड़ के पीछे ही रहते हैं"
+      },
+      "difficulty": 1,
+      "occlusion": false
+    },
+    {
+      "sceneId": "SCN-104",
+      "revision": 1,
+      "hazardType": "quiet",
+      "pov": "4W",
+      "setting": "small_town_market",
+      "roadType": "market_street",
+      "region": "North Indian town",
+      "tenantTags": ["JK", "KL"],
+      "timeOfDay": "day",
+      "weather": "rain",
+      "speedKmh": 20,
+      "leadInS": 12,
+      "targetDurationS": 32,
+      "scene": "A small-town market road in the rain, shopkeepers under awnings, a few people with umbrellas on the footpath and slow traffic.",
+      "shots": [
+        {
+          "kind": "opening",
+          "durationS": 8,
+          "prompt": "The car moves slowly through the market; wipers on."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "People with umbrellas stay on the footpath; a scooter ahead keeps its lane."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "A parked car on the left stays still with nobody inside; the car passes it."
+        },
+        {
+          "kind": "extension",
+          "durationS": 8,
+          "prompt": "The road opens out past the market and the rain eases."
+        }
+      ],
+      "cue": {
+        "en": "No hazard develops: people stay on the footpath",
+        "hi": "कोई खतरा नहीं बनता: लोग फ़ुटपाथ पर ही रहते हैं"
+      },
+      "difficulty": 2,
+      "occlusion": false
+    }
+  ]
+}

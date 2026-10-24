@@ -1,14 +1,14 @@
 # Data Model
-> Project: Margdarshak · Owner: Backend lead · Status: Draft v0.1 · Last updated: 2026-10-23
+> Project: Margdarshak · Owner: Backend lead · Status: Draft v0.1 · Last updated: 2026-10-24 (P2: migrations 00005–00009)
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [Architecture](ARCHITECTURE.md) · [API spec](API_SPEC.md) · [OpenAPI](../../api/openapi.yaml) · [Tech stack](TECH_STACK.md) · [Integrations](INTEGRATIONS.md) · [ADR-0007 rule packs](adr/ADR-0007-rule-packs-as-data-maker-checker.md) · [ADR-0008 no Aadhaar data](adr/ADR-0008-no-aadhaar-data-handoff-to-sarathi.md) · [ADR-0009 multi-tenant](adr/ADR-0009-multi-tenant-per-state.md)
 
 This document is the single description of what Margdarshak stores, why, for how long, and who can see it. It has three layers:
 
 1. **The ontology** (Palantir style): objects, links, actions and functions for E-01..E-31. This is the shared language for product, console screens and adapters.
 2. **The physical model**: PostgreSQL 16 tables with columns, types, constraints, indexes, PII class and retention.
-3. **Engineering notes**: event sourcing for the case timeline, SQLAlchemy 2 / Alembic conventions, migrations, multi-tenancy and erasure.
+3. **Engineering notes**: event sourcing for the case timeline, Go data-access conventions (pgx + sqlc, goose migrations), multi-tenancy and erasure.
 
-> **Hard rule (D-07, ADR-0008).** No table, column, log line, analytics event or AI prompt may ever hold an Aadhaar number, Aadhaar VID, OTP, captcha, Sarathi password, biometric, face image used for matching, or a document image. These are class **CX (prohibited)** and are blocked at four layers: Pydantic models (`extra="forbid"` + a prohibited-key validator), the `answers` JSON schema (`propertyNames` deny-list in `api/openapi.yaml`), a Postgres `CHECK` on `answers`, and the log/AI PII redaction filter.
+> **Hard rule (D-07, ADR-0008).** No table, column, log line, analytics event or AI prompt may ever hold an Aadhaar number, Aadhaar VID, OTP, captcha, Sarathi password, biometric, face image used for matching, or a document image. These are class **CX (prohibited)** and are blocked at four layers: Go request decoding (generated oapi-codegen types decoded with `DisallowUnknownFields` + a prohibited-key check in `internal/privacy`), the `answers` JSON schema (`propertyNames` deny-list in `api/openapi.yaml`), a Postgres `CHECK` on `answers`, and the log/AI PII redaction filter.
 
 ---
 
@@ -49,7 +49,7 @@ Palantir's Ontology is "an operational layer for the organization" made of seman
 ### 2.1 Object types
 | ID | Object | Primary key | Title property | Key properties | Backing table(s) | Owner |
 |---|---|---|---|---|---|---|
-| E-01 | Applicant (User) | `applicant_id` | pseudonym "Learner 7Q2K" | age_band, user_band, language, flags (minor, helper), a11y | `core.applicants` | Backend |
+| E-01 | Applicant (User) | `applicant_id` | pseudonym "Learner 7Q2K" | age_band, language, flags (family-mode learner, helper), a11y | `core.applicants` | Backend |
 | E-02 | Case | `case_id` | "MCWG + LMV-NT · JK" | state (derived stage/display_stage), path, tenant, rule_pack_version, key dates, version | `core.cases` (+ event store `core.case_events`) | Backend |
 | E-03 | ClassSelection | `(case_id, class_code)` | class code | status, attempts | `core.class_selections` | Backend |
 | E-04 | LearnerLicenceMirror | `case_id` | "LL ···4471" | issued_on, expires_on, classes, source | `core.ll_mirrors` | Backend |
@@ -64,14 +64,14 @@ Palantir's Ontology is "an operational layer for the organization" made of seman
 | E-13 | Notification | `notification_id` | template | channel, status, provider id | `msg.notifications` | Backend |
 | E-14 | Contact | `contact_id` | masked value | kind, enc value, blind index, opt-outs | `privacy.contacts` | Backend |
 | E-15 | ConsentArtefact | `consent_id` | purpose | data categories, recipient, validity, signature | `privacy.consent_artefacts` | Privacy |
-| E-16 | GameSession | `session_id` | "Nazar mock" | game, seed, digest, server-checked score, trust | `game.sessions` | Games |
-| E-17 | GameEvent | `(session_id, seq)` | type | t, mt, payload | `game.events` (partitioned) | Games |
-| E-18 | TopicMastery | `(applicant_id, topic_id)` | topic | FSRS card states, mastery, Brier | `learn.fsrs_cards`, `learn.topic_mastery` | Learning |
+| E-16 | GameSession | `session_id` | "Nazar mock" | game, mode, seed, digest, server-checked score, trust, replay inputs | `game.sessions`, `game.session_items`, `game.clip_exposures`, `game.staircase` | Games |
+| E-17 | GameEvent | `(session_id, seq)` | type | t, mt, payload | `game.events` (partitioned) — **deferred in P2**: the bounded replay blob is stored on `game.sessions` instead | Games |
+| E-18 | TopicMastery | `(subject, topic)` | topic | FSRS card states, mastery, Brier | `learn.answers`, `learn.review_log`, `learn.card_state`, `learn.topic_mastery`, `learn.readiness_snapshots` | Learning |
 | E-19 | Debrief | `debrief_id` | "Coach notes" | source, sections, validator verdict | `game.debriefs` | AI |
-| E-20 | Clip | `clip_id` | clip title | status, media keys, hazards, difficulty, licence | `content.clips`, `content.clip_hazards` | Content |
-| E-21 | ClipRating | `rating_id` | rater + clip | hazard windows, blur audit | `content.clip_ratings` | Content |
-| E-22 | Achievement | `applicant_id` | rank | XP ledger, badges, streak | `game.xp_ledger`, `game.badges`, `game.streaks` | Games |
-| E-23 | Squad | `squad_id` | squad name | members, goal | `game.squads`, `game.squad_members` | Games |
+| E-20 | Clip | `(clip_id, version)`; `clip_id` = `KL-0007` (clip-pipeline), ref `clip:KL-0007@1` | clip ID | status, clip.json doc, final hazards, blur audit, difficulty, licence | `content.clips`, `content.clip_blur_audits`, `content.clip_review_tasks`, `content.clip_scoring`, `content.clip_raw_deletions`, `content.clip_manifests` | Content |
+| E-21 | ClipRating | `(clip_id, version, rater)` | rater + clip | rater pseudonym, decision, marks, saved time (blind `RaterSubmission`; no blur flag) | `content.clip_ratings` | Content |
+| E-22 | Achievement | subject (`tenant_id, applicant_id, family_member_id`) | rank | XP ledger, badges, streak, share cards | `game.xp_ledger`, `game.badges`, `game.streaks`, `game.share_cards` | Games |
+| E-23 | Squad | `squad_id` | squad name | members (display name, role); weekly goal = 3 × members, never user-set | `game.squads`, `game.squad_members` | Games |
 | E-24 | RtoReport | `report_id` | "visit · JK02" | structured fields, status | `intel.rto_reports`, `intel.office_intel_agg` | Backend |
 | E-25 | DrivingSchool | `school_id` | school name | accreditation, Pro, sponsored | `eco.schools`, `eco.school_staff` | Eco |
 | E-26 | Booking | `booking_id` | kind | status, routing | `eco.bookings` | Eco |
@@ -126,22 +126,22 @@ Every action is a use-case function in `services/api/src/margdarshak/app/actions
 | `EvaluateBlockers` | Case | — | read scopes | none (pure) | API-13 |
 | `RecordStatus` | Case, ClassSelection, LL/DL mirror, TestAttempt, TimelineEvent | legal transition table (§4.3); dates not in future beyond 1 day (EC-15) | user, helper(case.record_events) | the status event | API-15 |
 | `PrepareHandoff` | Case | step valid for stage | read scopes | `handoff_opened` | API-16 |
-| `CheckAadhaarOffline` (**mock-only**; government mode calls the state's own OVSE service) | Case (derived flags) | tenant flag `mock`/`state_service`; consent `aadhaar_offline_check` | user (18+) | `aadhaar_offline_checked` (booleans only) | API-18 |
+| `CheckAadhaarOffline` (**mock-only**; government mode calls the state's own OVSE service) | Case (derived flags) | tenant flag `mock`/`state_service`; consent `aadhaar_offline_check` | user (account holder) | `aadhaar_offline_checked` (booleans only) | API-18 |
 | `CreatePaymentRedirect` | PaymentIntent (in `core.payment_intents`) | quote current; adapter mode | anon, user, helper | `payment_redirected` | API-19 |
 | `PullDigiLockerDL` | DrivingLicenceMirror, ConsentArtefact | consent `digilocker_pull`; PKCE | user | `dl_pulled` | API-21/22 |
 | `RecordDocumentCheck` | DocumentCheck | metadata only | anon, user, helper | `document_checked` | API-20 |
 | `WatchSlots` | SlotWatch | ≤ 5 offices; latest ≤ LL expiry | anon, user | `slot_watch_created` | API-27 |
-| `SubmitRtoReport` | RtoReport | structured enums only; 3 reports/user/day; account age ≥ 1 day | user (18+) | `report_submitted` | API-28 |
+| `SubmitRtoReport` | RtoReport | structured enums only; 3 reports/user/day; account age ≥ 1 day | user (account holder) | `report_submitted` | API-28 |
 | `PrecheckReport` / `ModerateReport` | RtoReport, OfficeIntel | precheck in code; decision reason code | internal (n8n W9) / admin:moderation | `report_prechecked` / `report_moderated` | API-68, API-56 |
 | `FireSlotWatch` | SlotWatch, Notification | moderated `slots_opened` report | internal (n8n W3) | `slot_watch_fired` | API-69 |
 | `DispatchLetter` | Letter | user approval recorded | internal (n8n W11) | `letter_dispatched` | API-72 |
 | `RouteLead` | Booking | consent, area, class, prior declines | internal (n8n W7) | `lead_routed` | API-73 |
 | `StartJob` | JobRun | job allowlist, input-derived key | internal (n8n) | `job_started` | API-67 |
 | `SubmitAnswers` | TopicMastery, FSRS cards | dedupe client_answer_id | anon, user | `answers_recorded` | API-32 |
-| `StartGameSession` | GameSession | min_user_band; unseen clips for mock | anon, user | `session_started` | API-34 |
+| `StartGameSession` | GameSession | parental consent on record for a family-mode learner under 18; unseen clips for mock | anon, user | `session_started` | API-34 |
 | `CompleteGameSession` | GameSession, Achievement, TopicMastery, Debrief | digest matches; replay verified | anon, user | `session_verified` | API-35 |
-| `NarrateDebrief` | Debrief | adult + consent `ai_coach`; validator | system | `debrief_narrated` / `debrief_fallback` | (workflow) |
-| `CreateSquad` / `JoinSquad` | Squad | adults only | user | `squad_*` | API-39 |
+| `NarrateDebrief` | Debrief | consent `ai_coach` (every user; the parent's consent for a family-mode learner); validator | system | `debrief_narrated` / `debrief_fallback` | (workflow) |
+| `CreateSquad` / `JoinSquad` | Squad | every user; a family-mode learner under 18 only with the parent's consent | user | `squad_*` | API-39 |
 | `DeclareKhudLicence` | Achievement (badge, `self_declared=true`) | DL issue date not in future; one per account | user | `khud_declared` | API-44 |
 | `RevokeRecordToken` | PracticeRecord token | holder only | user | `record_token_revoked` | API-48 |
 | `RequestSignOff` | PracticeLog, SignOffRequest | consent `school_share` for schools; one-time link for supervisors | user | `signoff_requested` | API-49 |
@@ -151,9 +151,9 @@ Every action is a use-case function in `services/api/src/margdarshak/app/actions
 | `SignOffPractice` | PracticeLog | school staff linked + learner consent | school | `practice_signed` | API-52 |
 | `RequestBooking` | Booking | consent `school_share` | user | `booking_requested` | API-51 |
 | `DraftRulePack` / `SubmitRulePack` / `ApproveRulePack` | RulePack, Rule | JSON schema + golden tests; checker ≠ maker | admin:rules.maker / admin:rules.checker | `rulepack_*` (audit) | API-54 |
-| `RegisterClip` / `RateClip` / `PublishClip` | Clip, ClipRating | contributor consent; blur audit; agreement | admin:clips.* | `clip_*` (audit) | API-55 |
+| `RegisterClip` / `RateClip` / `RecordBlurAudit` / `AdjudicateClip` / `SetCueTexts` / `PublishClip` | Clip, ClipRating | contributor consent; clip-pipeline status transition; blind ratings; 100% blur audit; adjudicator ≠ rater; agreement | admin:clips.* | `clip_*` (audit) | API-55 |
 | `GrantConsent` / `RevokeConsent` | ConsentArtefact | notice version current | anon, user | `consent_*` | API-60 |
-| `LinkHelper` / `RevokeHelper` | HelperLink, ConsentArtefact | applicant adult; ≤ 3 active helpers | user | `helper_*` | API-58 |
+| `LinkHelper` / `RevokeHelper` | HelperLink, ConsentArtefact | account holder (adult); ≤ 3 active helpers | user | `helper_*` | API-58 |
 | `ExportMyData` / `EraseMe` | all owned objects | re-auth within 10 min | user | `export_*` / `erasure_*` | API-61/62 |
 | `SweepClock` | TimelineEvent, Notification | as_of server time | internal | `milestone_due` | API-65 |
 
@@ -214,7 +214,7 @@ erDiagram
   GAME_SESSIONS ||--o{ GAME_EVENTS : contains
   GAME_SESSIONS ||--o| DEBRIEFS : debriefed_by
   GAME_SESSIONS }o--o{ CLIPS : uses_clip
-  CLIPS ||--o{ CLIP_HAZARDS : hazards
+  CLIPS ||--o{ CLIP_BLUR_AUDITS : audited
   CLIPS ||--o{ CLIP_RATINGS : rated_by
   SQUADS ||--|{ SQUAD_MEMBERS : members
   SCHOOLS ||--o{ BOOKINGS : receives
@@ -223,13 +223,13 @@ erDiagram
   APPLICANTS ||--o{ AUDIT_LOG : actor
 
   TENANTS { text tenant_id PK  text display_name  jsonb theme  text hosting_mode }
-  APPLICANTS { uuid applicant_id PK  text tenant_id FK  text user_band  text age_band  bytea dob_enc }
+  APPLICANTS { uuid applicant_id PK  text tenant_id FK  text age_band  bytea dob_enc }
   CASES { uuid case_id PK  uuid applicant_id FK  text state  text path  text rule_pack_version  int version  bigint last_seq }
   CASE_EVENTS { uuid case_id PK  int seq PK  text type  jsonb payload  timestamptz recorded_at }
   TIMELINE_EVENTS { uuid timeline_event_id PK  uuid case_id FK  text code  timestamptz due_at  text idempotency_key UK }
   RULES { text rule_id PK  text pack_version PK  text kind  jsonb value  date verified_on  text confidence }
   GAME_SESSIONS { uuid session_id PK  uuid applicant_id FK  text game_id  bigint seed  numeric server_score_pct  numeric trust }
-  CLIPS { text clip_id PK  text status  text media_key_360p  smallint difficulty  text licence }
+  CLIPS { text clip_id PK  int version PK  text status  jsonb doc  text licence }
   CONSENT_ARTEFACTS { uuid consent_id PK  uuid applicant_id FK  text purpose  timestamptz granted_at  timestamptz revoked_at }
   CONTACTS { uuid contact_id PK  uuid applicant_id FK  text kind  bytea value_enc  bytea blind_index }
 ```
@@ -241,12 +241,15 @@ erDiagram
 ### 4.0 Conventions
 - **Database:** PostgreSQL 16 (Render Postgres in the hackathon; CloudNativePG or a MeitY-empanelled managed Postgres in India for production). Extensions: `pgcrypto` (gen_random_uuid fallback, digest), `btree_gist` (exclusion constraints), `pg_trgm` (office search), `pg_partman` optional in production (`[unverified]` availability on Render; owner Backend lead, check at H0).
 - **Schemas:** `core`, `rules`, `learn`, `game`, `content`, `intel`, `eco`, `records`, `msg`, `privacy`, `audit`, `ops`, `study`.
-- **Keys:** `uuid` primary keys generated as **UUIDv7** in the application (`uuid6` package) so they sort by time. The API shows them as prefixed Crockford base32 (`cas_01JB8ZC…`) through one codec in `margdarshak/ids.py`. Natural keys (rule_id, clip_id, office_id, tenant_id) are `text`.
+- **Keys:** `uuid` primary keys generated as **UUIDv7** in the application (Go `github.com/google/uuid`, `uuid.NewV7()`) so they sort by time. The API shows them as prefixed Crockford base32 (`cas_01JB8ZC…`) through one codec in `internal/domain/ids.go`. Natural keys (rule_id, clip_id, office_id, tenant_id) are `text`.
 - **Tenancy:** every C2+ table has `tenant_id text NOT NULL REFERENCES core.tenants`. RLS is on: `USING (tenant_id = current_setting('app.tenant_id', true))`; the app sets `SET LOCAL app.tenant_id` per transaction. Cross-tenant jobs run as the `mg_jobs` role with `BYPASSRLS` and are audit-logged.
+- **Tenancy in the P2 schemas:** the same pattern covers every tenant table in `game`, `learn`, `study` and `records`: `ENABLE` + `FORCE ROW LEVEL SECURITY` and a `tenant_isolation` policy `USING / WITH CHECK (tenant_id = current_setting('app.tenant_id', true) OR current_user = 'mg_jobs')`. The CI test `TestRLSEnabledOnEveryTenantTable` checks those schemas with the P0 ones (§6). `content` is non-personal (blurred public-road clips; people appear only as staff pseudonyms) and has **no RLS**; tenant applicability is the clip's `tenant_tags`.
+- **Learner subject (P2):** learning and game rows are keyed by `tenant_id, applicant_id, family_member_id` (NULL = the account holder or device session; set = a family member in `core.family_members`). Uniques use `UNIQUE NULLS NOT DISTINCT` over that triple. A minor member's rows are written only after the parent's recorded consent (D-13 revised).
+- **Append-only for request traffic (P2):** `game.xp_ledger` and `learn.review_log` have `UPDATE, DELETE` revoked from `mg_app`; only `mg_jobs` (erasure) may delete.
 - **Time:** `timestamptz` in UTC, server-generated (`now()` / app clock synced to NTP); dates the user declares are `date` (Asia/Kolkata calendar). Device clocks are never trusted (EC-15).
 - **Money:** `integer` **paise** (`amount_paise`; 70000 = ₹700), the unit used by `fees.json` (BACKEND.md §6). No floats or `numeric` in money paths; values come from rule rows, never literals.
 - **Encryption:** C3/C4 columns are `bytea` holding an envelope `{kid, nonce, ciphertext}` (AES-256-GCM via `cryptography`), with per-tenant data keys wrapped by a KEK (hackathon: env secret; production: CSP KMS/HSM in India). Lookup uses `blind_index bytea = HMAC-SHA256(tenant_pepper, normalised_value)`.
-- **Soft delete:** `deleted_at timestamptz NULL` on user-owned roots (applicants, cases); a nightly erasure job hard-deletes after 30 days.
+- **Soft delete:** `deleted_at timestamptz NULL` on user-owned roots (applicants, cases); a nightly erasure job hard-deletes after 30 days. P2: DSR erasure must also delete the subject's `game.*`, `learn.*` and `records.declarations` rows, and it runs as `mg_jobs`, because the XP ledger and review log are append-only for `mg_app`.
 - **Optimistic concurrency:** `version integer NOT NULL DEFAULT 1` on mutable aggregates; the API exposes it as a weak ETag.
 - **Standard columns** (omitted from tables below unless special): `created_at timestamptz NOT NULL DEFAULT now()`, `updated_at timestamptz NOT NULL DEFAULT now()` (trigger), `tenant_id`.
 
@@ -284,11 +287,10 @@ Retention: RT-PUBLIC (config history kept in audit).
 | tenant_id | text | FK, NOT NULL | C1 | home tenant; may change on move (EC-12) |
 | kind | text | `CHECK IN ('device','account')` | C1 | anonymous device → account upgrade |
 | auth_subject_hash | bytea | UNIQUE NULL | C2 | HMAC of email/Google sub; the email itself is in contacts |
-| user_band | text | `CHECK IN ('u18','adult','unknown')` NOT NULL DEFAULT 'unknown' | C4 | drives AI gate (D-13) |
-| age_band | text | `CHECK IN ('under_16','16_17','18_19','20_39','40_plus','unknown')` | C2 | |
+| age_band | text | `CHECK IN ('under_16','16_17','18_25','26_40','41_60','60_plus')` NULL (unknown until a DOB is given) | C2 | licence eligibility only; gates no feature (D-13 revised) |
 | dob_enc | bytea | NULL | C3 | needed for EC-04 (turning 40) and renewal maths |
 | dob_precision | text | `CHECK IN ('day','year_only')` | C2 | EC-01 |
-| is_minor | boolean | NOT NULL DEFAULT false | C4 | rules-only features, no telemetry |
+| is_minor | boolean | NOT NULL DEFAULT false | C4 | family-mode learner under 18 inside a parent's account: every feature incl. AI, but no analytics events, no behavioural tracking or ads; squads/share cards need the parent's consent (D-13 revised) |
 | language | text | NOT NULL DEFAULT 'en' | C2 | |
 | a11y | jsonb | NOT NULL DEFAULT '{}' | C4 | reduced_motion, screen_reader, no_audio, colour_safe |
 | quiet_hours | tstzrange-free jsonb | `{start:"22:00",end:"07:00"}` default | C2 | |
@@ -326,7 +328,7 @@ Retention: 90 days after revoke.
 | deleted_at | timestamptz | | C1 | EC-26 |
 Indexes: `(applicant_id) WHERE deleted_at IS NULL`; `(tenant_id, state)`; `(tenant_id, rule_pack_version)` for EC-27 re-evaluation; GIN `(key_dates jsonb_path_ops)`. Retention: RT-CASE.
 
-The Aadhaar-number check above is a defence in depth (12 digits starting 2–9, the Aadhaar format); the primary control is the Pydantic validator, which also runs the Verhoeff checksum.
+The Aadhaar-number check above is a defence in depth (12 digits starting 2–9, the Aadhaar format); the primary control is the Go request validator (`internal/privacy`), which also runs the Verhoeff checksum.
 
 #### `core.case_events` — event store (backs E-02, E-11, E-12)
 | Column | Type | Constraints | PII | Notes |
@@ -464,7 +466,7 @@ Index: `(helper_applicant_id, status)`, `(case_id) WHERE status='active'`; `EXCL
 Indexes: `rules (pack_version, kind)`, GIN `(applies_to)`; `rule_pack_versions (pack_id) WHERE status='published'` UNIQUE partial on `(pack_id, effective_from)`. Retention RT-PUBLIC (rule packs are CC-BY 4.0, ADR-0010).
 
 ### 4.3 Case state machine (validated in `RecordStatus`)
-The persisted `core.cases.state` is the **14-state journey machine** defined in [BACKEND](BACKEND.md) §5 (the transition table lives in `domain/journey/machine.py`). The product stage code (S0–S9, S6F) and the home view's `display_stage` are **derived per request, never stored**:
+The persisted `core.cases.state` is the **14-state journey machine** defined in [BACKEND](BACKEND.md) §5 (the transition table lives in `internal/journey/machine.go`). The product stage code (S0–S9, S6F) and the home view's `display_stage` are **derived per request, never stored**:
 
 ```mermaid
 stateDiagram-v2
@@ -503,43 +505,70 @@ stateDiagram-v2
 Illegal transitions return `409 https://margdarshak.example/problems/journey-invalid-transition` (`JOURNEY_INVALID_TRANSITION`). Mid-journey onboarding (EC-22) goes PLAN → BRIDGE with `existing_ll`.
 
 ### 4.4 `learn` schema (E-18)
+Migration `00007_p2_learning.sql`. Every table carries the subject columns `tenant_id, applicant_id, family_member_id NULL` (§4.0) and FORCE RLS. The card states, mastery and readiness tables are caches of the compute service's `/learn/state` output, so API-31/33 still answer when that service is down.
+
 | Table.column | Type | Constraints | PII | Notes |
 |---|---|---|---|---|
-| fsrs_cards.applicant_id, card_id | uuid, text | PK | C2 | one card per concept |
-| .state | jsonb | NOT NULL | C2 | ts-fsrs card (`due, stability, difficulty, elapsed_days, scheduled_days, reps, lapses, state, last_review`) mirrored by Python `fsrs` 6.3.2 |
-| .due | timestamptz | NOT NULL | C2 | |
-| .topic_id | text | NOT NULL | C0 | |
-| answers.answer_id | uuid | PK | C2 | |
-| .client_answer_id | text | UNIQUE (applicant_id, client_answer_id) | C2 | offline dedupe |
-| .question_id, variant_id, option_id, correct, confidence, latency_ms, mode, answered_at | | | C2 | |
-| topic_mastery.applicant_id, topic_id | | PK | C2 | |
-| .mastery, coverage, brier, node_state | numeric(4,3)… | `CHECK (mastery BETWEEN 0 AND 1)` | C2 | |
-Indexes: `fsrs_cards (applicant_id, due)`; `answers (applicant_id, answered_at DESC)`. Retention: answers RT-90D raw then folded into card state; cards RT-ACCOUNT. **Minors:** no rows written (D-13); practice happens client-side only.
+| answers.answer_id | bigint | PK, identity | C2 | API-32 |
+| .client_answer_id | text | 1–64 chars; `UNIQUE NULLS NOT DISTINCT (tenant_id, applicant_id, family_member_id, client_answer_id)` | C2 | offline dedupe |
+| .qref | text | `^[A-Za-z0-9_][A-Za-z0-9_.@:-]{0,54}$` | C0 | API-32 `question_id` + `variant_id` map to `qref = q:<question_id>:<variant_id>` |
+| .card_id, topic | text | NOT NULL | C0 | |
+| .correct, rating, overconfident | bool, smallint, bool | `rating BETWEEN 1 AND 4` | C2 | `correct` comes from the compute service's answer key only |
+| .confidence | text | `CHECK IN ('50','75','100')` NULL | C2 | |
+| .answered_at / reviewed_at / next_due_at / received_at | timestamptz | NOT NULL | C2 | `answered_at` is device time (EC-15) |
+| review_log.review_id | bigint | PK, identity | C2 | append-only FSRS log, replayed by the compute service |
+| .card_id, rating, reviewed_at | text, smallint, timestamptz | `card_id` 1–48 chars; `rating BETWEEN 1 AND 4` | C2 | |
+| .source_kind, source_id | text | `source_kind CHECK IN ('answer','session','prediction')`; UNIQUE (subject, source_kind, source_id, card_id) | C2 | `source_id` = client_answer_id or session ID |
+| .confidence, correct, overconfident | | | C2 | |
+| card_state.(subject, card_id) | | UNIQUE NULLS NOT DISTINCT | C2 | gamification `CardState`, verbatim |
+| .state, due_at, computed_at | jsonb, timestamptz, timestamptz | NOT NULL | C2 | |
+| topic_mastery.(subject, topic) | | UNIQUE NULLS NOT DISTINCT; `topic ~ '^[A-Z]{1,4}[0-9]{1,2}$'` | C2 | E-18 |
+| .mastery, coverage, brier | numeric(6,5) | `BETWEEN 0 AND 1` (brier NULL) | C2 | |
+| .node_state | text | `CHECK IN ('locked','learning','mastered','fading')` | C2 | |
+| readiness_snapshots.snapshot_id | bigint | PK, identity | C2 | full `/learn/state` output with the review-log length it came from (stale when the log grew) |
+| .log_count, readiness, knowledge, cal_penalty, gate_met | int, smallint ×3, bool | scores `BETWEEN 0 AND 100` | C2 | kept for the readiness-vs-outcome pairing |
+| .nazar_score, nazar_sessions, state | numeric(5,2), int, jsonb | | C2 | |
+Indexes: `answers (subject, answer_id DESC) WHERE confidence IS NOT NULL`; `review_log (subject, reviewed_at)`; `card_state (subject, due_at)`; `readiness_snapshots (subject, computed_at DESC)`. Grants: `review_log` is append-only for `mg_app`. Retention: answers RT-90D raw then folded into card state; review log, cards and mastery RT-ACCOUNT. **Minors:** rows are written for a minor family member only after the parent's recorded consent, keyed by `tenant_id, applicant_id, family_member_id` (D-13 revised).
 
 Content (questions, variants, modules M1–M22, reviewed explanations, error catalogue, sign catalogue) is **versioned JSON in the repo** (`content/`), loaded read-only at boot; not in the database. CC-BY 4.0 where we authored it.
 
 ### 4.5 `game` schema (E-16, E-17, E-19, E-22, E-23)
+Migrations `00006_p2_games.sql` (sessions, items, exposures, staircase) and `00008_p2_gamification.sql` (XP, streaks, badges, squads, share cards). Every table has `tenant_id` and FORCE RLS; subject columns are `tenant_id, applicant_id, family_member_id NULL` (§4.0). Item refs are text; no foreign keys cross the P2 files.
+
 | Table.column | Type | Constraints | PII | Notes |
 |---|---|---|---|---|
 | sessions.session_id | uuid | PK (client-visible UUIDv7) | C2 | |
-| .applicant_id | uuid | FK | C2 | |
+| .applicant_id / family_member_id | uuid | FK core.applicants / FK core.family_members NULL | C2 | family mode |
 | .game_id | text | `CHECK IN ('nazar','junction_scan','stopping_distance','blind_spot','track_twin','night_glare','hill_road','helmet_fit','golden_hour','ll_sim')` | C0 | |
-| .mode | text | `CHECK IN ('learn','practice','mock','duel')` | C2 | |
-| .manifest_version / scoring_version | text | NOT NULL | C1 | |
-| .seed | bigint | NOT NULL | C1 | issued by server |
-| .difficulty | smallint | `CHECK (difficulty BETWEEN 1 AND 5)` | C2 | |
-| .status | text | `CHECK IN ('started','submitted','checked','pending_verification','expired','voided')` | C1 | |
-| .events_digest | bytea | | C1 | sha256 of the event stream |
-| .replay_object_key | text | | C2 | gz replay blob in object storage (≤ 512 KB) |
+| .mode | text | `CHECK IN ('learn','practice','mock','pair')` | C2 | `pair` (game-core) replaced `duel` |
+| .game_version / scoring_version / rule_pack_version | text | NOT NULL; `scoring_version ~ '^\d+\.\d+$'` | C1 | API `manifest_version` = `game_version` |
+| .seed / seed_origin | bigint / text | `seed BETWEEN 0 AND 4294967295`; `seed_origin CHECK IN ('server','client_offline')` | C1 | uint32 issued by the server; offline sessions are never Nazar-Score eligible |
+| .difficulty | smallint | NOT NULL, `CHECK (difficulty BETWEEN 1 AND 5)` | C2 | |
+| .status | text | `CHECK IN ('started','submitted','checked','pending_verification','expired','voided')` | C1 | `checked` needs `server_result`, `verified_at`, `digest`; `pending_verification` needs `replay_inputs`, `digest`, `submitted_at` |
+| .cohort / study_participant / study_phase | text | `cohort CHECK IN ('field_test')`; both NULL or both set; `study_phase CHECK IN ('ll_mock','test','feedback','fresh')` | C2 | online field study (F-57), pseudonymous `P-001` codes |
+| .context | jsonb | NOT NULL | C2 | the game-core `SessionContext` sent to the client (includes the items; no PII) |
+| .started_at / expires_at / submitted_at / verified_at | timestamptz | `expires_at > started_at` | C1 | |
+| .replay_inputs | bytea | `octet_length ≤ 524288` | C2 | decoded replay inputs on the row (replaces `replay_object_key`) |
+| .replay_encoding / replay_event_count / telemetry_version | text / int / smallint | `CHECK IN ('mdr1','mdr1+gzip')`; `0–5000`; `= 1` | C1 | |
+| .digest | text | `^sha256:[0-9a-f]{64}$` | C1 | the verifier's format (replaces `events_digest`) |
+| .hints | jsonb | NOT NULL DEFAULT '{}' | C1 | `{seenClip, sessionExpired}` at submission |
+| .client_result / server_result / analysis | jsonb | | C2 | client preview kept for comparison; the verifier's `SessionResult`; `{nazar_clips, nazar_clips_linear}` |
 | .client_score_pct / server_score_pct | numeric(5,2) | `CHECK BETWEEN 0 AND 100` | C2 | the server score overwrites the client score and is the one that counts |
-| .trust | numeric(3,2) | | C2 | < 0.6 ⇒ not counted for card |
-| .integrity_flags | text[] | | C2 | |
-| .timing_mode | text | `CHECK IN ('rvfc','fallback','sim')` | C1 | |
-| .findings | jsonb | | C2 | deterministic findings with facts |
-| .started_at / submitted_at / verified_at | timestamptz | | C1 | |
-| session_items.session_id, item_ref, ordinal | | PK (session_id, ordinal) | C1 | tracks seen clips (unseen-clip rule for mocks) |
-| events (partitioned by month on `t_server`) | | PK (session_id, seq) | C2 | E-17; **only for adult, consented sessions**; bounded; no PII |
-| debriefs.debrief_id | uuid | PK | C2 | E-19 |
+| .trust | numeric(4,3) | `BETWEEN 0 AND 1` | C2 | < 0.6 ⇒ not counted for card; three places because factors multiply (0.9³ = 0.729) |
+| .integrity_flags | text[] | NOT NULL DEFAULT '{}' | C2 | |
+| .timing_mode | text | `CHECK IN ('rvfc','fallback','sim','none')` | C1 | |
+| .eligibility / nazar_eligible | jsonb / bool | `nazar_eligible` GENERATED from `eligibility->>'nazar_score'` | C2 | derived from the server result only (GAME_SDK §6.4) |
+| .rejected_type | text | | C1 | verifier problem slug when voided |
+| session_items.(session_id, ordinal) | | PK; `ordinal BETWEEN 1 AND 40`; FK sessions ON DELETE CASCADE | C1 | items dealt, in order |
+| .item_ref, content_version, kind | text | `item_ref` = game-core ItemRef pattern | C1 | |
+| clip_exposures.exposure_id | uuid | PK | C2 | the unseen-clip rule for Nazar mocks |
+| .(subject, clip_id) | | `UNIQUE NULLS NOT DISTINCT (tenant_id, applicant_id, family_member_id, clip_id)` | C2 | first exposure wins; keyed on `clip_id`, not version (a new version of a seen clip is still seen) |
+| .via | text | `CHECK IN ('mock','practice','learn','replay','study')` | C2 | recorded at start for mock, pair and study; for learn/practice when windows are revealed |
+| .session_id, first_seen_at | uuid, timestamptz | | C2 | |
+| staircase.(subject, game_id, skill_id) | | UNIQUE NULLS NOT DISTINCT | C2 | difficulty staircase (GAME_SDK §7): 2 passes up, 1 fail down |
+| .level / streak_pass | smallint | `level BETWEEN 1 AND 5`; `streak_pass BETWEEN 0 AND 1` | C2 | |
+| events (partitioned by month on `t_server`) | | PK (session_id, seq) | C2 | E-17, **deferred in P2** (the replay blob on `sessions` is stored instead). When built: **only for consented sessions, never for a family-mode learner under 18** (no behavioural tracking of children, D-13 revised); bounded; no PII |
+| debriefs.debrief_id | uuid | PK | C2 | E-19; planned, not in migrations 00005–00009 |
 | .session_id | uuid | UNIQUE FK | C2 | |
 | .source | text | `CHECK IN ('template','ai')` | C1 | |
 | .status | text | `CHECK IN ('template_ready','ai_pending','ai_ready','ai_failed')` | C1 | |
@@ -548,35 +577,81 @@ Content (questions, variants, modules M1–M22, reviewed explanations, error cat
 | .validator | jsonb | NOT NULL | C1 | passed, attempts, violations |
 | .model_id / prompt_version | text | | C1 | env-pinned model ID |
 | .trace_expires_at | timestamptz | | C1 | prompt/response trace kept 7 days (RT-7D) in `game.debrief_traces` |
-| xp_ledger.(applicant_id, entry_id) | | PK | C2 | append-only; `amount int`, `reason`, `session_id` |
-| badges.(applicant_id, badge_id) | | PK | C2 | `self_declared bool` for Khud Licence / Pehli Baar Pass |
-| streaks.applicant_id | | PK | C2 | weekly_goal 2–6, freeze tokens ≤ 2, archived on DL test day |
-| squads.squad_id / name / invite_code_hash / weekly_goal | | | C2 | adults only (no school-code path; brief §15) |
-| share_cards.short_id | text | PK | C2 | API-57; kind, applicant_id, rendered_object_key, display_name_choice (initials or first name), withdrawn_at |
-| squad_members.(squad_id, applicant_id) | | PK; trigger ≤ 5 members | C2 | |
-Indexes: `sessions (applicant_id, game_id, mode, verified_at DESC)` (Nazar score), `sessions (status) WHERE status='pending_verification'` (`replay_pending_sessions` task), `session_items (item_ref)`. Retention: sessions RT-ACCOUNT (scores), events RT-90D, replay blobs 90 days.
+| xp_ledger.entry_id | uuid | PK; `UNIQUE NULLS NOT DISTINCT (subject, reason, source_id)` | C2 | append-only for `mg_app` (§4.0) |
+| .reason | text | `CHECK IN ('session','review','lesson','prediction')` | C2 | the database refuses XP for opening the app, sharing or inviting |
+| .source_id, xp, minutes, ist_day, week_key, counts_for_streak, breakdown | | `xp >= 0`; `minutes 0–1440`; `week_key ~ '^\d{4}-W\d{2}$'` | C2 | `breakdown` = gamification `XpAward` |
+| streaks.(subject) | | UNIQUE NULLS NOT DISTINCT | C2 | progress cache: `xp_total`, `rank` (`R1`–`R5`, never demoted), `rank_next`, `streak_goal` 2–6 (default 4), `streak_state`, `streak_view` |
+| badges.(subject, badge_id) | | UNIQUE NULLS NOT DISTINCT; `badge_id CHECK IN ('B1'…'B9')` | C2 | B1–B9 map to the nine API `BadgeId` keys (`khud_licence` … `golden_hour_ready`); `self_declared = (badge_id IN ('B1','B2'))` (Khud Licence / Pehli Baar Pass); a revoked declaration deletes the row |
+| squads.squad_id | uuid | PK | C2 | API `sqd_…` |
+| .name | text | 2–40 chars | C2 | |
+| .invite_code_hash / invite_expires_at | bytea / timestamptz | UNIQUE, 32 bytes | C2 | invite link expires after 7 days |
+| .weekly_goal | smallint | NOT NULL DEFAULT 15, `BETWEEN 3 AND 40` | C2 | column kept from the draft; the API takes no user-set goal and shows 3 × members (GAMIFICATION_ENGINE §8) |
+| .disbanded_at | timestamptz | | C1 | |
+| squad_members.(squad_id, subject) | | UNIQUE NULLS NOT DISTINCT; FK squads ON DELETE CASCADE; trigger `squad_members_cap` ≤ 5 members; one `owner` per squad | C2 | a family-mode learner under 18 only with the parent's `squads` extra (no school-code path; brief §15) |
+| .display_name / role | text | 1–24 chars / `CHECK IN ('owner','member')` | C2 | what other members see |
+| .joined_at / member_ord | timestamptz / smallint | `member_ord >= 0` | C1 | `member_ord` orders `Squad.members` (joins can share a `joined_at`) |
+| share_cards.short_id | text | PK, `^[a-km-np-z2-9]{10}$` (no `l`, `o`) | C2 | API-57 wire ID = `shc_` + upper-cased short ID |
+| .kind | text | `CHECK IN ('nazar_score','rank','badge')`; `badge` needs `badge_id` | C2 | API `kind` `nazar` is stored as `nazar_score`; `rank` has no API kind yet |
+| .display / display_text | text | `CHECK IN ('initials','first_name')` / 1–20 chars | C3 | the user's choice of name shown |
+| .badge_id, kerala_line | text, bool | `badge_id` B1–B9 | C2 | |
+| .created_at / expires_at / withdrawn_at | timestamptz | `expires_at > created_at` | C1 | link expires after 90 days; withdrawn or expired → 410. No score is stored: the numbers are recomputed from server data on every read (no `rendered_object_key`; the web renders the image) |
+
+Also in `00008`: `core.family_members.parental_extras text[] NOT NULL DEFAULT '{}'`, `CHECK (parental_extras <@ ARRAY['squads','share_cards','pair_mode'])`, the parent's extra consents for a minor member (API-60 parental-consent operation).
+
+Indexes: `sessions (tenant_id, applicant_id, family_member_id, game_id, mode, verified_at DESC)`; `sessions (tenant_id, applicant_id, family_member_id, verified_at DESC) WHERE nazar_eligible AND status='checked'` (Nazar score); `sessions (submitted_at) WHERE status='pending_verification'` (`replay_pending_sessions` task); `sessions (tenant_id, study_participant) WHERE cohort='field_test'`; `session_items (item_ref)`; `xp_ledger (subject, ist_day)` and `(subject, week_key) WHERE counts_for_streak`; `squad_members (subject)`; `share_cards (subject)`. Retention: sessions RT-ACCOUNT (scores), replay inputs 90 days, events RT-90D when built.
 
 ### 4.6 `content` schema (E-20, E-21)
+Migration `00005_p2_content_clips.sql`. Non-personal: blurred public-road clips, people only as staff pseudonyms (`rater-07`, `curator-02`; `^[a-z][a-z0-9]*-[a-z0-9]{1,16}$`). **No RLS** (§4.0). Grants: `mg_app` (API-55 admin requests, API-37 reads) reads everything and writes only `clips`, `clip_ratings`, `clip_id_counters`, `clip_review_tasks` (insert/update) and `clip_blur_audits` (insert); `mg_jobs` (clip_ingest / clip_finalize steps) writes everything; `clip_raw_deletions` is append-only for both.
+
 | Table.column | Type | Constraints | PII | Notes |
 |---|---|---|---|---|
-| clips.clip_id | text | PK | C0 after publish | |
-| .status | text | `CHECK IN ('registered','transcoding','blurring','proposing','awaiting_ratings','computing_agreement','ready_to_publish','published','rejected','failed')` | C1 | |
-| .raw_object_key | text | | **C3 until blurred** (bystander faces/plates) | raw bucket private, deleted 7 days after publish |
-| .media_key_360p / 480p | text | | C0 | blurred only |
-| .sha256 / bytes / duration_ms | | | C0 | |
-| .state / road_type / filmed_by | text | `filmed_by CHECK IN ('passenger','fixed_mount')` | C0 | never the rider |
-| .contributor_consent_id | uuid | FK | C2 | |
+| clip_id_counters.prefix / last | text / int | PK `^[A-Z]{2,4}$`; `last >= 0` | C1 | per-prefix clip numbers (`JK-0001`, `JMU-0012`) |
+| clips.(clip_id, version) | text, int | PK; `clip_id ~ '^[A-Z]{2,4}-\d{4,6}$'`; `version >= 1` | C0 after publish | one row per version (`clip:KL-0007@1`) |
+| .status | text | `CHECK IN ('raw','transcoded','blurred','audited','proposed','rated','adjudication','published','retired')` | C1 | the nine clip-pipeline statuses; `published` needs `published_at`, `audit_passed_at` and `blur_audit='passed'` |
+| .doc | jsonb | NOT NULL; `doc->>'clipId'`, `version`, `status` match the columns; `core.no_prohibited_keys(doc)` | C0/C1 | clip.json verbatim, validated in Go against clip.schema.json. Coarse metadata lives here: `captured_month` (YYYY-MM), `city` (letters only), closed `road_type`, `time_of_day`, `weather`, `pov`, `speed_source` (NAZAR §4) |
+| .tenant_tags | text[] | 1–8 entries; GIN index | C0 | where the clip applies |
+| .tenant | text | `^[A-Z]{2,3}$` | C1 | the registering state (n8n envelopes, job tenant) |
+| .raw_object_key / intermediate_keys | text / text[] | object keys only, never URLs or query strings | **C3 until blurred** (bystander faces/plates) | raw bucket private |
+| .filmed_by | text | `CHECK IN ('passenger','fixed_mount')` | C0 | never the rider |
+| .filmed_on | date | NULL | C1 | still a column; the API exposes only `captured_month` |
 | .licence | text | `CHECK (licence='CC-BY-4.0')` | C0 | |
-| .blur_audit | text | `CHECK IN ('pending','passed','failed')`; publish requires passed | C1 | 100% human audit (M-09) |
-| .proposals | jsonb | | C1 | Gemini proposals (±1 s), never used for scoring |
-| .difficulty_curator / difficulty_empirical | smallint / numeric | | C0 | |
-| .workflow_runs | jsonb | | C1 | Render run IDs for the demo |
-| clip_hazards.(clip_id, hazard_no) | | PK, `hazard_no IN (1,2)` | C1 | final windows = agreed windows; **served only to the verifier, never to clients** |
-| .hazard_type, onset_ms, offset_ms, speed_kmh_est | | `CHECK (offset_ms > onset_ms)` | C1 | |
-| clip_ratings.rating_id | uuid | PK | C1 | |
-| .clip_id, rater | | `UNIQUE (clip_id, rater)` | C1 | rater = staff pseudonym |
-| .hazards, blur_audit_passed | jsonb, bool | | C1 | |
-| clip_agreement.(clip_id) | | onset Δ median, matched count, passed | C1 | inter-rater Δ (D-22) |
+| .contributor_consent_id | uuid | FK privacy.consent_artefacts | C2 | |
+| .registered_by / registered_at | text / timestamptz | pseudonym | C1 | |
+| .flash_passed | bool | NULL | C1 | photosensitivity check |
+| .proposals | jsonb | NOT NULL DEFAULT '[]' | C1 | Gemini proposals (±1 s), never used for scoring; empty in P2 (the propose step is a stub) |
+| .blur_regions | jsonb | | C1 | |
+| .review_event_id / adjudication_event_id | text | | C1 | idempotency keys of the envelopes sent to n8n W08 |
+| .agreement / agreement_accepted / needs_third_rater | jsonb / bool / bool | | C1 | last `ClipAgreement`, verbatim |
+| .final_hazards | jsonb | NOT NULL DEFAULT '[]' | C1 | final windows (`a_ms`/`b_ms`, the 15 shared hazard types, occlusion); **served only to the verifier, never to clients** except learn/practice `reveal` and the replay endpoint |
+| .adjudication | jsonb | | C1 | |
+| .cue_texts | jsonb | NOT NULL DEFAULT '{}' | C0 | curator cue per final hazard `{hazard_id: {en, hi}}` (API-55 cue texts) |
+| .blur_audit / audit_passed_at | text / timestamptz | `CHECK IN ('pending','passed','failed')`; `passed` needs `audit_passed_at` | C1 | summary; full records in `clip_blur_audits` (M-09) |
+| .raw_deleted_at / published_at | timestamptz | | C1 | |
+| .mock_eligible / mock_reasons | bool / text[] | | C0 | |
+| .workflow_runs / finalize_round | text[] / int | `finalize_round >= 0` | C1 | Render run IDs for the demo |
+| .created_at / updated_at | timestamptz | | C1 | `updated_at` set by Go from the injected clock (no touch trigger) |
+| clip_scoring.(clip_id, version) | | PK; FK clips ON DELETE CASCADE | C1 | cache of the game-core `NazarClip` per published version (what `/verify` takes inline). The table exists, but nothing writes it yet |
+| clip_ratings.(clip_id, version, rater) | | PK; FK clips ON DELETE CASCADE | C1 | blind; one per rater per clip version, frozen once both are saved (Go rule) |
+| .submission | jsonb | NOT NULL; `jsonb_array_length(submission->'marks') <= 10` | C1 | clip-pipeline `RaterSubmission` (`marks[] {hazard_type, a_ms, b_ms, cue, occlusion}`); no blur flag |
+| .decision | text | NOT NULL DEFAULT 'windows_set', `CHECK IN ('windows_set','reject')` | C1 | the API-55 rating decision, relayed to n8n W08 |
+| .saved_at / seq | timestamptz / bigint | `seq` identity | C1 | `seq` = first-save order (kept on re-save): rater A, rater B |
+| clip_blur_audits.audit_id | bigint | PK, identity; FK clips | C1 | full human audit (clip-pipeline `BlurAuditRecord`) |
+| .auditor, rendition_sha256 | text | pseudonym; `^[0-9a-f]{64}$` | C1 | |
+| .frames_total / frames_checked / misses / miss_frames | int / int / int / jsonb | `frames_total > 0`; `jsonb_array_length(miss_frames) = misses` | C1 | |
+| .passed | bool | GENERATED: `frames_checked >= frames_total AND misses = 0` | C1 | |
+| .audited_at | timestamptz | NOT NULL | C1 | |
+| clip_raw_deletions.(clip_id, version) | | PK; FK clips | C1 | append-only raw-footage deletion log (MD-218), object keys only |
+| .object_keys, reason | text[], text | ≥ 1 key; `reason CHECK IN ('audit_passed','retention_limit','takedown')` | C1 | `audit_passed` needs `audit_passed_at` |
+| .uploaded_at / audit_passed_at / deleted_at / deadline / on_time / deleted_by | | NOT NULL except `audit_passed_at` | C1 | raw footage is deleted ≤ 24 h after a passing audit and ≤ 7 days after upload |
+| clip_manifests.manifest_version | text | PK | C0 | `bank` (CC-BY record with windows), `client` (API-37, no hazard information), `mock_eligibility`, `generated_at` |
+| clip_review_tasks.review_task_id | uuid | PK | C1 | n8n W08 blind rater task (API-55 internal review-tasks / status); API `rvt_…` |
+| .(clip_id, version, stage) | | UNIQUE; FK clips ON DELETE CASCADE; `stage CHECK IN ('rater_1','rater_2')` | C1 | one task per stage per clip version |
+| .status | text | `CHECK IN ('open','submitted','rejected','timed_out','cancelled')`; `submitted` needs `assignee` | C1 | |
+| .assignee / exclude_rater | text | pseudonyms; `assignee <> exclude_rater` | C1 | `assignee` is NULL until a rater claims the task by saving a rating |
+| .n8n_execution_id | text | 1–64 chars | C1 | |
+| .resume_url_enc | bytea | | C2 | Wait-node resume URL, a bearer capability for the n8n execution: stored only as a privacy-vault envelope (tenant = the clip's registering state), never in clear |
+| .due_at / created_at / updated_at | timestamptz | NOT NULL | C1 | |
+Indexes: `clips (status)`, GIN `clips (tenant_tags)`, `clip_blur_audits (clip_id, version, audit_id DESC)`, `clip_manifests (generated_at DESC)`. Inter-rater agreement (D-22) is stored on `clips.agreement`. Adjudications are stored on `clips.adjudication` (no separate table).
 
 ### 4.7 `intel` schema (E-24)
 `rto_reports(report_id uuid PK, tenant_id, office_id FK, reporter_id uuid (C2, never exposed), report_type CHECK IN ('visit','slots_opened','scam_offer'), visited_on date, fields jsonb (enums only; JSON schema enforced), status CHECK IN ('pending_moderation','published','rejected','takedown'), reason_code, moderator text, decided_at)`. No free-text column exists (D-14). `scam_offer` rows are never published (EC-24). `office_intel_agg(office_id, field, value_hash, value jsonb, n int, window_end date, sample_data bool)` refreshed on publish; API-29 shows rows with `n >= 5`. Indexes: `rto_reports (office_id, status, visited_on DESC)`, `(reporter_id, created_at)` for the 3/day limit. Retention: raw reports 12 months; aggregates RT-PUBLIC; takedown log 180 days (IT Rules 2021 grievance record).
@@ -590,7 +665,7 @@ Indexes: `sessions (applicant_id, game_id, mode, verified_at DESC)` (Nazar score
 | records.practice_logs (E-27) | practice_log_id PK, applicant_id, date, minutes CHECK 1–600, kind, conditions text[], supervisor jsonb (display name C3 enc), sign_off_status, signed_by_school_id, signed_by_name_enc, signed_at | C2/C3 | attributed sign-off, separate from in-app facts (D-14) |
 | records.practice_record_tokens | token_hash PK, applicant_id, payload_sha256, signature, revoked_at, expires_at | C2 | API-47 check, API-48 revoke |
 | records.signoff_requests | signoff_request_id PK, applicant_id, practice_log_ids uuid[], signer_kind CHECK IN ('school','supervisor'), school_id NULL, supervisor_contact_id NULL (C3 via privacy.contacts), one_time_token_hash, status, expires_at (14 days) | C2 | API-49 |
-| records.declarations | (applicant_id, kind) PK, kind CHECK IN ('khud_licence','pehli_baar_pass'), dl_issued_on date, declared_at | C2 | API-44; always shown as self-declared |
+| records.declarations | `UNIQUE NULLS NOT DISTINCT (tenant_id, applicant_id, family_member_id)` (one per subject), case_id uuid NULL, dl_issued_on date ≥ 1990-01-01, no_agent_used bool `CHECK (no_agent_used)`, first_attempt_pass bool, declared_at; FORCE RLS (migration 00008) | C2 | API-44; always shown as self-declared, never as a government check; feeds badges B1/B2 |
 | records.letters (E-28) | letter_id PK, case_id, kind CHECK IN ('escalation','rti_s6_test_record','cpgrams_steps'), body_enc bytea (C3), facts_used jsonb, status, approved_at | C3 | user sends; we never file |
 Retention: bookings RT-CASE; practice logs RT-ACCOUNT; letters RT-CASE.
 
@@ -626,7 +701,12 @@ Indexes: `consent_artefacts (applicant_id, purpose) WHERE revoked_at IS NULL` UN
 | ops.job_runs | run_id, job, runner, input_hash, status, started_at, finished_at, external_run_id | C1 | 90 days |
 | ops.analytics_events | day, tenant_id, name, props jsonb (no PII; allowlisted keys), count | C1 | RT-90D raw → daily rollups RT-PUBLIC |
 | study.lab_trials | trial_id, participant_code (`P-017`), arm, task_id, started_at, ended_at, errors, completed, sus_score, would_pay_agent, consent_id | C2 | RT-STUDY |
-| study.nazar_participants | participant_code, age_band, licence_held_years_band, ll_quiz_score, nazar_session_id | C2 | RT-STUDY |
+| study.nazar_arrivals | tenant_id PK, last_seq | C1 | RT-STUDY; arrival counter, forms rotate A → B → C by arrival order |
+| study.nazar_participants | (tenant_id, participant_code) PK, `participant_code ~ '^P-\d{3,}$'`, applicant_id (the enrolling session's subject), consent_id FK (purpose `field_study`), seq UNIQUE per tenant, age_band `CHECK IN ('18_20','21_24','25_34','35_plus')`, licence_held `CHECK IN ('ll','2w','4w','both')`, years_driving `CHECK IN ('0_1','1_3','3_plus')`, age_ok `CHECK (age_ok)`, form `CHECK IN ('A','B','C')` = rotation of seq, retake_of (≠ own code), near_miss_text ≤ 140 chars (privacy-scanned before storage, never exported), created_at, withdrawn_at (withdrawal clears the near-miss line) | C2 | RT-STUDY; only what the consent screen lists. Scores and tap times stay in `game.sessions` (`study_participant`, `study_phase`), joined by participant code at export |
+| study.form_blocks | tenant_id PK, b1/b2/b3 text[5] (clip refs balanced on curator difficulty), ll_set text[15], frozen_at (before the first participant) | C0 | RT-STUDY |
+| study.public_stats | stats_id PK, tenant_id, as_of, payload jsonb, script_sha256 `^[0-9a-f]{64}$`, prereg_commit; index `(tenant_id, as_of DESC)` | C0 | RT-PUBLIC; what `stats.field_study_publish` stored from `field-kit/nazar_stats.mjs`, read by API-71 |
+
+The four P2 `study` tables (migration 00009) have FORCE RLS. `mg_app` may select, insert and update arrivals and participants and only read `form_blocks` and `public_stats`; `mg_jobs` has full access.
 
 ---
 
@@ -650,26 +730,26 @@ Rules:
 1. **One writer path.** Only `CaseService.append(event)` writes `case_events`, inside the same transaction that updates `cases` (projection) and `timeline_events`, and inserts outbox rows. No dual writes.
 2. **Gapless sequence** per case using `SELECT … FOR UPDATE` on `core.cases`; concurrency conflicts surface as 412/409.
 3. **Idempotency:** `UNIQUE (case_id, idempotency_key)`; a replay returns the original result.
-4. **Upcasting:** `schema_version` per event; upcasters live in `margdarshak/domain/events/upcasters.py`; old events are never rewritten.
-5. **Rebuild:** `python -m margdarshak.tools.rebuild_projections --case <id>` replays events; nightly a 1% sample is rebuilt and diffed against the projection (drift alarm).
+4. **Upcasting:** `schema_version` per event; upcasters live in `internal/journey/upcast.go`; old events are never rewritten.
+5. **Rebuild:** `api rebuild-projections --case <id>` (a `cmd/api` subcommand) replays events; nightly a 1% sample is rebuilt and diffed against the projection (drift alarm).
 6. **Timeline keys:** `"{caseId}:{milestoneId}:{dueOn}"` (BACKEND.md §7.1). If the LL issue date or the rule pack changes, the key changes, the old row becomes `superseded`, and the new row is `scheduled`. A notification is sent at most once per key (`msg.notifications.idempotency_key`).
 7. **Server time only:** `recorded_at` and all `due_at` come from the server (NTP-synced; production NTP to NIC/NPL per CERT-In). The client clock is used only for display.
 8. **Erasure:** events are deleted with the case (`mg_erasure` role); aggregated counters already exclude identifiers.
 
 ---
 
-## 6. SQLAlchemy 2 and Alembic notes
+## 6. Go data-access and migration notes (pgx, sqlc, goose)
 
-- **Versions:** SQLAlchemy **2.1.6**, Alembic **1.20.1**, asyncpg **0.32.0** (driver for the API), psycopg **3.3.6** (Alembic + workflows sync paths). Pins in [TECH_STACK](TECH_STACK.md).
-- **Models:** typed declarative (`class Case(Base): case_id: Mapped[UUID] = mapped_column(primary_key=True)`), one module per schema in `services/api/src/margdarshak/infra/db/models/`. **Domain objects are not ORM models**: repositories map rows ↔ dataclasses so the hexagonal core never imports SQLAlchemy ([ADR-0001](adr/ADR-0001-hexagonal-core-and-adapters.md)).
-- **Sessions:** `async_sessionmaker(engine, expire_on_commit=False)`; one transaction per request; `SET LOCAL app.tenant_id = :t` and `SET LOCAL statement_timeout = '3s'` at transaction start. Workflows use a separate pool and the `mg_jobs` role.
-- **Encrypted columns:** a `TypeDecorator` `EncryptedBytes(kind="C3")` encrypts on bind and decrypts on result using the tenant data key from the key cache; it refuses to run if no tenant is set.
-- **Alembic layout:** `services/api/migrations/`, one linear history; filenames `YYYYMMDD_HHMM_<slug>.py`; `compare_type=True`, `include_schemas=True`. Autogenerate is a draft only; every migration is reviewed.
-- **Expand → migrate → contract:** additive migration ships first (nullable column / new table), code dual-reads, a backfill runs as a job through `JobRunnerPort` (`db_backfill`), and the contract migration (drop/NOT NULL) ships in a later release. Never rename in place.
-- **RLS and grants live in migrations** (`op.execute("ALTER TABLE … ENABLE ROW LEVEL SECURITY")`, policies, `REVOKE UPDATE, DELETE ON core.case_events`), and a CI test asserts every table with `tenant_id` has RLS enabled.
-- **Partitions:** `game.events` and `audit.audit_log` monthly; a monthly Workflows task creates next month's partition and drops partitions past retention.
-- **Seed data:** `python -m margdarshak.tools.seed --tenant JK --synthetic` loads offices, schools and intel rows with `sample_data=true`, plus synthetic applicants generated with `polyfactory` (no real PII, ever).
-- **Zero-downtime:** migrations run in Render's pre-deploy command (`alembic upgrade head`) with `lock_timeout = '2s'`; long index builds use `CREATE INDEX CONCURRENTLY` in an `autocommit_block()`.
+- **Versions:** `github.com/jackc/pgx/v5` **v5.11.0** (`pgxpool`, the only driver), `github.com/sqlc-dev/sqlc` **v1.31.1** (code generator, `sql_package: pgx/v5`), `github.com/pressly/goose/v3` **v3.29.0** (migrations), `github.com/fergusstrange/embedded-postgres` **v1.34.0** (real Postgres 16 in `go test`, no Docker). Pins in [TECH_STACK](TECH_STACK.md).
+- **Queries, not an ORM:** SQL lives in `services/api/internal/store/queries/*.sql` (one file per schema); `sqlc generate` writes typed Go into `internal/store/sqlcgen` (committed; CI fails on drift). Repositories in `internal/store` map sqlc rows ↔ plain domain structs, so the hexagonal core never imports pgx ([ADR-0001](adr/ADR-0001-hexagonal-core-and-adapters.md), [ADR-0011](adr/ADR-0011-go-backend.md)).
+- **Transactions:** a `UnitOfWork` (`store.WithTx(ctx, tenant, fn)`) opens one transaction per request and runs `SET LOCAL app.tenant_id = $1` and `SET LOCAL statement_timeout = '3s'` at transaction start. Job step handlers use a separate pool and the `mg_jobs` role. Render Workflows tasks never connect to Postgres; they call the API's job steps.
+- **Encrypted columns:** C3 columns are `bytea`; `internal/privacy` encrypts before bind and decrypts after scan (AES-256-GCM with the tenant data key from the key cache); the helper refuses to run if no tenant is set on the context.
+- **Migration layout:** `services/api/migrations/`, one linear goose history of plain SQL files named `NNNNN_<slug>.sql` with `-- +goose Up` / `-- +goose Down` sections, embedded in the binary with `embed.FS` and applied by `api migrate up|down|status`. Every migration is hand-written and reviewed; sqlc reads the same files as its schema, so a query against a missing column fails at generate time.
+- **Expand → migrate → contract:** additive migration ships first (nullable column / new table), code dual-reads, a backfill runs as a job through the `JobRunner` port (`db_backfill`), and the contract migration (drop/NOT NULL) ships in a later release. Never rename in place.
+- **RLS and grants live in migrations** (`ALTER TABLE … ENABLE ROW LEVEL SECURITY`, policies, `REVOKE UPDATE, DELETE ON core.case_events`), and a Go integration test (embedded Postgres) asserts every table with `tenant_id` has RLS enabled. That test, `TestRLSEnabledOnEveryTenantTable`, requires `ENABLE` + `FORCE` on every table with a NOT NULL `tenant_id` in `core`, `privacy`, `msg`, `audit`, `ops`, `study`, `game`, `learn` and `records` (except `core.tenants` and `core.tenant_adapter_config`): the 12 P0/P1 tables plus the 20 P2 tenant tables. `content` is outside it on purpose (non-personal, no RLS).
+- **Partitions:** `game.events` (deferred in P2) and `audit.audit_log` monthly; the monthly `db_maintenance` job creates next month's partition and drops partitions past retention.
+- **Seed data:** `go run ./cmd/seed --tenant JK --synthetic` loads offices, schools and intel rows with `sample_data=true`, plus synthetic applicants built by Go test-data builders (no real PII, ever).
+- **Zero-downtime:** migrations run in Render's pre-deploy command (`/app/api migrate up`) with `lock_timeout = '2s'`; long index builds use `CREATE INDEX CONCURRENTLY` in a migration marked `-- +goose NO TRANSACTION`.
 
 ---
 
@@ -679,7 +759,7 @@ Rules:
 | EC-01 year-only DOB | `applicants.dob_precision='year_only'` → planner assumes 1 Jan and raises a blocker asking for a DOB document |
 | EC-02 address ≠ residence | `cases.path='non_aadhaar_rto'` + blocker row `BLK-AADHAAR-ADDR` |
 | EC-04 turning 40 | `key_dates.turns_40_on` from `dob_enc`; timeline `FORM_1A_AT_40` |
-| EC-05/EC-17 minors | `applicants.is_minor`, `user_band='u18'` → games run locally with **no server session** (API-34 returns 403 `minor-local-only`), no rows in learn/game tables, no AI, no squads, no streaks |
+| EC-05/EC-17 minors | family mode (D-13 revised): the case sits in the parent's account (`cases.for_family_member`, subject `age_band` `16_17` or `under_16`, `is_minor`); every feature incl. AI and server game sessions works; a verifiable parental-consent artefact from the account holder is required (else 403 `PARENT_CONSENT_REQUIRED`); learning and game rows are then keyed by `tenant_id, applicant_id, family_member_id`; no `game.events` telemetry or analytics rows; squads, share cards and pair mode each need a separate parental extra in `core.family_members.parental_extras` (`squads`, `share_cards`, `pair_mode`) |
 | EC-07 LL expiry vs slot | `timeline_events` `LL_EXPIRY_M30/T7` + slot watch `latest ≤ ll_expiry` |
 | EC-08 three fails | `class_selections.attempts`, `test_attempts`, rule `TL-RETEST-GAP` |
 | EC-09 payment pending | `payment_intents.status='pending'` + guidance; never "pay again" |

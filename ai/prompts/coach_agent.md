@@ -2,7 +2,7 @@
 id: PRM-COACH
 version: 1.0.0
 agent: CoachAgent (M-03)
-model_env: MD_MODEL_COACH            # default gemini-3.1-flash-lite
+model_env: GEMINI_MODEL_COACH            # default gemini-3.1-flash-lite
 output_schema: margdarshak_ai.schemas.CoachDraft
 state_inputs: [plan, allowed_drill_ids, locale, streak_state, canary]
 temperature: 0.4

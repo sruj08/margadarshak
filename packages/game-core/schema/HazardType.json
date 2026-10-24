@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "string",
+  "enum": [
+    "bus_stop_pedestrian",
+    "door_opening",
+    "auto_cut_in",
+    "wrong_side_2w",
+    "cattle_animal",
+    "child_school",
+    "pedestrian_median",
+    "vehicle_pulling_out",
+    "truck_left_turn",
+    "junction_emerging",
+    "overtaking_oncoming",
+    "parked_vehicle_hidden",
+    "cyclist",
+    "surface_hazard",
+    "other"
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/HazardType.json",
+  "title": "HazardType"
+}

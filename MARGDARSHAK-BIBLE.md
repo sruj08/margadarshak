@@ -22641,13 +22641,13 @@ Licence check job in CI; every published clip has licence + attribution; README 
 
 | ID | Agent | Model (env var → default) | Where it runs | Phase-1/2 status | Under-18? |
 |---|---|---|---|---|---|
-| M-01 | VoiceGuideAgent | `MD_MODEL_VOICE_LIVE` → `gemini-3.8-live`; fallback `MD_MODEL_VOICE_LIVE_FALLBACK` → `gemini-2.5-flash-native-audio-preview-12-2025` | Cloud (Gemini Live via ADK `run_live`) | **Build (thin, bounded):** Hindi + English, 8 destinations, 10 fields (04 §3.1) | **No** |
-| M-02 | DebriefAgent | `MD_MODEL_DEBRIEF` → `gemini-3.1-flash-lite` | Cloud (one LLM node in the ADK graph) | **Build:** deep slice B | **No** (template card instead) |
-| M-03 | CoachAgent | `MD_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly batch through n8n W6 → API | Build (thin) | **No** (template plan) |
-| M-04 | TutorAgent | `MD_MODEL_TUTOR` → `gemini-3.1-flash-lite` | Cloud | Build (thin; explanations reviewed offline, see §M-04) | **No** (static reviewed explanation) |
-| M-05 | ScreenDecoderAgent | `MD_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Build: status-screenshot path. Paper slip is **thin/stretch** (04 §3.6) | **No** (manual stage dropdown) |
-| M-06 | ClipWindowProposer | `MD_MODEL_VIDEO` → `gemini-3.8-flash` | Cloud, **offline**, inside the Render Workflows clip pipeline | **Build first** (04 §4 order 2; D-15 headline Workflow) | n/a (never user-facing) |
-| M-07 | SignSnap | `MD_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Could (F-27) | **No** (sign catalogue browse) |
+| M-01 | VoiceGuideAgent | `GEMINI_MODEL_LIVE` → `gemini-3.8-live`; fallback `GEMINI_MODEL_LIVE_FALLBACK` → `gemini-2.5-flash-native-audio-preview-12-2025` | Cloud (Gemini Live via ADK `run_live`) | **Build (thin, bounded):** Hindi + English, 8 destinations, 10 fields (04 §3.1) | **No** |
+| M-02 | DebriefAgent | `GEMINI_MODEL_DEBRIEF` → `gemini-3.1-flash-lite` | Cloud (one LLM node in the ADK graph) | **Build:** deep slice B | **No** (template card instead) |
+| M-03 | CoachAgent | `GEMINI_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly batch through n8n W6 → API | Build (thin) | **No** (template plan) |
+| M-04 | TutorAgent | `GEMINI_MODEL_TUTOR` → `gemini-3.1-flash-lite` | Cloud | Build (thin; explanations reviewed offline, see §M-04) | **No** (static reviewed explanation) |
+| M-05 | ScreenDecoderAgent | `GEMINI_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Build: status-screenshot path. Paper slip is **thin/stretch** (04 §3.6) | **No** (manual stage dropdown) |
+| M-06 | ClipWindowProposer | `GEMINI_MODEL_VIDEO` → `gemini-3.8-flash` | Cloud, **offline**, inside the Render Workflows clip pipeline | **Build first** (04 §4 order 2; D-15 headline Workflow) | n/a (never user-facing) |
+| M-07 | SignSnap | `GEMINI_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Could (F-27) | **No** (sign catalogue browse) |
 | M-08 | Sarvam Saaras v3 (STT) + Bulbul v3 `hi-IN` (TTS) | `SARVAM_STT_MODEL`, `SARVAM_TTS_MODEL` (exact strings **[unverified]**, owner AI lead, check at H0) | Cloud (Sarvam API) | Stretch: Dogri cascade (+4 h, 04 §3.1) | **No** |
 | M-09 | On-device: MediaPipe Face Landmarker (Helmet Fit); YuNet face detector + plate detector (clip blur) | n/a (bundled model files, hash-pinned) | Device (browser) for Helmet Fit; pipeline worker for blur | Build: Helmet Fit framing; blur in clip pipeline | Helmet Fit yes (no data leaves the device, no telemetry for u18); blur n/a |
 
@@ -22664,12 +22664,12 @@ Licence check job in CI; every published clip has licence + attribution; README 
 
 | Variable | Default (H0 pin) | Used by | Note |
 |---|---|---|---|
-| `MD_MODEL_VOICE_LIVE` | `gemini-3.8-live` | M-01 | ADK 2.12 support is **unknown** (04 §6 Q1). The H0 smoke test decides; on failure, flip to the fallback |
-| `MD_MODEL_VOICE_LIVE_FALLBACK` | `gemini-2.5-flash-native-audio-preview-12-2025` | M-01 | The ADK-documented default (04 §0.4) |
-| `MD_MODEL_TEXT_LITE` | `gemini-3.1-flash-lite` | M-02/03/04, router, scam explainer, commentary classifier | The cheapest current non-legacy model (04 §1.7) |
-| `MD_MODEL_DEBRIEF` / `MD_MODEL_COACH` / `MD_MODEL_TUTOR` | `${MD_MODEL_TEXT_LITE}` | per agent | Per-agent override for A/B tests via ADK agent routing (experimental, 04 §1.2) |
-| `MD_MODEL_VISION` | `gemini-3.6-flash` | M-05, M-07 | Multimodal |
-| `MD_MODEL_VIDEO` | `gemini-3.8-flash` | M-06 | Offline authoring |
+| `GEMINI_MODEL_LIVE` | `gemini-3.8-live` | M-01 | ADK 2.12 support is **unknown** (04 §6 Q1). The H0 smoke test decides; on failure, flip to the fallback |
+| `GEMINI_MODEL_LIVE_FALLBACK` | `gemini-2.5-flash-native-audio-preview-12-2025` | M-01 | The ADK-documented default (04 §0.4) |
+| `GEMINI_MODEL_TEXT_LITE` | `gemini-3.1-flash-lite` | M-02/03/04, router, scam explainer, commentary classifier | The cheapest current non-legacy model (04 §1.7) |
+| `GEMINI_MODEL_DEBRIEF` / `GEMINI_MODEL_COACH` / `GEMINI_MODEL_TUTOR` | `${GEMINI_MODEL_TEXT_LITE}` | per agent | Per-agent override for A/B tests via ADK agent routing (experimental, 04 §1.2) |
+| `GEMINI_MODEL_VISION` | `gemini-3.6-flash` | M-05, M-07 | Multimodal |
+| `GEMINI_MODEL_VIDEO` | `gemini-3.8-flash` | M-06 | Offline authoring |
 | `MD_GEMINI_TIER` | `paid` | all | The start-up check **refuses to boot** with `APP_ENV in {staging, prod, field}` unless the value is `paid` (D-13, 04 §0.2) |
 | `MD_GEMINI_SAFETY_THRESHOLD` | `BLOCK_MEDIUM_AND_ABOVE` | all | Set explicitly, because the default is OFF on Gemini 2.5+ (04 §1.8) |
 | `MD_VOICE_MONTHLY_CAP_MIN` | `10` | M-01 | Free-plan cap per user (04 §5) |
@@ -23054,7 +23054,7 @@ Common fields for every agent: purpose · instruction summary (full text in `ai/
 - answer rule questions only via `get_rule` and say the source;
 - if asked to pay, submit, book, or give Aadhaar/OTP, decline with the canned line and offer the hand-off screen.
 
-**Type.** An `LlmAgent` run under `runner.run_live()` with a `LiveRequestQueue` (bidi, so interruption works, 04 §1.5). Text mode uses the same agent with `MD_MODEL_TEXT_LITE`.
+**Type.** An `LlmAgent` run under `runner.run_live()` with a `LiveRequestQueue` (bidi, so interruption works, 04 §1.5). Text mode uses the same agent with `GEMINI_MODEL_TEXT_LITE`.
 
 **Tools (function tools; all idempotent because barge-in discards pending calls):**
 
@@ -23521,7 +23521,7 @@ sequenceDiagram
   participant B as Browser (AudioWorklet)
   participant API as FastAPI /v1/voice (API-40)
   participant ADK as ADK run_live + LiveRequestQueue
-  participant G as Gemini Live (MD_MODEL_VOICE_LIVE)
+  participant G as Gemini Live (GEMINI_MODEL_LIVE)
   B->>API: WS upgrade (session cookie) → AgeGate + consent
   API->>ADK: runner.run_live(session, live_request_queue)
   loop every 20 ms
@@ -23789,16 +23789,16 @@ The prompt files live in `ai/prompts/`. Each starts with a YAML front-matter blo
 
 | Prompt ID | Version | Agent / model | File | Output schema | Eval set (gate) | Owner | Status |
 |---|---|---|---|---|---|---|---|
-| `PRM-DEBRIEF` | 1.0.0 | M-02 DebriefAgent / `MD_MODEL_DEBRIEF` | `ai/prompts/debrief_agent.md` | `DebriefDraft` | `debrief_150.jsonl` | AI lead | draft, needs eval |
-| `PRM-COACH` | 1.0.0 | M-03 CoachAgent / `MD_MODEL_COACH` | `ai/prompts/coach_agent.md` | `CoachDraft` | `coach.evalset.json` (30, generated) | AI lead | draft |
-| `PRM-TUTOR` | 1.0.0 | M-04 TutorAgent / `MD_MODEL_TUTOR` | `ai/prompts/tutor_agent.md` | `TutorDraft` | `tutor_30.jsonl` | Learning lead | draft |
-| `PRM-VOICE` | 1.0.0 | M-01 VoiceGuideAgent / `MD_MODEL_VOICE_LIVE` (+ text mode) | `ai/prompts/voice_guide_agent.md` | tools (no schema) | `voice_nav_30.jsonl` | AI lead | draft |
-| `PRM-DECODER` | 1.0.0 | M-05 ScreenDecoderAgent / `MD_MODEL_VISION` | `ai/prompts/screen_decoder_agent.md` | `DecoderDraft` | `decoder_30.jsonl` | AI lead | draft |
-| `PRM-CLIPPROP` | 1.0.0 | M-06 ClipWindowProposer / `MD_MODEL_VIDEO` | `ai/prompts/clip_window_proposer.md` | `ClipProposal` | 3 hand-labelled clips (recall ≥ 80%) | Pipeline lead | draft |
-| `PRM-SIGNSNAP` | 1.0.0 | M-07 SignSnap / `MD_MODEL_VISION` | `ai/prompts/sign_snap.md` | `SignDraft` | `signsnap_30` (collect at H0) | Learning lead | draft |
+| `PRM-DEBRIEF` | 1.0.0 | M-02 DebriefAgent / `GEMINI_MODEL_DEBRIEF` | `ai/prompts/debrief_agent.md` | `DebriefDraft` | `debrief_150.jsonl` | AI lead | draft, needs eval |
+| `PRM-COACH` | 1.0.0 | M-03 CoachAgent / `GEMINI_MODEL_COACH` | `ai/prompts/coach_agent.md` | `CoachDraft` | `coach.evalset.json` (30, generated) | AI lead | draft |
+| `PRM-TUTOR` | 1.0.0 | M-04 TutorAgent / `GEMINI_MODEL_TUTOR` | `ai/prompts/tutor_agent.md` | `TutorDraft` | `tutor_30.jsonl` | Learning lead | draft |
+| `PRM-VOICE` | 1.0.0 | M-01 VoiceGuideAgent / `GEMINI_MODEL_LIVE` (+ text mode) | `ai/prompts/voice_guide_agent.md` | tools (no schema) | `voice_nav_30.jsonl` | AI lead | draft |
+| `PRM-DECODER` | 1.0.0 | M-05 ScreenDecoderAgent / `GEMINI_MODEL_VISION` | `ai/prompts/screen_decoder_agent.md` | `DecoderDraft` | `decoder_30.jsonl` | AI lead | draft |
+| `PRM-CLIPPROP` | 1.0.0 | M-06 ClipWindowProposer / `GEMINI_MODEL_VIDEO` | `ai/prompts/clip_window_proposer.md` | `ClipProposal` | 3 hand-labelled clips (recall ≥ 80%) | Pipeline lead | draft |
+| `PRM-SIGNSNAP` | 1.0.0 | M-07 SignSnap / `GEMINI_MODEL_VISION` | `ai/prompts/sign_snap.md` | `SignDraft` | `signsnap_30` (collect at H0) | Learning lead | draft |
 | `PRM-SCAM` | 0.1.0 | Scam explainer (no M-ID; see AGENTS §9) | inline in `services/api/ai/scam.py` (to be extracted) | `ScamFlags` | 50 messages (04 §3.7) | AI lead | planned |
 | `PRM-COMMENTARY` | 0.1.0 | Commentary classifier (no M-ID) | inline (to be extracted) | `MentionList` | 15 scripted commentaries | AI lead | planned |
-| `PRM-JUDGE` | 1.0.0 | Jailbreak judge (P4) / `MD_MODEL_TEXT_LITE` | `services/api/ai/judge.md` | `JudgeVerdict` | 40 injection strings in `debrief_150` + `voice_nav_30` | AI lead | draft |
+| `PRM-JUDGE` | 1.0.0 | Jailbreak judge (P4) / `GEMINI_MODEL_TEXT_LITE` | `services/api/ai/judge.md` | `JudgeVerdict` | 40 injection strings in `debrief_150` + `voice_nav_30` | AI lead | draft |
 
 ### 1.1 Front-matter format
 
@@ -23807,7 +23807,7 @@ The prompt files live in `ai/prompts/`. Each starts with a YAML front-matter blo
 id: PRM-DEBRIEF
 version: 1.0.0
 agent: DebriefAgent
-model_env: MD_MODEL_DEBRIEF
+model_env: GEMINI_MODEL_DEBRIEF
 output_schema: margdarshak_ai.schemas.DebriefDraft
 state_inputs: [facts, allowed_rule_ids, drill_candidates, locale, prev_finding_ids]
 temperature: 0.3
@@ -24480,8 +24480,8 @@ jobs:
       APP_ENV: ci
       MD_GEMINI_TIER: paid
       GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY_EVAL }}
-      MD_MODEL_TEXT_LITE: ${{ vars.MD_MODEL_TEXT_LITE }}
-      MD_MODEL_VISION: ${{ vars.MD_MODEL_VISION }}
+      GEMINI_MODEL_TEXT_LITE: ${{ vars.GEMINI_MODEL_TEXT_LITE }}
+      GEMINI_MODEL_VISION: ${{ vars.GEMINI_MODEL_VISION }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24498,7 +24498,7 @@ jobs:
 
 **`ai/evals/gates.yaml`** encodes §3. A gate miss fails the job.
 - Monitor-only metrics (raw violations, latency on PR) post a PR comment instead.
-- Model-ID changes go through `vars`, never code. The nightly job also runs against `MD_MODEL_*_CANDIDATE` vars for shadow comparison.
+- Model-ID changes go through `vars`, never code. The nightly job also runs against `GEMINI_MODEL_*_CANDIDATE` vars for shadow comparison.
 
 **Regression policy.**
 1. Every production incident or human-review finding becomes a new eval case **before** the fix merges.

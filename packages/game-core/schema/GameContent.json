@@ -1,0 +1,1008 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "gameId": {
+          "type": "string",
+          "const": "nazar"
+        },
+        "clips": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clipId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "speedKmhEst": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 120
+              },
+              "durationMs": {
+                "type": "integer",
+                "minimum": 1000,
+                "maximum": 600000
+              },
+              "hazards": {
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "hazardId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24,
+                      "pattern": "^[A-Za-z0-9_.:@-]+$"
+                    },
+                    "hazardType": {
+                      "type": "string",
+                      "enum": [
+                        "bus_stop_pedestrian",
+                        "door_opening",
+                        "auto_cut_in",
+                        "wrong_side_2w",
+                        "cattle_animal",
+                        "child_school",
+                        "pedestrian_median",
+                        "vehicle_pulling_out",
+                        "truck_left_turn",
+                        "junction_emerging",
+                        "overtaking_oncoming",
+                        "parked_vehicle_hidden",
+                        "cyclist",
+                        "surface_hazard",
+                        "other"
+                      ]
+                    },
+                    "window": {
+                      "type": "object",
+                      "properties": {
+                        "aMs": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 600000
+                        },
+                        "bMs": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 600000
+                        }
+                      },
+                      "required": ["aMs", "bMs"]
+                    },
+                    "cardId": {
+                      "type": "string",
+                      "maxLength": 48
+                    }
+                  },
+                  "required": ["hazardId", "hazardType", "window"]
+                }
+              },
+              "quietSegments": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fromMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 600000
+                    },
+                    "toMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 600000
+                    }
+                  },
+                  "required": ["fromMs", "toMs"]
+                }
+              }
+            },
+            "required": [
+              "clipId",
+              "version",
+              "speedKmhEst",
+              "durationMs",
+              "hazards",
+              "quietSegments"
+            ]
+          }
+        },
+        "format": {
+          "type": "object",
+          "properties": {
+            "rule_id": {
+              "type": "string",
+              "pattern": "^HPT-[A-Z]{2}$"
+            },
+            "clips": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "marks_per_clip": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "max_hazards_per_clip": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "total_marks": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "status": {
+              "type": "string",
+              "enum": ["announced", "in_force", "on_hold", "stayed", "postponed", "withdrawn"]
+            },
+            "source_url": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "verified_on": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "rule_id",
+            "clips",
+            "marks_per_clip",
+            "max_hazards_per_clip",
+            "pass",
+            "total_marks",
+            "status",
+            "source_url",
+            "verified_on",
+            "confidence"
+          ]
+        }
+      },
+      "required": ["gameId", "clips", "format"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "gameId": {
+          "type": "string",
+          "const": "stopping_distance"
+        },
+        "rounds": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "round": {
+                    "type": "number",
+                    "const": 1
+                  },
+                  "speedKmh": {
+                    "type": "integer",
+                    "minimum": 10,
+                    "maximum": 120
+                  },
+                  "surface": {
+                    "type": "string",
+                    "enum": ["dry", "wet"]
+                  }
+                },
+                "required": ["round", "speedKmh", "surface"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "round": {
+                    "type": "number",
+                    "const": 2
+                  },
+                  "surface": {
+                    "type": "string",
+                    "enum": ["dry", "wet"]
+                  },
+                  "childDistanceM": {
+                    "type": "object",
+                    "properties": {
+                      "min": {
+                        "type": "integer",
+                        "minimum": 5,
+                        "maximum": 120
+                      },
+                      "max": {
+                        "type": "integer",
+                        "minimum": 5,
+                        "maximum": 120
+                      }
+                    },
+                    "required": ["min", "max"]
+                  },
+                  "speedOptionsKmh": {
+                    "minItems": 2,
+                    "maxItems": 8,
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 5,
+                      "maximum": 120,
+                      "multipleOf": 5
+                    }
+                  }
+                },
+                "required": ["round", "surface", "childDistanceM", "speedOptionsKmh"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "round": {
+                    "type": "number",
+                    "const": 3
+                  },
+                  "surface": {
+                    "type": "string",
+                    "enum": ["dry", "wet"]
+                  },
+                  "sightM": {
+                    "type": "object",
+                    "properties": {
+                      "min": {
+                        "type": "integer",
+                        "minimum": 10,
+                        "maximum": 200
+                      },
+                      "max": {
+                        "type": "integer",
+                        "minimum": 10,
+                        "maximum": 200
+                      }
+                    },
+                    "required": ["min", "max"]
+                  }
+                },
+                "required": ["round", "surface", "sightM"]
+              }
+            ]
+          }
+        }
+      },
+      "required": ["gameId", "rounds"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "gameId": {
+          "type": "string",
+          "const": "blind_spot"
+        },
+        "items": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "part": {
+                    "type": "string",
+                    "const": "A"
+                  },
+                  "vehicleType": {
+                    "type": "string",
+                    "enum": ["truck", "bus", "tanker"]
+                  },
+                  "orientationsDeg": {
+                    "minItems": 1,
+                    "maxItems": 8,
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 359
+                    }
+                  },
+                  "probes": {
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "wait_behind_at_light",
+                        "truck_about_to_turn_left",
+                        "beside_in_slow_traffic",
+                        "about_to_overtake",
+                        "stopped_ahead_of_truck"
+                      ]
+                    }
+                  }
+                },
+                "required": ["part", "vehicleType", "orientationsDeg", "probes"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "part": {
+                    "type": "string",
+                    "const": "B"
+                  },
+                  "vehicleType": {
+                    "type": "string",
+                    "enum": ["truck", "bus", "tanker"]
+                  },
+                  "durationMs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1200000
+                  },
+                  "laneWidthM": {
+                    "type": "number",
+                    "minimum": 2,
+                    "maximum": 6
+                  },
+                  "riderLaneLeftM": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 20
+                  },
+                  "truck": {
+                    "type": "object",
+                    "properties": {
+                      "keyframes": {
+                        "minItems": 2,
+                        "maxItems": 64,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "tMs": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 1200000
+                            },
+                            "progressM": {
+                              "type": "number",
+                              "minimum": -100,
+                              "maximum": 10000
+                            },
+                            "lateralM": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 20
+                            }
+                          },
+                          "required": ["tMs", "progressM", "lateralM"]
+                        }
+                      },
+                      "exitMs": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 1200000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": ["keyframes", "exitMs"]
+                  },
+                  "indicateLeft": {
+                    "maxItems": 8,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fromMs": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1200000
+                        },
+                        "toMs": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1200000
+                        }
+                      },
+                      "required": ["fromMs", "toMs"]
+                    }
+                  }
+                },
+                "required": [
+                  "part",
+                  "vehicleType",
+                  "durationMs",
+                  "laneWidthM",
+                  "riderLaneLeftM",
+                  "truck",
+                  "indicateLeft"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": ["gameId", "items"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "gameId": {
+          "type": "string",
+          "const": "junction_scan"
+        },
+        "items": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "junction": {
+                "type": "string",
+                "enum": ["T", "4arm"]
+              },
+              "threatSide": {
+                "type": "string",
+                "enum": ["right", "left"]
+              },
+              "occluded": {
+                "type": "boolean"
+              },
+              "creepClearDm": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "traffic": {
+                "maxItems": 16,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "agentId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24,
+                      "pattern": "^[A-Za-z0-9_.:@-]+$"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "car",
+                        "two_wheeler",
+                        "auto",
+                        "truck",
+                        "bus",
+                        "pedestrian",
+                        "cyclist",
+                        "wrong_side_rider"
+                      ]
+                    },
+                    "side": {
+                      "type": "string",
+                      "enum": ["right", "left"]
+                    },
+                    "spawnMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1200000
+                    },
+                    "spawnJitterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000
+                    },
+                    "distAtSpawnM": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 500
+                    },
+                    "speedMps": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 30
+                    }
+                  },
+                  "required": [
+                    "agentId",
+                    "kind",
+                    "side",
+                    "spawnMs",
+                    "spawnJitterMs",
+                    "distAtSpawnM",
+                    "speedMps"
+                  ]
+                }
+              },
+              "pedestrianOnCrossing": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "fromMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1200000
+                      },
+                      "toMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1200000
+                      }
+                    },
+                    "required": ["fromMs", "toMs"]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "vehicleInJunction": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "fromMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1200000
+                      },
+                      "toMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1200000
+                      }
+                    },
+                    "required": ["fromMs", "toMs"]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "junction",
+              "threatSide",
+              "occluded",
+              "creepClearDm",
+              "traffic",
+              "pedestrianOnCrossing",
+              "vehicleInJunction"
+            ]
+          }
+        }
+      },
+      "required": ["gameId", "items"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "gameId": {
+          "type": "string",
+          "const": "track_twin"
+        },
+        "tracks": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trackId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32,
+                "pattern": "^[a-z0-9-]+$"
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "class": {
+                "type": "string",
+                "enum": ["2W", "LMV"]
+              },
+              "source": {
+                "type": "string",
+                "enum": ["design", "rule_pack", "live_intel"]
+              },
+              "label": {
+                "type": "string",
+                "const": "practice_layout"
+              },
+              "timeLimitS": {
+                "type": "integer",
+                "minimum": 10,
+                "maximum": 600
+              },
+              "passDemerits": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "immediateFailTimeFactor": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 3
+              },
+              "demerits": {
+                "type": "object",
+                "properties": {
+                  "lineTouch": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
+                  },
+                  "cone": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
+                  },
+                  "footDown": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
+                  },
+                  "stall": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
+                  },
+                  "rollback": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
+                  },
+                  "overTimePer10s": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
+                  }
+                },
+                "required": ["lineTouch", "cone", "footDown", "stall", "rollback", "overTimePer10s"]
+              },
+              "halfWidthM": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 5
+              },
+              "offTrackMarginM": {
+                "type": "number",
+                "minimum": 0.1,
+                "maximum": 5
+              },
+              "centreline": {
+                "minItems": 4,
+                "maxItems": 400,
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number",
+                      "minimum": -500,
+                      "maximum": 500
+                    },
+                    {
+                      "type": "number",
+                      "minimum": -500,
+                      "maximum": 500
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "segments": {
+                "minItems": 1,
+                "maxItems": 40,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fromIndex": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "toIndex": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "location": {
+                      "type": "string",
+                      "enum": ["loop_left", "loop_right", "crossing", "entry", "exit"]
+                    }
+                  },
+                  "required": ["fromIndex", "toIndex", "location"]
+                }
+              },
+              "cones": {
+                "maxItems": 40,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "rM": {
+                      "type": "number",
+                      "minimum": 0.05,
+                      "maximum": 1
+                    }
+                  },
+                  "required": ["x", "y", "rM"]
+                }
+              },
+              "start": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  },
+                  "headingDeg": {
+                    "type": "number",
+                    "minimum": -360,
+                    "maximum": 360
+                  }
+                },
+                "required": ["x", "y", "headingDeg"]
+              },
+              "finishFraction": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 1
+              },
+              "finishRadiusM": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 10
+              }
+            },
+            "required": [
+              "trackId",
+              "version",
+              "class",
+              "source",
+              "label",
+              "timeLimitS",
+              "passDemerits",
+              "immediateFailTimeFactor",
+              "demerits",
+              "halfWidthM",
+              "offTrackMarginM",
+              "centreline",
+              "segments",
+              "cones",
+              "start",
+              "finishFraction",
+              "finishRadiusM"
+            ]
+          }
+        }
+      },
+      "required": ["gameId", "tracks"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "gameId": {
+          "type": "string",
+          "const": "ll_sim"
+        },
+        "format": {
+          "type": "object",
+          "properties": {
+            "rule_id": {
+              "type": "string",
+              "pattern": "^LLT-[A-Z]{2,7}$"
+            },
+            "state": {
+              "type": "string",
+              "pattern": "^[A-Z]{2,7}$"
+            },
+            "known": {
+              "type": "boolean"
+            },
+            "questions": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 40
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 40
+            },
+            "per_q_timer_s": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 5,
+                  "maximum": 600
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "total_timer_s": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 10,
+                  "maximum": 7200
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source_url": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "verified_on": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "rule_id",
+            "state",
+            "known",
+            "questions",
+            "pass",
+            "per_q_timer_s",
+            "total_timer_s",
+            "source_url",
+            "verified_on",
+            "confidence"
+          ]
+        },
+        "questions": {
+          "maxItems": 40,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "qref": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24,
+                "pattern": "^[A-Za-z0-9_.:@-]+$"
+              },
+              "cardId": {
+                "type": "string",
+                "maxLength": 48
+              },
+              "correctOptionId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24,
+                "pattern": "^[A-Za-z0-9_.:@-]+$"
+              },
+              "topic": {
+                "type": "string",
+                "enum": ["LL0", "LL1", "LL2", "LL3", "LL4"]
+              },
+              "signFamily": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": ["MANDATORY", "CAUTIONARY", "INFORMATORY", "MARKINGS", "SIGNALS"]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "signId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^SIGN-[A-Z]{2,4}-\\d{3}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": ["qref", "cardId", "correctOptionId", "topic", "signFamily", "signId"]
+          }
+        }
+      },
+      "required": ["gameId", "format", "questions"]
+    }
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/GameContent.json",
+  "title": "GameContent"
+}

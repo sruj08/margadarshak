@@ -1,0 +1,288 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "LL2",
+  "track": "A_ll_syllabus",
+  "title": {
+    "en": "Rules of the road",
+    "hi": "सड़क के नियम"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "All",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Deep",
+  "skill_id": "SK-LL2",
+  "game_ids": ["ll_sim"],
+  "drill_ids": ["DR-LL-TOPIC-LL2"],
+  "rule_ids": [
+    "RR-ALC-001",
+    "RR-BLT-001",
+    "RR-FOL-001",
+    "RR-HIL-001",
+    "RR-HIL-003",
+    "RR-HLM-001",
+    "RR-HVY-002",
+    "RR-JCT-001",
+    "RR-JCT-002",
+    "RR-NGT-001",
+    "RR-NGT-002",
+    "RR-PED-001",
+    "RR-PHN-001",
+    "RR-SPD-001",
+    "RR-SPD-002",
+    "RR-WRG-001"
+  ],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-LL2-1",
+      "text": {
+        "en": "Keep left; overtake on the right only.",
+        "hi": "बाईं ओर चलें; ओवरटेक सिर्फ़ दाईं ओर से करें।"
+      }
+    },
+    {
+      "id": "LO-LL2-2",
+      "text": {
+        "en": "Apply right-of-way at junctions and pedestrian crossings.",
+        "hi": "चौराहों और पैदल यात्री क्रॉसिंग पर रास्ते का हक़ सही से लागू करें।"
+      }
+    },
+    {
+      "id": "LO-LL2-3",
+      "text": {
+        "en": "Know where not to stop, park or overtake: bends, bridges, crossings.",
+        "hi": "जानें कि कहाँ रुकना, पार्क करना या ओवरटेक करना मना है: मोड़, पुल, क्रॉसिंग।"
+      }
+    },
+    {
+      "id": "LO-LL2-4",
+      "text": {
+        "en": "Give way to emergency vehicles.",
+        "hi": "आपात वाहनों को रास्ता दें।"
+      }
+    },
+    {
+      "id": "LO-LL2-5",
+      "text": {
+        "en": "Know when the horn is prohibited.",
+        "hi": "जानें कि हॉर्न कब मना है।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-LL2-1",
+      "title": {
+        "en": "Lane discipline",
+        "hi": "लेन अनुशासन"
+      }
+    },
+    {
+      "id": "LS-LL2-2",
+      "title": {
+        "en": "Overtaking",
+        "hi": "ओवरटेक"
+      }
+    },
+    {
+      "id": "LS-LL2-3",
+      "title": {
+        "en": "Junction priority",
+        "hi": "चौराहे पर रास्ते का हक़"
+      }
+    },
+    {
+      "id": "LS-LL2-4",
+      "title": {
+        "en": "Roundabouts",
+        "hi": "गोल चक्कर"
+      }
+    },
+    {
+      "id": "LS-LL2-5",
+      "title": {
+        "en": "Pedestrians",
+        "hi": "पैदल यात्री"
+      }
+    },
+    {
+      "id": "LS-LL2-6",
+      "title": {
+        "en": "Parking and stopping",
+        "hi": "पार्किंग और रुकना"
+      }
+    },
+    {
+      "id": "LS-LL2-7",
+      "title": {
+        "en": "Emergency vehicles and the horn",
+        "hi": "आपात वाहन और हॉर्न"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-LL2-1",
+      "kind": "law",
+      "text": {
+        "en": "Keep left and let oncoming traffic pass on your right; never ride against traffic.",
+        "hi": "बाईं ओर चलें और सामने के ट्रैफ़िक को दाईं ओर से निकलने दें; कभी उल्टी दिशा में न चलें।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-WRG-001"
+    },
+    {
+      "id": "KF-LL2-2",
+      "kind": "law",
+      "text": {
+        "en": "At an uncontrolled junction of equal roads, give way to traffic from your right and to anyone already in the junction.",
+        "hi": "बराबर सड़कों के बिना नियंत्रण वाले चौराहे पर दाईं ओर से आते ट्रैफ़िक को और चौराहे में पहले से मौजूद लोगों को रास्ता दें।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-JCT-002"
+    },
+    {
+      "id": "KF-LL2-3",
+      "kind": "law",
+      "text": {
+        "en": "Overtake only on the right of the vehicle you are passing.",
+        "hi": "जिस वाहन को पार कर रहे हैं, उसे सिर्फ़ उसकी दाईं ओर से ओवरटेक करें।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-HVY-002"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-LL2-1",
+      "myth": {
+        "en": "On a two-wheeler you can slip past a turning vehicle on its left.",
+        "hi": "दोपहिया पर मुड़ते वाहन की बाईं ओर से निकल सकते हैं।"
+      },
+      "correction": {
+        "en": "Passing on the left of a vehicle that is turning or stopping puts you where its driver can't see you; overtake on the right.",
+        "hi": "मुड़ते या रुकते वाहन की बाईं ओर से निकलने पर आप ऐसी जगह होते हैं जहाँ ड्राइवर आपको नहीं देख पाता; दाईं ओर से ओवरटेक करें।"
+      },
+      "rule_id": "RR-HVY-002"
+    },
+    {
+      "id": "MC-LL2-2",
+      "myth": {
+        "en": "Sounding the horn gives you the right of way.",
+        "hi": "हॉर्न बजाने से रास्ते का हक़ मिल जाता है।"
+      },
+      "correction": {
+        "en": "The horn only warns others; it gives you no priority.",
+        "hi": "हॉर्न सिर्फ़ दूसरों को सावधान करता है; इससे कोई हक़ नहीं मिलता।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 45,
+    "authored": [
+      "C-LL2-001",
+      "C-LL2-002",
+      "C-LL2-003",
+      "C-LL2-004",
+      "C-LL2-005",
+      "C-LL2-006",
+      "C-LL2-007",
+      "C-LL2-008",
+      "C-LL2-009",
+      "C-LL2-010",
+      "C-LL2-011",
+      "C-LL2-012",
+      "C-LL2-013",
+      "C-LL2-014",
+      "C-LL2-015",
+      "C-LL2-016",
+      "C-LL2-017",
+      "C-LL2-018",
+      "C-LL2-019",
+      "C-LL2-020",
+      "C-LL2-021",
+      "C-LL2-022",
+      "C-LL2-023"
+    ]
+  },
+  "assessment": {
+    "criterion": {
+      "en": "FSRS mastery M_LL2 ≥ 0.8; mock sections.",
+      "hi": "FSRS महारत M_LL2 ≥ 0.8; मॉक के हिस्से।"
+    },
+    "readiness": "test",
+    "item_refs": [
+      "C-LL2-001",
+      "C-LL2-002",
+      "C-LL2-003",
+      "C-LL2-004",
+      "C-LL2-005",
+      "C-LL2-006",
+      "C-LL2-007",
+      "C-LL2-008",
+      "C-LL2-009",
+      "C-LL2-010",
+      "C-LL2-011",
+      "C-LL2-012",
+      "C-LL2-013",
+      "C-LL2-014",
+      "C-LL2-015",
+      "C-LL2-016",
+      "C-LL2-017",
+      "C-LL2-018",
+      "C-LL2-019",
+      "C-LL2-020",
+      "C-LL2-021",
+      "C-LL2-022",
+      "C-LL2-023"
+    ]
+  },
+  "review": {
+    "needs": [
+      "Legal review of each rule statement against the fetched MV (Driving) Regulations 2017 text (numbers pinned after fetch; verified=false until then)"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

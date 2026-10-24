@@ -1,0 +1,168 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M6",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Uncontrolled and T-junctions",
+    "hi": "बिना नियंत्रण वाले और T-चौराहे"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Thin (1 level) + Nazar",
+  "skill_id": "SK-M6",
+  "game_ids": ["junction_scan", "nazar"],
+  "drill_ids": [
+    "DR-JS-SCAN",
+    "DR-JS-GAP",
+    "DR-JS-CREEP",
+    "DR-JS-YIELD",
+    "DR-NAZ-OCCL-JUNCTION_EMERGING",
+    "DR-NAZ-OCCL-PARKED_VEHICLE_HIDDEN"
+  ],
+  "rule_ids": ["RR-JCT-001", "RR-JCT-002"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M6-1",
+      "text": {
+        "en": "Apply slow → scan (right, left, right again) → creep → go.",
+        "hi": "धीमे हों → देखें (दाएँ, बाएँ, फिर दाएँ) → धीरे बढ़ें → जाएँ।"
+      }
+    },
+    {
+      "id": "LO-M6-2",
+      "text": {
+        "en": "Yield correctly when right-of-way is unclear: a pedestrian on the crossing, a vehicle already in the junction.",
+        "hi": "जब रास्ते का हक़ साफ़ न हो तब सही से रास्ता दें: क्रॉसिंग पर पैदल यात्री, चौराहे में पहले से मौजूद वाहन।"
+      }
+    },
+    {
+      "id": "LO-M6-3",
+      "text": {
+        "en": "Spot vehicles hidden behind a stopped bus or a car's pillar.",
+        "hi": "रुकी बस या कार के खंभे के पीछे छिपे वाहनों को पहचानें।"
+      }
+    },
+    {
+      "id": "LO-M6-4",
+      "text": {
+        "en": "Accept only gaps you can complete.",
+        "hi": "सिर्फ़ उतना फ़ासला चुनें जिसमें आप पूरा निकल सकें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M6-1",
+      "title": {
+        "en": "Why uncontrolled junctions are the biggest risk",
+        "hi": "बिना नियंत्रण वाले चौराहे सबसे बड़ा जोखिम क्यों हैं"
+      }
+    },
+    {
+      "id": "LS-M6-2",
+      "title": {
+        "en": "Right, left, right again",
+        "hi": "दाएँ, बाएँ, फिर दाएँ"
+      }
+    },
+    {
+      "id": "LS-M6-3",
+      "title": {
+        "en": "Creep and peek",
+        "hi": "धीरे बढ़ें और झाँकें"
+      }
+    },
+    {
+      "id": "LS-M6-4",
+      "title": {
+        "en": "Gap judgement in seconds",
+        "hi": "सेकंड में फ़ासले का अंदाज़ा"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M6-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Uncontrolled crossings saw 25,471 deaths (14.7%) in 2023, far more than signalised junctions (2,131); T-junctions saw 12,311 (7.1%).",
+        "hi": "2023 में बिना नियंत्रण वाले चौराहों पर 25,471 मौतें (14.7%) हुईं, सिग्नल वाले चौराहों (2,131) से कहीं ज़्यादा; T-चौराहों पर 12,311 (7.1%)।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Tables 3.6–3.7 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M6-2",
+      "kind": "practice",
+      "text": {
+        "en": "At junctions: slow, look right, left and right again, creep to see, then go.",
+        "hi": "चौराहे पर: धीमे हों, दाएँ, बाएँ और फिर दाएँ देखें, धीरे बढ़कर देखें, फिर जाएँ।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M6 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-JCT-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M6-1",
+      "myth": {
+        "en": "Looking once each way is enough.",
+        "hi": "हर ओर एक बार देखना काफ़ी है।"
+      },
+      "correction": {
+        "en": "Look right again last: in left-hand traffic the near lane comes from the right.",
+        "hi": "आख़िर में फिर दाएँ देखें: बाईं ओर चलने वाले ट्रैफ़िक में पास वाली लेन दाईं ओर से आती है।"
+      },
+      "rule_id": "RR-JCT-001"
+    }
+  ],
+  "concepts": {
+    "target": 7,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G4 ≥ 80 with no critical fault in 2 sessions; Nazar junction types ≥ 0.8.",
+      "hi": "2 सेशन में बिना गंभीर ग़लती के G4 ≥ 80; नज़र में चौराहे वाले ख़तरे ≥ 0.8।"
+    },
+    "readiness": "road",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Instructor review of the scan-sequence wording"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

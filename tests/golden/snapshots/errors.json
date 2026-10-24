@@ -1,0 +1,68 @@
+{
+  "ERR-dob-after-as-of": {
+    "error": {
+      "code": "DOB_AFTER_AS_OF",
+      "field": "dob"
+    }
+  },
+  "ERR-invalid-as-of": {
+    "error": {
+      "code": "INVALID_AS_OF",
+      "field": "as_of"
+    }
+  },
+  "ERR-invalid-dob": {
+    "error": {
+      "code": "INVALID_DOB",
+      "field": "dob"
+    }
+  },
+  "ERR-invalid-dob-precision": {
+    "error": {
+      "code": "INVALID_DOB_PRECISION",
+      "field": "dob_precision"
+    }
+  },
+  "ERR-ll-issued-in-future": {
+    "error": {
+      "code": "INVALID_DATE",
+      "field": "ll_issued_on"
+    }
+  },
+  "ERR-no-classes": {
+    "error": {
+      "code": "NO_CLASSES",
+      "field": "vehicles"
+    }
+  },
+  "ERR-unknown-class": {
+    "error": {
+      "code": "UNKNOWN_CLASS",
+      "field": "classes"
+    }
+  },
+  "ERR-unknown-disability": {
+    "error": {
+      "code": "UNKNOWN_DISABILITY",
+      "field": "disability"
+    }
+  },
+  "ERR-unknown-state": {
+    "error": {
+      "code": "UNKNOWN_STATE",
+      "field": "state"
+    }
+  },
+  "ERR-unknown-vehicle": {
+    "error": {
+      "code": "UNKNOWN_VEHICLE",
+      "field": "vehicles"
+    }
+  },
+  "ERR-year-only-bad-year": {
+    "error": {
+      "code": "INVALID_DOB",
+      "field": "dob"
+    }
+  }
+}

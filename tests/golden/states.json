@@ -1,0 +1,208 @@
+{
+  "cases": [
+    {
+      "id": "STATE-JK-full-pack",
+      "description": "J&K v1: not partial, LL format 10/6 (medium, unverified), CSC option, S-track/8-track, office stubs, PSGA unknown",
+      "refs": ["MD-030"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2001-01-01", "vehicles": ["car"] },
+      "expect": {
+        "rule_pack": {
+          "pack_id": "JK",
+          "version": "2026.10.0",
+          "base_version": "IN-base@2026.10.0",
+          "partial": false
+        },
+        "ll_test": {
+          "online_available": true,
+          "where": ["home_online", "csc", "rto"],
+          "mode": "online",
+          "known": true,
+          "questions": 10,
+          "pass_correct": 6,
+          "pass_pct": 60,
+          "verified": false,
+          "confidence": "medium",
+          "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"]
+        },
+        "dl_test": {
+          "known": true,
+          "automated": true,
+          "rule_id": "JK-PRM-DL-TEST",
+          "tracks": { "$len": 2 }
+        },
+        "offices": [
+          { "office_id": "jk-rto-jammu", "track_type": null },
+          { "office_id": "jk-rto-kashmir", "district": "Srinagar" },
+          { "office_id": "jk-arto-kathua" },
+          { "office_id": "jk-csc", "tests": ["ll_online"] }
+        ],
+        "notices": {
+          "$includes": [
+            { "rule_id": "JK-B08" },
+            { "rule_id": "JK-NTC-DIGILOCKER" },
+            { "rule_id": "JK-NTC-APPROVAL-SMS", "verify_at_rto": true }
+          ],
+          "$excludes": [{ "rule_id": "NTC-PARTIAL-PACK" }]
+        },
+        "milestones": [
+          { "id": "LL_DAY_30_UNLOCK", "rule_id": "JK-PRM-MIN-WAIT-DAYS" },
+          { "id": "LL_EXPIRY", "rule_id": "JK-PRM-LL-VALIDITY-MONTHS" }
+        ],
+        "max_rto_visits": 1
+      }
+    },
+    {
+      "id": "STATE-DL-partial",
+      "description": "Delhi partial pack: online at home or RTO, automated tracks, partial banner, default LL format marked unknown",
+      "refs": ["MD-031"],
+      "input": { "as_of": "2026-10-23", "state": "DL", "dob": "2001-01-01", "vehicles": ["car"] },
+      "expect": {
+        "rule_pack": { "pack_id": "DL", "partial": true },
+        "ll_test": {
+          "online_available": true,
+          "known": false,
+          "pass_pct": 60,
+          "verified": false,
+          "rule_ids": ["DL-PRM-LL-TEST-MODE", "PRM-LL-FORMAT"]
+        },
+        "dl_test": { "automated": true, "rule_id": "DL-PRM-DL-TEST" },
+        "offices": [],
+        "notices": {
+          "$includes": [{ "rule_id": "NTC-PARTIAL-PACK" }, { "rule_id": "DL-NTC-ADTT-FAIL-RATE" }]
+        },
+        "max_rto_visits": 1
+      }
+    },
+    {
+      "id": "STATE-KL-partial",
+      "description": "Kerala partial pack: manual MVI tests, slot backlog warning, HPT status row",
+      "refs": ["MD-031", "EC-10", "EC-28"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "KL",
+        "dob": "2001-01-01",
+        "vehicles": ["scooter"]
+      },
+      "expect": {
+        "rule_pack": { "pack_id": "KL", "partial": true },
+        "dl_test": { "automated": false, "rule_id": "KL-PRM-DL-TEST" },
+        "warnings": [{ "rule_id": "KL-WRN-SLOT-BACKLOG", "verify_at_rto": true }],
+        "hpt": { "status": "announced" }
+      }
+    },
+    {
+      "id": "STATE-MH-partial",
+      "description": "Maharashtra partial pack: at-home LL, manual test notice",
+      "refs": ["MD-031"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "MH",
+        "dob": "2001-01-01",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "rule_pack": { "pack_id": "MH", "partial": true },
+        "ll_test": {
+          "online_available": true,
+          "rule_ids": ["MH-PRM-LL-TEST-MODE", "PRM-LL-FORMAT"]
+        },
+        "dl_test": { "automated": false },
+        "notices": {
+          "$includes": [{ "rule_id": "MH-NTC-MANUAL-TEST" }, { "rule_id": "NTC-PARTIAL-PACK" }]
+        }
+      }
+    },
+    {
+      "id": "STATE-TN-partial",
+      "description": "Tamil Nadu partial pack: contactless flow (P-state, verified), automated tracks",
+      "refs": ["MD-031"],
+      "input": { "as_of": "2026-10-23", "state": "TN", "dob": "2001-01-01", "vehicles": ["car"] },
+      "expect": {
+        "rule_pack": { "pack_id": "TN", "partial": true },
+        "ll_test": {
+          "online_available": true,
+          "rule_ids": ["TN-PRM-LL-TEST-MODE", "PRM-LL-FORMAT"]
+        },
+        "dl_test": { "automated": true, "rule_id": "TN-PRM-DL-TEST" },
+        "max_rto_visits": 1
+      }
+    },
+    {
+      "id": "STATE-PB-partial",
+      "description": "Punjab partial pack: faceless services notice, automated video-recorded tracks",
+      "refs": ["MD-031"],
+      "input": { "as_of": "2026-10-23", "state": "PB", "dob": "2001-01-01", "vehicles": ["car"] },
+      "expect": {
+        "rule_pack": { "pack_id": "PB", "partial": true },
+        "dl_test": { "automated": true, "rule_id": "PB-PRM-DL-TEST" },
+        "notices": {
+          "$includes": [{ "rule_id": "PB-NTC-FACELESS" }],
+          "$excludes": [{ "rule_id": "PB-NTC-LL-EXTENSION" }]
+        }
+      }
+    },
+    {
+      "id": "STATE-PB-ll-extension",
+      "description": "Punjab, LL already held: 'extension of LL validity' notice",
+      "refs": ["EC-07", "EC-22"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "PB",
+        "dob": "2001-01-01",
+        "vehicles": ["car"],
+        "ll_issued_on": "2026-06-01"
+      },
+      "expect": { "notices": { "$includes": [{ "rule_id": "PB-NTC-LL-EXTENSION" }] } }
+    },
+    {
+      "id": "STATE-JK-steps-online",
+      "description": "J&K steps on the contactless path, in order",
+      "refs": ["F-02"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2001-01-01", "vehicles": ["car"] },
+      "expect": {
+        "steps": [
+          {
+            "n": 1,
+            "key": "ll.apply",
+            "at_rto": false,
+            "rule_ids": ["JK-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"]
+          },
+          { "n": 2, "key": "ll.tutorial", "rule_ids": ["PRM-TUTORIAL-DAYS"] },
+          {
+            "n": 3,
+            "key": "ll.test.online",
+            "at_rto": false,
+            "visit": null,
+            "due_on": "2026-10-23"
+          },
+          { "n": 4, "key": "practice", "due_on": "2026-11-22" },
+          {
+            "n": 5,
+            "key": "dl.book",
+            "rule_ids": ["JK-PRM-MIN-WAIT-DAYS", "JK-PRM-LL-VALIDITY-MONTHS"]
+          },
+          { "n": 6, "key": "dl.test", "at_rto": true, "visit": 1 },
+          {
+            "n": 7,
+            "key": "dl.issue",
+            "due_on": "2026-11-22",
+            "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "STATE-KL-pack-hash-recorded",
+      "description": "EC-27: every plan records the pack version and a 64-hex content hash",
+      "refs": ["EC-27"],
+      "input": { "as_of": "2026-10-23", "state": "KL", "dob": "2001-01-01", "vehicles": ["car"] },
+      "expect": {
+        "rule_pack": {
+          "version": "2026.10.0",
+          "fees_version": "2026.10.0",
+          "classes_version": "2026.10.0"
+        }
+      }
+    }
+  ]
+}

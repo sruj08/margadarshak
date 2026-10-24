@@ -1,7 +1,7 @@
 # Gamification Engine: XP, ranks, mastery, readiness, streaks, squads, badges
 > Project: Margdarshak · Owner: Learning & Games lead · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [GAME_SDK](GAME_SDK.md) · [GAME_DESIGN](GAME_DESIGN.md) · [CURRICULUM](CURRICULUM.md) · [DEBRIEF_SPEC](DEBRIEF_SPEC.md) · [NAZAR](NAZAR.md) · [Design system](../02-design/DESIGN_SYSTEM.md) · [Privacy](../06-security-compliance/PRIVACY.md) · [Compliance](../06-security-compliance/COMPLIANCE.md) · [Metrics](../01-product/METRICS.md)
-> Features: F-20, F-21, F-26, F-28, F-15 (refresh), F-53 (nudges), F-54 (minor gating) · Entities: E-18 TopicMastery, E-22 Achievement, E-23 Squad, E-27 PracticeLog, E-11 TestAttempt · APIs: API-31, API-32, API-33, API-38, API-39, API-46, API-47 · Directives: D-11, D-13, D-14, D-19, D-22 · Edge cases: EC-05, EC-14, EC-15, EC-22, EC-26
+> Features: F-20, F-21, F-26, F-28, F-15 (refresh), F-53 (nudges), F-54 (consent, incl. parental consent in family mode) · Entities: E-18 TopicMastery, E-22 Achievement, E-23 Squad, E-27 PracticeLog, E-11 TestAttempt · APIs: API-31, API-32, API-33, API-38, API-39, API-46, API-47 · Directives: D-11, D-13 revised, D-14, D-19, D-22 · Edge cases: EC-05, EC-14, EC-15, EC-22, EC-26
 > Evidence: `research/ps1-deep/05-psychology.md` (principles 10–20, cheat vectors), `08-game-ai-n8n.md` §4, `06-design-language.md` §B11.
 
 ---
@@ -17,22 +17,22 @@
 | 5 | **No tangible rewards for learning** | Deci, Koestner & Ryan 1999 (`05` principle 15) | cash, cash-back, coupons, redeemable prizes; also the Online Gaming Act 2025 stake-free requirement (verification G9) |
 | 6 | The loop **ends at DL test day** | `05` principle 16 | lifetime DAU goals; the only post-licence loop is an opt-in Nazar refresh |
 | 7 | **Honest copy, legally**: the CCPA 2023 dark-pattern list is a CI lint (§12) | CCPA Guidelines, 30 Nov 2023 | false urgency, confirm-shaming, nagging… |
-| 8 | **Under 18 gets none of it** (D-13) | DPDP s.9(3) bans tracking and behavioural monitoring of children (verification G7) | XP history, streaks, squads, badges, share cards for minors |
+| 8 | **A child's data is never used for tracking or ads** (D-13 revised) | DPDP s.9(3) bans tracking, behavioural monitoring and targeted advertising directed at children (verification G7) | profiling, targeted ads or marketing built on a minor's data; squads and share cards for a minor's profile without the parent's consent |
 
 ---
 
 ## 1. Who gets what
 
-| Mechanic | Adult (DOB ≥ 18, account) | Adult, anonymous device session | Under 18 (P-07) |
+| Mechanic | Account holder (adult) | Adult, anonymous device session | Minor's profile in family mode (P-07, D-13 revised) |
 |---|---|---|---|
-| FSRS reviews, mastery, readiness | server + device cache | device only, migrates on account creation | **device only**, never synced |
-| XP, ranks | yes | device only, migrates | **no** |
-| Weekly streak | yes | device only | **no** |
-| Squads, pair mode | yes | no (needs an account) | **no** |
-| Badges | yes | device only (except self-declared ones, which need an account) | **no** |
-| Share card | yes | no | **no** |
-| Practice Record | yes | no | **no** |
-| Notifications | opt-in, ≤ 1/day | no | **no marketing; only guardian-configured case-clock reminders if the guardian opts in (F-17)** |
+| FSRS reviews, mastery, readiness | server + device cache | device only, migrates on account creation | server + device cache |
+| XP, ranks | yes | device only, migrates | yes |
+| Weekly streak | yes | device only | yes |
+| Squads, pair mode | yes | no (needs an account) | after the parent consents |
+| Badges | yes | device only (except self-declared ones, which need an account) | yes |
+| Share card | yes | no | after the parent consents |
+| Practice Record | yes | no | yes |
+| Notifications | opt-in, ≤ 1/day | no | opt-in by the parent, ≤ 1/day; **no marketing** |
 
 ---
 
@@ -204,7 +204,7 @@ State machine (E-22 `streak`): `active(weeks, tokens)` → week closes → goal 
 | Rule | Value |
 |---|---|
 | Size | 3–5 members (E-23), invite-only link (expires 7 days) |
-| Who | **adults only** (verified DOB ≥ 18). No under-18 squads of any kind (D-13 overrides the school-code idea in `08` §4.7) |
+| Who | every account holder, and a minor's profile in family mode once the parent consents (D-13 revised). The school-code idea in `08` §4.7 is not built in Phase 1–2 |
 | Squad score | `mean over members with a Nazar Score of (NazarScore_i × (1 − B_i))`, shown only when ≥ 3 members contribute (so no individual's score can be inferred) |
 | Weekly squad goal | `3 × members` sessions [D] (e.g. 15 for 5); **everyone gets the ribbon, or nobody does** |
 | What members see of each other | display name (user-chosen), rank, whether they hit their weekly goal (yes/no). **Not** individual scores, calibration or failures |
@@ -290,18 +290,21 @@ The Guidelines (notified 30 Nov 2023) specify **13 patterns** ([Mondaq](https://
 | DP-15 | (ours) Public loss and comparison pushes | No "your friend beat you", no public fail states | copy + review |
 | DP-16 | (ours) Money for learning | No cash, cash-back, coupons or redeemable prizes (also Online Gaming Act 2025) | review |
 | DP-17 | (ours) Fear content | No gore, death splash screens or injury imagery | copy lint (banned words) + asset review |
-| DP-18 | (ours) Minors | No AI, telemetry, streaks, squads, badges or share cards under 18 | e2e with a u18 profile: none of these elements render; network log shows no game telemetry |
+| DP-18 | (ours) Minors | No behavioural tracking, profiling, targeted ads or marketing on a minor's data; squads, pair mode and share cards only with the parent's consent (D-13 revised) | e2e with a family-mode profile: AI, streaks and badges render; squad, pair and share actions show the parent-consent step until the parent consents |
 
 A PR that fails any DP lint can't merge. Waivers need the product lead's sign-off in the PR and a CHANGELOG line.
 
 ---
 
-## 13. Under-18 rules (D-13, P-07, EC-05)
+## 13. Family-mode rules (D-13 revised, P-07, EC-05)
 
-1. Age band comes from the DOB on the case (E-01 age band); EC-01 (Aadhaar with only a year of birth) keeps the user in the u18 band until a DOB document is confirmed when the computed age is within a year of 18.
-2. Allowed: plan card, checklists, static lessons, LL practice and the games marked `local_only`, all on the device, with **template** debriefs rendered on the device.
-3. Not allowed: any AI (Gemini terms are 18+, verification G8), game telemetry leaving the device, XP history, ranks, streaks, squads, pair mode, badges, share cards, Practice Record, marketing messages, Nazar mock and commentary.
-4. On turning 18 (server-computed from the DOB), the user is offered (never auto-enrolled) an account; device-only progress may be imported with their consent.
+1. Age band comes from the DOB on the case (E-01 age band); EC-01 (Aadhaar with only a year of birth) keeps the learner in the u18 band (family mode) until a DOB document is confirmed when the computed age is within a year of 18.
+2. A learner under 18 uses Margdarshak on a parent's phone, inside the parent's (adult) account. The parent gives verifiable parental consent (DPDP s.9(1), Rule 10), including the "AI coach" and mic consents for the minor's case.
+3. Allowed, exactly as for every user: every AI feature, XP, ranks, streaks, badges, Practice Record, every game, Nazar mock and commentary.
+   - Needs the parent's consent first: squads, pair mode, share cards.
+   - Never: behavioural tracking, profiling, targeted ads or marketing messages built on a minor's data (s.9(3)).
+   - Provider terms for under-18 use are residual risk R-13 (legal lead); they do not switch features off.
+4. On turning 18 (server-computed from the DOB), the learner is offered (never auto-enrolled) their own account; the family-mode profile's progress may be moved with their consent.
 5. Guardian-facing content (M20, F-17 minor-riding awareness) is shown to adults.
 
 ## 14. Data and APIs

@@ -44,12 +44,12 @@
 | Line | Plan / usage | US$ | ₹ | Paid by |
 |---|---|---|---|---|
 | `margdarshak-web` | `0.5c-512mb` × 1 | 7 | 616 | Render credits |
-| `margdarshak-api` | `1c-2g` × 1 | 25 | 2,200 | Render credits |
+| `margdarshak-api` | `0.5c-512mb` × 1 (one static Go binary, ADR-0011; `1c-2g` at $25 if the k6 burst needs it) | 7 | 616 | Render credits |
 | `margdarshak-score-verifier` | `0.5c-512mb` pserv × 1 | 7 | 616 | Render credits |
 | `margdarshak-db` | Postgres `0.1c-256mb` | 6 | 528 | Render credits |
 | `margdarshak-kv` | Key Value `256mb` | 10 | 880 | Render credits |
 | Render Workflows | ≈ 120 clip ingests × 10 min + 2,000 debrief fan-outs × 20 s + 31 sweeps + 31 nightly stats, at ≤ $0.30/h effective **[E]** | ≈ 10 | ≈ 880 | Render credits |
-| **Render subtotal** | | **≈ 65** | **≈ 5,720** | **covered**: 4 members × $50 = $200 credit [S] B-sponsors §0 |
+| **Render subtotal** | | **≈ 47** | **≈ 4,136** | **covered**: 4 members × $50 = $200 credit [S] B-sponsors §0 |
 | Gemini: debriefs | ≈ 1,000 × ₹0.10 | | 100 | card (paid tier) |
 | Gemini: voice | ≈ 200 min × ₹2 | | 400 | card |
 | Gemini: vision (screen decoder, sign snap) | ≈ 200 × ₹0.20 | | 40 | card |
@@ -62,7 +62,7 @@
 | Sentry, Grafana Cloud | free tiers | | 0 | [U] quotas |
 | **Cash out of pocket** | | | **≈ ₹1,300–1,400** | team card |
 
-**Credit runway:** $200 of credit vs ≈ $65/month ⇒ about 3 months of the hackathon stack. Prize credits (Workflows track: $500 / $300 / $100 [S]) would extend this into the pilot. Suspend services after the judging window and post-event review so idle instances don't burn credit.
+**Credit runway:** $200 of credit vs ≈ $47/month ⇒ about 4 months of the hackathon stack. Prize credits (Workflows track: $500 / $300 / $100 [S]) would extend this into the pilot. Suspend services after the judging window and post-event review so idle instances don't burn credit.
 
 ## 3. Usage model per MAU (assumptions behind §4)
 | Driver | Assumption per MAU per month | Tag | ₹ per MAU |
@@ -79,11 +79,11 @@
 ## 4. Monthly cost at 1k / 100k / 10M MAU
 | Line | 1k MAU (pilot) | 100k MAU (one state) | 10M MAU (several states) | Notes |
 |---|---|---|---|---|
-| **Hosting** | Render (as §2, Postgres to 1 GB tier): ≈ **₹6,900** | India CSP **[E]**: ≈ 29 vCPU (web 4, api 8, verifier 2, workers 4, Temporal 4, observability 6, n8n 1) × ₹2,500 = **₹72,500** | **[E]**: ≈ 600 vCPU × ₹2,500 = **₹15,00,000** | production must be in India (INFRASTRUCTURE §3) |
+| **Hosting** | Render (as §2, Postgres to 1 GB tier): ≈ **₹5,300** | India CSP **[E]**: ≈ 29 vCPU (web 4, api 8, verifier 2, workers 4, Temporal 4, observability 6, n8n 1) × ₹2,500 = **₹72,500** | **[E]**: ≈ 600 vCPU × ₹2,500 = **₹15,00,000** | production must be in India (INFRASTRUCTURE §3) |
 | Postgres | incl. above | managed HA, 8 vCPU / 32 GB + replica **[E]** ≈ **₹60,000** | per-state clusters **[E]** ≈ **₹8,00,000** | partition `game_events` monthly |
 | Clip delivery (egress) | R2: **₹0** | 10 clips × 2 MB (360p, EC-19) = 20 MB/MAU ⇒ 2 TB × ₹6 = **₹12,000** | 200 TB × ₹6 = **₹12,00,000** | biggest infra lever (§6) |
 | Object storage, logs (180 d), backups | ≈ ₹0–500 | ≈ ₹5,000 (900 GB logs + backups) | ≈ ₹2,80,000 (≈ 90 TB logs + backups) | CERT-In 180-day retention in India |
-| **Infra subtotal** | **≈ ₹7,400** | **≈ ₹1,49,500** | **≈ ₹37,80,000** | |
+| **Infra subtotal** | **≈ ₹5,800** | **≈ ₹1,49,500** | **≈ ₹37,80,000** | |
 | Gemini: debriefs | ₹900 | ₹90,000 | ₹90,00,000 | ₹0.10 each |
 | Gemini: coach + tutor + vision | ₹820 | ₹82,000 | ₹82,00,000 | |
 | Gemini: **voice** (₹2/min) | ₹1,200 | ₹1,20,000 | **₹1,20,00,000** | dominant AI line (04 §5) |
@@ -91,8 +91,8 @@
 | WhatsApp (utility only, incl. GST) | ₹330 | ₹32,600 | ₹32,60,000 | volume tiers lower the utility rate at scale [S] |
 | n8n | ₹0 (Pro perk) | self-hosted, inside the compute line (≈ 1 vCPU) | ops queues only, self-hosted | §5 |
 | SMS | 0 | 0 until TRAI DLT; then via the state's NIC/mGov gateway [U] | same | D-16 |
-| **Total / month** | **≈ ₹10,650** | **≈ ₹4,74,000** | **≈ ₹3,62,00,000** | |
-| **₹ per MAU per month** | **≈ ₹10.7** | **≈ ₹4.7** | **≈ ₹3.6** | AI is 27 % → 62 % → 81 % of the total |
+| **Total / month** | **≈ ₹9,050** | **≈ ₹4,74,000** | **≈ ₹3,62,00,000** | |
+| **₹ per MAU per month** | **≈ ₹9.1** | **≈ ₹4.7** | **≈ ₹3.6** | AI is 32 % → 62 % → 81 % of the total |
 
 Reading the table:
 - At pilot scale, **fixed infrastructure dominates**: ₹7k of ₹10.7k.
@@ -147,4 +147,4 @@ This works because n8n holds **no business logic** (D-16): moving a workflow int
 - **Hard caps:** Gemini spend alert at ₹1,000/day in the hackathon (A-21); evals ≤ ₹150 per run (evals.yml); voice 10 min/user/month enforced server-side.
 - **Per-call cost is logged** (`md.cost_inr`) and shown on dashboard D9.
 - **Budget review:** daily during the event, weekly in the pilot; any line over 120 % of forecast opens a ticket.
-- **Under-18 users cost nothing in AI** by design (template cards, no voice), so a younger user base lowers AI cost.
+- **Learners under 18 use AI like everyone else** (family mode in a parent's account, D-13 revised), so the AI lines above already count every MAU; there is no age discount. The same caps (voice 10 min/month, circuit breaker) apply to every account.

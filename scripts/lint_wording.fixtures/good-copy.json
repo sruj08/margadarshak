@@ -1,0 +1,12 @@
+{
+  "clean": {
+    "a": "Get my first licence",
+    "b": "Govt fee for one vehicle class: {fee_one_class, number, inr} + {fee_card, number, inr} card. Never pay agents.",
+    "c": "Payments happen only on Sarathi, the government portal.",
+    "d": "Built to the DPDP Rules. Hands off to Sarathi.",
+    "e": "मेरा पहला लाइसेंस",
+    "f": "एक वाहन श्रेणी की सरकारी फ़ीस: {fee_one_class, number, inr}",
+    "g": "Your Practice Record shows what was counted.",
+    "h": "Book your test in 30 days."
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M11",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Alcohol, drugs and the ride home",
+    "hi": "शराब, नशा और घर वापसी"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Not built",
+  "skill_id": "SK-M11",
+  "game_ids": [],
+  "drill_ids": [],
+  "rule_ids": ["RR-ALC-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M11-1",
+      "text": {
+        "en": "Know there is no safe dose for riding.",
+        "hi": "जानें कि चलाने के लिए शराब की कोई भी मात्रा ठीक नहीं है।"
+      }
+    },
+    {
+      "id": "LO-M11-2",
+      "text": {
+        "en": "Plan the ride home: a sober rider, a cab, or staying over.",
+        "hi": "घर लौटने की योजना बनाएँ: बिना पिए चलाने वाला, कैब, या वहीं रुकना।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M11-1",
+      "title": {
+        "en": "Myths and facts about alcohol",
+        "hi": "शराब के मिथक और तथ्य"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M11-1",
+      "kind": "evidence",
+      "text": {
+        "en": "3,674 recorded deaths involved alcohol or drugs in 2023; the true burden is unknown (J&K records 0, a recording artefact).",
+        "hi": "2023 में 3,674 दर्ज मौतों में शराब या नशा शामिल था; असली संख्या पता नहीं (J&K में 0 दर्ज है, जो रिकॉर्डिंग की कमी है)।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Annex 35 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M11-2",
+      "kind": "law",
+      "text": {
+        "en": "Riding with blood alcohol above the legal limit is an offence. The limit is shown only once verified.",
+        "hi": "क़ानूनी सीमा से ज़्यादा शराब पीकर चलाना अपराध है। सीमा पक्की होने के बाद ही दिखाई जाती है।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.185 (limit not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-ALC-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M11-1",
+      "myth": {
+        "en": "Coffee sobers you up.",
+        "hi": "कॉफ़ी से नशा उतर जाता है।"
+      },
+      "correction": {
+        "en": "Only time clears alcohol; coffee doesn't.",
+        "hi": "शराब का असर सिर्फ़ समय से जाता है; कॉफ़ी से नहीं।"
+      }
+    },
+    {
+      "id": "MC-M11-2",
+      "myth": {
+        "en": "Just one drink is fine before riding.",
+        "hi": "चलाने से पहले बस एक पैग ठीक है।"
+      },
+      "correction": {
+        "en": "Alcohol slows you before you feel it; don't ride after drinking.",
+        "hi": "शराब आपको महसूस होने से पहले ही धीमा कर देती है; पीकर न चलाएँ।"
+      },
+      "rule_id": "RR-ALC-001"
+    }
+  ],
+  "concepts": {
+    "target": 4,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Myth/fact ≥ 80%.",
+      "hi": "मिथक/तथ्य ≥ 80%।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Legal check of MV Act s.185", "Medical wording review"],
+    "medical_review_required": true,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

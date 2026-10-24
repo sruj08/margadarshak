@@ -11,7 +11,7 @@
 - Each persona is a **composite**. Names and biographies are illustrative. Every pain, quote and behaviour comes from a cited source. Quotes are verbatim from public posts (Reddit, Play Store, consumer forums), copied from `03-user-pain.md` with their original links. None of the people quoted is the persona.
 - Where a claim rests only on corpus signals or council inference, it is tagged **[corpus]** or **[inference]** and listed in §9 as something the field study must test (D-22).
 - Amounts are in ₹. Government fees come only from the CMVR r.32 table in [`02-rules-process.md` §7](../../../research/ps1-current-state/02-rules-process.md): **₹700 for one class** (LL ₹150 + LL test ₹50 + driving test ₹300 + DL ₹200) **plus ₹200 for the smart card**. A second class adds about ₹450. In the product these numbers are always computed from `fees.json` and never hard-coded (D-06).
-- Under-18 users (P-07) get rules-only features: no AI, no telemetry, no streaks, no squads (D-13).
+- Learners under 18 (P-07) get the full product, every AI feature included, in family mode: they use a parent's phone, inside the parent's (adult) account, and the parent consents. No behavioural tracking or targeted ads on a child's data; squads and share cards need the parent's consent (D-13 revised).
 
 ### 0.1 Persona map
 
@@ -23,7 +23,7 @@
 | P-04 | **Helper** | Fills forms for others | S1–S7 for someone else | F-17, F-05, F-06, F-07, F-54 | Cyber-café desktop or sibling's phone | Hindi, English |
 | P-05 | **Driving-school owner** | B2B buyer, trainer | S4–S6F of their students | F-40, F-23, F-28, F-13 | Android + a desktop at the office | Malayalam/Hindi/English (tenant) |
 | P-06 | **RTO officer / Transport Commissioner** | Government buyer and operator | Whole funnel, in aggregate | F-41, F-42, F-56, F-58 | Office desktop on NIC/State network | English, Hindi, state language |
-| P-07 | **Rahul** (edge) | Minor applicant, ≤50 cc only | S0–S2 (rules-only) | F-02, F-04 (EC-05, EC-17), F-20 static lessons | Parent's phone or own phone | Hindi, English |
+| P-07 | **Rahul** (edge) | Minor applicant, ≤50 cc only | S0–S4 (family mode) | F-02, F-04 (EC-05, EC-17), F-20, F-22, F-23, F-25, F-30 | Parent's phone, inside the parent's account | Hindi, English |
 
 ### 0.2 What the personas share (the core insight)
 
@@ -246,7 +246,7 @@ Excited (turns 18) → confused (research) → tentative hope (decides Khud) →
 | Moment | Feature | Behaviour |
 |---|---|---|
 | Lapsed DL | F-16 + EC-16 rule row | "Expired 14 months ago → renewal needs the test again (MV Act s.15 as amended 2019). Form 1A needed (age ≥ 40)." Source chip, `verified_on` |
-| Voice | F-30 (18+) | "Mere papa 52 saal ke hain, unko car ka licence chahiye" → navigates to the renewal/re-test plan; never submits or pays |
+| Voice | F-30 | "Mere papa 52 saal ke hain, unko car ka licence chahiye" → navigates to the renewal/re-test plan; never submits or pays |
 | Practice | F-24 Track Test Twin (layout familiarisation) + F-12 explainer | Labelled "layout familiarisation, not certification" (D-11) |
 | Family | F-17 family mode | Kabir manages his father's case; reminders for RC/insurance/PUC dates |
 | Scam | F-33 | "Not from an allowlisted sender. Never install APKs. Check on the e-challan site yourself." |
@@ -402,8 +402,8 @@ Excited (turns 18) → confused (research) → tentative hope (decides Khud) →
 | Age | 17, Class 12, Jammu |
 | Wants | To ride the family scooter (an Activa, > 50 cc) to coaching |
 | Legal reality | At 16–17 only **MCWOG ≤ 50 cc with guardian consent** ([02-rules-process l.30](../../../research/ps1-current-state/02-rules-process.md)); most scooters exceed 50 cc (EC-05). If a minor commits an MV Act offence, the guardian or owner is deemed guilty (up to 3 years and ₹25,000), registration is cancelled for 12 months, and the juvenile cannot get an LL/DL until 25 (s.199A, [03-lifecycle §0.4](../../../research/ps1-deep/03-lifecycle.md)) |
-| Product rules | Rules-only, account-less features: plan card, checklist, static lessons. **No AI, no telemetry, no streaks, no squads, no WhatsApp marketing** (D-13, G7) |
-| Device | Own phone or parent's |
+| Product rules | **Family mode:** he uses a parent's phone, inside the parent's account, and gets the full product including every AI feature (voice guide, tutor, AI debrief, Nazar). The parent gives verifiable parental consent. No behavioural tracking or targeted ads on his data; squads and share cards only with the parent's consent; no WhatsApp marketing (D-13 revised, G7) |
+| Device | Parent's phone (parent's account) |
 
 ### Pains (with evidence)
 | # | Pain | Evidence |
@@ -418,9 +418,9 @@ Excited (turns 18) → confused (research) → tentative hope (decides Khud) →
 
 ### What Margdarshak gives him
 - A plan card stating the ≤50 cc limit in plain words ("most scooters, including yours, are above 50 cc"), the guardian-consent requirement, and a "your 18th-birthday plan" date computed from DOB.
-- Static road-safety lessons (no FSRS history stored server-side, no telemetry).
+- Road-safety lessons with spaced repetition (FSRS), saved in the parent's account.
 - A **parent card** with the s.199A facts, framed without shaming (EC-17, D-20 #17).
-- Debriefs, if any, are the offline template only (US-103); voice guide hidden.
+- AI debriefs, the tutor and the voice guide, as for any learner, under the parent's consent (US-103).
 
 ### What would make him stop
 - Being lectured; being asked for a parent's documents he can't get; a "you can't use this" wall. The product shows what he *can* do.
@@ -433,7 +433,7 @@ Excited (turns 18) → confused (research) → tentative hope (decides Khud) →
 | Someone seeking a licence without a test, or a proxy for the online LL test | The corrupt core (agent points 2, 6, 7). We never help; we still offer the hazard plan "because the road doesn't check your licence" (05 cheat table) |
 | Bulk agents running many applications | Helper mode caps active helper links per helper account [design default, unverified threshold: 10 active links; owner: Product lead; decide by 2026-10-24] and every action is visible to the applicant |
 | Anyone wanting slot-booking bots or Sarathi scraping | Forbidden (IT Act s.43; D-08) |
-| Under-18 users wanting AI features | Gemini terms require 18+; D-13 |
+| A child holding their own account | The account holder is an adult; a minor uses family mode in a parent's account (D-13 revised; residual risk R-13, legal lead) |
 
 ---
 

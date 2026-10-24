@@ -1,0 +1,125 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M12",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Seatbelts, rear seat and children",
+    "hi": "सीट बेल्ट, पिछली सीट और बच्चे"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "Car",
+  "deep_content_classes": ["LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Not built",
+  "skill_id": "SK-M12",
+  "game_ids": [],
+  "drill_ids": [],
+  "rule_ids": ["RR-BLT-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M12-1",
+      "text": {
+        "en": "Belts in every seat, every trip.",
+        "hi": "हर सीट पर, हर सफ़र में बेल्ट।"
+      }
+    },
+    {
+      "id": "LO-M12-2",
+      "text": {
+        "en": "Child seats; airbags work with belts.",
+        "hi": "बच्चों की सीट; एयरबैग बेल्ट के साथ काम करते हैं।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M12-1",
+      "title": {
+        "en": "Every seat, every trip",
+        "hi": "हर सीट, हर सफ़र"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M12-1",
+      "kind": "evidence",
+      "text": {
+        "en": "16,025 people were killed not wearing a seatbelt in 2023; 47.3% of them were passengers.",
+        "hi": "2023 में सीट बेल्ट न पहनने वाले 16,025 लोगों की मौत हुई; इनमें 47.3% सवारियाँ थीं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.3 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M12-2",
+      "kind": "evidence",
+      "text": {
+        "en": "Rear-seat belts cut deaths by up to 25%.",
+        "hi": "पिछली सीट की बेल्ट से मौतें 25% तक कम होती हैं।"
+      },
+      "sources": [
+        {
+          "title": "WHO road traffic injuries fact sheet (not re-fetched)",
+          "url": "https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries",
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "low",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M12-1",
+      "myth": {
+        "en": "Airbags make seatbelts unnecessary.",
+        "hi": "एयरबैग हों तो सीट बेल्ट की ज़रूरत नहीं।"
+      },
+      "correction": {
+        "en": "Airbags are designed to work with seatbelts, not instead of them.",
+        "hi": "एयरबैग सीट बेल्ट के साथ काम करने के लिए बने हैं, उसकी जगह नहीं।"
+      },
+      "rule_id": "RR-BLT-001"
+    }
+  ],
+  "concepts": {
+    "target": 3,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Quiz ≥ 80% (LMV class only).",
+      "hi": "क्विज़ ≥ 80% (सिर्फ़ LMV श्रेणी)।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Legal check (CMVR rule number to pin)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

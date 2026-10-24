@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "part": {
+          "type": "string",
+          "const": "A"
+        },
+        "vehicleType": {
+          "type": "string",
+          "enum": ["truck", "bus", "tanker"]
+        },
+        "orientationsDeg": {
+          "minItems": 1,
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 359
+          }
+        },
+        "probes": {
+          "minItems": 1,
+          "maxItems": 5,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "wait_behind_at_light",
+              "truck_about_to_turn_left",
+              "beside_in_slow_traffic",
+              "about_to_overtake",
+              "stopped_ahead_of_truck"
+            ]
+          }
+        }
+      },
+      "required": ["part", "vehicleType", "orientationsDeg", "probes"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "part": {
+          "type": "string",
+          "const": "B"
+        },
+        "vehicleType": {
+          "type": "string",
+          "enum": ["truck", "bus", "tanker"]
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1200000
+        },
+        "laneWidthM": {
+          "type": "number",
+          "minimum": 2,
+          "maximum": 6
+        },
+        "riderLaneLeftM": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "truck": {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "minItems": 2,
+              "maxItems": 64,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tMs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1200000
+                  },
+                  "progressM": {
+                    "type": "number",
+                    "minimum": -100,
+                    "maximum": 10000
+                  },
+                  "lateralM": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 20
+                  }
+                },
+                "required": ["tMs", "progressM", "lateralM"]
+              }
+            },
+            "exitMs": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1200000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": ["keyframes", "exitMs"]
+        },
+        "indicateLeft": {
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1200000
+              },
+              "toMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1200000
+              }
+            },
+            "required": ["fromMs", "toMs"]
+          }
+        }
+      },
+      "required": [
+        "part",
+        "vehicleType",
+        "durationMs",
+        "laneWidthM",
+        "riderLaneLeftM",
+        "truck",
+        "indicateLeft"
+      ]
+    }
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/BsItem.json",
+  "title": "BsItem"
+}

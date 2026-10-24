@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "clipId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "speedKmhEst": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 120
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 600000
+    },
+    "hazards": {
+      "maxItems": 2,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hazardId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "pattern": "^[A-Za-z0-9_.:@-]+$"
+          },
+          "hazardType": {
+            "type": "string",
+            "enum": [
+              "bus_stop_pedestrian",
+              "door_opening",
+              "auto_cut_in",
+              "wrong_side_2w",
+              "cattle_animal",
+              "child_school",
+              "pedestrian_median",
+              "vehicle_pulling_out",
+              "truck_left_turn",
+              "junction_emerging",
+              "overtaking_oncoming",
+              "parked_vehicle_hidden",
+              "cyclist",
+              "surface_hazard",
+              "other"
+            ]
+          },
+          "window": {
+            "type": "object",
+            "properties": {
+              "aMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 600000
+              },
+              "bMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 600000
+              }
+            },
+            "required": ["aMs", "bMs"]
+          },
+          "cardId": {
+            "type": "string",
+            "maxLength": 48
+          }
+        },
+        "required": ["hazardId", "hazardType", "window"]
+      }
+    },
+    "quietSegments": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fromMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 600000
+          },
+          "toMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 600000
+          }
+        },
+        "required": ["fromMs", "toMs"]
+      }
+    }
+  },
+  "required": ["clipId", "version", "speedKmhEst", "durationMs", "hazards", "quietSegments"],
+  "$id": "https://margdarshak.example/schemas/game-core/NazarClip.json",
+  "title": "NazarClip"
+}

@@ -68,7 +68,7 @@ Team Chanakya is three people plus AI coding agents. This file says who owns wha
 | Nazar clip pipeline (RW-1) | `services/workflows/clips` | BE | PD (rating, audit) | Each task, retries, two raters, blur audit |
 | AI layer (ADK agents, validator, evals) | `services/api/.../agents`, `ai/prompts`, `ai/evals` | BE | PD (tone, review) | Gate, PII, provenance, enums, fallback, eval gates |
 | n8n workflows | `n8n/` | BE | PD | Why n8n holds no logic; W1..W15 |
-| Privacy centre + consent | `services/api/.../consent`, `apps/web/privacy` | BE (controls), PD (text) | FE | Consent artefacts, export/delete, under-18 position |
+| Privacy centre + consent | `services/api/.../consent`, `apps/web/privacy` | BE (controls), PD (text) | FE | Consent artefacts, export/delete, family mode and parental consent |
 | Console, school portal, rule studio | `apps/console` | FE (UI), BE (APIs), PD (product) | — | RBAC, k ≥ 5, maker-checker |
 | Field study + analysis | `analysis/`, `apps/web/lab` | PD (protocol), BE (scripts) | FE (lab replica) | Pre-registration, every statistic on the slide |
 
@@ -115,7 +115,7 @@ Where a row shows two "A" (rules, journey, privacy) the split is by artefact: co
 | **Incident review** | After any S1/S2 or guardrail incident | 20 min | BE + whoever saw it | Runbook update; new eval/red-team case within a day |
 
 **Channels**
-- GitHub Issues and PRs are the system of record for work (imported with `scripts/gh_import_backlog.py`).
+- GitHub Issues and PRs are the system of record for work (imported with `scripts/gh_import_backlog.mjs`).
 - The team WhatsApp group is for coordination only; any decision taken there is copied into the decision log within the session.
 - Alerts (W12) go to a separate on-call channel so they don't drown the team chat.
 - No participant data, secrets or screenshots containing personal data in any chat.
@@ -176,14 +176,15 @@ Budget about 30% of an agent-assisted ticket's estimate for human specification 
 | DEC-010 | 2026-10-23 | Render Workflows headline = RW-1 clip pipeline; also RW-2 sweep, RW-3 debrief fan-out, RW-4 stats; n8n Schedule triggers because Workflows has no cron | D-15; B-sponsors §7 | Team | Accepted |
 | DEC-011 | 2026-10-23 | n8n = messaging edge and schedules only; no business logic; SMS off until TRAI DLT | D-16 | Team | Accepted |
 | DEC-012 | 2026-10-23 | Commentary coach = record, then score; Gemini Live commentary is roadmap | Cost and fragility of live streaming (D-12) | Council | Accepted |
-| DEC-013 | 2026-10-23 | Under 18: rules only (no AI, telemetry, streaks, squads, account history) | DPDP children = under 18; Gemini terms 18+ (D-13, VG-7, VG-8) | Council | Accepted |
+| DEC-013 | 2026-10-23 | Under 18: rules only (no AI, telemetry, streaks, squads, account history) | DPDP children = under 18; Gemini terms 18+ (D-13, VG-7, VG-8) | Council | **Superseded by DEC-021** |
 | DEC-014 | 2026-10-23 | Feature verdicts: Live Intel thin (structured, k ≥ 5, no names); route-risk to roadmap; "Practice Record" (not passport); Golden Hour static, no AI; test record = RTI template; test vehicle = checklist + listing; novice year voluntary + riding lock | D-14 | Council | Accepted |
 | DEC-015 | 2026-10-23 | Code licence Apache-2.0; rule packs and clip bank CC-BY 4.0 | GoI OSS policy; adoption (07 §B5) | Team | Accepted |
 | DEC-016 | 2026-10-23 | Languages claimed: English + Hindi in full, Dogri voice input only | D-21 | Council | Accepted |
 | DEC-017 | 2026-10-23 | Nazar scoring for the product and the pre-registered primary analysis: UK-style 5 bands inside the rater-set window, Kerala 10 × 10 scaling, pattern clicks = 0; the field kit's linear-decay rule kept as a pre-registered sensitivity analysis | Field kit and 08 §G1 described different rules; one must be primary before data (FIELD_STUDY §6) | PD + BE | **Proposed**: confirm before MD-241 |
-| DEC-018 | pending | Phaser 4 vs last Phaser 3.x | Needs numbers from MD-229 on the slowest team phone | FE | Open |
+| DEC-018 | 2026-10-24 | Phaser 4 vs last Phaser 3.x | MD-229: keep Phaser 4.2.1, lazy-loaded, fixed-step; DOM decision version on Lite / no WebGL / screen reader (ADR-0012). On-device numbers on the slowest team phone still to be added | FE | Decided |
 | DEC-019 | pending | Email provider for transactional mail | Needed by MD-042 | BE | Open (decide at G0) |
-| DEC-020 | pending | Gemini paid-tier billing active before any participant session | D-13; Gemini terms | BE | Open (before MD-626) |
+| DEC-020 | pending | Gemini paid-tier billing active before any participant session | Gemini terms (the free tier allows human review of prompts) | BE | Open (before MD-626) |
+| DEC-021 | 2026-10-23 | D-13 revised, AI for everyone: every feature, including AI, for every user; a learner under 18 uses a parent's (adult) account in family mode with verifiable parental consent; no behavioural tracking or targeted ads on a child's data; squads and share cards for a minor's profile need the parent's consent | User decision; residual R-13 (Gemini/Vertex terms on services likely accessed by under-18s) owned by the legal lead | User | Accepted |
 
 ---
 
@@ -194,7 +195,7 @@ Judges average five criteria (Innovation, Technical Execution, Design & UX, Impa
 | Judge | Lens | Their likely questions | Primary answerer | Backup | Show |
 |---|---|---|---|---|---|
 | **Shubham Gaur** (Product Manager, Metropolis Healthcare) | Who is the user, which metric moves | "Who exactly is this for?" · "What changed for them, in numbers?" · "Why would they stop paying an agent?" | **PD** | FE | Kabir and Tanvi; before/after (choices ~120 → 4, LL screens ~16 → ~6, minutes to find fee + documents); journey-test agent-intent result |
-| **Dr Nitigya Sambyal** (Asst Prof CSE, Thapar; Responsible AI) | Who computed the number, what if the AI is wrong | "Who computed '1.4 s late'?" · "What happens when Gemini is wrong?" · "How do you evaluate it?" · "What never goes to the model?" · "What about minors?" | **BE** | PD | Code-computes / Gemini-narrates diagram; validator rejecting "₹0 fee"; `adk eval` results; the "never sent to AI" list; 18+ gate; inter-rater Δ; HYPOTHESES.md hash |
+| **Dr Nitigya Sambyal** (Asst Prof CSE, Thapar; Responsible AI) | Who computed the number, what if the AI is wrong | "Who computed '1.4 s late'?" · "What happens when Gemini is wrong?" · "How do you evaluate it?" · "What never goes to the model?" · "What about minors?" | **BE** | PD | Code-computes / Gemini-narrates diagram; validator rejecting "₹0 fee"; `adk eval` results; the "never sent to AI" list; family mode with parental consent; inter-rater Δ; HYPOTHESES.md hash |
 | **Dr Simmi Dutta** (HoD Computer Engineering, GCET Jammu; co-host) | Which part did *you* build; architecture; J&K relevance | "Show me the architecture." · "Who built which module?" · "Does it work for J&K users?" | **Each owner for their module** (§2); BE leads the architecture walk-through | — | One-slide architecture with owner names on each box; README; Jammu clips; Dogri voice-in; J&K rule pack |
 | **Rutvik Gupta** (Product Owner, Aditya Birla Capital; lending, payments, APIs) | Who pays; is it on real APIs; is the money maths right | "Is this on real government APIs?" · "Who pays you?" · "How do fees work for two classes?" | **PD** (business), **BE** (API honesty) | — | Honest API line (NIC RTI, adapter spec, DigiLocker onboarding checklist); driving-school Pro tier with Kerala's hazard-training mandate; computed FeeQuote for 1 and 2 classes |
 | **Dr Yuganshu Tickoo** (Asst Prof, Sharda School of Business Studies; analytics) | What does the data show | "What's your n?" · "Is the correlation meaningful?" · "Is this a convenience sample?" | **PD** (study lead) | BE (ran the analysis) | The evidence slide: N, % below 60 with Wilson CI, r with Fisher CI, pre/post gain, exclusions, "convenience sample" footnote; live counters |

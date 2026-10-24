@@ -34,7 +34,7 @@ A case counts when all three hold:
 | First-attempt pass rate (self-reported or adapter) | Readiness pays off | `test_passed{attempt=1}` |
 | Weekly active learners in S3–S4 | Learning habit | `learn_session` |
 
-**Guardrail metrics (must not get worse):** complaints about wrong rules or fees (R-09), AI provenance violations (D-10, target 0), under-18 users reaching AI (target 0, D-13), dark-pattern lint failures (target 0, F-26).
+**Guardrail metrics (must not get worse):** complaints about wrong rules or fees (R-09), AI provenance violations (D-10, target 0), a child's data used for behavioural tracking or targeted ads (target 0, D-13 revised), dark-pattern lint failures (target 0, F-26).
 
 ## 4. The 1 / 5 / 10-year picture (Musk: work backwards from the end state)
 

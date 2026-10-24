@@ -8,7 +8,7 @@
 |---|---|---|
 | Who deploys | Ops lead, from `main` automatically | the state's ops team (or NIC) with Nestiq, from a **release tag** |
 | Artefact | Render builds the Dockerfiles from the commit | signed images (cosign), mirrored into the state registry |
-| Migrations | `preDeployCommand: alembic upgrade head` on the API | Helm `pre-upgrade` hook Job |
+| Migrations | `preDeployCommand: /app/api migrate up` on the API (goose, embedded in the Go binary) | Helm `pre-upgrade` hook Job (`/app/api migrate up`) |
 | Approval | CI green (+ evals not failed) | GitHub Environment reviewers: state nodal officer + Nestiq ops lead |
 | Rollback | Render "Rollback" or re-run with the previous SHA | `helm --atomic` / `helm rollback` |
 | Data | synthetic | real, under the state's DPDP notice |
@@ -38,16 +38,19 @@
    | `GEMINI_API_KEY` | Google AI Studio project **with billing on** (paid tier, D-13) |
    | `SARVAM_API_KEY` | Sarvam dashboard |
    | `N8N_BASE_URL`, `N8N_HMAC_SECRET`, `N8N_RESUME_AUTH_TOKEN` | n8n workspace URL; `openssl rand -hex 32` twice |
+   | `INTERNAL_HMAC_SECRET` | `openssl rand -hex 32`; the same value on `margdarshak-api` and `margdarshak-workflows` (TS tasks → `/internal/job-steps/*`) |
    | `R2_*` | Cloudflare → R2 → API token (Object Read & Write on the 3 buckets) |
    | `CONTACT_ENCRYPTION_KEY` | `openssl rand -base64 32` |
    | `CORS_ALLOWED_ORIGINS` | `https://margdarshak-web.onrender.com` |
 3. **Check the workflow service** was created. If the Blueprint rejects the `startCommand` field on `type: workflow` [unverified, §INFRASTRUCTURE 4.5], delete that block and run:
    ```bash
    render workflows create --name margdarshak-workflows --repo https://github.com/<org>/margdarshak \
-     --runtime python --build-command "pip install --no-cache-dir -r requirements.txt" \
-     --run-command "python main.py"
+     --runtime node \
+     --build-command 'corepack enable && pnpm install --frozen-lockfile --filter "@margdarshak/workflows..." && pnpm --filter @margdarshak/workflows build' \
+     --run-command "node services/workflows/dist/main.js"
    ```
-   (CLI flags as in B-sponsors §1; `--root-dir services/workflows` if the CLI supports it, else set Root Directory in the dashboard.)
+   (CLI flags as in B-sponsors §1. No root directory: `services/workflows` is a pnpm workspace member built from the repo root.)
+   Then set `INTERNAL_HMAC_SECRET` to the same value (`openssl rand -hex 32`) on the API and the workflow service: the TypeScript tasks call the Go API's `/internal/job-steps/{step}` with it.
 4. **Copy the verifier secret.** `VERIFIER_SHARED_SECRET` is generated on the verifier; copy it into the API's env (a `fromService` reference can't read secrets).
 5. **R2.** Create buckets `margdarshak-clips-ingest` (lifecycle: delete after 14 days), `margdarshak-clips-public` (public via a custom domain or r2.dev, CORS GET from the web origin, `Accept-Ranges` for video seeking), `margdarshak-exports` (delete after 7 days), `margdarshak-backups` (keep 14).
 6. **GitHub.** Environments `hackathon-prod` and `staging` with variables `RENDER_SERVICE_ID_API/WEB/VERIFIER/WORKFLOWS`, `WEB_URL`, `API_URL` and secrets `RENDER_API_KEY`, `OPS_SMOKE_TOKEN`; environment `ai-evals` with `GEMINI_API_KEY_EVALS`. Branch protection on `main` requires `ci-gate`.
@@ -70,10 +73,10 @@ sequenceDiagram
   GH->>R: POST /v1/services/{verifier}/deploys {commitId}
   R-->>GH: live
   GH->>R: POST /v1/services/{api}/deploys {commitId}
-  R->>API: build image → preDeployCommand: alembic upgrade head → health check /v1/health → swap
+  R->>API: build Go image → preDeployCommand: /app/api migrate up (goose) → health check /v1/health → swap
   R-->>GH: live
   GH->>R: POST /v1/services/{workflows}/deploys
-  R->>WF: build → app.start() registers tasks
+  R->>WF: pnpm build → node dist/main.js registers the TS tasks (SDK task server auto-starts)
   GH->>R: POST /v1/services/{web}/deploys
   GH->>API: smoke: /v1/health (build_sha), API-01 plan (fee total 700 + card 200), footer text, API-71
   GH->>API: /internal/ops/smoke-task → a no-op Workflows run completes
@@ -82,8 +85,9 @@ sequenceDiagram
 Order matters: verifier → API (migrations) → workflows → web. Each step waits for `live` before the next; a failed step stops the pipeline and leaves the previous versions serving.
 
 ### 2.3 Local and staging
-- **Local:** `docker compose -f infra/docker/compose.yaml up --build` (mock adapters, `AI_MODE=template`, `JOB_RUNNER=inline`).
-- **Local with real task runs:** in `services/workflows`, `render workflows dev -- python main.py` (local task server on :8120); set `RENDER_USE_LOCAL_DEV=true` in the API. Start a run: `render workflows tasks start clip_ingest --input='["clip_demo01"]' --local` (B-sponsors §1, local development).
+- **Local without Docker (default for the team, ENVIRONMENT_SETUP.md):** `cd services/api && go run ./cmd/api migrate up && go run ./cmd/api` against a native Postgres 16 or embedded-postgres, plus `pnpm --filter @margdarshak/web dev` (mock adapters, `AI_MODE=template`, `JOB_RUNNER=inline`).
+- **Local with Docker (optional):** `docker compose -f infra/docker/compose.yaml up --build` (same settings).
+- **Local with real task runs:** from the repo root, `render workflows dev -- node services/workflows/dist/main.js` after `pnpm --filter @margdarshak/workflows build` (local task server on :8120); set `JOB_RUNNER=render_workflows` and `RENDER_USE_LOCAL_DEV=true` in the API, so the Go JobRunner posts to `http://localhost:8120/v1/task-runs`. Start a run: `render workflows tasks start clip_ingest --input='["clip_demo01"]' --local` (B-sponsors §1, local development).
 - **Staging:** a second Blueprint (`infra/render.staging.yaml`, same file with `-staging` names and `APP_ENV=staging`) and `deploy.yml` → `render-staging`. Rehearse every migration here first.
 
 ### 2.4 Freeze for judging
@@ -91,10 +95,10 @@ Order matters: verifier → API (migrations) → workflows → web. Each step wa
 - T-30 min: run `scripts/ops/warmup.sh` from a laptop (the same route list as deploy.yml's warm-up step; re-running deploy.yml would redeploy, which the freeze forbids), then check the dashboards (OBSERVABILITY §5).
 
 ## 3. Database migrations
-- **Tooling:** Alembic (SQLAlchemy 2) in `services/api/alembic/`. One head only (CI checks).
-- **Naming:** `YYYYMMDD_HHMM_<slug>.py`; every revision declares `phase = "expand" | "migrate" | "contract"` and `reversible = True/False` in its docstring; `app.db.migration_lint` enforces the rules below.
+- **Tooling:** goose v3.29.0 SQL migrations in `services/api/migrations/` (`-- +goose Up` / `-- +goose Down` sections), embedded in the binary with `embed.FS` and applied by `api migrate up|down|status`. Versions are strictly sequential (`goose create -s <slug> sql`); CI rejects duplicate or out-of-order versions, and runs up → down 1 → up on embedded-postgres.
+- **Naming:** `NNNNN_<slug>.sql`; every file starts with `-- phase: expand | migrate | contract` and `-- reversible: true | false`; a Go migration-lint test in `internal/store` enforces the rules below. sqlc reads the same files as its schema, so generated queries always match the migrated schema.
 - **Rules (zero-downtime):**
-  1. **Expand** (release N): add nullable columns or new tables, add indexes `CONCURRENTLY` (with `op.execute` outside a transaction), add enum values. Old code must still work.
+  1. **Expand** (release N): add nullable columns or new tables, add indexes `CONCURRENTLY` (in a file marked `-- +goose NO TRANSACTION`), add enum values. Old code must still work.
   2. **Migrate** (release N, a Workflows task or a one-off job): backfill in batches of 5,000 rows with `SKIP LOCKED`; idempotent; resumable.
   3. **Contract** (release N+1 or later, after N is fully rolled out): drop old columns, set `NOT NULL`, remove old code paths.
   - Never `RENAME` a column in place: add the new one, dual-write, switch reads, drop the old one.
@@ -123,7 +127,7 @@ Order matters: verifier → API (migrations) → workflows → web. Each step wa
 7. **Go-live** behind the `tenant_public` flag at 1–2 pilot RTOs (§4.4).
 
 ### 4.3 Upgrades
-Same pipeline with a new tag. Expand/contract migrations ensure old pods keep serving during the rolling update (`maxUnavailable: 0`, `maxSurge: 25%`, readiness gates, `preStop: sleep 10`).
+Same pipeline with a new tag. Expand/contract migrations ensure old pods keep serving during the rolling update (`maxUnavailable: 0`, `maxSurge: 25%`, readiness gates, native `preStop` sleep action of 10 s; the distroless image has no shell).
 
 ### 4.4 Per-state tenant rollout (pilot → state)
 | Phase | Scope | Flags on | Exit criteria (from 07 §C2 and the adoption checklist) |
@@ -145,15 +149,15 @@ Data export (standard formats) + source escrow + handover runbook to NIC/the sta
 | Flag | Default (hackathon) | Purpose / incident use |
 |---|---|---|
 | `ai_debrief` | on | off ⇒ template "Auto notes" card for everyone (EC-29, RUNBOOK PB-01) |
-| `ai_voice_guide` | on (18+) | off when Live errors spike or voice spend exceeds the cap |
+| `ai_voice_guide` | on (every user, including a 16–17 learner in a parent's account, D-13 revised) | off when Live errors spike or voice spend exceeds the cap |
 | `ai_screen_decoder` | on | M-05 kill switch |
-| `ai_min_age` | 18 | must never be lowered (D-13); CI asserts it |
+| `family_mode` | on | a learner aged 16–17 uses the parent's (adult) account; the account holder gives verifiable parental consent for the minor's case (DPDP). AI features are not age-gated (D-13 revised); no behavioural tracking or targeted ads on a child's data (CI asserts both) |
 | `nazar_hpt_format` | `kerala_10x10` | switch to `practice_only` copy if the Kerala HPT is stayed (EC-28, PB-05) |
 | `live_intel_public` | on, k ≥ 5 | off ⇒ intel hidden, reports still collected (PB-11) |
 | `whatsapp_outbound` | on | off ⇒ email + web push only (PB-02) |
 | `sms_outbound` | **off** | stays off until TRAI DLT registration (D-16) |
 | `slot_watch_alerts` | on | W03 relay |
-| `squads`, `streaks` | on (18+ only) | always off for under-18 (D-13) |
+| `squads`, `streaks` | on | for a minor in family mode, squads and share cards need the parent's consent (D-13 revised) |
 | `sarathi_mode` | `handoff_a` | `handoff_a` (prefilled hand-off + copy-pack) / `adapter_b` (state adopted) |
 | `tenant_public` | on (hackathon) | per-tenant go-live gate (§4.4) |
 | `fault_injection_clip_blur` | off | `once` for the demo's visible Workflows retry (D-15); env `FAULT_INJECTION_CLIP_BLUR` |
@@ -162,7 +166,7 @@ Data export (standard formats) + source escrow + handover runbook to NIC/the sta
 ## 6. Zero-downtime strategy
 ### 6.1 Render (hackathon)
 - Render health-checks the new instance on `healthCheckPath` before routing traffic to it and keeps the old one serving until then (Render's standard zero-downtime deploy for web services with a health check [K; recheck in Render docs at H0]).
-- gunicorn `--graceful-timeout 25` drains in-flight requests on SIGTERM.
+- The Go server drains in-flight requests on SIGTERM (`http.Server.Shutdown` with a 25 s deadline, below Render's 30 s grace), then closes the pgx pool and flushes OpenTelemetry.
 - Migrations are expand-first, so the old instance works against the new schema during the switch.
 - **The web app tolerates an API one version ahead or behind:** the API keeps `/v1` backward-compatible (oasdiff gate in CI); new fields are additive.
 - Workflows: tasks are versioned by name when their input shape changes (`case_clock_sweep_v2`); in-flight runs of the old task finish on the old code.

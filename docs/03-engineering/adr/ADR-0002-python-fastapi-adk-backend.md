@@ -1,6 +1,8 @@
 # ADR-0002: Python 3.12 + FastAPI + Google ADK as the single backend
-> Project: Margdarshak · Owner: Backend lead · Status: Accepted · Date: 2026-10-23
+> Project: Margdarshak · Owner: Backend lead · Status: **Superseded by [ADR-0011](ADR-0011-go-backend.md)** (23 Oct 2026) · Date: 2026-10-23
 > Related: [Architecture §2, §7](../ARCHITECTURE.md) · [Backend](../BACKEND.md) · [Tech stack §4, §6](../TECH_STACK.md) · ADR-0004 · ADR-0005
+
+> **Superseded.** On 23 Oct 2026 the team switched the backend to **Go 1.27** (chi, oapi-codegen, pgx + sqlc, goose, ADK for Go with `RunLive`) and moved the Render Workflows tasks to the TypeScript SDK. See [ADR-0011](ADR-0011-go-backend.md). This record is kept unchanged below as history; nothing in it is current. There is no Python in the repository.
 
 ## Context and problem statement
 The product needs: a rules engine and journey state machine, an AI layer with a **live voice guide** (F-30), debrief/coach/tutor/decoder agents (M-02..M-05), durable jobs on Render Workflows (sponsor track), Postgres, and an OpenAPI contract. The council ruled "one Python backend (FastAPI + ADK + Render Workflows Python SDK) and Postgres" to keep the demo stack robust (D-17, risk 5 in verification §4). ADK's live (voice) mode is Python or Java only and experimental (`04` §0.4).

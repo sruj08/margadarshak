@@ -1,0 +1,4598 @@
+{
+  "P-01-kabir-bike-and-car": {
+    "age": {
+      "band": "18_19",
+      "dob_precision": "day",
+      "years_max": 19,
+      "years_min": 19
+    },
+    "as_of": "2026-10-23",
+    "blockers": [],
+    "bundles": [
+      {
+        "bundle_no": 1,
+        "classes": ["MCWG", "LMV-NT"],
+        "dl_test_unlock": "2026-11-22",
+        "earliest_licence": "2026-11-22",
+        "fees": {
+          "classes": ["MCWG", "LMV-NT"],
+          "excludes": ["state_service_charge", "postage"],
+          "lines": [
+            {
+              "amount_paise": 15000,
+              "class_code": "MCWG",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 15000,
+              "class_code": "LMV-NT",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 5000,
+              "class_code": null,
+              "fee_id": "FEE-LL-TEST",
+              "label_key": "fee.ll_test",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-LL-TEST",
+              "stage": "LL",
+              "unit_paise": 5000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "MCWG",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "LMV-NT",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-DL-ISSUE",
+              "label_key": "fee.dl_issue",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-DL-ISSUE",
+              "stage": "DL",
+              "unit_paise": 20000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-SMART-CARD",
+              "label_key": "fee.smart_card",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-SMART-CARD",
+              "stage": "DL",
+              "unit_paise": 20000
+            }
+          ],
+          "ll_stage_paise": 95000,
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "medium",
+            "grade": "S",
+            "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+            "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+            "verified": true
+          },
+          "retest": [
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-LL-RETEST",
+              "label_key": "fee.ll_retest",
+              "per": "attempt"
+            },
+            {
+              "amount_paise": 30000,
+              "fee_id": "FEE-DL-RETEST",
+              "label_key": "fee.dl_retest",
+              "per": "class_attempt"
+            }
+          ],
+          "smart_card_paise": 20000,
+          "state_items": [
+            {
+              "amount_paise": 105000,
+              "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.slot_booking_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            },
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-JK-POSTAGE-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.postage_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            }
+          ],
+          "subtotal_govt_fee_paise": 115000,
+          "total_paise": 135000
+        },
+        "ll_expires_on": "2027-04-23",
+        "ll_from": "2026-10-23",
+        "rule_ids": ["PLN-ONE-LL-MANY-CLASSES"]
+      }
+    ],
+    "classes": [
+      {
+        "alternatives": [],
+        "class_code": "MCWG",
+        "content_depth": "deep",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.mcwg",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": [],
+        "rule_ids": ["CLS-MCWG"],
+        "transport": false,
+        "verify_at_rto": false
+      },
+      {
+        "alternatives": [],
+        "class_code": "LMV-NT",
+        "content_depth": "deep",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.lmv_nt",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": [],
+        "rule_ids": ["CLS-LMV-NT"],
+        "transport": false,
+        "verify_at_rto": false
+      }
+    ],
+    "dl_test": {
+      "automated": true,
+      "known": true,
+      "rule_id": "JK-PRM-DL-TEST",
+      "tracks": ["S-track (LMV, Kashmir)", "8-track (two-wheeler, Kashmir)"],
+      "verified": false
+    },
+    "documents": [
+      {
+        "doc_id": "form_2_ll_application",
+        "required": true,
+        "rule_id": "DOC-FORM-2",
+        "stage": "LL",
+        "text_key": "doc.form_2",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1_self_declaration",
+        "required": true,
+        "rule_id": "DOC-FORM-1",
+        "stage": "LL",
+        "text_key": "doc.form_1",
+        "verified": true
+      },
+      {
+        "doc_id": "proof_of_age_and_address",
+        "required": true,
+        "rule_id": "DOC-AGE-ADDRESS-PROOF",
+        "stage": "LL",
+        "text_key": "doc.age_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "photo_and_signature",
+        "required": true,
+        "rule_id": "DOC-PHOTO-SIGNATURE",
+        "stage": "LL",
+        "text_key": "doc.photo_signature",
+        "verified": true
+      },
+      {
+        "doc_id": "valid_learners_licence",
+        "required": true,
+        "rule_id": "DOC-VALID-LL",
+        "stage": "DL",
+        "text_key": "doc.valid_ll",
+        "verified": true
+      },
+      {
+        "doc_id": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "rule_id": "DOC-TEST-VEHICLE-PAPERS",
+        "stage": "DL",
+        "text_key": "doc.test_vehicle_papers",
+        "verified": false
+      }
+    ],
+    "earliest_dates": {
+      "dl_test_unlock": "2026-11-22",
+      "earliest_licence": "2026-11-22",
+      "ll_expires_on": "2027-04-23",
+      "ll_issue": "2026-10-23"
+    },
+    "family_mode_required": false,
+    "fees": {
+      "classes": ["MCWG", "LMV-NT"],
+      "excludes": ["state_service_charge", "postage"],
+      "lines": [
+        {
+          "amount_paise": 15000,
+          "class_code": "MCWG",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 15000,
+          "class_code": "LMV-NT",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 5000,
+          "class_code": null,
+          "fee_id": "FEE-LL-TEST",
+          "label_key": "fee.ll_test",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-LL-TEST",
+          "stage": "LL",
+          "unit_paise": 5000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "MCWG",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "LMV-NT",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-DL-ISSUE",
+          "label_key": "fee.dl_issue",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-DL-ISSUE",
+          "stage": "DL",
+          "unit_paise": 20000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-SMART-CARD",
+          "label_key": "fee.smart_card",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-SMART-CARD",
+          "stage": "DL",
+          "unit_paise": 20000
+        }
+      ],
+      "ll_stage_paise": 95000,
+      "provenance": {
+        "checked_on": "2026-10-22",
+        "confidence": "medium",
+        "grade": "S",
+        "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+        "verified": true
+      },
+      "retest": [
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-LL-RETEST",
+          "label_key": "fee.ll_retest",
+          "per": "attempt"
+        },
+        {
+          "amount_paise": 30000,
+          "fee_id": "FEE-DL-RETEST",
+          "label_key": "fee.dl_retest",
+          "per": "class_attempt"
+        }
+      ],
+      "smart_card_paise": 20000,
+      "state_items": [
+        {
+          "amount_paise": 105000,
+          "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.slot_booking_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        },
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-JK-POSTAGE-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.postage_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        }
+      ],
+      "subtotal_govt_fee_paise": 115000,
+      "total_paise": 135000
+    },
+    "hpt": {
+      "applies": false,
+      "effective_from": null,
+      "rule_id": "PRM-HPT",
+      "status": "none"
+    },
+    "ll_test": {
+      "confidence": "medium",
+      "known": true,
+      "mode": "online",
+      "online_available": true,
+      "pass_correct": 6,
+      "pass_pct": 60,
+      "questions": 10,
+      "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+      "verified": false,
+      "where": ["home_online", "csc", "rto"]
+    },
+    "max_rto_visits": 1,
+    "milestones": [
+      {
+        "due_on": "2026-11-22",
+        "id": "LL_DAY_30_UNLOCK",
+        "rule_id": "JK-PRM-MIN-WAIT-DAYS"
+      },
+      {
+        "due_on": "2027-04-23",
+        "id": "LL_EXPIRY",
+        "rule_id": "JK-PRM-LL-VALIDITY-MONTHS"
+      }
+    ],
+    "notices": [
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-06"],
+        "rule_id": "JK-B08",
+        "severity": "notice",
+        "text_key": "blocker.jk.photo_cannot_change_later",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "MoRTH ADTC rules effective 1 Jul 2021 (Tribune/PTI)",
+          "source_url": "https://www.tribuneindia.com/news/road-ministry-notifies-rules-for-accredited-driver-training-centres-266863",
+          "verified": false
+        },
+        "refs": ["F-02"],
+        "rule_id": "NTC-ADTC-OPTION",
+        "severity": "notice",
+        "text_key": "notice.adtc_option",
+        "verify_at_rto": true
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+          "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+          "verified": true
+        },
+        "refs": ["F-02", "D-06"],
+        "rule_id": "NTC-STATE-CHARGES",
+        "severity": "notice",
+        "text_key": "notice.state_charges_may_apply",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": true
+        },
+        "refs": ["F-14"],
+        "rule_id": "JK-NTC-DIGILOCKER",
+        "severity": "notice",
+        "text_key": "notice.jk.digilocker_equal",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "Kashmir Life, Dec 2025",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": false
+        },
+        "refs": ["EC-23"],
+        "rule_id": "JK-NTC-APPROVAL-SMS",
+        "severity": "notice",
+        "text_key": "notice.jk.three_sms_24h",
+        "verify_at_rto": true
+      }
+    ],
+    "offices": [
+      {
+        "district": "Jammu",
+        "name": "RTO Jammu",
+        "office_id": "jk-rto-jammu",
+        "rule_id": "JK-OFC-RTO-JAMMU",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "Srinagar",
+        "name": "RTO Kashmir",
+        "office_id": "jk-rto-kashmir",
+        "rule_id": "JK-OFC-RTO-KASHMIR",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": "S-track (LMV), 8-track (2W)",
+        "verified": false
+      },
+      {
+        "district": "Kathua",
+        "name": "ARTO Kathua",
+        "office_id": "jk-arto-kathua",
+        "rule_id": "JK-OFC-ARTO-KATHUA",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "All districts",
+        "name": "Common Service Centres (LL test)",
+        "office_id": "jk-csc",
+        "rule_id": "JK-OFC-CSC",
+        "tests": ["ll_online"],
+        "track_type": null,
+        "verified": false
+      }
+    ],
+    "paths": [
+      {
+        "ll_test_at_rto": false,
+        "max_rto_visits": 1,
+        "path_id": "aadhaar_contactless",
+        "recommended": true,
+        "rule_ids": []
+      },
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "non_aadhaar",
+        "recommended": false,
+        "rule_ids": ["PLN-NON-AADHAAR-AT-RTO"]
+      }
+    ],
+    "recommended_path": "aadhaar_contactless",
+    "requested_classes": ["MCWG", "LMV-NT"],
+    "rule_pack": {
+      "base_version": "IN-base@2026.10.0",
+      "classes_version": "2026.10.0",
+      "fees_version": "2026.10.0",
+      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "pack_id": "JK",
+      "partial": false,
+      "version": "2026.10.0"
+    },
+    "saving": {
+      "applications_saved": 1,
+      "classes_on_one_ll": 2,
+      "confidence": "low",
+      "fee_saving_paise": 45000,
+      "note_key": "plan.bundle.saves_if_sequential",
+      "rule_ids": ["PLN-ONE-LL-MANY-CLASSES", "PLN-SAVING-IF-SEQUENTIAL"],
+      "verified": false,
+      "wait_days_saved": 30
+    },
+    "state": "JK",
+    "steps": [
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.apply",
+        "n": 1,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.tutorial",
+        "n": 2,
+        "rule_ids": ["PRM-TUTORIAL-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-10-23",
+        "key": "ll.test.online",
+        "n": 3,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "practice",
+        "n": 4,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.book",
+        "n": 5,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS", "JK-PRM-LL-VALIDITY-MONTHS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.test",
+        "n": 6,
+        "rule_ids": ["JK-PRM-DL-TEST"],
+        "visit": 1
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.issue",
+        "n": 7,
+        "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"],
+        "visit": null
+      }
+    ],
+    "trace": [
+      "CLS-LMV-NT",
+      "CLS-MCWG",
+      "DOC-AGE-ADDRESS-PROOF",
+      "DOC-FORM-1",
+      "DOC-FORM-2",
+      "DOC-PHOTO-SIGNATURE",
+      "DOC-TEST-VEHICLE-PAPERS",
+      "DOC-VALID-LL",
+      "FEE-DL-ISSUE",
+      "FEE-DL-TEST",
+      "FEE-JK-POSTAGE-REPORTED",
+      "FEE-JK-SLOT-BOOKING-REPORTED",
+      "FEE-LL-ISSUE",
+      "FEE-LL-TEST",
+      "FEE-SMART-CARD",
+      "JK-B08",
+      "JK-NTC-APPROVAL-SMS",
+      "JK-NTC-DIGILOCKER",
+      "JK-OFC-ARTO-KATHUA",
+      "JK-OFC-CSC",
+      "JK-OFC-RTO-JAMMU",
+      "JK-OFC-RTO-KASHMIR",
+      "JK-PRM-DL-TEST",
+      "JK-PRM-LL-FORMAT",
+      "JK-PRM-LL-TEST-MODE",
+      "JK-PRM-LL-VALIDITY-MONTHS",
+      "JK-PRM-MIN-WAIT-DAYS",
+      "NTC-ADTC-OPTION",
+      "NTC-STATE-CHARGES",
+      "PLN-NON-AADHAAR-AT-RTO",
+      "PLN-ONE-LL-MANY-CLASSES",
+      "PLN-SAVING-IF-SEQUENTIAL",
+      "PRM-FORM1A-AGE",
+      "PRM-HPT",
+      "PRM-TUTORIAL-DAYS"
+    ],
+    "warnings": []
+  },
+  "P-01-kabir-bike-jk": {
+    "age": {
+      "band": "18_19",
+      "dob_precision": "day",
+      "years_max": 19,
+      "years_min": 19
+    },
+    "as_of": "2026-10-23",
+    "blockers": [],
+    "bundles": [
+      {
+        "bundle_no": 1,
+        "classes": ["MCWG"],
+        "dl_test_unlock": "2026-11-22",
+        "earliest_licence": "2026-11-22",
+        "fees": {
+          "classes": ["MCWG"],
+          "excludes": ["state_service_charge", "postage"],
+          "lines": [
+            {
+              "amount_paise": 15000,
+              "class_code": "MCWG",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 5000,
+              "class_code": null,
+              "fee_id": "FEE-LL-TEST",
+              "label_key": "fee.ll_test",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-LL-TEST",
+              "stage": "LL",
+              "unit_paise": 5000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "MCWG",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-DL-ISSUE",
+              "label_key": "fee.dl_issue",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-DL-ISSUE",
+              "stage": "DL",
+              "unit_paise": 20000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-SMART-CARD",
+              "label_key": "fee.smart_card",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-SMART-CARD",
+              "stage": "DL",
+              "unit_paise": 20000
+            }
+          ],
+          "ll_stage_paise": 50000,
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "medium",
+            "grade": "S",
+            "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+            "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+            "verified": true
+          },
+          "retest": [
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-LL-RETEST",
+              "label_key": "fee.ll_retest",
+              "per": "attempt"
+            },
+            {
+              "amount_paise": 30000,
+              "fee_id": "FEE-DL-RETEST",
+              "label_key": "fee.dl_retest",
+              "per": "class_attempt"
+            }
+          ],
+          "smart_card_paise": 20000,
+          "state_items": [
+            {
+              "amount_paise": 105000,
+              "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.slot_booking_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            },
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-JK-POSTAGE-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.postage_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            }
+          ],
+          "subtotal_govt_fee_paise": 70000,
+          "total_paise": 90000
+        },
+        "ll_expires_on": "2027-04-23",
+        "ll_from": "2026-10-23",
+        "rule_ids": []
+      }
+    ],
+    "classes": [
+      {
+        "alternatives": [],
+        "class_code": "MCWG",
+        "content_depth": "deep",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.mcwg",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": [],
+        "rule_ids": ["CLS-MCWG"],
+        "transport": false,
+        "verify_at_rto": false
+      }
+    ],
+    "dl_test": {
+      "automated": true,
+      "known": true,
+      "rule_id": "JK-PRM-DL-TEST",
+      "tracks": ["S-track (LMV, Kashmir)", "8-track (two-wheeler, Kashmir)"],
+      "verified": false
+    },
+    "documents": [
+      {
+        "doc_id": "form_2_ll_application",
+        "required": true,
+        "rule_id": "DOC-FORM-2",
+        "stage": "LL",
+        "text_key": "doc.form_2",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1_self_declaration",
+        "required": true,
+        "rule_id": "DOC-FORM-1",
+        "stage": "LL",
+        "text_key": "doc.form_1",
+        "verified": true
+      },
+      {
+        "doc_id": "proof_of_age_and_address",
+        "required": true,
+        "rule_id": "DOC-AGE-ADDRESS-PROOF",
+        "stage": "LL",
+        "text_key": "doc.age_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "photo_and_signature",
+        "required": true,
+        "rule_id": "DOC-PHOTO-SIGNATURE",
+        "stage": "LL",
+        "text_key": "doc.photo_signature",
+        "verified": true
+      },
+      {
+        "doc_id": "valid_learners_licence",
+        "required": true,
+        "rule_id": "DOC-VALID-LL",
+        "stage": "DL",
+        "text_key": "doc.valid_ll",
+        "verified": true
+      },
+      {
+        "doc_id": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "rule_id": "DOC-TEST-VEHICLE-PAPERS",
+        "stage": "DL",
+        "text_key": "doc.test_vehicle_papers",
+        "verified": false
+      }
+    ],
+    "earliest_dates": {
+      "dl_test_unlock": "2026-11-22",
+      "earliest_licence": "2026-11-22",
+      "ll_expires_on": "2027-04-23",
+      "ll_issue": "2026-10-23"
+    },
+    "family_mode_required": false,
+    "fees": {
+      "classes": ["MCWG"],
+      "excludes": ["state_service_charge", "postage"],
+      "lines": [
+        {
+          "amount_paise": 15000,
+          "class_code": "MCWG",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 5000,
+          "class_code": null,
+          "fee_id": "FEE-LL-TEST",
+          "label_key": "fee.ll_test",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-LL-TEST",
+          "stage": "LL",
+          "unit_paise": 5000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "MCWG",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-DL-ISSUE",
+          "label_key": "fee.dl_issue",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-DL-ISSUE",
+          "stage": "DL",
+          "unit_paise": 20000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-SMART-CARD",
+          "label_key": "fee.smart_card",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-SMART-CARD",
+          "stage": "DL",
+          "unit_paise": 20000
+        }
+      ],
+      "ll_stage_paise": 50000,
+      "provenance": {
+        "checked_on": "2026-10-22",
+        "confidence": "medium",
+        "grade": "S",
+        "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+        "verified": true
+      },
+      "retest": [
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-LL-RETEST",
+          "label_key": "fee.ll_retest",
+          "per": "attempt"
+        },
+        {
+          "amount_paise": 30000,
+          "fee_id": "FEE-DL-RETEST",
+          "label_key": "fee.dl_retest",
+          "per": "class_attempt"
+        }
+      ],
+      "smart_card_paise": 20000,
+      "state_items": [
+        {
+          "amount_paise": 105000,
+          "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.slot_booking_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        },
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-JK-POSTAGE-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.postage_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        }
+      ],
+      "subtotal_govt_fee_paise": 70000,
+      "total_paise": 90000
+    },
+    "hpt": {
+      "applies": false,
+      "effective_from": null,
+      "rule_id": "PRM-HPT",
+      "status": "none"
+    },
+    "ll_test": {
+      "confidence": "medium",
+      "known": true,
+      "mode": "online",
+      "online_available": true,
+      "pass_correct": 6,
+      "pass_pct": 60,
+      "questions": 10,
+      "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+      "verified": false,
+      "where": ["home_online", "csc", "rto"]
+    },
+    "max_rto_visits": 1,
+    "milestones": [
+      {
+        "due_on": "2026-11-22",
+        "id": "LL_DAY_30_UNLOCK",
+        "rule_id": "JK-PRM-MIN-WAIT-DAYS"
+      },
+      {
+        "due_on": "2027-04-23",
+        "id": "LL_EXPIRY",
+        "rule_id": "JK-PRM-LL-VALIDITY-MONTHS"
+      }
+    ],
+    "notices": [
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-06"],
+        "rule_id": "JK-B08",
+        "severity": "notice",
+        "text_key": "blocker.jk.photo_cannot_change_later",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+          "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+          "verified": true
+        },
+        "refs": ["F-02", "D-06"],
+        "rule_id": "NTC-STATE-CHARGES",
+        "severity": "notice",
+        "text_key": "notice.state_charges_may_apply",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": true
+        },
+        "refs": ["F-14"],
+        "rule_id": "JK-NTC-DIGILOCKER",
+        "severity": "notice",
+        "text_key": "notice.jk.digilocker_equal",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "Kashmir Life, Dec 2025",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": false
+        },
+        "refs": ["EC-23"],
+        "rule_id": "JK-NTC-APPROVAL-SMS",
+        "severity": "notice",
+        "text_key": "notice.jk.three_sms_24h",
+        "verify_at_rto": true
+      }
+    ],
+    "offices": [
+      {
+        "district": "Jammu",
+        "name": "RTO Jammu",
+        "office_id": "jk-rto-jammu",
+        "rule_id": "JK-OFC-RTO-JAMMU",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "Srinagar",
+        "name": "RTO Kashmir",
+        "office_id": "jk-rto-kashmir",
+        "rule_id": "JK-OFC-RTO-KASHMIR",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": "S-track (LMV), 8-track (2W)",
+        "verified": false
+      },
+      {
+        "district": "Kathua",
+        "name": "ARTO Kathua",
+        "office_id": "jk-arto-kathua",
+        "rule_id": "JK-OFC-ARTO-KATHUA",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "All districts",
+        "name": "Common Service Centres (LL test)",
+        "office_id": "jk-csc",
+        "rule_id": "JK-OFC-CSC",
+        "tests": ["ll_online"],
+        "track_type": null,
+        "verified": false
+      }
+    ],
+    "paths": [
+      {
+        "ll_test_at_rto": false,
+        "max_rto_visits": 1,
+        "path_id": "aadhaar_contactless",
+        "recommended": true,
+        "rule_ids": []
+      },
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "non_aadhaar",
+        "recommended": false,
+        "rule_ids": ["PLN-NON-AADHAAR-AT-RTO"]
+      }
+    ],
+    "recommended_path": "aadhaar_contactless",
+    "requested_classes": ["MCWG"],
+    "rule_pack": {
+      "base_version": "IN-base@2026.10.0",
+      "classes_version": "2026.10.0",
+      "fees_version": "2026.10.0",
+      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "pack_id": "JK",
+      "partial": false,
+      "version": "2026.10.0"
+    },
+    "saving": null,
+    "state": "JK",
+    "steps": [
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.apply",
+        "n": 1,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.tutorial",
+        "n": 2,
+        "rule_ids": ["PRM-TUTORIAL-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-10-23",
+        "key": "ll.test.online",
+        "n": 3,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "practice",
+        "n": 4,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.book",
+        "n": 5,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS", "JK-PRM-LL-VALIDITY-MONTHS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.test",
+        "n": 6,
+        "rule_ids": ["JK-PRM-DL-TEST"],
+        "visit": 1
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.issue",
+        "n": 7,
+        "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"],
+        "visit": null
+      }
+    ],
+    "trace": [
+      "CLS-MCWG",
+      "DOC-AGE-ADDRESS-PROOF",
+      "DOC-FORM-1",
+      "DOC-FORM-2",
+      "DOC-PHOTO-SIGNATURE",
+      "DOC-TEST-VEHICLE-PAPERS",
+      "DOC-VALID-LL",
+      "FEE-DL-ISSUE",
+      "FEE-DL-TEST",
+      "FEE-JK-POSTAGE-REPORTED",
+      "FEE-JK-SLOT-BOOKING-REPORTED",
+      "FEE-LL-ISSUE",
+      "FEE-LL-TEST",
+      "FEE-SMART-CARD",
+      "JK-B08",
+      "JK-NTC-APPROVAL-SMS",
+      "JK-NTC-DIGILOCKER",
+      "JK-OFC-ARTO-KATHUA",
+      "JK-OFC-CSC",
+      "JK-OFC-RTO-JAMMU",
+      "JK-OFC-RTO-KASHMIR",
+      "JK-PRM-DL-TEST",
+      "JK-PRM-LL-FORMAT",
+      "JK-PRM-LL-TEST-MODE",
+      "JK-PRM-LL-VALIDITY-MONTHS",
+      "JK-PRM-MIN-WAIT-DAYS",
+      "NTC-STATE-CHARGES",
+      "PLN-NON-AADHAAR-AT-RTO",
+      "PRM-FORM1A-AGE",
+      "PRM-HPT",
+      "PRM-TUTORIAL-DAYS"
+    ],
+    "warnings": []
+  },
+  "P-02-tanvi-migrant": {
+    "age": {
+      "band": "18_19",
+      "dob_precision": "day",
+      "years_max": 19,
+      "years_min": 19
+    },
+    "as_of": "2026-10-23",
+    "blockers": [],
+    "bundles": [
+      {
+        "bundle_no": 1,
+        "classes": ["MCWOG"],
+        "dl_test_unlock": "2026-11-22",
+        "earliest_licence": "2026-11-22",
+        "fees": {
+          "classes": ["MCWOG"],
+          "excludes": ["state_service_charge", "postage"],
+          "lines": [
+            {
+              "amount_paise": 15000,
+              "class_code": "MCWOG",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 5000,
+              "class_code": null,
+              "fee_id": "FEE-LL-TEST",
+              "label_key": "fee.ll_test",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-LL-TEST",
+              "stage": "LL",
+              "unit_paise": 5000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "MCWOG",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-DL-ISSUE",
+              "label_key": "fee.dl_issue",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-DL-ISSUE",
+              "stage": "DL",
+              "unit_paise": 20000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-SMART-CARD",
+              "label_key": "fee.smart_card",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-SMART-CARD",
+              "stage": "DL",
+              "unit_paise": 20000
+            }
+          ],
+          "ll_stage_paise": 50000,
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "medium",
+            "grade": "S",
+            "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+            "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+            "verified": true
+          },
+          "retest": [
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-LL-RETEST",
+              "label_key": "fee.ll_retest",
+              "per": "attempt"
+            },
+            {
+              "amount_paise": 30000,
+              "fee_id": "FEE-DL-RETEST",
+              "label_key": "fee.dl_retest",
+              "per": "class_attempt"
+            }
+          ],
+          "smart_card_paise": 20000,
+          "state_items": [
+            {
+              "amount_paise": 105000,
+              "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.slot_booking_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            },
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-JK-POSTAGE-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.postage_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            }
+          ],
+          "subtotal_govt_fee_paise": 70000,
+          "total_paise": 90000
+        },
+        "ll_expires_on": "2027-04-23",
+        "ll_from": "2026-10-23",
+        "rule_ids": []
+      }
+    ],
+    "classes": [
+      {
+        "alternatives": [],
+        "class_code": "MCWOG",
+        "content_depth": "deep",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.mcwog",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": [],
+        "rule_ids": ["CLS-MCWOG"],
+        "transport": false,
+        "verify_at_rto": false
+      }
+    ],
+    "dl_test": {
+      "automated": true,
+      "known": true,
+      "rule_id": "JK-PRM-DL-TEST",
+      "tracks": ["S-track (LMV, Kashmir)", "8-track (two-wheeler, Kashmir)"],
+      "verified": false
+    },
+    "documents": [
+      {
+        "doc_id": "form_2_ll_application",
+        "required": true,
+        "rule_id": "DOC-FORM-2",
+        "stage": "LL",
+        "text_key": "doc.form_2",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1_self_declaration",
+        "required": true,
+        "rule_id": "DOC-FORM-1",
+        "stage": "LL",
+        "text_key": "doc.form_1",
+        "verified": true
+      },
+      {
+        "doc_id": "proof_of_age_and_address",
+        "required": true,
+        "rule_id": "DOC-AGE-ADDRESS-PROOF",
+        "stage": "LL",
+        "text_key": "doc.age_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "residence_address_proof",
+        "required": true,
+        "rule_id": "DOC-RESIDENCE-PROOF",
+        "stage": "LL",
+        "text_key": "doc.residence_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "relation_name_proof",
+        "required": false,
+        "rule_id": "DOC-RELATION-NAME-PROOF",
+        "stage": "LL",
+        "text_key": "doc.relation_name_proof",
+        "verified": false
+      },
+      {
+        "doc_id": "photo_and_signature",
+        "required": true,
+        "rule_id": "DOC-PHOTO-SIGNATURE",
+        "stage": "LL",
+        "text_key": "doc.photo_signature",
+        "verified": true
+      },
+      {
+        "doc_id": "valid_learners_licence",
+        "required": true,
+        "rule_id": "DOC-VALID-LL",
+        "stage": "DL",
+        "text_key": "doc.valid_ll",
+        "verified": true
+      },
+      {
+        "doc_id": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "rule_id": "DOC-TEST-VEHICLE-PAPERS",
+        "stage": "DL",
+        "text_key": "doc.test_vehicle_papers",
+        "verified": false
+      }
+    ],
+    "earliest_dates": {
+      "dl_test_unlock": "2026-11-22",
+      "earliest_licence": "2026-11-22",
+      "ll_expires_on": "2027-04-23",
+      "ll_issue": "2026-10-23"
+    },
+    "family_mode_required": false,
+    "fees": {
+      "classes": ["MCWOG"],
+      "excludes": ["state_service_charge", "postage"],
+      "lines": [
+        {
+          "amount_paise": 15000,
+          "class_code": "MCWOG",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 5000,
+          "class_code": null,
+          "fee_id": "FEE-LL-TEST",
+          "label_key": "fee.ll_test",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-LL-TEST",
+          "stage": "LL",
+          "unit_paise": 5000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "MCWOG",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-DL-ISSUE",
+          "label_key": "fee.dl_issue",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-DL-ISSUE",
+          "stage": "DL",
+          "unit_paise": 20000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-SMART-CARD",
+          "label_key": "fee.smart_card",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-SMART-CARD",
+          "stage": "DL",
+          "unit_paise": 20000
+        }
+      ],
+      "ll_stage_paise": 50000,
+      "provenance": {
+        "checked_on": "2026-10-22",
+        "confidence": "medium",
+        "grade": "S",
+        "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+        "verified": true
+      },
+      "retest": [
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-LL-RETEST",
+          "label_key": "fee.ll_retest",
+          "per": "attempt"
+        },
+        {
+          "amount_paise": 30000,
+          "fee_id": "FEE-DL-RETEST",
+          "label_key": "fee.dl_retest",
+          "per": "class_attempt"
+        }
+      ],
+      "smart_card_paise": 20000,
+      "state_items": [
+        {
+          "amount_paise": 105000,
+          "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.slot_booking_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        },
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-JK-POSTAGE-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.postage_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        }
+      ],
+      "subtotal_govt_fee_paise": 70000,
+      "total_paise": 90000
+    },
+    "hpt": {
+      "applies": false,
+      "effective_from": null,
+      "rule_id": "PRM-HPT",
+      "status": "none"
+    },
+    "ll_test": {
+      "confidence": "medium",
+      "known": true,
+      "mode": "rto",
+      "online_available": true,
+      "pass_correct": 6,
+      "pass_pct": 60,
+      "questions": 10,
+      "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+      "verified": false,
+      "where": ["home_online", "csc", "rto"]
+    },
+    "max_rto_visits": 2,
+    "milestones": [
+      {
+        "due_on": "2026-11-22",
+        "id": "LL_DAY_30_UNLOCK",
+        "rule_id": "JK-PRM-MIN-WAIT-DAYS"
+      },
+      {
+        "due_on": "2027-04-23",
+        "id": "LL_EXPIRY",
+        "rule_id": "JK-PRM-LL-VALIDITY-MONTHS"
+      }
+    ],
+    "notices": [
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "OBS",
+          "source_title": "Sarathi class picker (observed 2026-10-22); Delhi Transport class table",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "refs": ["EC-05", "F-04"],
+        "rule_id": "JK-B01",
+        "severity": "notice",
+        "text_key": "blocker.jk.class_vs_vehicle",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-06"],
+        "rule_id": "JK-B08",
+        "severity": "notice",
+        "text_key": "blocker.jk.photo_cannot_change_later",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+          "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+          "verified": true
+        },
+        "refs": ["F-02", "D-06"],
+        "rule_id": "NTC-STATE-CHARGES",
+        "severity": "notice",
+        "text_key": "notice.state_charges_may_apply",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": true
+        },
+        "refs": ["F-14"],
+        "rule_id": "JK-NTC-DIGILOCKER",
+        "severity": "notice",
+        "text_key": "notice.jk.digilocker_equal",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "Kashmir Life, Dec 2025",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": false
+        },
+        "refs": ["EC-23"],
+        "rule_id": "JK-NTC-APPROVAL-SMS",
+        "severity": "notice",
+        "text_key": "notice.jk.three_sms_24h",
+        "verify_at_rto": true
+      }
+    ],
+    "offices": [
+      {
+        "district": "Jammu",
+        "name": "RTO Jammu",
+        "office_id": "jk-rto-jammu",
+        "rule_id": "JK-OFC-RTO-JAMMU",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "Srinagar",
+        "name": "RTO Kashmir",
+        "office_id": "jk-rto-kashmir",
+        "rule_id": "JK-OFC-RTO-KASHMIR",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": "S-track (LMV), 8-track (2W)",
+        "verified": false
+      },
+      {
+        "district": "Kathua",
+        "name": "ARTO Kathua",
+        "office_id": "jk-arto-kathua",
+        "rule_id": "JK-OFC-ARTO-KATHUA",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "All districts",
+        "name": "Common Service Centres (LL test)",
+        "office_id": "jk-csc",
+        "rule_id": "JK-OFC-CSC",
+        "tests": ["ll_online"],
+        "track_type": null,
+        "verified": false
+      }
+    ],
+    "paths": [
+      {
+        "ll_test_at_rto": false,
+        "max_rto_visits": 1,
+        "path_id": "aadhaar_contactless",
+        "recommended": false,
+        "rule_ids": []
+      },
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "non_aadhaar",
+        "recommended": true,
+        "rule_ids": ["PLN-NON-AADHAAR-AT-RTO"]
+      }
+    ],
+    "recommended_path": "non_aadhaar",
+    "requested_classes": ["MCWOG"],
+    "rule_pack": {
+      "base_version": "IN-base@2026.10.0",
+      "classes_version": "2026.10.0",
+      "fees_version": "2026.10.0",
+      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "pack_id": "JK",
+      "partial": false,
+      "version": "2026.10.0"
+    },
+    "saving": null,
+    "state": "JK",
+    "steps": [
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.apply",
+        "n": 1,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.tutorial",
+        "n": 2,
+        "rule_ids": ["PRM-TUTORIAL-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-10-23",
+        "key": "ll.test.at_rto",
+        "n": 3,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT", "PLN-NON-AADHAAR-AT-RTO"],
+        "visit": 1
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "practice",
+        "n": 4,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.book",
+        "n": 5,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS", "JK-PRM-LL-VALIDITY-MONTHS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.test",
+        "n": 6,
+        "rule_ids": ["JK-PRM-DL-TEST"],
+        "visit": 2
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.issue",
+        "n": 7,
+        "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"],
+        "visit": null
+      }
+    ],
+    "trace": [
+      "CLS-MCWOG",
+      "DOC-AGE-ADDRESS-PROOF",
+      "DOC-FORM-1",
+      "DOC-FORM-2",
+      "DOC-PHOTO-SIGNATURE",
+      "DOC-RELATION-NAME-PROOF",
+      "DOC-RESIDENCE-PROOF",
+      "DOC-TEST-VEHICLE-PAPERS",
+      "DOC-VALID-LL",
+      "FEE-DL-ISSUE",
+      "FEE-DL-TEST",
+      "FEE-JK-POSTAGE-REPORTED",
+      "FEE-JK-SLOT-BOOKING-REPORTED",
+      "FEE-LL-ISSUE",
+      "FEE-LL-TEST",
+      "FEE-SMART-CARD",
+      "JK-B01",
+      "JK-B02",
+      "JK-B03",
+      "JK-B08",
+      "JK-B09",
+      "JK-NTC-APPROVAL-SMS",
+      "JK-NTC-DIGILOCKER",
+      "JK-OFC-ARTO-KATHUA",
+      "JK-OFC-CSC",
+      "JK-OFC-RTO-JAMMU",
+      "JK-OFC-RTO-KASHMIR",
+      "JK-PRM-DL-TEST",
+      "JK-PRM-LL-FORMAT",
+      "JK-PRM-LL-TEST-MODE",
+      "JK-PRM-LL-VALIDITY-MONTHS",
+      "JK-PRM-MIN-WAIT-DAYS",
+      "NTC-STATE-CHARGES",
+      "PLN-NON-AADHAAR-AT-RTO",
+      "PRM-FORM1A-AGE",
+      "PRM-HPT",
+      "PRM-TUTORIAL-DAYS"
+    ],
+    "warnings": [
+      {
+        "due_on": null,
+        "fix_key": "fix.jk.address_ask_at_counter",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "P-state",
+          "source_title": "TN STA contactless LL flow (PIN-based RTO assignment); J&K behaviour unknown",
+          "source_url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf",
+          "verified": false
+        },
+        "refs": ["EC-02"],
+        "rule_id": "JK-B02",
+        "severity": "warning",
+        "text_key": "blocker.jk.address_mismatch",
+        "verify_at_rto": true
+      },
+      {
+        "due_on": null,
+        "fix_key": "fix.update_aadhaar_or_non_aadhaar",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "India Herald, 19 Feb 2026 (news report, not a rule)",
+          "source_url": "https://www.indiaherald.com/Politics/Read/994879460/-Aadhaar-Update-Stalled-Technical-Glitch-on-the-Sarathi-Portal-Stalls-Thousands-of-Driving-Licence-Applications",
+          "verified": false
+        },
+        "refs": ["EC-03"],
+        "rule_id": "JK-B03",
+        "severity": "warning",
+        "text_key": "blocker.jk.relation_line_blank",
+        "verify_at_rto": true
+      },
+      {
+        "due_on": null,
+        "fix_key": "fix.arrange_test_vehicle",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "J&K guides (Kashmir Life); CMVR r.3 L plate [MK]",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": false
+        },
+        "refs": ["F-04"],
+        "rule_id": "JK-B09",
+        "severity": "warning",
+        "text_key": "blocker.jk.no_test_vehicle",
+        "verify_at_rto": true
+      }
+    ]
+  },
+  "P-03-mohanji-car-52": {
+    "age": {
+      "band": "40_plus",
+      "dob_precision": "day",
+      "years_max": 52,
+      "years_min": 52
+    },
+    "as_of": "2026-10-23",
+    "blockers": [
+      {
+        "due_on": null,
+        "fix_key": "fix.get_form1a_before_applying",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "P-state",
+          "source_title": "Delhi Transport LL page; TN STA flow: Form 1A over 40, RTO approval",
+          "source_url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf",
+          "verified": true
+        },
+        "refs": ["EC-04"],
+        "rule_id": "JK-B04",
+        "severity": "blocker",
+        "text_key": "blocker.jk.form1a_age40",
+        "verify_at_rto": false
+      }
+    ],
+    "bundles": [
+      {
+        "bundle_no": 1,
+        "classes": ["LMV-NT"],
+        "dl_test_unlock": "2026-11-22",
+        "earliest_licence": "2026-11-22",
+        "fees": {
+          "classes": ["LMV-NT"],
+          "excludes": ["state_service_charge", "postage"],
+          "lines": [
+            {
+              "amount_paise": 15000,
+              "class_code": "LMV-NT",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 5000,
+              "class_code": null,
+              "fee_id": "FEE-LL-TEST",
+              "label_key": "fee.ll_test",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-LL-TEST",
+              "stage": "LL",
+              "unit_paise": 5000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "LMV-NT",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-DL-ISSUE",
+              "label_key": "fee.dl_issue",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-DL-ISSUE",
+              "stage": "DL",
+              "unit_paise": 20000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-SMART-CARD",
+              "label_key": "fee.smart_card",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-SMART-CARD",
+              "stage": "DL",
+              "unit_paise": 20000
+            }
+          ],
+          "ll_stage_paise": 50000,
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "medium",
+            "grade": "S",
+            "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+            "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+            "verified": true
+          },
+          "retest": [
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-LL-RETEST",
+              "label_key": "fee.ll_retest",
+              "per": "attempt"
+            },
+            {
+              "amount_paise": 30000,
+              "fee_id": "FEE-DL-RETEST",
+              "label_key": "fee.dl_retest",
+              "per": "class_attempt"
+            }
+          ],
+          "smart_card_paise": 20000,
+          "state_items": [
+            {
+              "amount_paise": 105000,
+              "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.slot_booking_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            },
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-JK-POSTAGE-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.postage_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            }
+          ],
+          "subtotal_govt_fee_paise": 70000,
+          "total_paise": 90000
+        },
+        "ll_expires_on": "2027-04-23",
+        "ll_from": "2026-10-23",
+        "rule_ids": []
+      }
+    ],
+    "classes": [
+      {
+        "alternatives": [],
+        "class_code": "LMV-NT",
+        "content_depth": "deep",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.lmv_nt",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": [],
+        "rule_ids": ["CLS-LMV-NT"],
+        "transport": false,
+        "verify_at_rto": false
+      }
+    ],
+    "dl_test": {
+      "automated": true,
+      "known": true,
+      "rule_id": "JK-PRM-DL-TEST",
+      "tracks": ["S-track (LMV, Kashmir)", "8-track (two-wheeler, Kashmir)"],
+      "verified": false
+    },
+    "documents": [
+      {
+        "doc_id": "form_2_ll_application",
+        "required": true,
+        "rule_id": "DOC-FORM-2",
+        "stage": "LL",
+        "text_key": "doc.form_2",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1_self_declaration",
+        "required": true,
+        "rule_id": "DOC-FORM-1",
+        "stage": "LL",
+        "text_key": "doc.form_1",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1a_medical",
+        "required": true,
+        "rule_id": "DOC-FORM-1A",
+        "stage": "LL",
+        "text_key": "doc.form_1a",
+        "verified": true
+      },
+      {
+        "doc_id": "proof_of_age_and_address",
+        "required": true,
+        "rule_id": "DOC-AGE-ADDRESS-PROOF",
+        "stage": "LL",
+        "text_key": "doc.age_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "photo_and_signature",
+        "required": true,
+        "rule_id": "DOC-PHOTO-SIGNATURE",
+        "stage": "LL",
+        "text_key": "doc.photo_signature",
+        "verified": true
+      },
+      {
+        "doc_id": "valid_learners_licence",
+        "required": true,
+        "rule_id": "DOC-VALID-LL",
+        "stage": "DL",
+        "text_key": "doc.valid_ll",
+        "verified": true
+      },
+      {
+        "doc_id": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "rule_id": "DOC-TEST-VEHICLE-PAPERS",
+        "stage": "DL",
+        "text_key": "doc.test_vehicle_papers",
+        "verified": false
+      }
+    ],
+    "earliest_dates": {
+      "dl_test_unlock": "2026-11-22",
+      "earliest_licence": "2026-11-22",
+      "ll_expires_on": "2027-04-23",
+      "ll_issue": "2026-10-23"
+    },
+    "family_mode_required": false,
+    "fees": {
+      "classes": ["LMV-NT"],
+      "excludes": ["state_service_charge", "postage"],
+      "lines": [
+        {
+          "amount_paise": 15000,
+          "class_code": "LMV-NT",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 5000,
+          "class_code": null,
+          "fee_id": "FEE-LL-TEST",
+          "label_key": "fee.ll_test",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-LL-TEST",
+          "stage": "LL",
+          "unit_paise": 5000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "LMV-NT",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-DL-ISSUE",
+          "label_key": "fee.dl_issue",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-DL-ISSUE",
+          "stage": "DL",
+          "unit_paise": 20000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-SMART-CARD",
+          "label_key": "fee.smart_card",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-SMART-CARD",
+          "stage": "DL",
+          "unit_paise": 20000
+        }
+      ],
+      "ll_stage_paise": 50000,
+      "provenance": {
+        "checked_on": "2026-10-22",
+        "confidence": "medium",
+        "grade": "S",
+        "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+        "verified": true
+      },
+      "retest": [
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-LL-RETEST",
+          "label_key": "fee.ll_retest",
+          "per": "attempt"
+        },
+        {
+          "amount_paise": 30000,
+          "fee_id": "FEE-DL-RETEST",
+          "label_key": "fee.dl_retest",
+          "per": "class_attempt"
+        }
+      ],
+      "smart_card_paise": 20000,
+      "state_items": [
+        {
+          "amount_paise": 105000,
+          "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.slot_booking_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        },
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-JK-POSTAGE-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.postage_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        }
+      ],
+      "subtotal_govt_fee_paise": 70000,
+      "total_paise": 90000
+    },
+    "hpt": {
+      "applies": false,
+      "effective_from": null,
+      "rule_id": "PRM-HPT",
+      "status": "none"
+    },
+    "ll_test": {
+      "confidence": "medium",
+      "known": true,
+      "mode": "rto",
+      "online_available": true,
+      "pass_correct": 6,
+      "pass_pct": 60,
+      "questions": 10,
+      "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+      "verified": false,
+      "where": ["home_online", "csc", "rto"]
+    },
+    "max_rto_visits": 2,
+    "milestones": [
+      {
+        "due_on": "2026-11-22",
+        "id": "LL_DAY_30_UNLOCK",
+        "rule_id": "JK-PRM-MIN-WAIT-DAYS"
+      },
+      {
+        "due_on": "2027-04-23",
+        "id": "LL_EXPIRY",
+        "rule_id": "JK-PRM-LL-VALIDITY-MONTHS"
+      }
+    ],
+    "notices": [
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-06"],
+        "rule_id": "JK-B08",
+        "severity": "notice",
+        "text_key": "blocker.jk.photo_cannot_change_later",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "MoRTH ADTC rules effective 1 Jul 2021 (Tribune/PTI)",
+          "source_url": "https://www.tribuneindia.com/news/road-ministry-notifies-rules-for-accredited-driver-training-centres-266863",
+          "verified": false
+        },
+        "refs": ["F-02"],
+        "rule_id": "NTC-ADTC-OPTION",
+        "severity": "notice",
+        "text_key": "notice.adtc_option",
+        "verify_at_rto": true
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+          "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+          "verified": true
+        },
+        "refs": ["F-02", "D-06"],
+        "rule_id": "NTC-STATE-CHARGES",
+        "severity": "notice",
+        "text_key": "notice.state_charges_may_apply",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": true
+        },
+        "refs": ["F-14"],
+        "rule_id": "JK-NTC-DIGILOCKER",
+        "severity": "notice",
+        "text_key": "notice.jk.digilocker_equal",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "Kashmir Life, Dec 2025",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": false
+        },
+        "refs": ["EC-23"],
+        "rule_id": "JK-NTC-APPROVAL-SMS",
+        "severity": "notice",
+        "text_key": "notice.jk.three_sms_24h",
+        "verify_at_rto": true
+      }
+    ],
+    "offices": [
+      {
+        "district": "Jammu",
+        "name": "RTO Jammu",
+        "office_id": "jk-rto-jammu",
+        "rule_id": "JK-OFC-RTO-JAMMU",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "Srinagar",
+        "name": "RTO Kashmir",
+        "office_id": "jk-rto-kashmir",
+        "rule_id": "JK-OFC-RTO-KASHMIR",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": "S-track (LMV), 8-track (2W)",
+        "verified": false
+      },
+      {
+        "district": "Kathua",
+        "name": "ARTO Kathua",
+        "office_id": "jk-arto-kathua",
+        "rule_id": "JK-OFC-ARTO-KATHUA",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "All districts",
+        "name": "Common Service Centres (LL test)",
+        "office_id": "jk-csc",
+        "rule_id": "JK-OFC-CSC",
+        "tests": ["ll_online"],
+        "track_type": null,
+        "verified": false
+      }
+    ],
+    "paths": [
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "aadhaar_contactless",
+        "recommended": true,
+        "rule_ids": ["RT-AGE-40"]
+      },
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "non_aadhaar",
+        "recommended": false,
+        "rule_ids": ["PLN-NON-AADHAAR-AT-RTO", "RT-AGE-40"]
+      }
+    ],
+    "recommended_path": "aadhaar_contactless",
+    "requested_classes": ["LMV-NT"],
+    "rule_pack": {
+      "base_version": "IN-base@2026.10.0",
+      "classes_version": "2026.10.0",
+      "fees_version": "2026.10.0",
+      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "pack_id": "JK",
+      "partial": false,
+      "version": "2026.10.0"
+    },
+    "saving": null,
+    "state": "JK",
+    "steps": [
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.apply",
+        "n": 1,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.tutorial",
+        "n": 2,
+        "rule_ids": ["PRM-TUTORIAL-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-10-23",
+        "key": "ll.test.at_rto",
+        "n": 3,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT", "RT-AGE-40"],
+        "visit": 1
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "practice",
+        "n": 4,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.book",
+        "n": 5,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS", "JK-PRM-LL-VALIDITY-MONTHS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.test",
+        "n": 6,
+        "rule_ids": ["JK-PRM-DL-TEST"],
+        "visit": 2
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.issue",
+        "n": 7,
+        "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"],
+        "visit": null
+      }
+    ],
+    "trace": [
+      "CLS-LMV-NT",
+      "DOC-AGE-ADDRESS-PROOF",
+      "DOC-FORM-1",
+      "DOC-FORM-1A",
+      "DOC-FORM-2",
+      "DOC-PHOTO-SIGNATURE",
+      "DOC-TEST-VEHICLE-PAPERS",
+      "DOC-VALID-LL",
+      "FEE-DL-ISSUE",
+      "FEE-DL-TEST",
+      "FEE-JK-POSTAGE-REPORTED",
+      "FEE-JK-SLOT-BOOKING-REPORTED",
+      "FEE-LL-ISSUE",
+      "FEE-LL-TEST",
+      "FEE-SMART-CARD",
+      "JK-B04",
+      "JK-B08",
+      "JK-NTC-APPROVAL-SMS",
+      "JK-NTC-DIGILOCKER",
+      "JK-OFC-ARTO-KATHUA",
+      "JK-OFC-CSC",
+      "JK-OFC-RTO-JAMMU",
+      "JK-OFC-RTO-KASHMIR",
+      "JK-PRM-DL-TEST",
+      "JK-PRM-LL-FORMAT",
+      "JK-PRM-LL-TEST-MODE",
+      "JK-PRM-LL-VALIDITY-MONTHS",
+      "JK-PRM-MIN-WAIT-DAYS",
+      "NTC-ADTC-OPTION",
+      "NTC-STATE-CHARGES",
+      "PLN-NON-AADHAAR-AT-RTO",
+      "PRM-FORM1A-AGE",
+      "PRM-HPT",
+      "PRM-TUTORIAL-DAYS",
+      "RT-AGE-40"
+    ],
+    "warnings": []
+  },
+  "P-04-helper-no-laptop": {
+    "age": {
+      "band": "20_39",
+      "dob_precision": "day",
+      "years_max": 26,
+      "years_min": 26
+    },
+    "as_of": "2026-10-23",
+    "blockers": [],
+    "bundles": [
+      {
+        "bundle_no": 1,
+        "classes": ["MCWOG"],
+        "dl_test_unlock": "2026-11-22",
+        "earliest_licence": "2026-11-22",
+        "fees": {
+          "classes": ["MCWOG"],
+          "excludes": ["state_service_charge", "postage"],
+          "lines": [
+            {
+              "amount_paise": 15000,
+              "class_code": "MCWOG",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 5000,
+              "class_code": null,
+              "fee_id": "FEE-LL-TEST",
+              "label_key": "fee.ll_test",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-LL-TEST",
+              "stage": "LL",
+              "unit_paise": 5000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "MCWOG",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-DL-ISSUE",
+              "label_key": "fee.dl_issue",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-DL-ISSUE",
+              "stage": "DL",
+              "unit_paise": 20000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-SMART-CARD",
+              "label_key": "fee.smart_card",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-SMART-CARD",
+              "stage": "DL",
+              "unit_paise": 20000
+            }
+          ],
+          "ll_stage_paise": 50000,
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "medium",
+            "grade": "S",
+            "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+            "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+            "verified": true
+          },
+          "retest": [
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-LL-RETEST",
+              "label_key": "fee.ll_retest",
+              "per": "attempt"
+            },
+            {
+              "amount_paise": 30000,
+              "fee_id": "FEE-DL-RETEST",
+              "label_key": "fee.dl_retest",
+              "per": "class_attempt"
+            }
+          ],
+          "smart_card_paise": 20000,
+          "state_items": [
+            {
+              "amount_paise": 105000,
+              "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.slot_booking_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            },
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-JK-POSTAGE-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.postage_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            }
+          ],
+          "subtotal_govt_fee_paise": 70000,
+          "total_paise": 90000
+        },
+        "ll_expires_on": "2027-04-23",
+        "ll_from": "2026-10-23",
+        "rule_ids": []
+      }
+    ],
+    "classes": [
+      {
+        "alternatives": [],
+        "class_code": "MCWOG",
+        "content_depth": "deep",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.mcwog",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": [],
+        "rule_ids": ["CLS-MCWOG"],
+        "transport": false,
+        "verify_at_rto": false
+      }
+    ],
+    "dl_test": {
+      "automated": true,
+      "known": true,
+      "rule_id": "JK-PRM-DL-TEST",
+      "tracks": ["S-track (LMV, Kashmir)", "8-track (two-wheeler, Kashmir)"],
+      "verified": false
+    },
+    "documents": [
+      {
+        "doc_id": "form_2_ll_application",
+        "required": true,
+        "rule_id": "DOC-FORM-2",
+        "stage": "LL",
+        "text_key": "doc.form_2",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1_self_declaration",
+        "required": true,
+        "rule_id": "DOC-FORM-1",
+        "stage": "LL",
+        "text_key": "doc.form_1",
+        "verified": true
+      },
+      {
+        "doc_id": "proof_of_age_and_address",
+        "required": true,
+        "rule_id": "DOC-AGE-ADDRESS-PROOF",
+        "stage": "LL",
+        "text_key": "doc.age_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "photo_and_signature",
+        "required": true,
+        "rule_id": "DOC-PHOTO-SIGNATURE",
+        "stage": "LL",
+        "text_key": "doc.photo_signature",
+        "verified": true
+      },
+      {
+        "doc_id": "valid_learners_licence",
+        "required": true,
+        "rule_id": "DOC-VALID-LL",
+        "stage": "DL",
+        "text_key": "doc.valid_ll",
+        "verified": true
+      },
+      {
+        "doc_id": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "rule_id": "DOC-TEST-VEHICLE-PAPERS",
+        "stage": "DL",
+        "text_key": "doc.test_vehicle_papers",
+        "verified": false
+      }
+    ],
+    "earliest_dates": {
+      "dl_test_unlock": "2026-11-22",
+      "earliest_licence": "2026-11-22",
+      "ll_expires_on": "2027-04-23",
+      "ll_issue": "2026-10-23"
+    },
+    "family_mode_required": false,
+    "fees": {
+      "classes": ["MCWOG"],
+      "excludes": ["state_service_charge", "postage"],
+      "lines": [
+        {
+          "amount_paise": 15000,
+          "class_code": "MCWOG",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 5000,
+          "class_code": null,
+          "fee_id": "FEE-LL-TEST",
+          "label_key": "fee.ll_test",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-LL-TEST",
+          "stage": "LL",
+          "unit_paise": 5000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "MCWOG",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-DL-ISSUE",
+          "label_key": "fee.dl_issue",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-DL-ISSUE",
+          "stage": "DL",
+          "unit_paise": 20000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-SMART-CARD",
+          "label_key": "fee.smart_card",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-SMART-CARD",
+          "stage": "DL",
+          "unit_paise": 20000
+        }
+      ],
+      "ll_stage_paise": 50000,
+      "provenance": {
+        "checked_on": "2026-10-22",
+        "confidence": "medium",
+        "grade": "S",
+        "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+        "verified": true
+      },
+      "retest": [
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-LL-RETEST",
+          "label_key": "fee.ll_retest",
+          "per": "attempt"
+        },
+        {
+          "amount_paise": 30000,
+          "fee_id": "FEE-DL-RETEST",
+          "label_key": "fee.dl_retest",
+          "per": "class_attempt"
+        }
+      ],
+      "smart_card_paise": 20000,
+      "state_items": [
+        {
+          "amount_paise": 105000,
+          "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.slot_booking_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        },
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-JK-POSTAGE-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.postage_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        }
+      ],
+      "subtotal_govt_fee_paise": 70000,
+      "total_paise": 90000
+    },
+    "hpt": {
+      "applies": false,
+      "effective_from": null,
+      "rule_id": "PRM-HPT",
+      "status": "none"
+    },
+    "ll_test": {
+      "confidence": "medium",
+      "known": true,
+      "mode": "rto",
+      "online_available": true,
+      "pass_correct": 6,
+      "pass_pct": 60,
+      "questions": 10,
+      "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+      "verified": false,
+      "where": ["home_online", "csc", "rto"]
+    },
+    "max_rto_visits": 2,
+    "milestones": [
+      {
+        "due_on": "2026-11-22",
+        "id": "LL_DAY_30_UNLOCK",
+        "rule_id": "JK-PRM-MIN-WAIT-DAYS"
+      },
+      {
+        "due_on": "2027-04-23",
+        "id": "LL_EXPIRY",
+        "rule_id": "JK-PRM-LL-VALIDITY-MONTHS"
+      }
+    ],
+    "notices": [
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "OBS",
+          "source_title": "Sarathi class picker (observed 2026-10-22); Delhi Transport class table",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "refs": ["EC-05", "F-04"],
+        "rule_id": "JK-B01",
+        "severity": "notice",
+        "text_key": "blocker.jk.class_vs_vehicle",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-06"],
+        "rule_id": "JK-B08",
+        "severity": "notice",
+        "text_key": "blocker.jk.photo_cannot_change_later",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+          "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+          "verified": true
+        },
+        "refs": ["F-02", "D-06"],
+        "rule_id": "NTC-STATE-CHARGES",
+        "severity": "notice",
+        "text_key": "notice.state_charges_may_apply",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": true
+        },
+        "refs": ["F-14"],
+        "rule_id": "JK-NTC-DIGILOCKER",
+        "severity": "notice",
+        "text_key": "notice.jk.digilocker_equal",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "Kashmir Life, Dec 2025",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": false
+        },
+        "refs": ["EC-23"],
+        "rule_id": "JK-NTC-APPROVAL-SMS",
+        "severity": "notice",
+        "text_key": "notice.jk.three_sms_24h",
+        "verify_at_rto": true
+      }
+    ],
+    "offices": [
+      {
+        "district": "Jammu",
+        "name": "RTO Jammu",
+        "office_id": "jk-rto-jammu",
+        "rule_id": "JK-OFC-RTO-JAMMU",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "Srinagar",
+        "name": "RTO Kashmir",
+        "office_id": "jk-rto-kashmir",
+        "rule_id": "JK-OFC-RTO-KASHMIR",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": "S-track (LMV), 8-track (2W)",
+        "verified": false
+      },
+      {
+        "district": "Kathua",
+        "name": "ARTO Kathua",
+        "office_id": "jk-arto-kathua",
+        "rule_id": "JK-OFC-ARTO-KATHUA",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "All districts",
+        "name": "Common Service Centres (LL test)",
+        "office_id": "jk-csc",
+        "rule_id": "JK-OFC-CSC",
+        "tests": ["ll_online"],
+        "track_type": null,
+        "verified": false
+      }
+    ],
+    "paths": [
+      {
+        "ll_test_at_rto": false,
+        "max_rto_visits": 1,
+        "path_id": "aadhaar_contactless",
+        "recommended": false,
+        "rule_ids": []
+      },
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "non_aadhaar",
+        "recommended": true,
+        "rule_ids": ["PLN-NON-AADHAAR-AT-RTO"]
+      }
+    ],
+    "recommended_path": "non_aadhaar",
+    "requested_classes": ["MCWOG"],
+    "rule_pack": {
+      "base_version": "IN-base@2026.10.0",
+      "classes_version": "2026.10.0",
+      "fees_version": "2026.10.0",
+      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "pack_id": "JK",
+      "partial": false,
+      "version": "2026.10.0"
+    },
+    "saving": null,
+    "state": "JK",
+    "steps": [
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.apply",
+        "n": 1,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.tutorial",
+        "n": 2,
+        "rule_ids": ["PRM-TUTORIAL-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-10-23",
+        "key": "ll.test.at_rto",
+        "n": 3,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT", "PLN-NON-AADHAAR-AT-RTO"],
+        "visit": 1
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "practice",
+        "n": 4,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.book",
+        "n": 5,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS", "JK-PRM-LL-VALIDITY-MONTHS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.test",
+        "n": 6,
+        "rule_ids": ["JK-PRM-DL-TEST"],
+        "visit": 2
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.issue",
+        "n": 7,
+        "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"],
+        "visit": null
+      }
+    ],
+    "trace": [
+      "CLS-MCWOG",
+      "DOC-AGE-ADDRESS-PROOF",
+      "DOC-FORM-1",
+      "DOC-FORM-2",
+      "DOC-PHOTO-SIGNATURE",
+      "DOC-TEST-VEHICLE-PAPERS",
+      "DOC-VALID-LL",
+      "FEE-DL-ISSUE",
+      "FEE-DL-TEST",
+      "FEE-JK-POSTAGE-REPORTED",
+      "FEE-JK-SLOT-BOOKING-REPORTED",
+      "FEE-LL-ISSUE",
+      "FEE-LL-TEST",
+      "FEE-SMART-CARD",
+      "JK-B01",
+      "JK-B05",
+      "JK-B06",
+      "JK-B08",
+      "JK-NTC-APPROVAL-SMS",
+      "JK-NTC-DIGILOCKER",
+      "JK-OFC-ARTO-KATHUA",
+      "JK-OFC-CSC",
+      "JK-OFC-RTO-JAMMU",
+      "JK-OFC-RTO-KASHMIR",
+      "JK-PRM-DL-TEST",
+      "JK-PRM-LL-FORMAT",
+      "JK-PRM-LL-TEST-MODE",
+      "JK-PRM-LL-VALIDITY-MONTHS",
+      "JK-PRM-MIN-WAIT-DAYS",
+      "NTC-STATE-CHARGES",
+      "PLN-NON-AADHAAR-AT-RTO",
+      "PRM-FORM1A-AGE",
+      "PRM-HPT",
+      "PRM-TUTORIAL-DAYS"
+    ],
+    "warnings": [
+      {
+        "due_on": null,
+        "fix_key": "fix.link_mobile_or_non_aadhaar",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "OBS",
+          "source_title": "Sarathi Aadhaar OTP screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-04"],
+        "rule_id": "JK-B05",
+        "severity": "warning",
+        "text_key": "blocker.jk.aadhaar_mobile_not_linked",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": "fix.jk.use_csc",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "OBS",
+          "source_title": "Sarathi LL test sign-in and face authentication (observed 2026-10-22); Kashmir Life (CSC)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/authenticationaction.do",
+          "verified": true
+        },
+        "refs": ["F-04"],
+        "rule_id": "JK-B06",
+        "severity": "warning",
+        "text_key": "blocker.jk.home_test_device",
+        "verify_at_rto": false
+      }
+    ]
+  },
+  "P-05-kerala-school-student": {
+    "age": {
+      "band": "20_39",
+      "dob_precision": "day",
+      "years_max": 21,
+      "years_min": 21
+    },
+    "as_of": "2026-12-20",
+    "blockers": [],
+    "bundles": [
+      {
+        "bundle_no": 1,
+        "classes": ["LMV-NT"],
+        "dl_test_unlock": "2027-01-19",
+        "earliest_licence": "2027-01-19",
+        "fees": {
+          "classes": ["LMV-NT"],
+          "excludes": ["state_service_charge", "postage"],
+          "lines": [
+            {
+              "amount_paise": 15000,
+              "class_code": "LMV-NT",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 5000,
+              "class_code": null,
+              "fee_id": "FEE-LL-TEST",
+              "label_key": "fee.ll_test",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-LL-TEST",
+              "stage": "LL",
+              "unit_paise": 5000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "LMV-NT",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-DL-ISSUE",
+              "label_key": "fee.dl_issue",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-DL-ISSUE",
+              "stage": "DL",
+              "unit_paise": 20000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-SMART-CARD",
+              "label_key": "fee.smart_card",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-SMART-CARD",
+              "stage": "DL",
+              "unit_paise": 20000
+            }
+          ],
+          "ll_stage_paise": 50000,
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "medium",
+            "grade": "S",
+            "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+            "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+            "verified": true
+          },
+          "retest": [
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-LL-RETEST",
+              "label_key": "fee.ll_retest",
+              "per": "attempt"
+            },
+            {
+              "amount_paise": 30000,
+              "fee_id": "FEE-DL-RETEST",
+              "label_key": "fee.dl_retest",
+              "per": "class_attempt"
+            }
+          ],
+          "smart_card_paise": 20000,
+          "state_items": [],
+          "subtotal_govt_fee_paise": 70000,
+          "total_paise": 90000
+        },
+        "ll_expires_on": "2027-06-20",
+        "ll_from": "2026-12-20",
+        "rule_ids": []
+      }
+    ],
+    "classes": [
+      {
+        "alternatives": [],
+        "class_code": "LMV-NT",
+        "content_depth": "deep",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.lmv_nt",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": [],
+        "rule_ids": ["CLS-LMV-NT"],
+        "transport": false,
+        "verify_at_rto": false
+      }
+    ],
+    "dl_test": {
+      "automated": false,
+      "known": true,
+      "rule_id": "KL-PRM-DL-TEST",
+      "tracks": ["road test before H-test", "angular/parallel parking", "zig-zag", "gradient"],
+      "verified": false
+    },
+    "documents": [
+      {
+        "doc_id": "form_2_ll_application",
+        "required": true,
+        "rule_id": "DOC-FORM-2",
+        "stage": "LL",
+        "text_key": "doc.form_2",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1_self_declaration",
+        "required": true,
+        "rule_id": "DOC-FORM-1",
+        "stage": "LL",
+        "text_key": "doc.form_1",
+        "verified": true
+      },
+      {
+        "doc_id": "proof_of_age_and_address",
+        "required": true,
+        "rule_id": "DOC-AGE-ADDRESS-PROOF",
+        "stage": "LL",
+        "text_key": "doc.age_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "photo_and_signature",
+        "required": true,
+        "rule_id": "DOC-PHOTO-SIGNATURE",
+        "stage": "LL",
+        "text_key": "doc.photo_signature",
+        "verified": true
+      },
+      {
+        "doc_id": "valid_learners_licence",
+        "required": true,
+        "rule_id": "DOC-VALID-LL",
+        "stage": "DL",
+        "text_key": "doc.valid_ll",
+        "verified": true
+      },
+      {
+        "doc_id": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "rule_id": "DOC-TEST-VEHICLE-PAPERS",
+        "stage": "DL",
+        "text_key": "doc.test_vehicle_papers",
+        "verified": false
+      }
+    ],
+    "earliest_dates": {
+      "dl_test_unlock": "2027-01-19",
+      "earliest_licence": "2027-01-19",
+      "ll_expires_on": "2027-06-20",
+      "ll_issue": "2026-12-20"
+    },
+    "family_mode_required": false,
+    "fees": {
+      "classes": ["LMV-NT"],
+      "excludes": ["state_service_charge", "postage"],
+      "lines": [
+        {
+          "amount_paise": 15000,
+          "class_code": "LMV-NT",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 5000,
+          "class_code": null,
+          "fee_id": "FEE-LL-TEST",
+          "label_key": "fee.ll_test",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-LL-TEST",
+          "stage": "LL",
+          "unit_paise": 5000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "LMV-NT",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-DL-ISSUE",
+          "label_key": "fee.dl_issue",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-DL-ISSUE",
+          "stage": "DL",
+          "unit_paise": 20000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-SMART-CARD",
+          "label_key": "fee.smart_card",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-SMART-CARD",
+          "stage": "DL",
+          "unit_paise": 20000
+        }
+      ],
+      "ll_stage_paise": 50000,
+      "provenance": {
+        "checked_on": "2026-10-22",
+        "confidence": "medium",
+        "grade": "S",
+        "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+        "verified": true
+      },
+      "retest": [
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-LL-RETEST",
+          "label_key": "fee.ll_retest",
+          "per": "attempt"
+        },
+        {
+          "amount_paise": 30000,
+          "fee_id": "FEE-DL-RETEST",
+          "label_key": "fee.dl_retest",
+          "per": "class_attempt"
+        }
+      ],
+      "smart_card_paise": 20000,
+      "state_items": [],
+      "subtotal_govt_fee_paise": 70000,
+      "total_paise": 90000
+    },
+    "hpt": {
+      "applies": true,
+      "effective_from": "2026-12-01",
+      "rule_id": "KL-PRM-HPT",
+      "status": "announced"
+    },
+    "ll_test": {
+      "confidence": "low",
+      "known": false,
+      "mode": "rto",
+      "online_available": false,
+      "pass_correct": 9,
+      "pass_pct": 60,
+      "questions": 15,
+      "rule_ids": ["KL-PRM-LL-TEST-MODE", "PRM-LL-FORMAT"],
+      "verified": false,
+      "where": ["rto"]
+    },
+    "max_rto_visits": 2,
+    "milestones": [
+      {
+        "due_on": "2027-01-19",
+        "id": "LL_DAY_30_UNLOCK",
+        "rule_id": "PRM-MIN-WAIT-DAYS"
+      },
+      {
+        "due_on": "2027-06-20",
+        "id": "LL_EXPIRY",
+        "rule_id": "PRM-LL-VALIDITY-MONTHS"
+      }
+    ],
+    "notices": [
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "State LL test mode from the state pack (PRM-LL-TEST-MODE)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["EC-10"],
+        "rule_id": "NTC-LL-AT-RTO",
+        "severity": "notice",
+        "text_key": "notice.ll_test_at_rto",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-06"],
+        "rule_id": "NTC-PHOTO-FINAL",
+        "severity": "notice",
+        "text_key": "notice.photo_cannot_change_later",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "MoRTH ADTC rules effective 1 Jul 2021 (Tribune/PTI)",
+          "source_url": "https://www.tribuneindia.com/news/road-ministry-notifies-rules-for-accredited-driver-training-centres-266863",
+          "verified": false
+        },
+        "refs": ["F-02"],
+        "rule_id": "NTC-ADTC-OPTION",
+        "severity": "notice",
+        "text_key": "notice.adtc_option",
+        "verify_at_rto": true
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+          "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+          "verified": true
+        },
+        "refs": ["F-02", "D-06"],
+        "rule_id": "NTC-STATE-CHARGES",
+        "severity": "notice",
+        "text_key": "notice.state_charges_may_apply",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-23",
+          "confidence": "high",
+          "grade": "OBS",
+          "source_title": "Margdarshak rule-pack coverage (partial state pack)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["MD-031", "D-05"],
+        "rule_id": "NTC-PARTIAL-PACK",
+        "severity": "notice",
+        "text_key": "notice.partial_pack",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "Onmanorama, 14 Sep 2026; South First on the HPT circular",
+          "source_url": "https://thesouthfirst.com/kerala/how-fast-can-you-spot-danger-keralams-new-licence-test-faces-driving-school-block/",
+          "verified": false
+        },
+        "refs": ["EC-28"],
+        "rule_id": "KL-NTC-HPT",
+        "severity": "notice",
+        "text_key": "notice.kl.hpt_in_your_test",
+        "verify_at_rto": true
+      }
+    ],
+    "offices": [],
+    "paths": [
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "aadhaar_contactless",
+        "recommended": true,
+        "rule_ids": ["RT-NO-ONLINE-LL"]
+      },
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "non_aadhaar",
+        "recommended": false,
+        "rule_ids": ["PLN-NON-AADHAAR-AT-RTO", "RT-NO-ONLINE-LL"]
+      }
+    ],
+    "recommended_path": "aadhaar_contactless",
+    "requested_classes": ["LMV-NT"],
+    "rule_pack": {
+      "base_version": "IN-base@2026.10.0",
+      "classes_version": "2026.10.0",
+      "fees_version": "2026.10.0",
+      "hash": "dbdf14467693605c1b2bd4d920ae74bc39ede517cf0b9e932d7aab488b985330",
+      "pack_id": "KL",
+      "partial": true,
+      "version": "2026.10.0"
+    },
+    "saving": null,
+    "state": "KL",
+    "steps": [
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.apply",
+        "n": 1,
+        "rule_ids": ["KL-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.tutorial",
+        "n": 2,
+        "rule_ids": ["PRM-TUTORIAL-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-12-20",
+        "key": "ll.test.at_rto",
+        "n": 3,
+        "rule_ids": ["KL-PRM-LL-TEST-MODE", "PRM-LL-FORMAT", "RT-NO-ONLINE-LL"],
+        "visit": 1
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2027-01-19",
+        "key": "practice",
+        "n": 4,
+        "rule_ids": ["PRM-MIN-WAIT-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2027-01-19",
+        "key": "dl.book",
+        "n": 5,
+        "rule_ids": ["PRM-MIN-WAIT-DAYS", "PRM-LL-VALIDITY-MONTHS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2027-01-19",
+        "key": "dl.hpt",
+        "n": 6,
+        "rule_ids": ["KL-PRM-HPT"],
+        "visit": 2
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2027-01-19",
+        "key": "dl.test",
+        "n": 7,
+        "rule_ids": ["KL-PRM-DL-TEST"],
+        "visit": 2
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2027-01-19",
+        "key": "dl.issue",
+        "n": 8,
+        "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"],
+        "visit": null
+      }
+    ],
+    "trace": [
+      "CLS-LMV-NT",
+      "DOC-AGE-ADDRESS-PROOF",
+      "DOC-FORM-1",
+      "DOC-FORM-2",
+      "DOC-PHOTO-SIGNATURE",
+      "DOC-TEST-VEHICLE-PAPERS",
+      "DOC-VALID-LL",
+      "FEE-DL-ISSUE",
+      "FEE-DL-TEST",
+      "FEE-LL-ISSUE",
+      "FEE-LL-TEST",
+      "FEE-SMART-CARD",
+      "KL-NTC-HPT",
+      "KL-PRM-DL-TEST",
+      "KL-PRM-HPT",
+      "KL-PRM-LL-TEST-MODE",
+      "KL-WRN-SLOT-BACKLOG",
+      "NTC-ADTC-OPTION",
+      "NTC-LL-AT-RTO",
+      "NTC-PARTIAL-PACK",
+      "NTC-PHOTO-FINAL",
+      "NTC-STATE-CHARGES",
+      "PLN-NON-AADHAAR-AT-RTO",
+      "PRM-FORM1A-AGE",
+      "PRM-LL-FORMAT",
+      "PRM-LL-VALIDITY-MONTHS",
+      "PRM-MIN-WAIT-DAYS",
+      "PRM-TUTORIAL-DAYS",
+      "RT-NO-ONLINE-LL"
+    ],
+    "warnings": [
+      {
+        "due_on": null,
+        "fix_key": "fix.book_slot_early",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "Onmanorama, Sep 2024: test backlog after reforms",
+          "source_url": "https://onmanorama.com/news/kerala/2024/09/19/high-driving-test-failure-rate-post-reforms-kerala-government-revise-daily-limit.html",
+          "verified": false
+        },
+        "refs": ["EC-07"],
+        "rule_id": "KL-WRN-SLOT-BACKLOG",
+        "severity": "warning",
+        "text_key": "warning.kl.slot_backlog",
+        "verify_at_rto": true
+      }
+    ]
+  },
+  "P-07-rahul-17": {
+    "age": {
+      "band": "16_17",
+      "dob_precision": "day",
+      "years_max": 17,
+      "years_min": 17
+    },
+    "as_of": "2026-10-23",
+    "blockers": [],
+    "bundles": [
+      {
+        "bundle_no": 1,
+        "classes": ["MC50CC"],
+        "dl_test_unlock": "2026-11-22",
+        "earliest_licence": "2026-11-22",
+        "fees": {
+          "classes": ["MC50CC"],
+          "excludes": ["state_service_charge", "postage"],
+          "lines": [
+            {
+              "amount_paise": 15000,
+              "class_code": "MC50CC",
+              "fee_id": "FEE-LL-ISSUE",
+              "label_key": "fee.ll_issue",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-LL-ISSUE",
+              "stage": "LL",
+              "unit_paise": 15000
+            },
+            {
+              "amount_paise": 5000,
+              "class_code": null,
+              "fee_id": "FEE-LL-TEST",
+              "label_key": "fee.ll_test",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-LL-TEST",
+              "stage": "LL",
+              "unit_paise": 5000
+            },
+            {
+              "amount_paise": 30000,
+              "class_code": "MC50CC",
+              "fee_id": "FEE-DL-TEST",
+              "label_key": "fee.dl_test",
+              "per": "class",
+              "quantity": 1,
+              "rule_id": "FEE-DL-TEST",
+              "stage": "LL",
+              "unit_paise": 30000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-DL-ISSUE",
+              "label_key": "fee.dl_issue",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-DL-ISSUE",
+              "stage": "DL",
+              "unit_paise": 20000
+            },
+            {
+              "amount_paise": 20000,
+              "class_code": null,
+              "fee_id": "FEE-SMART-CARD",
+              "label_key": "fee.smart_card",
+              "per": "application",
+              "quantity": 1,
+              "rule_id": "FEE-SMART-CARD",
+              "stage": "DL",
+              "unit_paise": 20000
+            }
+          ],
+          "ll_stage_paise": 50000,
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "medium",
+            "grade": "S",
+            "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+            "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+            "verified": true
+          },
+          "retest": [
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-LL-RETEST",
+              "label_key": "fee.ll_retest",
+              "per": "attempt"
+            },
+            {
+              "amount_paise": 30000,
+              "fee_id": "FEE-DL-RETEST",
+              "label_key": "fee.dl_retest",
+              "per": "class_attempt"
+            }
+          ],
+          "smart_card_paise": 20000,
+          "state_items": [
+            {
+              "amount_paise": 105000,
+              "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.slot_booking_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            },
+            {
+              "amount_paise": 5000,
+              "fee_id": "FEE-JK-POSTAGE-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.jk.postage_reported",
+              "provenance": {
+                "checked_on": "2026-10-22",
+                "confidence": "low",
+                "grade": "S",
+                "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+                "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+                "verified": false
+              }
+            }
+          ],
+          "subtotal_govt_fee_paise": 70000,
+          "total_paise": 90000
+        },
+        "ll_expires_on": "2027-04-23",
+        "ll_from": "2026-10-23",
+        "rule_ids": []
+      }
+    ],
+    "classes": [
+      {
+        "alternatives": [],
+        "class_code": "MC50CC",
+        "content_depth": "coming",
+        "eligible": true,
+        "eligible_from": null,
+        "flags": [],
+        "name_key": "class.mc50cc",
+        "prerequisites": [],
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(2) [MK]; Delhi Transport class table (16 with guardian consent)",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "reason_key": null,
+        "requires": ["GUARDIAN_CONSENT"],
+        "rule_ids": ["CLS-MC50CC", "ELIG-GUARDIAN-CONSENT"],
+        "transport": false,
+        "verify_at_rto": false
+      }
+    ],
+    "dl_test": {
+      "automated": true,
+      "known": true,
+      "rule_id": "JK-PRM-DL-TEST",
+      "tracks": ["S-track (LMV, Kashmir)", "8-track (two-wheeler, Kashmir)"],
+      "verified": false
+    },
+    "documents": [
+      {
+        "doc_id": "form_2_ll_application",
+        "required": true,
+        "rule_id": "DOC-FORM-2",
+        "stage": "LL",
+        "text_key": "doc.form_2",
+        "verified": true
+      },
+      {
+        "doc_id": "form_1_self_declaration",
+        "required": true,
+        "rule_id": "DOC-FORM-1",
+        "stage": "LL",
+        "text_key": "doc.form_1",
+        "verified": true
+      },
+      {
+        "doc_id": "proof_of_age_and_address",
+        "required": true,
+        "rule_id": "DOC-AGE-ADDRESS-PROOF",
+        "stage": "LL",
+        "text_key": "doc.age_address_proof",
+        "verified": true
+      },
+      {
+        "doc_id": "photo_and_signature",
+        "required": true,
+        "rule_id": "DOC-PHOTO-SIGNATURE",
+        "stage": "LL",
+        "text_key": "doc.photo_signature",
+        "verified": true
+      },
+      {
+        "doc_id": "guardian_consent",
+        "required": true,
+        "rule_id": "DOC-GUARDIAN-CONSENT",
+        "stage": "LL",
+        "text_key": "doc.guardian_consent",
+        "verified": true
+      },
+      {
+        "doc_id": "valid_learners_licence",
+        "required": true,
+        "rule_id": "DOC-VALID-LL",
+        "stage": "DL",
+        "text_key": "doc.valid_ll",
+        "verified": true
+      },
+      {
+        "doc_id": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "rule_id": "DOC-TEST-VEHICLE-PAPERS",
+        "stage": "DL",
+        "text_key": "doc.test_vehicle_papers",
+        "verified": false
+      }
+    ],
+    "earliest_dates": {
+      "dl_test_unlock": "2026-11-22",
+      "earliest_licence": "2026-11-22",
+      "ll_expires_on": "2027-04-23",
+      "ll_issue": "2026-10-23"
+    },
+    "family_mode_required": true,
+    "fees": {
+      "classes": ["MC50CC"],
+      "excludes": ["state_service_charge", "postage"],
+      "lines": [
+        {
+          "amount_paise": 15000,
+          "class_code": "MC50CC",
+          "fee_id": "FEE-LL-ISSUE",
+          "label_key": "fee.ll_issue",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-LL-ISSUE",
+          "stage": "LL",
+          "unit_paise": 15000
+        },
+        {
+          "amount_paise": 5000,
+          "class_code": null,
+          "fee_id": "FEE-LL-TEST",
+          "label_key": "fee.ll_test",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-LL-TEST",
+          "stage": "LL",
+          "unit_paise": 5000
+        },
+        {
+          "amount_paise": 30000,
+          "class_code": "MC50CC",
+          "fee_id": "FEE-DL-TEST",
+          "label_key": "fee.dl_test",
+          "per": "class",
+          "quantity": 1,
+          "rule_id": "FEE-DL-TEST",
+          "stage": "LL",
+          "unit_paise": 30000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-DL-ISSUE",
+          "label_key": "fee.dl_issue",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-DL-ISSUE",
+          "stage": "DL",
+          "unit_paise": 20000
+        },
+        {
+          "amount_paise": 20000,
+          "class_code": null,
+          "fee_id": "FEE-SMART-CARD",
+          "label_key": "fee.smart_card",
+          "per": "application",
+          "quantity": 1,
+          "rule_id": "FEE-SMART-CARD",
+          "stage": "DL",
+          "unit_paise": 20000
+        }
+      ],
+      "ll_stage_paise": 50000,
+      "provenance": {
+        "checked_on": "2026-10-22",
+        "confidence": "medium",
+        "grade": "S",
+        "source_title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+        "verified": true
+      },
+      "retest": [
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-LL-RETEST",
+          "label_key": "fee.ll_retest",
+          "per": "attempt"
+        },
+        {
+          "amount_paise": 30000,
+          "fee_id": "FEE-DL-RETEST",
+          "label_key": "fee.dl_retest",
+          "per": "class_attempt"
+        }
+      ],
+      "smart_card_paise": 20000,
+      "state_items": [
+        {
+          "amount_paise": 105000,
+          "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.slot_booking_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        },
+        {
+          "amount_paise": 5000,
+          "fee_id": "FEE-JK-POSTAGE-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.jk.postage_reported",
+          "provenance": {
+            "checked_on": "2026-10-22",
+            "confidence": "low",
+            "grade": "S",
+            "source_title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+            "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+            "verified": false
+          }
+        }
+      ],
+      "subtotal_govt_fee_paise": 70000,
+      "total_paise": 90000
+    },
+    "hpt": {
+      "applies": false,
+      "effective_from": null,
+      "rule_id": "PRM-HPT",
+      "status": "none"
+    },
+    "ll_test": {
+      "confidence": "medium",
+      "known": true,
+      "mode": "online",
+      "online_available": true,
+      "pass_correct": 6,
+      "pass_pct": 60,
+      "questions": 10,
+      "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+      "verified": false,
+      "where": ["home_online", "csc", "rto"]
+    },
+    "max_rto_visits": 1,
+    "milestones": [
+      {
+        "due_on": "2026-11-22",
+        "id": "LL_DAY_30_UNLOCK",
+        "rule_id": "JK-PRM-MIN-WAIT-DAYS"
+      },
+      {
+        "due_on": "2027-04-23",
+        "id": "LL_EXPIRY",
+        "rule_id": "JK-PRM-LL-VALIDITY-MONTHS"
+      }
+    ],
+    "notices": [
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-23",
+          "confidence": "medium",
+          "grade": "MK",
+          "source_title": "DPDP Act 2023: verifiable parental consent for under-18s [MK]",
+          "source_url": "https://www.meity.gov.in/",
+          "verified": true
+        },
+        "refs": ["EC-05", "D-13"],
+        "rule_id": "NTC-FAMILY-MODE",
+        "severity": "notice",
+        "text_key": "notice.family_mode",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "OBS",
+          "source_title": "Sarathi class picker (observed 2026-10-22); Delhi Transport class table",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "refs": ["EC-05", "F-04"],
+        "rule_id": "JK-B01",
+        "severity": "notice",
+        "text_key": "blocker.jk.class_vs_vehicle",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "OBS",
+          "source_title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+          "source_url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+          "verified": true
+        },
+        "refs": ["F-06"],
+        "rule_id": "JK-B08",
+        "severity": "notice",
+        "text_key": "blocker.jk.photo_cannot_change_later",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+          "source_url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf",
+          "verified": true
+        },
+        "refs": ["F-02", "D-06"],
+        "rule_id": "NTC-STATE-CHARGES",
+        "severity": "notice",
+        "text_key": "notice.state_charges_may_apply",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "medium",
+          "grade": "S",
+          "source_title": "Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": true
+        },
+        "refs": ["F-14"],
+        "rule_id": "JK-NTC-DIGILOCKER",
+        "severity": "notice",
+        "text_key": "notice.jk.digilocker_equal",
+        "verify_at_rto": false
+      },
+      {
+        "due_on": null,
+        "fix_key": null,
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "low",
+          "grade": "S",
+          "source_title": "Kashmir Life, Dec 2025",
+          "source_url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "verified": false
+        },
+        "refs": ["EC-23"],
+        "rule_id": "JK-NTC-APPROVAL-SMS",
+        "severity": "notice",
+        "text_key": "notice.jk.three_sms_24h",
+        "verify_at_rto": true
+      }
+    ],
+    "offices": [
+      {
+        "district": "Jammu",
+        "name": "RTO Jammu",
+        "office_id": "jk-rto-jammu",
+        "rule_id": "JK-OFC-RTO-JAMMU",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "Srinagar",
+        "name": "RTO Kashmir",
+        "office_id": "jk-rto-kashmir",
+        "rule_id": "JK-OFC-RTO-KASHMIR",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": "S-track (LMV), 8-track (2W)",
+        "verified": false
+      },
+      {
+        "district": "Kathua",
+        "name": "ARTO Kathua",
+        "office_id": "jk-arto-kathua",
+        "rule_id": "JK-OFC-ARTO-KATHUA",
+        "tests": ["ll_rto", "dl_test"],
+        "track_type": null,
+        "verified": false
+      },
+      {
+        "district": "All districts",
+        "name": "Common Service Centres (LL test)",
+        "office_id": "jk-csc",
+        "rule_id": "JK-OFC-CSC",
+        "tests": ["ll_online"],
+        "track_type": null,
+        "verified": false
+      }
+    ],
+    "paths": [
+      {
+        "ll_test_at_rto": false,
+        "max_rto_visits": 1,
+        "path_id": "aadhaar_contactless",
+        "recommended": true,
+        "rule_ids": []
+      },
+      {
+        "ll_test_at_rto": true,
+        "max_rto_visits": 2,
+        "path_id": "non_aadhaar",
+        "recommended": false,
+        "rule_ids": ["PLN-NON-AADHAAR-AT-RTO"]
+      }
+    ],
+    "recommended_path": "aadhaar_contactless",
+    "requested_classes": ["MC50CC"],
+    "rule_pack": {
+      "base_version": "IN-base@2026.10.0",
+      "classes_version": "2026.10.0",
+      "fees_version": "2026.10.0",
+      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "pack_id": "JK",
+      "partial": false,
+      "version": "2026.10.0"
+    },
+    "saving": null,
+    "state": "JK",
+    "steps": [
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.apply",
+        "n": 1,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "FEE-LL-ISSUE", "FEE-LL-TEST", "FEE-DL-TEST"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": null,
+        "key": "ll.tutorial",
+        "n": 2,
+        "rule_ids": ["PRM-TUTORIAL-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-10-23",
+        "key": "ll.test.online",
+        "n": 3,
+        "rule_ids": ["JK-PRM-LL-TEST-MODE", "JK-PRM-LL-FORMAT"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "practice",
+        "n": 4,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS"],
+        "visit": null
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.book",
+        "n": 5,
+        "rule_ids": ["JK-PRM-MIN-WAIT-DAYS", "JK-PRM-LL-VALIDITY-MONTHS"],
+        "visit": null
+      },
+      {
+        "at_rto": true,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.test",
+        "n": 6,
+        "rule_ids": ["JK-PRM-DL-TEST"],
+        "visit": 1
+      },
+      {
+        "at_rto": false,
+        "done": false,
+        "due_on": "2026-11-22",
+        "key": "dl.issue",
+        "n": 7,
+        "rule_ids": ["FEE-DL-ISSUE", "FEE-SMART-CARD"],
+        "visit": null
+      }
+    ],
+    "trace": [
+      "CLS-MC50CC",
+      "DOC-AGE-ADDRESS-PROOF",
+      "DOC-FORM-1",
+      "DOC-FORM-2",
+      "DOC-GUARDIAN-CONSENT",
+      "DOC-PHOTO-SIGNATURE",
+      "DOC-TEST-VEHICLE-PAPERS",
+      "DOC-VALID-LL",
+      "ELIG-GUARDIAN-CONSENT",
+      "FEE-DL-ISSUE",
+      "FEE-DL-TEST",
+      "FEE-JK-POSTAGE-REPORTED",
+      "FEE-JK-SLOT-BOOKING-REPORTED",
+      "FEE-LL-ISSUE",
+      "FEE-LL-TEST",
+      "FEE-SMART-CARD",
+      "JK-B01",
+      "JK-B08",
+      "JK-NTC-APPROVAL-SMS",
+      "JK-NTC-DIGILOCKER",
+      "JK-OFC-ARTO-KATHUA",
+      "JK-OFC-CSC",
+      "JK-OFC-RTO-JAMMU",
+      "JK-OFC-RTO-KASHMIR",
+      "JK-PRM-DL-TEST",
+      "JK-PRM-LL-FORMAT",
+      "JK-PRM-LL-TEST-MODE",
+      "JK-PRM-LL-VALIDITY-MONTHS",
+      "JK-PRM-MIN-WAIT-DAYS",
+      "NTC-FAMILY-MODE",
+      "NTC-STATE-CHARGES",
+      "PLN-NON-AADHAAR-AT-RTO",
+      "PRM-FORM1A-AGE",
+      "PRM-HPT",
+      "PRM-TUTORIAL-DAYS",
+      "WRN-U18-MC50-ONLY"
+    ],
+    "warnings": [
+      {
+        "due_on": "2027-02-20",
+        "fix_key": "fix.mc50_or_wait_18",
+        "provenance": {
+          "checked_on": "2026-10-22",
+          "confidence": "high",
+          "grade": "P-state",
+          "source_title": "MV Act 1988 s.4(2) [MK]; Delhi Transport class table",
+          "source_url": "https://transport.delhi.gov.in/hi/node/3079",
+          "verified": true
+        },
+        "refs": ["EC-05", "EC-17"],
+        "rule_id": "WRN-U18-MC50-ONLY",
+        "severity": "warning",
+        "text_key": "warning.u18_mc50_only",
+        "verify_at_rto": false
+      }
+    ]
+  }
+}

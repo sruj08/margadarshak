@@ -1,0 +1,3967 @@
+{
+  "$schema": "../schema/question-bank.schema.json",
+  "file_kind": "question_bank",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "Rules of the road. Reworded stems, scenarios and true/false flips; never copied from any third-party bank. Rule statements are verified=false until the MV (Driving) Regulations 2017 and MV Act text are fetched and pinned (CURRICULUM §2.0). SERVER-SIDE CONTENT: items[].key and concepts[].explanation must never reach a client in mock mode; publish only through splitQuestionBank (packages/content). Every item is a draft awaiting two-person review; Hindi awaits native review.",
+  "topic": "LL2",
+  "confidence_levels": [50, 75, 100],
+  "answer_mode": "single_choice",
+  "concepts": [
+    {
+      "concept_id": "C-LL2-001",
+      "topic": "LL2",
+      "title": {
+        "en": "Keep left",
+        "hi": "बाईं ओर चलें"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-WRG-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-001",
+        "text": {
+          "en": "In India traffic keeps left. Ride as close to the left as is practical and let oncoming traffic pass on your right; never ride against traffic, even for a short distance.",
+          "hi": "भारत में ट्रैफ़िक बाईं ओर चलता है। जितना हो सके बाईं ओर चलें और सामने के ट्रैफ़िक को अपनी दाईं ओर से निकलने दें; थोड़ी दूरी के लिए भी उल्टी दिशा में न चलें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-001:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "On Indian roads, which side of the road should you normally ride on?",
+            "hi": "भारतीय सड़कों पर आपको आमतौर पर सड़क की किस ओर चलना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The right side",
+                "hi": "दाईं ओर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The middle of the road",
+                "hi": "सड़क के बीच में"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Whichever side is emptier",
+                "hi": "जो ओर ज़्यादा ख़ाली हो"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The left side",
+                "hi": "बाईं ओर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-001:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are riding on a two-way road with no lane markings. Where should you keep?",
+            "hi": "आप बिना लेन मार्किंग वाली दो-तरफ़ा सड़क पर चल रहे हैं। आपको कहाँ रहना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "As close to the left as is practical, leaving room for oncoming traffic",
+                "hi": "जितना हो सके बाईं ओर, सामने के ट्रैफ़िक के लिए जगह छोड़ते हुए"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "In the middle, so others can pass on both sides",
+                "hi": "बीच में, ताकि दूसरे दोनों ओर से निकल सकें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "On the right, to see oncoming traffic better",
+                "hi": "दाईं ओर, ताकि सामने का ट्रैफ़िक बेहतर दिखे"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Wherever the surface is smoothest, even on the right",
+                "hi": "जहाँ सड़क सबसे चिकनी हो, चाहे दाईं ओर ही क्यों न हो"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-001:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Riding on the right side for a short distance is fine if it saves a long U-turn. True or false?",
+            "hi": "लंबा U-टर्न बचाने के लिए थोड़ी दूर दाईं ओर चलना ठीक है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-002",
+      "topic": "LL2",
+      "title": {
+        "en": "Overtake on the right",
+        "hi": "दाईं ओर से ओवरटेक"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-HVY-002"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-002",
+        "text": {
+          "en": "Overtake only on the right of the vehicle you are passing, after checking that the road ahead is clear. Passing on the left puts you where drivers don't expect you.",
+          "hi": "आगे वाले वाहन को सिर्फ़ उसकी दाईं ओर से ओवरटेक करें, और पहले देख लें कि आगे सड़क साफ़ है। बाईं ओर से निकलने पर आप वहाँ होते हैं जहाँ ड्राइवर आपकी उम्मीद नहीं करता।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-002:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "From which side should you normally overtake a vehicle going the same way?",
+            "hi": "एक ही दिशा में जा रहे वाहन को आमतौर पर किस ओर से ओवरटेक करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "From its left",
+                "hi": "उसकी बाईं ओर से"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "From its right",
+                "hi": "उसकी दाईं ओर से"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "From whichever side has more space",
+                "hi": "जिस ओर ज़्यादा जगह हो"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "From the left if it is a truck",
+                "hi": "ट्रक हो तो बाईं ओर से"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-002:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A car ahead is moving slowly in your lane on a two-lane road and the road ahead is clear. How do you pass it?",
+            "hi": "दो लेन वाली सड़क पर आगे की कार आपकी लेन में धीरे चल रही है और आगे सड़क साफ़ है। आप उसे कैसे पार करेंगे?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Squeeze past on its left",
+                "hi": "उसकी बाईं ओर से जगह बनाकर निकलें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Sound the horn until it moves over, then pass on the left",
+                "hi": "उसके हटने तक हॉर्न बजाएँ, फिर बाईं ओर से निकलें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Check mirrors, signal right, pass on its right, then return left when clear",
+                "hi": "शीशे देखें, दायाँ इंडिकेटर दें, उसकी दाईं ओर से निकलें, फिर जगह होने पर बाईं ओर लौटें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Pass on the left without signalling",
+                "hi": "बिना इंडिकेटर के बाईं ओर से निकलें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-002:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "It is fine to overtake a bus on its left if it is moving slowly. True or false?",
+            "hi": "बस धीरे चल रही हो तो उसे बाईं ओर से ओवरटेक करना ठीक है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-003",
+      "topic": "LL2",
+      "title": {
+        "en": "Where not to overtake",
+        "hi": "कहाँ ओवरटेक न करें"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-HIL-003", "RR-HVY-002"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-003",
+        "text": {
+          "en": "Don't overtake where you cannot see far enough ahead, such as bends, hill tops and junctions, or at pedestrian crossings. Wait for a straight, clear stretch.",
+          "hi": "जहाँ आगे दूर तक न दिखे, जैसे मोड़, चढ़ाई का ऊपरी हिस्सा और चौराहे, या पैदल यात्री क्रॉसिंग पर, वहाँ ओवरटेक न करें। सीधे और साफ़ हिस्से का इंतज़ार करें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M14 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-003:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Where should you never overtake?",
+            "hi": "आपको कहाँ कभी ओवरटेक नहीं करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "On a straight road with a broken centre line",
+                "hi": "बीच में टूटी लाइन वाली सीधी सड़क पर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "On a wide road with a good view ahead",
+                "hi": "आगे साफ़ दिखने वाली चौड़ी सड़क पर"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "On a road with two lanes in your direction",
+                "hi": "आपकी दिशा में दो लेन वाली सड़क पर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "On a bend or near the top of a hill where you can't see ahead",
+                "hi": "मोड़ पर या चढ़ाई के ऊपरी हिस्से के पास, जहाँ आगे न दिखे"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-003:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Which of these is a place where overtaking is not allowed?",
+            "hi": "इनमें से किस जगह ओवरटेक करना मना है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "At a pedestrian crossing",
+                "hi": "पैदल यात्री क्रॉसिंग पर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "On a long straight with a clear view",
+                "hi": "साफ़ दिखने वाले लंबे सीधे रास्ते पर"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Where the centre line is broken and the road is clear",
+                "hi": "जहाँ बीच की लाइन टूटी हो और सड़क साफ़ हो"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "On a divided highway, from the right lane",
+                "hi": "डिवाइडर वाले हाईवे पर, दाईं लेन से"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-003:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are behind a slow tractor just before a blind bend. What should you do?",
+            "hi": "एक अंधे मोड़ से ठीक पहले आप धीमे ट्रैक्टर के पीछे हैं। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Overtake quickly before the bend",
+                "hi": "मोड़ से पहले जल्दी से ओवरटेक कर लें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Stay behind until after the bend, where you can see the road is clear",
+                "hi": "मोड़ के बाद तक पीछे रहें, जहाँ साफ़ दिखे कि सड़क ख़ाली है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Overtake on its left",
+                "hi": "उसकी बाईं ओर से ओवरटेक करें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Sound the horn and overtake on the bend",
+                "hi": "हॉर्न बजाएँ और मोड़ पर ओवरटेक करें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-004",
+      "topic": "LL2",
+      "title": {
+        "en": "When you are being overtaken",
+        "hi": "जब कोई आपको ओवरटेक करे"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-004",
+        "text": {
+          "en": "When you are being overtaken, keep left and don't speed up. Make it easy for the other vehicle to pass and pull back in.",
+          "hi": "जब कोई आपको ओवरटेक कर रहा हो, बाईं ओर रहें और रफ़्तार न बढ़ाएँ। दूसरे वाहन के लिए आगे निकलकर वापस लौटना आसान बनाएँ।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-004:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A vehicle behind you is overtaking. What should you do?",
+            "hi": "पीछे का एक वाहन आपको ओवरटेक कर रहा है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Speed up so it can't pass",
+                "hi": "रफ़्तार बढ़ाएँ ताकि वह न निकल सके"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Move to the middle of the road",
+                "hi": "सड़क के बीच में आ जाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Keep left and don't speed up",
+                "hi": "बाईं ओर रहें और रफ़्तार न बढ़ाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Brake hard so it passes quickly",
+                "hi": "ज़ोर से ब्रेक लगाएँ ताकि वह जल्दी निकल जाए"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-004:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When someone is overtaking you, you should speed up so the move ends sooner. True or false?",
+            "hi": "जब कोई आपको ओवरटेक कर रहा हो, तो रफ़्तार बढ़ा देनी चाहिए ताकि यह जल्दी ख़त्म हो। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-004:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A bus signals to overtake you on a narrow road. What helps most?",
+            "hi": "एक संकरी सड़क पर बस आपको ओवरटेक करने का इशारा देती है। सबसे ज़्यादा किस बात से मदद मिलेगी?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Ride closer to the centre to block it",
+                "hi": "उसे रोकने के लिए बीच की ओर चलें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Speed up to stay ahead of it",
+                "hi": "उससे आगे रहने के लिए रफ़्तार बढ़ाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Brake suddenly in front of it",
+                "hi": "उसके सामने अचानक ब्रेक लगाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Hold a steady speed and keep to the left",
+                "hi": "एक जैसी रफ़्तार रखें और बाईं ओर रहें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-005",
+      "topic": "LL2",
+      "title": {
+        "en": "Uncontrolled junctions: traffic from the right",
+        "hi": "बिना नियंत्रण वाले चौराहे: दाईं ओर का ट्रैफ़िक"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-JCT-002", "RR-JCT-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-005",
+        "text": {
+          "en": "Where a junction has no signals, signs or police and neither road is the main road, give way to traffic coming from your right, and to anyone already in the junction.",
+          "hi": "जहाँ चौराहे पर न सिग्नल हो, न संकेत, न पुलिस, और कोई सड़क मुख्य न हो, वहाँ दाईं ओर से आते ट्रैफ़िक को और चौराहे में पहले से मौजूद लोगों को रास्ता दें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-005:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At a junction with no signals, signs or police, whom should you give way to?",
+            "hi": "जिस चौराहे पर न सिग्नल हो, न संकेत, न पुलिस, वहाँ आपको किसे रास्ता देना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Traffic approaching from your right",
+                "hi": "दाईं ओर से आते ट्रैफ़िक को"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Traffic approaching from your left",
+                "hi": "बाईं ओर से आते ट्रैफ़िक को"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Nobody; whoever arrives first goes",
+                "hi": "किसी को नहीं; जो पहले पहुँचे वह जाए"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only buses and trucks",
+                "hi": "सिर्फ़ बस और ट्रक को"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-005:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At an unmarked crossing of two equal roads, a car is coming from your right. What should you do?",
+            "hi": "दो बराबर सड़कों के बिना निशान वाले चौराहे पर एक कार आपकी दाईं ओर से आ रही है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Go first because you are on a two-wheeler",
+                "hi": "पहले जाएँ, क्योंकि आप दोपहिया पर हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Give way and let it go first",
+                "hi": "रास्ता दें और उसे पहले जाने दें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Sound the horn and go",
+                "hi": "हॉर्न बजाएँ और निकल जाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Speed up to cross before it",
+                "hi": "उससे पहले पार करने के लिए रफ़्तार बढ़ाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-005:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At an uncontrolled junction of two equal roads, you give way to vehicles coming from your left. True or false?",
+            "hi": "दो बराबर सड़कों के बिना नियंत्रण वाले चौराहे पर आप बाईं ओर से आने वाले वाहनों को रास्ता देते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-006",
+      "topic": "LL2",
+      "title": {
+        "en": "Joining a main road",
+        "hi": "मुख्य सड़क में जाना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-JCT-002", "RR-JCT-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-006",
+        "text": {
+          "en": "When you come out of a side road, lane or driveway, traffic already on the main road goes first. Stop if needed, creep forward to see, and go only into a gap you can complete.",
+          "hi": "किसी गली, लेन या घर के रास्ते से निकलते समय मुख्य सड़क पर पहले से चल रहा ट्रैफ़िक पहले जाता है। ज़रूरत हो तो रुकें, धीरे बढ़कर देखें और उतने ही फ़ासले में निकलें जिसमें आप पूरा निकल सकें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M6 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-006:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are coming out of a side road onto a main road. Who goes first?",
+            "hi": "आप एक गली से मुख्य सड़क पर निकल रहे हैं। पहले कौन जाएगा?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "You, because you were waiting",
+                "hi": "आप, क्योंकि आप इंतज़ार कर रहे थे"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Whoever sounds the horn first",
+                "hi": "जो पहले हॉर्न बजाए"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Traffic already on the main road",
+                "hi": "मुख्य सड़क पर पहले से चल रहा ट्रैफ़िक"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The bigger vehicle",
+                "hi": "बड़ा वाहन"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-006:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are leaving a lane onto a busy main road, and a parked van blocks your view to the right. What should you do?",
+            "hi": "आप एक लेन से व्यस्त मुख्य सड़क पर निकल रहे हैं, और खड़ी वैन आपकी दाईं ओर की नज़र रोक रही है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Pull out quickly and hope it's clear",
+                "hi": "जल्दी से निकल जाएँ और उम्मीद करें कि रास्ता साफ़ होगा"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Sound the horn and pull out",
+                "hi": "हॉर्न बजाएँ और निकल जाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Follow the vehicle ahead out without looking",
+                "hi": "बिना देखे आगे वाले वाहन के पीछे निकल जाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Stop, creep forward slowly until you can see, then go when there is a gap",
+                "hi": "रुकें, दिखने लगे तब तक धीरे-धीरे आगे बढ़ें, फिर फ़ासला मिलने पर निकलें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-006:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When you join a main road from a side road, main-road traffic should slow down for you. True or false?",
+            "hi": "जब आप गली से मुख्य सड़क में जाते हैं, तो मुख्य सड़क के ट्रैफ़िक को आपके लिए धीमा होना चाहिए। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-007",
+      "topic": "LL2",
+      "title": {
+        "en": "Pedestrians on a crossing",
+        "hi": "क्रॉसिंग पर पैदल यात्री"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-JCT-002", "RR-PED-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-007",
+        "text": {
+          "en": "Give way to anyone on a pedestrian crossing, and never stop on the stripes. If a vehicle has stopped at a crossing, someone may be crossing in front of it.",
+          "hi": "पैदल यात्री क्रॉसिंग पर मौजूद हर व्यक्ति को रास्ता दें और धारियों पर कभी न रुकें। अगर क्रॉसिंग पर कोई वाहन रुका है, तो उसके आगे कोई पार कर रहा हो सकता है।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-007:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Someone is crossing on a zebra crossing ahead. What must you do?",
+            "hi": "आगे ज़ेबरा क्रॉसिंग पर कोई सड़क पार कर रहा है। आपको क्या करना है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Slow down and stop to let them cross",
+                "hi": "धीमे हों और उन्हें पार करने देने के लिए रुकें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Sound the horn so they move faster",
+                "hi": "हॉर्न बजाएँ ताकि वे जल्दी चलें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Ride around them",
+                "hi": "उनके बगल से निकल जाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Keep going; they should wait",
+                "hi": "चलते रहें; उन्हें रुकना चाहिए"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-007:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You may stop your scooter on a zebra crossing while waiting at a red light. True or false?",
+            "hi": "लाल बत्ती पर इंतज़ार करते समय आप अपना स्कूटर ज़ेबरा क्रॉसिंग पर रोक सकते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-007:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At a zebra crossing, the car in the next lane has stopped and you can't see why. What should you do?",
+            "hi": "ज़ेबरा क्रॉसिंग पर बगल की लेन की कार रुकी है और आपको वजह नहीं दिख रही। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Overtake the stopped car",
+                "hi": "रुकी हुई कार को ओवरटेक करें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Slow down and be ready to stop; someone may be crossing in front of it",
+                "hi": "धीमे हों और रुकने को तैयार रहें; उसके आगे कोई पार कर रहा हो सकता है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Sound the horn and pass",
+                "hi": "हॉर्न बजाएँ और निकल जाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Speed up to clear the crossing",
+                "hi": "क्रॉसिंग पार करने के लिए रफ़्तार बढ़ाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-008",
+      "topic": "LL2",
+      "title": {
+        "en": "Emergency vehicles",
+        "hi": "आपात वाहन"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-008",
+        "text": {
+          "en": "Give free passage to ambulances and fire engines on emergency duty: move to the left and slow down or stop so they can pass.",
+          "hi": "आपात ड्यूटी पर चल रही एम्बुलेंस और दमकल गाड़ी को रास्ता दें: बाईं ओर हो जाएँ और धीमे हों या रुकें ताकि वे निकल सकें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Motor Vehicles Act 1988 as amended 2019 (section to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-008:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "An ambulance with its siren on is coming up behind you. What should you do?",
+            "hi": "सायरन बजाती एम्बुलेंस आपके पीछे से आ रही है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Speed up to stay ahead of it",
+                "hi": "उससे आगे रहने के लिए रफ़्तार बढ़ाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Stop in the middle of the road",
+                "hi": "सड़क के बीच में रुक जाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Move to the left and let it pass",
+                "hi": "बाईं ओर हो जाएँ और उसे निकलने दें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Follow closely behind it once it passes",
+                "hi": "उसके निकलते ही ठीक उसके पीछे चलें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-008:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You must give way to a fire engine sounding its siren. True or false?",
+            "hi": "सायरन बजाती दमकल गाड़ी को रास्ता देना ज़रूरी है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-008:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are waiting at a red light and an ambulance behind you needs to get through. What should you do?",
+            "hi": "आप लाल बत्ती पर रुके हैं और पीछे की एम्बुलेंस को निकलना है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Stay still; the light is red",
+                "hi": "वहीं रुके रहें; बत्ती लाल है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Jump the red light quickly",
+                "hi": "जल्दी से लाल बत्ती पार कर लें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Ignore it; it can go round",
+                "hi": "ध्यान न दें; वह बगल से निकल जाएगी"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Move aside to make space where you can do so without danger",
+                "hi": "जहाँ बिना ख़तरे के हो सके, किनारे होकर जगह बनाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-009",
+      "topic": "LL2",
+      "title": {
+        "en": "Using the horn",
+        "hi": "हॉर्न का इस्तेमाल"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-009",
+        "text": {
+          "en": "Use the horn only to warn others when needed, never to rush people. Don't use it in silence zones near hospitals and schools, or where a horn-prohibited sign is shown.",
+          "hi": "हॉर्न सिर्फ़ ज़रूरत पड़ने पर दूसरों को सावधान करने के लिए बजाएँ, किसी को जल्दी कराने के लिए नहीं। अस्पताल और स्कूल के पास साइलेंस ज़ोन में, या जहाँ हॉर्न मना का संकेत हो, हॉर्न न बजाएँ।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Silence-zone rules (horn use near hospitals and schools; source to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-009:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When should you use the horn?",
+            "hi": "आपको हॉर्न कब बजाना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Only to warn others of your presence when needed",
+                "hi": "सिर्फ़ ज़रूरत पड़ने पर दूसरों को अपनी मौजूदगी बताने के लिए"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "To ask the vehicle ahead to go faster",
+                "hi": "आगे वाले वाहन को तेज़ चलने को कहने के लिए"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Whenever the light turns green",
+                "hi": "जब भी बत्ती हरी हो"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "To greet friends on the road",
+                "hi": "रास्ते में दोस्तों को नमस्ते करने के लिए"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-009:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Where is using the horn not allowed?",
+            "hi": "हॉर्न बजाना कहाँ मना है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Before a blind bend on a hill road",
+                "hi": "पहाड़ी सड़क पर अंधे मोड़ से पहले"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "In a silence zone, such as near a hospital",
+                "hi": "साइलेंस ज़ोन में, जैसे अस्पताल के पास"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "On an open highway",
+                "hi": "खुले हाईवे पर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "When a person ahead is about to step out without seeing you",
+                "hi": "जब आगे कोई आपको देखे बिना सड़क पर आने वाला हो"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-009:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Pressing the horn continuously in a traffic jam helps clear it. True or false?",
+            "hi": "जाम में लगातार हॉर्न बजाने से जाम खुल जाता है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-010",
+      "topic": "LL2",
+      "title": {
+        "en": "Where not to park",
+        "hi": "कहाँ पार्क न करें"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-010",
+        "text": {
+          "en": "Don't park where you block or surprise others: on bends, bridges and hill tops, at or near junctions and crossings, on footpaths, or in front of entrances. Use marked parking.",
+          "hi": "ऐसी जगह पार्क न करें जहाँ आप दूसरों का रास्ता रोकें या उन्हें चौंकाएँ: मोड़, पुल और चढ़ाई के ऊपर, चौराहे और क्रॉसिंग पर या उनके पास, फ़ुटपाथ पर, या किसी गेट के सामने। तय पार्किंग इस्तेमाल करें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-010:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Where should you not park?",
+            "hi": "आपको कहाँ पार्क नहीं करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "In a marked parking area",
+                "hi": "निशान लगी पार्किंग की जगह में"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Where a parking sign is shown",
+                "hi": "जहाँ पार्किंग का संकेत लगा हो"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "On a bend or a bridge",
+                "hi": "मोड़ पर या पुल पर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "In a parking lot",
+                "hi": "पार्किंग लॉट में"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-010:v2",
+          "variant": 2,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Which is a bad place to leave your scooter?",
+            "hi": "स्कूटर छोड़ने के लिए इनमें से कौन-सी जगह ग़लत है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "In a parking bay",
+                "hi": "पार्किंग की तय जगह में"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "At a marked two-wheeler stand",
+                "hi": "दोपहिया के लिए बने स्टैंड पर"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "In your own driveway, clear of the road",
+                "hi": "अपने घर के रास्ते में, सड़क से हटकर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "On the footpath",
+                "hi": "फ़ुटपाथ पर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-010:v3",
+          "variant": 3,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You need to stop for a few minutes to make a call. Where is the best place?",
+            "hi": "आपको फ़ोन करने के लिए कुछ मिनट रुकना है। सबसे अच्छी जगह कौन-सी है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Pull fully off the road where you don't block anyone",
+                "hi": "सड़क से पूरी तरह हटकर, जहाँ किसी का रास्ता न रुके"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Just after a bend, at the edge",
+                "hi": "मोड़ के ठीक बाद, किनारे पर"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "On a pedestrian crossing",
+                "hi": "पैदल यात्री क्रॉसिंग पर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "At the corner of a junction",
+                "hi": "चौराहे के कोने पर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-011",
+      "topic": "LL2",
+      "title": {
+        "en": "Turning right",
+        "hi": "दाएँ मुड़ना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-011",
+        "text": {
+          "en": "To turn right, check mirrors, signal right in good time and move towards the centre of the road. Give way to oncoming traffic, then turn.",
+          "hi": "दाएँ मुड़ने के लिए शीशे देखें, समय से दायाँ इंडिकेटर दें और सड़क के बीच की ओर जाएँ। सामने के ट्रैफ़िक को रास्ता दें, फिर मुड़ें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-011:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Before turning right at a junction, where should your vehicle be?",
+            "hi": "चौराहे पर दाएँ मुड़ने से पहले आपका वाहन कहाँ होना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "At the far left edge",
+                "hi": "बिल्कुल बाएँ किनारे पर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Near the centre of the road, after signalling right",
+                "hi": "दायाँ इंडिकेटर देने के बाद सड़क के बीच के पास"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "On the wrong side of the road",
+                "hi": "सड़क की उल्टी ओर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Anywhere, as long as you sound the horn",
+                "hi": "कहीं भी, बस हॉर्न बजाते रहें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-011:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You want to turn right into a lane and an oncoming car is close. What should you do?",
+            "hi": "आप दाएँ एक लेन में मुड़ना चाहते हैं और सामने से कार पास आ चुकी है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Turn quickly in front of it",
+                "hi": "उसके सामने से जल्दी मुड़ जाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Sound the horn and turn",
+                "hi": "हॉर्न बजाएँ और मुड़ जाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Wait near the centre with your signal on until the car has passed",
+                "hi": "इंडिकेटर चालू रखकर बीच के पास इंतज़ार करें जब तक कार निकल न जाए"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Switch off the signal and wait at the left edge",
+                "hi": "इंडिकेटर बंद करके बाएँ किनारे पर इंतज़ार करें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-011:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When turning right you should signal right well before the turn. True or false?",
+            "hi": "दाएँ मुड़ते समय मोड़ से काफ़ी पहले दायाँ इंडिकेटर देना चाहिए। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-012",
+      "topic": "LL2",
+      "title": {
+        "en": "Turning left",
+        "hi": "बाएँ मुड़ना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-012",
+        "text": {
+          "en": "To turn left, check your mirror and your left side, signal left in good time and keep close to the left. Watch for cyclists and pedestrians on your left before you turn.",
+          "hi": "बाएँ मुड़ने के लिए शीशा और अपनी बाईं ओर देखें, समय से बायाँ इंडिकेटर दें और बाईं ओर पास रहें। मुड़ने से पहले बाईं ओर साइकिल सवारों और पैदल यात्रियों का ध्यान रखें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-012:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How should you turn left at a junction?",
+            "hi": "चौराहे पर बाएँ कैसे मुड़ना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Swing out to the right first, then turn",
+                "hi": "पहले दाईं ओर घूमें, फिर मुड़ें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Turn from the right lane",
+                "hi": "दाईं लेन से मुड़ें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Turn without signalling if the road is empty",
+                "hi": "सड़क ख़ाली हो तो बिना इंडिकेटर के मुड़ें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Signal left, keep to the left side and turn close to the left edge",
+                "hi": "बायाँ इंडिकेटर दें, बाईं ओर रहें और बाएँ किनारे के पास से मुड़ें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-012:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are turning left and a cyclist is riding on your left. What should you do?",
+            "hi": "आप बाएँ मुड़ रहे हैं और आपकी बाईं ओर एक साइकिल सवार चल रहा है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Let the cyclist go ahead before you turn",
+                "hi": "मुड़ने से पहले साइकिल सवार को आगे निकलने दें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Turn in front of the cyclist",
+                "hi": "साइकिल सवार के सामने से मुड़ जाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Sound the horn and turn",
+                "hi": "हॉर्न बजाएँ और मुड़ जाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Speed up to turn before the cyclist",
+                "hi": "साइकिल सवार से पहले मुड़ने के लिए रफ़्तार बढ़ाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-012:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When turning left you should keep to the left side of the road. True or false?",
+            "hi": "बाएँ मुड़ते समय सड़क की बाईं ओर रहना चाहिए। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-013",
+      "topic": "LL2",
+      "title": {
+        "en": "One-way roads",
+        "hi": "वन-वे सड़कें"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-WRG-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-013",
+        "text": {
+          "en": "On a one-way road traffic moves in one direction only. Never ride against it or reverse along it; take the next legal route instead.",
+          "hi": "वन-वे सड़क पर ट्रैफ़िक एक ही दिशा में चलता है। उसके उल्टा कभी न चलें और न पीछे की ओर रिवर्स करें; अगला सही रास्ता लें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-013:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "On a one-way road, what must you not do?",
+            "hi": "वन-वे सड़क पर आपको क्या नहीं करना है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Ride at a steady speed",
+                "hi": "एक जैसी रफ़्तार से चलना"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Ride against the direction of traffic",
+                "hi": "ट्रैफ़िक की उल्टी दिशा में चलना"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Keep to the left",
+                "hi": "बाईं ओर रहना"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Use your indicators",
+                "hi": "इंडिकेटर इस्तेमाल करना"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-013:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "On a one-way street you may ride the wrong way for a few metres to reach a shop. True or false?",
+            "hi": "वन-वे गली में दुकान तक पहुँचने के लिए कुछ मीटर उल्टा चल सकते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-013:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You have missed your turning on a one-way road. What should you do?",
+            "hi": "वन-वे सड़क पर आपका मोड़ छूट गया है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Reverse back along the road",
+                "hi": "सड़क पर पीछे की ओर रिवर्स करें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Turn round and ride against the traffic",
+                "hi": "मुड़ें और ट्रैफ़िक के उल्टा चलें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Carry on and take the next legal route back",
+                "hi": "आगे बढ़ते रहें और वापसी का अगला सही रास्ता लें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Ride back on the footpath",
+                "hi": "फ़ुटपाथ पर वापस चलें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-014",
+      "topic": "LL2",
+      "title": {
+        "en": "Lane discipline",
+        "hi": "लेन अनुशासन"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-014",
+        "text": {
+          "en": "Keep within your lane. Before changing lanes, check mirrors, signal and look over your shoulder, then move only into a clear gap.",
+          "hi": "अपनी लेन के भीतर रहें। लेन बदलने से पहले शीशे देखें, इंडिकेटर दें और कंधे के ऊपर से देखें, फिर सिर्फ़ ख़ाली फ़ासले में जाएँ।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-014:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "On a road with marked lanes, how should you ride?",
+            "hi": "लेन के निशान वाली सड़क पर आपको कैसे चलना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Ride on the lane line",
+                "hi": "लेन की लाइन पर चलें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Weave between lanes to keep moving",
+                "hi": "चलते रहने के लिए लेनों के बीच से निकलें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Change lanes without looking if no one honks",
+                "hi": "कोई हॉर्न न बजाए तो बिना देखे लेन बदलें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Stay within one lane and signal before changing",
+                "hi": "एक लेन में रहें और बदलने से पहले इंडिकेटर दें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-014:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You want to move into the right lane on a busy road. What should you do first?",
+            "hi": "व्यस्त सड़क पर आप दाईं लेन में जाना चाहते हैं। सबसे पहले क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Check mirrors, signal, look over your shoulder, then move when there is a gap",
+                "hi": "शीशे देखें, इंडिकेटर दें, कंधे के ऊपर से देखें, फिर फ़ासला मिलने पर जाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Signal and move at once",
+                "hi": "इंडिकेटर दें और तुरंत चले जाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Move first, then signal",
+                "hi": "पहले चले जाएँ, फिर इंडिकेटर दें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Sound the horn and move",
+                "hi": "हॉर्न बजाएँ और चले जाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-014:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Riding along the line between two lanes is fine on a two-wheeler. True or false?",
+            "hi": "दोपहिया पर दो लेनों के बीच की लाइन पर चलना ठीक है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-015",
+      "topic": "LL2",
+      "title": {
+        "en": "Following distance",
+        "hi": "आगे वाले से फ़ासला"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-FOL-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-015",
+        "text": {
+          "en": "Keep at least a 3-second gap: when the vehicle ahead passes a fixed point, you should take 3 seconds or more to reach it. Make it 4 seconds or more in the wet or at night.",
+          "hi": "कम से कम 3 सेकंड का फ़ासला रखें: आगे वाला वाहन किसी तय जगह से निकले, तो आपको वहाँ पहुँचने में 3 सेकंड या उससे ज़्यादा लगने चाहिए। गीली सड़क पर या रात में इसे 4 सेकंड या ज़्यादा करें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M7 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-015:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How much gap should you keep behind the vehicle ahead in dry daylight?",
+            "hi": "सूखी सड़क पर दिन में आगे वाले वाहन से कितना फ़ासला रखना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Half a second",
+                "hi": "आधा सेकंड"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "At least a 3-second gap",
+                "hi": "कम से कम 3 सेकंड का फ़ासला"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "One bike length at any speed",
+                "hi": "किसी भी रफ़्तार पर एक बाइक जितना"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "As close as possible so no one cuts in",
+                "hi": "जितना पास हो सके, ताकि कोई बीच में न घुसे"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-015:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "It is raining at night. How should your following gap change?",
+            "hi": "रात में बारिश हो रही है। आगे वाले से आपका फ़ासला कैसे बदलना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Keep it the same",
+                "hi": "उतना ही रखना चाहिए"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Make it shorter to follow the tail lights",
+                "hi": "पीछे की बत्तियों के सहारे चलने के लिए कम करना चाहिए"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Make it longer: 4 seconds or more",
+                "hi": "बढ़ाना चाहिए: 4 सेकंड या उससे ज़्यादा"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "It doesn't matter at night",
+                "hi": "रात में इससे फ़र्क़ नहीं पड़ता"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-015:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How can you check your following gap?",
+            "hi": "आप आगे वाले से फ़ासला कैसे जाँच सकते हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Look at your speedometer",
+                "hi": "स्पीडोमीटर देखें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Judge by the vehicle's size",
+                "hi": "वाहन के आकार से अंदाज़ा लगाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Stay close enough to read its number plate",
+                "hi": "इतना पास रहें कि उसकी नंबर प्लेट पढ़ सकें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Count the seconds from when the vehicle ahead passes a fixed point until you reach it",
+                "hi": "आगे वाला वाहन किसी तय जगह से निकले, तब से आपके वहाँ पहुँचने तक सेकंड गिनें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-016",
+      "topic": "LL2",
+      "title": {
+        "en": "Speed limits",
+        "hi": "गति-सीमा"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-SPD-002", "RR-SPD-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-016",
+        "text": {
+          "en": "A speed limit is the most you may ride at, not a target. Ride at a speed that lets you stop within the distance you can see to be clear.",
+          "hi": "गति-सीमा सबसे ज़्यादा अनुमत रफ़्तार है, कोई लक्ष्य नहीं। उतनी रफ़्तार रखें जिस पर आप साफ़ दिख रही दूरी के भीतर रुक सकें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 as amended 2019 (section to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M1 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-016:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A speed limit sign tells you…",
+            "hi": "गति-सीमा का संकेत आपको बताता है…"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The highest speed allowed; you may need to go slower",
+                "hi": "सबसे ज़्यादा अनुमत रफ़्तार; हो सकता है आपको धीमे चलना पड़े"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The speed you must keep to",
+                "hi": "वह रफ़्तार जिस पर चलना ही है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The lowest speed allowed",
+                "hi": "सबसे कम अनुमत रफ़्तार"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The speed for trucks only",
+                "hi": "सिर्फ़ ट्रकों की रफ़्तार"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-016:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "The limit is 50 km/h but it's foggy and you can see only a short way. What speed should you ride at?",
+            "hi": "गति-सीमा 50 किमी/घंटा है, पर कोहरा है और थोड़ी दूर तक ही दिखता है। आपको किस रफ़्तार से चलना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "50 km/h, since that is the limit",
+                "hi": "50 किमी/घंटा, क्योंकि यही सीमा है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Slow enough to stop within what you can see, even if that is well below the limit",
+                "hi": "इतना धीमे कि जितना दिखे उतने में रुक सकें, चाहे वह सीमा से काफ़ी कम हो"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "A little above the limit to get out of the fog sooner",
+                "hi": "कोहरे से जल्दी निकलने के लिए सीमा से थोड़ा ज़्यादा"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Any speed, as long as your lights are on",
+                "hi": "कोई भी रफ़्तार, बस लाइट चालू हो"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-016:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Riding at the speed limit is always fine, whatever the weather. True or false?",
+            "hi": "मौसम कैसा भी हो, गति-सीमा पर चलना हमेशा ठीक है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-017",
+      "topic": "LL2",
+      "title": {
+        "en": "Roundabouts",
+        "hi": "गोल चक्कर"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-017",
+        "text": {
+          "en": "In left-hand traffic, roundabouts run clockwise. Slow down, give way to traffic already on the roundabout (coming from your right), and signal before you leave.",
+          "hi": "बाईं ओर चलने वाले ट्रैफ़िक में गोल चक्कर घड़ी की दिशा में चलता है। धीमे हों, चक्कर पर पहले से मौजूद (आपकी दाईं ओर से आते) ट्रैफ़िक को रास्ता दें, और निकलने से पहले इंडिकेटर दें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-017:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At a roundabout in India, which way does traffic go round?",
+            "hi": "भारत में गोल चक्कर पर ट्रैफ़िक किस दिशा में घूमता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Anticlockwise",
+                "hi": "घड़ी की उल्टी दिशा में"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Either way",
+                "hi": "किसी भी दिशा में"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Clockwise, keeping the island on your right",
+                "hi": "घड़ी की दिशा में, बीच का घेरा आपकी दाईं ओर रहता है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Straight across the island",
+                "hi": "बीच के घेरे के ऊपर से सीधे"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-017:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When entering a roundabout, whom do you give way to?",
+            "hi": "गोल चक्कर में जाते समय आप किसे रास्ता देते हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Traffic waiting to enter on your left",
+                "hi": "आपकी बाईं ओर अंदर जाने का इंतज़ार कर रहे ट्रैफ़िक को"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Nobody, if you signal",
+                "hi": "किसी को नहीं, अगर आप इंडिकेटर दें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Only buses",
+                "hi": "सिर्फ़ बसों को"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Traffic already on the roundabout, coming from your right",
+                "hi": "चक्कर पर पहले से मौजूद ट्रैफ़िक को, जो आपकी दाईं ओर से आता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-017:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At a roundabout you should give way to traffic already going round it. True or false?",
+            "hi": "गोल चक्कर पर पहले से घूम रहे ट्रैफ़िक को रास्ता देना चाहिए। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-018",
+      "topic": "LL2",
+      "title": {
+        "en": "Mobile phones",
+        "hi": "मोबाइल फ़ोन"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-PHN-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-018",
+        "text": {
+          "en": "Using a handheld phone while riding or driving is an offence. Even hands-free calls distract you, so set navigation before you start and pull over to talk.",
+          "hi": "बाइक या गाड़ी चलाते समय हाथ में फ़ोन लेकर इस्तेमाल करना अपराध है। हैंड्स-फ़्री कॉल भी ध्यान भटकाती है, इसलिए चलने से पहले नेविगेशन सेट करें और बात करने के लिए किनारे रुकें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.184 (as cited in verification row 11; not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M10 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-018:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does the law say about using a handheld phone while riding?",
+            "hi": "चलाते समय हाथ में फ़ोन इस्तेमाल करने के बारे में क़ानून क्या कहता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "It is not allowed",
+                "hi": "इसकी इजाज़त नहीं है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "It is allowed at low speed",
+                "hi": "धीमी रफ़्तार पर इजाज़त है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "It is allowed if you use one hand",
+                "hi": "एक हाथ से इस्तेमाल करें तो इजाज़त है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "It is allowed on empty roads",
+                "hi": "ख़ाली सड़कों पर इजाज़त है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-018:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Your phone rings while you are riding. What should you do?",
+            "hi": "चलाते समय आपका फ़ोन बजता है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Answer it holding the phone to your ear",
+                "hi": "फ़ोन कान पर लगाकर जवाब दें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Let it ring, or pull over somewhere suitable before answering",
+                "hi": "बजने दें, या जवाब देने से पहले किसी ठीक जगह पर किनारे रुकें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Tuck it inside your helmet and talk",
+                "hi": "उसे हेलमेट के अंदर फँसाकर बात करें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Slow down and answer it on the move",
+                "hi": "धीमे होकर चलते-चलते जवाब दें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-018:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Talking on a phone tucked inside your helmet is fine while riding. True or false?",
+            "hi": "चलाते समय हेलमेट के अंदर फँसाए फ़ोन पर बात करना ठीक है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-019",
+      "topic": "LL2",
+      "title": {
+        "en": "Helmets for rider and pillion",
+        "hi": "चलाने वाले और पीछे बैठी सवारी के लिए हेलमेट"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-HLM-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-019",
+        "text": {
+          "en": "The rider and the pillion must both wear a protective helmet, on every trip, with the strap fastened.",
+          "hi": "चलाने वाले और पीछे बैठी सवारी, दोनों को हर सफ़र में स्ट्रैप बाँधकर सुरक्षात्मक हेलमेट पहनना चाहिए।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.129 (not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "2W",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-019:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Who on a two-wheeler must wear a protective helmet?",
+            "hi": "दोपहिया पर किसे सुरक्षात्मक हेलमेट पहनना ज़रूरी है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Only the rider",
+                "hi": "सिर्फ़ चलाने वाले को"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Only on highways",
+                "hi": "सिर्फ़ हाईवे पर"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Both the rider and the pillion",
+                "hi": "चलाने वाले और पीछे बैठी सवारी, दोनों को"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only riders under 18",
+                "hi": "सिर्फ़ 18 से कम उम्र वालों को"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-019:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A helmet only needs to be worn on long rides, not short trips. True or false?",
+            "hi": "हेलमेट सिर्फ़ लंबे सफ़र में पहनना होता है, छोटे सफ़र में नहीं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-019:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Your friend wants a lift for a short trip but has no helmet. What should you do?",
+            "hi": "आपका दोस्त छोटे सफ़र के लिए लिफ़्ट चाहता है पर उसके पास हेलमेट नहीं है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Give the lift; short trips are fine",
+                "hi": "लिफ़्ट दे दें; छोटा सफ़र ठीक है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Let them hold a helmet in their hand",
+                "hi": "उन्हें हेलमेट हाथ में पकड़ने दें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Ride slowly without one",
+                "hi": "बिना हेलमेट धीरे चलें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Arrange a helmet for them before you ride",
+                "hi": "चलने से पहले उनके लिए हेलमेट का इंतज़ाम करें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-020",
+      "topic": "LL2",
+      "title": {
+        "en": "Alcohol and riding",
+        "hi": "शराब और गाड़ी चलाना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-ALC-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-020",
+        "text": {
+          "en": "Riding or driving with alcohol in your blood above the legal limit is an offence, and alcohol slows you down well before you feel it. Coffee doesn't help; plan a sober ride home.",
+          "hi": "क़ानूनी सीमा से ज़्यादा शराब पीकर बाइक या गाड़ी चलाना अपराध है, और शराब आपको महसूस होने से पहले ही धीमा कर देती है। कॉफ़ी से कोई फ़र्क़ नहीं पड़ता; घर लौटने का ऐसा इंतज़ाम करें जिसमें चलाने वाले ने न पी हो।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.185 (limit not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M11 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-020:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Riding after drinking alcohol above the legal limit is…",
+            "hi": "क़ानूनी सीमा से ज़्यादा शराब पीकर चलाना…"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "An offence",
+                "hi": "अपराध है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Allowed at night",
+                "hi": "रात में जायज़ है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Allowed if you ride slowly",
+                "hi": "धीरे चलाएँ तो जायज़ है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Allowed with a pillion to watch the road",
+                "hi": "पीछे सड़क देखने वाली सवारी हो तो जायज़ है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-020:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You have had a drink at a party. How should you get home?",
+            "hi": "आपने पार्टी में शराब पी है। आपको घर कैसे जाना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Ride slowly on quiet roads",
+                "hi": "शांत सड़कों पर धीरे चलाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Don't ride; get a lift from someone who hasn't been drinking, take a cab or stay over",
+                "hi": "ख़ुद न चलाएँ; जिसने न पी हो उससे लिफ़्ट लें, कैब लें या वहीं रुक जाएँ"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Drink coffee first, then ride",
+                "hi": "पहले कॉफ़ी पिएँ, फिर चलाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Ride with a friend on the pillion to keep you alert",
+                "hi": "पीछे दोस्त को बिठाएँ ताकि वह आपको सचेत रखे"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-020:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A cup of coffee removes the effect of alcohol, so you can ride. True or false?",
+            "hi": "एक कप कॉफ़ी शराब का असर ख़त्म कर देती है, इसलिए आप चला सकते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-021",
+      "topic": "LL2",
+      "title": {
+        "en": "Dipping headlights",
+        "hi": "हेडलाइट डिप करना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-NGT-001", "RR-NGT-002"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-021",
+        "text": {
+          "en": "Dip to low beam for oncoming traffic and when following another vehicle, so you don't dazzle drivers. If you are dazzled, look to the left edge and slow down.",
+          "hi": "सामने से आते ट्रैफ़िक के लिए और किसी के पीछे चलते समय लो बीम करें, ताकि ड्राइवरों की आँखें न चौंधियाएँ। अगर आपकी आँखें चौंधियाएँ, तो बाएँ किनारे की ओर देखें और धीमे हो जाएँ।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M8 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-021:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When should you switch from high beam to low beam at night?",
+            "hi": "रात में हाई बीम से लो बीम कब करनी चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Only in the city",
+                "hi": "सिर्फ़ शहर में"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Never; high beam is always better",
+                "hi": "कभी नहीं; हाई बीम हमेशा बेहतर है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "When a vehicle comes towards you, and when you are following another vehicle",
+                "hi": "जब कोई वाहन सामने से आए, और जब आप किसी वाहन के पीछे चल रहे हों"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only when it rains",
+                "hi": "सिर्फ़ बारिश में"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-021:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "An oncoming car keeps its high beam on and dazzles you. What should you do?",
+            "hi": "सामने से आती कार हाई बीम चालू रखती है और आपकी आँखें चौंधिया जाती हैं। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Flash your high beam back at it",
+                "hi": "बदले में उस पर हाई बीम चमकाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Close your eyes for a moment",
+                "hi": "एक पल के लिए आँखें बंद कर लें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Speed up to get past quickly",
+                "hi": "जल्दी निकलने के लिए रफ़्तार बढ़ाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Keep your low beam, look toward the left edge and slow down",
+                "hi": "अपनी लो बीम रखें, बाएँ किनारे की ओर देखें और धीमे हों"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL2-021:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You should keep high beam on when following close behind another vehicle at night. True or false?",
+            "hi": "रात में किसी वाहन के ठीक पीछे चलते समय हाई बीम चालू रखनी चाहिए। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-022",
+      "topic": "LL2",
+      "title": {
+        "en": "Hill roads: who gives way",
+        "hi": "पहाड़ी सड़कें: कौन रास्ता दे"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-HIL-001", "RR-HIL-003"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-022",
+        "text": {
+          "en": "On steep, narrow roads, vehicles going downhill normally give way to vehicles climbing, which find it harder to stop and restart. Stop at a widening and let them pass.",
+          "hi": "खड़ी और संकरी सड़कों पर नीचे उतरते वाहन आमतौर पर चढ़ते वाहनों को रास्ता देते हैं, क्योंकि चढ़ते वाहन के लिए रुककर फिर चलना मुश्किल होता है। चौड़ी जगह पर रुकें और उन्हें निकलने दें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M14 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-022:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "On a steep, narrow hill road, which vehicle should normally give way?",
+            "hi": "खड़ी, संकरी पहाड़ी सड़क पर आमतौर पर किस वाहन को रास्ता देना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The vehicle going downhill",
+                "hi": "नीचे उतरते वाहन को"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The vehicle going uphill",
+                "hi": "ऊपर चढ़ते वाहन को"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The smaller vehicle, always",
+                "hi": "हमेशा छोटे वाहन को"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Whichever vehicle sounds its horn last",
+                "hi": "जो वाहन बाद में हॉर्न बजाए"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-022:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are riding downhill on a narrow mountain road and a loaded truck is climbing towards you. What should you do?",
+            "hi": "आप संकरी पहाड़ी सड़क पर नीचे उतर रहे हैं और सामान से भरा ट्रक ऊपर चढ़ता आ रहा है। आपको क्या करना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Squeeze past on the outer edge",
+                "hi": "बाहरी किनारे से जगह बनाकर निकलें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Stop at a wider spot and let the truck come up",
+                "hi": "चौड़ी जगह पर रुकें और ट्रक को ऊपर आने दें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Sound the horn and keep going",
+                "hi": "हॉर्न बजाएँ और चलते रहें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Speed up to pass before the narrow part",
+                "hi": "संकरे हिस्से से पहले निकलने के लिए रफ़्तार बढ़ाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL2-022:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "On steep hill roads, vehicles going uphill must always stop for vehicles coming down. True or false?",
+            "hi": "खड़ी पहाड़ी सड़कों पर ऊपर चढ़ते वाहनों को नीचे आते वाहनों के लिए हमेशा रुकना होता है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL2-023",
+      "topic": "LL2",
+      "title": {
+        "en": "Seatbelts",
+        "hi": "सीट बेल्ट"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-BLT-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL2-023",
+        "text": {
+          "en": "Everyone in a car should wear a seatbelt on every trip, in the front and rear seats; airbags are built to work together with belts.",
+          "hi": "कार में हर व्यक्ति को हर सफ़र में सीट बेल्ट पहननी चाहिए, आगे और पीछे दोनों सीटों पर; एयरबैग बेल्ट के साथ मिलकर काम करने के लिए बने होते हैं।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Central Motor Vehicles Rules 1989 (rule to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M12 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "Car",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL2-023:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "In a car, who should wear a seatbelt?",
+            "hi": "कार में किसे सीट बेल्ट पहननी चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Only the driver",
+                "hi": "सिर्फ़ ड्राइवर"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Only front-seat passengers",
+                "hi": "सिर्फ़ आगे बैठी सवारी"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The driver and every passenger, front and rear",
+                "hi": "ड्राइवर और हर सवारी, आगे और पीछे"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only on highways",
+                "hi": "सिर्फ़ हाईवे पर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL2-023:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Rear-seat passengers don't need seatbelts in the city. True or false?",
+            "hi": "शहर में पीछे बैठी सवारियों को सीट बेल्ट की ज़रूरत नहीं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL2-023:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Your car has airbags. Do you still need to wear a seatbelt?",
+            "hi": "आपकी कार में एयरबैग हैं। क्या फिर भी सीट बेल्ट पहननी चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "No; the airbag is enough",
+                "hi": "नहीं; एयरबैग काफ़ी है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Only on long trips",
+                "hi": "सिर्फ़ लंबे सफ़र में"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Only if the airbag light is on",
+                "hi": "सिर्फ़ तब, जब एयरबैग की बत्ती जली हो"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Yes; airbags are designed to work with seatbelts",
+                "hi": "हाँ; एयरबैग सीट बेल्ट के साथ काम करने के लिए बने हैं"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    }
+  ]
+}

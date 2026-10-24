@@ -1,0 +1,96 @@
+# golangci-lint v2 configuration for services/api (CI: lint-go job, GOLANGCI_LINT_VERSION v2.15.0).
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  default: standard
+  enable:
+    - depguard
+    - forbidigo
+    - misspell
+    - bodyclose
+    - errorlint
+  settings:
+    depguard:
+      rules:
+        # Pure packages: decisions only, no I/O, no frameworks (BACKEND §2.1 dependency rule).
+        pure-core:
+          files:
+            - "**/internal/domain/**"
+            - "**/internal/rules/**"
+            - "**/internal/journey/**"
+          deny:
+            - pkg: net/http
+              desc: pure packages do no I/O; HTTP belongs in internal/httpapi or an adapter
+            - pkg: database/sql
+              desc: pure packages do no I/O; persistence belongs in internal/store
+            - pkg: github.com/jackc/pgx/v5
+              desc: pure packages do no I/O; persistence belongs in internal/store
+            - pkg: github.com/go-chi/chi/v5
+              desc: no HTTP framework in the core
+            - pkg: github.com/redis/go-redis/v9
+              desc: no Key Value client in the core
+            - pkg: google.golang.org/genai
+              desc: AI calls go through ports (internal/ports), never from the core
+            - pkg: google.golang.org/adk
+              desc: AI calls go through ports (internal/ports), never from the core
+            - pkg: os/exec
+              desc: no subprocesses in the core
+            - pkg: github.com/sruj08/margadarshak/services/api/internal/adapters
+              desc: the core never imports adapters (hexagonal rule)
+            - pkg: github.com/sruj08/margadarshak/services/api/internal/store
+              desc: the core never imports the store
+        # Ports are interfaces and domain types only.
+        ports-are-pure:
+          files:
+            - "**/internal/ports/*.go"
+          deny:
+            - pkg: github.com/sruj08/margadarshak/services/api/internal/adapters
+              desc: ports never depend on adapters
+            - pkg: github.com/sruj08/margadarshak/services/api/internal/store
+              desc: ports never depend on the store
+            - pkg: github.com/sruj08/margadarshak/services/api/internal/httpapi
+              desc: ports never depend on the HTTP layer
+            - pkg: net/http
+              desc: ports never do I/O
+    forbidigo:
+      forbid:
+        - pattern: '^fmt\.Print(f|ln)?$'
+          msg: use the slog logger from internal/platform/logging (it redacts PII); fmt.Print is for cmd/ only
+        - pattern: '^log\.(Print|Printf|Println|Fatal|Fatalf|Fatalln|Panic|Panicf|Panicln)$'
+          msg: use the slog logger from internal/platform/logging (it redacts PII)
+        - pattern: '^slog\.(New|SetDefault)$'
+          msg: build loggers with logging.New so the PII redaction handler is always installed
+        - pattern: '^time\.Local$'
+          msg: server time is IST via internal/platform/servertime (EC-15)
+        - pattern: '^math/rand\.'
+          msg: use crypto/rand for tokens and codes
+  exclusions:
+    generated: lax
+    paths:
+      - internal/httpapi/gen
+    rules:
+      - path: cmd/
+        linters: [forbidigo]
+        text: fmt\.Print
+      - path: _test\.go
+        linters: [forbidigo, errorlint, bodyclose, errcheck]
+      - path: internal/platform/logging/
+        linters: [forbidigo]
+        text: slog\.New
+      - path: internal/adapters/registry\.go
+        linters: [forbidigo]
+        text: slog\.New
+      - path: tools/
+        linters: [forbidigo]
+      # RULES agent code style nit (reported to the owner), not a correctness issue.
+      - path: internal/rules/
+        linters: [staticcheck]
+        text: S1016
+
+formatters:
+  enable:
+    - gofmt

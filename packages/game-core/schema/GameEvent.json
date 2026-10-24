@@ -1,0 +1,1672 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "session_start"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "deviceClass": {
+              "type": "string",
+              "enum": ["low", "mid", "high"]
+            },
+            "timingMode": {
+              "type": "string",
+              "enum": ["rvfc", "fallback", "sim", "none"]
+            },
+            "a11yModes": {
+              "maxItems": 8,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "no_audio",
+                  "colour_safe",
+                  "one_hand",
+                  "reduced_motion",
+                  "tap_only",
+                  "screen_reader_alt",
+                  "large_text",
+                  "safe_luminance"
+                ]
+              }
+            },
+            "orientation": {
+              "type": "string",
+              "enum": ["portrait", "landscape"]
+            },
+            "mode": {
+              "type": "string",
+              "enum": ["learn", "practice", "mock", "pair"]
+            }
+          },
+          "required": ["deviceClass", "timingMode", "a11yModes", "orientation"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "item_start"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "ref": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 64,
+              "pattern": "^[a-z]{1,8}:[A-Za-z0-9_][A-Za-z0-9_.@:-]{0,54}$"
+            }
+          },
+          "required": ["ref"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "item_end"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "ref": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 64,
+              "pattern": "^[a-z]{1,8}:[A-Za-z0-9_][A-Za-z0-9_.@:-]{0,54}$"
+            },
+            "reason": {
+              "type": "string",
+              "enum": ["done", "voided", "timeout"]
+            }
+          },
+          "required": ["ref", "reason"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "tap"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "multipleOf": 0.01
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "multipleOf": 0.01
+            }
+          },
+          "required": ["x", "y"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "hazard_response"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "hazardId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24,
+              "pattern": "^[A-Za-z0-9_.:@-]+$"
+            },
+            "band": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "firstValidMt": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 600000
+            }
+          },
+          "required": ["hazardId", "band", "firstValidMt"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "prediction"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "choice": {
+              "type": "string",
+              "enum": [
+                "bus_stop_pedestrian",
+                "door_opening",
+                "auto_cut_in",
+                "wrong_side_2w",
+                "cattle_animal",
+                "child_school",
+                "pedestrian_median",
+                "vehicle_pulling_out",
+                "truck_left_turn",
+                "junction_emerging",
+                "overtaking_oncoming",
+                "parked_vehicle_hidden",
+                "cyclist",
+                "surface_hazard",
+                "other"
+              ]
+            }
+          },
+          "required": ["choice"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "estimate"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "speedKmh": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 150
+            },
+            "surface": {
+              "type": "string",
+              "enum": ["dry", "wet"]
+            },
+            "predictedM": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 400,
+              "multipleOf": 0.1
+            }
+          },
+          "required": ["speedKmh", "surface", "predictedM"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "brake"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "rtMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "heldMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60000
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "speed_choice"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "chosenKmh": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 150,
+              "multipleOf": 5
+            },
+            "context": {
+              "type": "string",
+              "enum": ["sight", "night", "bend", "street"]
+            }
+          },
+          "required": ["chosenKmh", "context"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "place"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "zoneProbe": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "minimum": -500,
+                  "maximum": 500
+                },
+                "y": {
+                  "type": "integer",
+                  "minimum": -500,
+                  "maximum": 500
+                }
+              },
+              "required": ["x", "y"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["zoneProbe"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "lane_pos"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "lateralCm": {
+              "type": "integer",
+              "minimum": -2000,
+              "maximum": 2000
+            },
+            "progressDm": {
+              "type": "integer",
+              "minimum": -1000,
+              "maximum": 100000
+            }
+          },
+          "required": ["lateralCm", "progressDm"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "mirror_check"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string",
+              "enum": ["truck", "bus", "self"]
+            }
+          },
+          "required": ["target"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "scan_look"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "dir": {
+              "type": "string",
+              "enum": ["right", "left", "ahead", "left_edge"]
+            },
+            "durMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            }
+          },
+          "required": ["dir", "durMs"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "creep"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "distDm": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "required": ["distDm"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "decision"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "node": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24,
+              "pattern": "^[A-Za-z0-9_.:@-]+$"
+            },
+            "choice": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24,
+              "pattern": "^[A-Za-z0-9_.:@-]+$"
+            }
+          },
+          "required": ["node", "choice"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "indicator"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "side": {
+              "type": "string",
+              "enum": ["left", "right", "off"]
+            }
+          },
+          "required": ["side"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "input"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "steer": {
+              "type": "integer",
+              "minimum": -127,
+              "maximum": 127
+            },
+            "throttle": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "brake": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            }
+          },
+          "required": ["steer", "throttle", "brake"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "gear_choice"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "gear": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            }
+          },
+          "required": ["gear"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "horn"
+        },
+        "p": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "beam_toggle"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": ["high", "low"]
+            }
+          },
+          "required": ["state"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "camera_check"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "faceCentred": {
+              "type": "boolean"
+            },
+            "chinVisible": {
+              "type": "boolean"
+            },
+            "classifierBand": {
+              "type": "string",
+              "enum": ["low", "mid", "high"]
+            }
+          },
+          "required": ["faceCentred", "chinVisible"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "step_confirm"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "stepId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24,
+              "pattern": "^[A-Za-z0-9_.:@-]+$"
+            }
+          },
+          "required": ["stepId"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "card_order"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "cardId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24,
+              "pattern": "^[A-Za-z0-9_.:@-]+$"
+            },
+            "position": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            }
+          },
+          "required": ["cardId", "position"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "answer"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "qref": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24,
+              "pattern": "^[A-Za-z0-9_.:@-]+$"
+            },
+            "optionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24,
+              "pattern": "^[A-Za-z0-9_.:@-]+$"
+            },
+            "latencyMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 600000
+            }
+          },
+          "required": ["qref", "optionId", "latencyMs"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "confidence"
+        },
+        "p": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "qref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 24,
+                  "pattern": "^[A-Za-z0-9_.:@-]+$"
+                },
+                "p": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "const": 50
+                    },
+                    {
+                      "type": "number",
+                      "const": 75
+                    },
+                    {
+                      "type": "number",
+                      "const": 100
+                    }
+                  ]
+                }
+              },
+              "required": ["p"],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "predictedPassClips": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10
+                }
+              },
+              "required": ["predictedPassClips"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "commentary_marker"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "startMt": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 600000
+            },
+            "endMt": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 600000
+            }
+          },
+          "required": ["startMt", "endMt"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "pause"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "cause": {
+              "type": "string",
+              "enum": ["user", "hidden", "system"]
+            }
+          },
+          "required": ["cause"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "resume"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "cause": {
+              "type": "string",
+              "enum": ["user", "hidden", "system"]
+            }
+          },
+          "required": ["cause"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "visibility_hidden"
+        },
+        "p": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "a11y_toggle"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "no_audio",
+                "colour_safe",
+                "one_hand",
+                "reduced_motion",
+                "tap_only",
+                "screen_reader_alt",
+                "large_text",
+                "safe_luminance"
+              ]
+            },
+            "on": {
+              "type": "boolean"
+            }
+          },
+          "required": ["mode", "on"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4999
+        },
+        "t": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "mt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "item": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 39
+        },
+        "type": {
+          "type": "string",
+          "const": "session_end"
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "type": "string",
+              "enum": ["completed", "quit", "timeout", "event_cap", "abandoned"]
+            }
+          },
+          "required": ["reason"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["sid", "seq", "t", "type", "p"],
+      "additionalProperties": false
+    }
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/GameEvent.json",
+  "title": "GameEvent"
+}

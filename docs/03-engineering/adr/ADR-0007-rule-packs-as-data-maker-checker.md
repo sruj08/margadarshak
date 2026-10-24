@@ -14,7 +14,7 @@ Licence rules differ by class and by state: minimum ages (16 for ≤ 50 cc with 
 
 ## Considered options
 1. **Rule packs as versioned JSON data (base `IN-base` from MV Act + CMVR, state overlays `JK`, `DL`, `KL`), JSON Schema 2020-12, a closed JSON expression language, golden tests, maker-checker approval, signed manifest, pinned per case.**
-2. Rules hard-coded in Python.
+2. Rules hard-coded in backend code (Go since ADR-0011).
 3. A general rules engine/DSL (e.g. Drools-style) or an LLM answering rule questions.
 
 ## Decision outcome

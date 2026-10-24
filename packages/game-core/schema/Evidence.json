@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "cardId": {
+      "type": "string",
+      "maxLength": 48
+    },
+    "correct": {
+      "type": "boolean"
+    },
+    "latencyMs": {
+      "type": "number"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["50", "75", "100"]
+    },
+    "rating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "overconfident": {
+      "type": "boolean"
+    }
+  },
+  "required": ["cardId", "correct", "rating", "overconfident"],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/Evidence.json",
+  "title": "Evidence"
+}

@@ -1,0 +1,45 @@
+# AsyncAPI stub (MD-044): events the government-side adapter emits to Margdarshak. The HTTP
+# delivery of these events is the `webhooks` section of api/adapters.openapi.yaml (signed with
+# Margdarshak-Signature). A broker binding (e.g. a state message bus) is roadmap.
+asyncapi: 3.0.0
+info:
+  title: Margdarshak Government Adapter Events (proposed)
+  version: 0.1.0
+  description: Proposed contract; nothing here claims a state system emits these today. Not affiliated with MoRTH, NIC or any State Transport Department.
+channels:
+  applicationStatus:
+    address: adapter.application.status
+    messages:
+      applicationStatusChanged:
+        $ref: '#/components/messages/applicationStatusChanged'
+  testResults:
+    address: adapter.application.test-results
+    messages:
+      testResultRecorded:
+        $ref: '#/components/messages/testResultRecorded'
+  payments:
+    address: adapter.payments
+    messages:
+      paymentReconciled:
+        $ref: '#/components/messages/paymentReconciled'
+operations:
+  receiveApplicationStatus:
+    action: receive
+    channel: { $ref: '#/channels/applicationStatus' }
+  receiveTestResult:
+    action: receive
+    channel: { $ref: '#/channels/testResults' }
+  receivePayment:
+    action: receive
+    channel: { $ref: '#/channels/payments' }
+components:
+  messages:
+    applicationStatusChanged:
+      contentType: application/json
+      payload: { $ref: './adapters.openapi.yaml#/components/schemas/ApplicationStatus' }
+    testResultRecorded:
+      contentType: application/json
+      payload: { $ref: './adapters.openapi.yaml#/components/schemas/TestResult' }
+    paymentReconciled:
+      contentType: application/json
+      payload: { $ref: './adapters.openapi.yaml#/components/schemas/PaymentStatus' }

@@ -1,0 +1,321 @@
+{
+  "$schema": "../schema/games.schema.json",
+  "file_kind": "games",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "G-codes follow GAME_SDK §2.2 (display only; gameId is the stable key). module_ids follow GAME_SDK §2.2 plus the clip-tagged modules CURRICULUM assigns to Nazar (M4, M7, M9, M16). Default drills other than DR-NAZ-MOCK (DEBRIEF_SPEC §5.1) are content choices: round 1 / Part A / the core scan or strap set / the state mock.",
+  "games": [
+    {
+      "game_id": "nazar",
+      "code": "G1",
+      "title": {
+        "en": "Nazar",
+        "hi": "नज़र"
+      },
+      "finding_prefix": "NAZ_",
+      "module_ids": ["M4", "M5", "M6", "M7", "M8", "M9", "M16", "M18"],
+      "skill_ids": ["SK-M4", "SK-M5", "SK-M6", "SK-M7", "SK-M8", "SK-M9", "SK-M16", "SK-M18"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "deep",
+      "default_drill_id": "DR-NAZ-MOCK",
+      "how_templates": {
+        "strong": {
+          "en": "You spotted most hazards early. Keep looking for the clues that come before them.",
+          "hi": "आपने ज़्यादातर ख़तरे जल्दी पहचाने। उनसे पहले दिखने वाले संकेतों पर नज़र बनाए रखें।"
+        },
+        "medium": {
+          "en": "You caught many hazards. A few came late; the clips below show where to look sooner.",
+          "hi": "आपने कई ख़तरे पकड़े। कुछ देर से पहचाने; नीचे दी गई क्लिप दिखाती हैं कि पहले कहाँ देखना है।"
+        },
+        "weak": {
+          "en": "This set was hard. Start with the drill below and look for early clues, not the hazard itself.",
+          "hi": "यह सेट मुश्किल था। नीचे दिए अभ्यास से शुरू करें और ख़तरे से पहले के संकेत देखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "stopping_distance",
+      "code": "G2",
+      "title": {
+        "en": "Stopping Distance",
+        "hi": "रुकने की दूरी"
+      },
+      "finding_prefix": "SD_",
+      "module_ids": ["M1", "M2", "M16"],
+      "skill_ids": ["SK-M1", "SK-M2", "SK-M16"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "deep",
+      "default_drill_id": "DR-SD-PREDICT",
+      "how_templates": {
+        "strong": {
+          "en": "Your speed choices matched what you could see. Good reading of the road.",
+          "hi": "आपकी रफ़्तार उतनी ही थी जितनी सड़क दिख रही थी। आपने सड़क को अच्छे से पढ़ा।"
+        },
+        "medium": {
+          "en": "Some estimates were close. Stopping distance grows faster than speed, so look again at the ones you missed.",
+          "hi": "कुछ अंदाज़े सही के करीब थे। रुकने की दूरी रफ़्तार से तेज़ी से बढ़ती है, इसलिए छूटे हुए सवाल फिर देखें।"
+        },
+        "weak": {
+          "en": "Stopping distances were longer than you expected. The drill below lets you predict, then see the real distance.",
+          "hi": "रुकने की दूरी आपके अंदाज़े से ज़्यादा थी। नीचे के अभ्यास में पहले अंदाज़ा लगाएँ, फिर असली दूरी देखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "blind_spot",
+      "code": "G3",
+      "title": {
+        "en": "Blind Spot",
+        "hi": "ब्लाइंड स्पॉट"
+      },
+      "finding_prefix": "BS_",
+      "module_ids": ["M4", "M5"],
+      "skill_ids": ["SK-M4", "SK-M5"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "deep",
+      "default_drill_id": "DR-BS-PLACE",
+      "how_templates": {
+        "strong": {
+          "en": "You stayed where the driver could see you most of the time. Well placed.",
+          "hi": "आप ज़्यादातर समय वहीं रहे जहाँ ड्राइवर आपको देख सकता था। अच्छी जगह चुनी।"
+        },
+        "medium": {
+          "en": "You were often visible, but some moments were in a no-zone. The drill below shows where.",
+          "hi": "आप अक्सर दिखाई देने वाली जगह पर रहे, पर कुछ पल नो-ज़ोन में बीते। नीचे का अभ्यास दिखाता है कहाँ।"
+        },
+        "weak": {
+          "en": "Large vehicles hide a lot of road. Start by placing the bike outside the no-zones, then ride.",
+          "hi": "बड़े वाहन सड़क का बड़ा हिस्सा छिपा लेते हैं। पहले बाइक को नो-ज़ोन से बाहर रखना सीखें, फिर चलाएँ।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "junction_scan",
+      "code": "G4",
+      "title": {
+        "en": "Junction Scan",
+        "hi": "चौराहा स्कैन"
+      },
+      "finding_prefix": "JS_",
+      "module_ids": ["M6", "M18"],
+      "skill_ids": ["SK-M6", "SK-M18"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "thin",
+      "default_drill_id": "DR-JS-SCAN",
+      "how_templates": {
+        "strong": {
+          "en": "You scanned well and waited for gaps you could complete.",
+          "hi": "आपने अच्छे से देखा और उतने ही फ़ासले का इंतज़ार किया जिसमें आप निकल सकें।"
+        },
+        "medium": {
+          "en": "Your scanning was mostly right. Look right again just before you go.",
+          "hi": "आपका देखना ज़्यादातर सही था। निकलने से ठीक पहले एक बार फिर दाएँ देखें।"
+        },
+        "weak": {
+          "en": "Junctions need a steady routine: slow, look right, left, right again, creep, then go.",
+          "hi": "चौराहे पर एक तय क्रम रखें: धीमे हों, दाएँ, बाएँ, फिर दाएँ देखें, धीरे बढ़ें, फिर जाएँ।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "track_twin",
+      "code": "G5",
+      "title": {
+        "en": "Track Test Twin",
+        "hi": "ट्रैक टेस्ट अभ्यास"
+      },
+      "finding_prefix": "TT_",
+      "module_ids": ["DL1", "M1"],
+      "skill_ids": ["SK-DL1", "SK-M1"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "thin",
+      "default_drill_id": "DR-TT-FIG8-SLOW",
+      "how_templates": {
+        "strong": {
+          "en": "You rode the practice layout cleanly.",
+          "hi": "आपने अभ्यास वाला ट्रैक साफ़-सुथरे ढंग से पूरा किया।"
+        },
+        "medium": {
+          "en": "A few faults on the practice layout. Slow down and keep your line wide.",
+          "hi": "अभ्यास ट्रैक पर कुछ ग़लतियाँ हुईं। धीमे चलें और मोड़ चौड़ा रखें।"
+        },
+        "weak": {
+          "en": "The layout was tricky this time. Take it slowly; a smooth, slow run beats a quick one.",
+          "hi": "इस बार ट्रैक मुश्किल रहा। धीरे चलें; धीमा और सधा हुआ चक्कर जल्दबाज़ी वाले चक्कर से बेहतर है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "helmet_fit",
+      "code": "G6",
+      "title": {
+        "en": "Helmet Fit",
+        "hi": "हेलमेट फ़िट"
+      },
+      "finding_prefix": "HF_",
+      "module_ids": ["M3", "M13"],
+      "skill_ids": ["SK-M3", "SK-M13"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "thin",
+      "default_drill_id": "DR-HF-STRAP",
+      "how_templates": {
+        "strong": {
+          "en": "You went through every fit step in order. Keep the strap snug on every ride.",
+          "hi": "आपने फ़िटिंग के सारे कदम सही क्रम में किए। हर बार स्ट्रैप कसकर बाँधें।"
+        },
+        "medium": {
+          "en": "Most steps were right. The strap check is the one to do every time.",
+          "hi": "ज़्यादातर कदम सही थे। स्ट्रैप की जाँच हर बार ज़रूर करें।"
+        },
+        "weak": {
+          "en": "Let's go through the fit steps again: size, position, strap, two-finger check.",
+          "hi": "फ़िटिंग के कदम फिर से देखें: साइज़, सही जगह, स्ट्रैप, दो उँगली की जाँच।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "golden_hour",
+      "code": "G7",
+      "title": {
+        "en": "Golden Hour",
+        "hi": "गोल्डन आवर"
+      },
+      "finding_prefix": "GH_",
+      "module_ids": ["M19"],
+      "skill_ids": ["SK-M19"],
+      "debrief_mode": "template_only",
+      "build_depth_phase_1_2": "thin",
+      "default_drill_id": "DR-GH-ORDER",
+      "how_templates": {
+        "strong": {
+          "en": "You followed the steps in a good order. This is draft content, not medical advice.",
+          "hi": "आपने कदम अच्छे क्रम में उठाए। यह मसौदा सामग्री है, चिकित्सा सलाह नहीं।"
+        },
+        "medium": {
+          "en": "Some steps came out of order. Making the scene safe and calling for help come before anything else.",
+          "hi": "कुछ कदम क्रम से बाहर रहे। जगह को सुरक्षित करना और मदद के लिए कॉल करना सबसे पहले आता है।"
+        },
+        "weak": {
+          "en": "Let's replay the scene. Start with the scene and the call, then the person.",
+          "hi": "दृश्य को फिर से खेलें। पहले जगह और कॉल, फिर व्यक्ति।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": true
+    },
+    {
+      "game_id": "night_glare",
+      "code": "G8",
+      "title": {
+        "en": "Night & Glare",
+        "hi": "रात और चकाचौंध"
+      },
+      "finding_prefix": "NG_",
+      "module_ids": ["M8", "M16"],
+      "skill_ids": ["SK-M8", "SK-M16"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "storyboard",
+      "default_drill_id": "DR-NG-DIP",
+      "how_templates": {
+        "strong": {
+          "en": "You kept within your lights and handled glare calmly.",
+          "hi": "आप अपनी लाइट की पहुँच के भीतर रहे और चकाचौंध को शांति से संभाला।"
+        },
+        "medium": {
+          "en": "Mostly steady at night. Dip the beam earlier for oncoming traffic.",
+          "hi": "रात में ज़्यादातर सधे रहे। सामने से आते वाहनों के लिए बीम पहले डिप करें।"
+        },
+        "weak": {
+          "en": "Night riding asks for lower speeds. Ride so you can stop within what your lights show.",
+          "hi": "रात में कम रफ़्तार ज़रूरी है। ऐसे चलें कि लाइट जितना दिखाए, उतने में रुक सकें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "hill_road",
+      "code": "G9",
+      "title": {
+        "en": "Hill Road",
+        "hi": "पहाड़ी सड़क"
+      },
+      "finding_prefix": "HR_",
+      "module_ids": ["M14", "M15"],
+      "skill_ids": ["SK-M14", "SK-M15"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "storyboard",
+      "default_drill_id": "DR-HR-GEAR",
+      "how_templates": {
+        "strong": {
+          "en": "You used low gears and took the bends with care.",
+          "hi": "आपने नीचे के गियर इस्तेमाल किए और मोड़ों को सावधानी से पार किया।"
+        },
+        "medium": {
+          "en": "Good on most bends. Use the horn at blind bends and wait at a widening for heavy vehicles.",
+          "hi": "ज़्यादातर मोड़ों पर अच्छा रहा। अंधे मोड़ पर हॉर्न दें और भारी वाहनों के लिए चौड़ी जगह पर रुकें।"
+        },
+        "weak": {
+          "en": "Hill roads take patience. Start with low-gear descents in the drill below.",
+          "hi": "पहाड़ी सड़कों पर धैर्य चाहिए। नीचे के अभ्यास में नीचे के गियर में उतरने से शुरू करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "game_id": "ll_sim",
+      "code": "G10",
+      "title": {
+        "en": "LL Test Simulator",
+        "hi": "LL टेस्ट अभ्यास"
+      },
+      "finding_prefix": "LL_",
+      "module_ids": ["LL0", "LL1", "LL2", "LL3", "LL4"],
+      "skill_ids": ["SK-LL0", "SK-LL1", "SK-LL2", "SK-LL3", "SK-LL4"],
+      "debrief_mode": "ai_or_template",
+      "build_depth_phase_1_2": "deep",
+      "default_drill_id": "DR-LL-MOCK",
+      "how_templates": {
+        "strong": {
+          "en": "You answered most questions correctly, and your confidence matched your answers.",
+          "hi": "आपने ज़्यादातर सवाल सही किए, और आपका भरोसा आपके जवाबों से मेल खाता था।"
+        },
+        "medium": {
+          "en": "A good base. A few topics need another look; the drill below picks them for you.",
+          "hi": "अच्छी शुरुआत है। कुछ विषय फिर से देखने हैं; नीचे का अभ्यास उन्हें आपके लिए चुनता है।"
+        },
+        "weak": {
+          "en": "This set was tough. Go topic by topic and read each explanation; it builds up quickly.",
+          "hi": "यह सेट कठिन था। एक-एक विषय लें और हर व्याख्या पढ़ें; समझ जल्दी बनती है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    }
+  ]
+}

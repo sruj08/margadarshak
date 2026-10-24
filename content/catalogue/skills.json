@@ -1,0 +1,412 @@
+{
+  "$schema": "../schema/skills.schema.json",
+  "file_kind": "skills",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "GAMIFICATION_ENGINE §3.1 draws 20 nodes; the 8 CURRICULUM modules it does not draw (M9–M12, M17, M20–M22) are listed with in_skill_tree=false so every module has a skill ID. `follows` uses the arrows of CURRICULUM §1 (LL0 → each of LL1–LL4) where §3.1 draws an undirected chain. SK-DL1 requires SK-M1 + SK-LL1 at 'learning' (§3.1).",
+  "skills": [
+    {
+      "skill_id": "SK-LL0",
+      "module_id": "LL0",
+      "title": {
+        "en": "Test format",
+        "hi": "टेस्ट का फ़ॉर्मैट"
+      },
+      "track": "ll_syllabus",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-LL1",
+      "module_id": "LL1",
+      "title": {
+        "en": "Signs",
+        "hi": "संकेत"
+      },
+      "track": "ll_syllabus",
+      "in_skill_tree": true,
+      "follows": ["SK-LL0"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-LL2",
+      "module_id": "LL2",
+      "title": {
+        "en": "Rules",
+        "hi": "नियम"
+      },
+      "track": "ll_syllabus",
+      "in_skill_tree": true,
+      "follows": ["SK-LL0"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-LL3",
+      "module_id": "LL3",
+      "title": {
+        "en": "Signals",
+        "hi": "हाथ और इंडिकेटर के संकेत"
+      },
+      "track": "ll_syllabus",
+      "in_skill_tree": true,
+      "follows": ["SK-LL0"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-LL4",
+      "module_id": "LL4",
+      "title": {
+        "en": "Documents",
+        "hi": "दस्तावेज़"
+      },
+      "track": "ll_syllabus",
+      "in_skill_tree": true,
+      "follows": ["SK-LL0"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M1",
+      "module_id": "M1",
+      "title": {
+        "en": "Stopping",
+        "hi": "रुकने की दूरी"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M2",
+      "module_id": "M2",
+      "title": {
+        "en": "Impact",
+        "hi": "टक्कर की रफ़्तार"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": ["SK-M1"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M3",
+      "module_id": "M3",
+      "title": {
+        "en": "Helmet",
+        "hi": "हेलमेट"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M4",
+      "module_id": "M4",
+      "title": {
+        "en": "No-zone",
+        "hi": "नो-ज़ोन"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M5",
+      "module_id": "M5",
+      "title": {
+        "en": "Left-overtake",
+        "hi": "बाएँ से ओवरटेक"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": ["SK-M4"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M6",
+      "module_id": "M6",
+      "title": {
+        "en": "Junctions",
+        "hi": "चौराहे"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M7",
+      "module_id": "M7",
+      "title": {
+        "en": "Following",
+        "hi": "फ़ासला और ओवरटेक"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": ["SK-M2"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M8",
+      "module_id": "M8",
+      "title": {
+        "en": "Night",
+        "hi": "रात"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M9",
+      "module_id": "M9",
+      "title": {
+        "en": "Wrong side",
+        "hi": "उल्टी दिशा"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M10",
+      "module_id": "M10",
+      "title": {
+        "en": "Phones",
+        "hi": "फ़ोन"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M11",
+      "module_id": "M11",
+      "title": {
+        "en": "Alcohol",
+        "hi": "शराब"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M12",
+      "module_id": "M12",
+      "title": {
+        "en": "Seatbelts",
+        "hi": "सीट बेल्ट"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M13",
+      "module_id": "M13",
+      "title": {
+        "en": "Pillion",
+        "hi": "पीछे की सवारी"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": ["SK-M3"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M14",
+      "module_id": "M14",
+      "title": {
+        "en": "Hill (J&K)",
+        "hi": "पहाड़ी सड़कें (J&K)"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M15",
+      "module_id": "M15",
+      "title": {
+        "en": "Landslides/snow",
+        "hi": "भूस्खलन और बर्फ़"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": ["SK-M14"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M16",
+      "module_id": "M16",
+      "title": {
+        "en": "Fog/rain",
+        "hi": "कोहरा और बारिश"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": ["SK-M7", "SK-M8"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M17",
+      "module_id": "M17",
+      "title": {
+        "en": "Road surface",
+        "hi": "सड़क की सतह"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M18",
+      "module_id": "M18",
+      "title": {
+        "en": "Pedestrians/animals",
+        "hi": "पैदल यात्री और जानवर"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": ["SK-M6"],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M19",
+      "module_id": "M19",
+      "title": {
+        "en": "Golden hour",
+        "hi": "गोल्डन आवर"
+      },
+      "track": "survival",
+      "in_skill_tree": true,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M20",
+      "module_id": "M20",
+      "title": {
+        "en": "Under-18 and the law",
+        "hi": "18 से कम उम्र और क़ानून"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M21",
+      "module_id": "M21",
+      "title": {
+        "en": "Pre-ride check",
+        "hi": "चलने से पहले जाँच"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-M22",
+      "module_id": "M22",
+      "title": {
+        "en": "Fatigue",
+        "hi": "थकान"
+      },
+      "track": "survival",
+      "in_skill_tree": false,
+      "follows": [],
+      "requires": [],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    },
+    {
+      "skill_id": "SK-DL1",
+      "module_id": "DL1",
+      "title": {
+        "en": "Track",
+        "hi": "टेस्ट ट्रैक"
+      },
+      "track": "dl_test",
+      "in_skill_tree": true,
+      "follows": ["SK-LL1", "SK-M1"],
+      "requires": [
+        {
+          "skill_id": "SK-M1",
+          "state": "learning"
+        },
+        {
+          "skill_id": "SK-LL1",
+          "state": "learning"
+        }
+      ],
+      "mastered_threshold": 0.8,
+      "fading_threshold": 0.7
+    }
+  ]
+}

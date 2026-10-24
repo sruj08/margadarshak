@@ -1,0 +1,107 @@
+{
+  "title": "Nazar",
+  "name": "Nazar · Spot the hazard early",
+  "practise": "Seeing a hazard while it develops: autos cutting in, a child behind a bus, a door opening.",
+  "scored": "Earlier tap = more points (5 to 1). Tapping all the time scores 0 for that clip, and taps away from hazards count against you. No timer: it's about noticing, not speed.",
+  "controls": "Tap anywhere on the clip, or press Space or any key. Works with one thumb. No sound needed.",
+  "format": "Kerala's announced format, as reported: {clips} clips, {marks} marks each, pass {pass} of {total}.",
+  "formatOnHold": "Kerala's hazard test status changed to {status} (checked {date}). The practice is still useful anywhere.",
+  "notTest": "Practice on our own AI-generated scenes, not Kerala's test and not a licence test.",
+  "photo": "Clips are checked for flashing before they're published (no more than 3 flashes a second). Turn on Reduce motion for calmer feedback.",
+  "srLinkLine": "Using a screen reader? The screen-reader version uses still frames with descriptions. It's a different exercise from the timed clips.",
+  "offline": "You're offline. Practice works on clips saved on this phone; scores are checked when you're back online.",
+  "ai": {
+    "chip": "AI-generated scene",
+    "brief": "Practice on AI-generated road scenes in Kerala's announced format.",
+    "shareCard": "Scored on AI-generated road scenes"
+  },
+  "modes": {
+    "mock": "Mock test (Kerala format)",
+    "mockLine": "{n} clips, feedback only at the end",
+    "practice": "Practice",
+    "practiceLine": "Feedback and a replay after each clip",
+    "learn": "Learn",
+    "learnLine": "The clip pauses before the hazard: what happens next?"
+  },
+  "calib": {
+    "q": "How many of the {n} clips do you think you'll pass?",
+    "less": "One fewer",
+    "more": "One more",
+    "go": "Start the mock"
+  },
+  "play": {
+    "placeholder": "Placeholder clip: no real video yet. Timing and scoring work as with a real clip.",
+    "tapHint": "Tap anywhere when you see a hazard developing.",
+    "zoneLabel": "Clip. Tap, or press any key, when you see a hazard developing.",
+    "clipOf": "Clip {n} of {total}",
+    "mockNoFeedback": "As in the test, you see how you did after the last clip.",
+    "startClip": "Start the clip",
+    "stalled": "The clip stopped loading, so it won't count.",
+    "nextClip": "Next clip",
+    "finish": "See how you did",
+    "watchAgain": "Watch again"
+  },
+  "reveal": {
+    "voided": "That clip was paused partway, so it won't count.",
+    "pattern": "Too many taps on this clip, so it scored 0. Tap when you see something develop.",
+    "points": "{p} of 5",
+    "stripLabel": "Points by band: earliest band 5, latest band 1",
+    "band": "Spotted in band {b} of 5",
+    "missed": "No tap in the window.",
+    "early": "You tapped just before it began: that's anticipation. It's logged, not scored.",
+    "teach": "The hazard: {hazard}.",
+    "quiet": "This clip had no hazard.",
+    "falseAlarms": "{n, plural, =0 {No taps away from the hazards.} one {# tap away from the hazards.} other {# taps away from the hazards.}}"
+  },
+  "learn": {
+    "predict": "What happens next?",
+    "correct": "Yes: {hazard}.",
+    "wrong": "It was {hazard}.",
+    "where": "Tap where",
+    "whereHint": "Tap when it starts to happen."
+  },
+  "results": {
+    "skill": "Hazard spotting · Kerala format",
+    "skillPractice": "Hazard spotting · practice",
+    "spotted": "You spotted {h} of {n} hazards. {late, plural, =0 {None were late.} one {# was late.} other {# were late.}}",
+    "passMark": "Kerala's pass mark is {pass} (as reported)",
+    "calib": "You expected {expected} passes; you got {actual}.",
+    "counts": "Counts toward your Nazar Score",
+    "notCounts": "Practice run: not counted for your Nazar Score.",
+    "aiScenes": "Results describe how you did on our AI-generated scenes, not on real roads or in Kerala's test."
+  },
+  "sr": {
+    "title": "Nazar: screen-reader version",
+    "label": "A different exercise from the timed clips: it practises the same hazard types without timing. It doesn't count toward a Nazar Score.",
+    "placeholder": "Placeholder descriptions until the published clips carry their own.",
+    "offline": "You're offline. This version works without internet.",
+    "progress": "Scene {n} of {total}",
+    "question": "Which of these is developing into a hazard?",
+    "frame": "Frame {letter}",
+    "check": "Check",
+    "next": "Next scene",
+    "right": "Yes. This is {hazard}.",
+    "wrong": "Frame {letter} was the one: {hazard}.",
+    "doneTitle": "All scenes done",
+    "doneLine": "You picked the developing hazard in {right} of {total} scenes.",
+    "back": "Back to Nazar",
+    "aiLine": "The timed clips are AI-generated road scenes. These still frames describe scenes in words."
+  },
+  "pack": {
+    "title": "Practice pack for offline",
+    "checking": "Checking the clips",
+    "error": "Couldn't check the pack.",
+    "retry": "Try again",
+    "empty": "No clips to download yet: clip media isn't published.",
+    "unsupported": "This browser can't save clips for offline use.",
+    "download": "Download practice pack (≈ {mb} MB)",
+    "saved": "Saved on this phone (≈ {mb} MB).",
+    "remove": "Remove",
+    "progress": "Downloading clip {done} of {total}",
+    "failed": "The download stopped. Clips saved so far are kept.",
+    "confirmTitle": "Download ≈ {mb} MB?",
+    "confirmBody": "The clips are saved on this phone so practice works offline. You can remove them any time.",
+    "confirm": "Download ≈ {mb} MB",
+    "notNow": "Not now"
+  }
+}

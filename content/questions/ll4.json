@@ -1,0 +1,2079 @@
+{
+  "$schema": "../schema/question-bank.schema.json",
+  "file_kind": "question_bank",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "Documents, LL conditions and duties. Values quoted from rule packs are listed in rulepack_facts and checked against rulepacks/ by tests; penalties appear only as concepts, never as amounts. SERVER-SIDE CONTENT: items[].key and concepts[].explanation must never reach a client in mock mode; publish only through splitQuestionBank (packages/content). Every item is a draft awaiting two-person review; Hindi awaits native review.",
+  "topic": "LL4",
+  "confidence_levels": [50, 75, 100],
+  "answer_mode": "single_choice",
+  "concepts": [
+    {
+      "concept_id": "C-LL4-001",
+      "topic": "LL4",
+      "title": {
+        "en": "\"L\" plates",
+        "hi": "\"L\" प्लेट"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-LLC-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-001",
+        "text": {
+          "en": "A learner must display an \"L\" plate on the front and the rear of the vehicle (CMVR r.3).",
+          "hi": "लर्नर को वाहन के आगे और पीछे, दोनों जगह \"L\" प्लेट लगानी होती है (CMVR r.3)।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Central Motor Vehicles Rules 1989 r.3, learner's licence conditions (secondary sources only)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-001:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "While riding on a learner's licence, what must your vehicle display?",
+            "hi": "लर्नर लाइसेंस पर चलाते समय आपके वाहन पर क्या लगा होना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "An \"L\" plate at the front and at the rear",
+                "hi": "आगे और पीछे \"L\" प्लेट"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Nothing special",
+                "hi": "कुछ ख़ास नहीं"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "An \"L\" sticker on your helmet only",
+                "hi": "सिर्फ़ हेलमेट पर \"L\" स्टिकर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "A \"new rider\" sign on the back only",
+                "hi": "सिर्फ़ पीछे \"नया चालक\" लिखा बोर्ड"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-001:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "On a learner's licence, an \"L\" plate on the rear alone is enough. True or false?",
+            "hi": "लर्नर लाइसेंस पर सिर्फ़ पीछे \"L\" प्लेट लगाना काफ़ी है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL4-001:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You get your LL today and want to practise on the road this evening. What do you need on the vehicle?",
+            "hi": "आपको आज LL मिला है और आप शाम को सड़क पर अभ्यास करना चाहते हैं। वाहन पर क्या चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Your college ID card on the dashboard",
+                "hi": "डैशबोर्ड पर आपका कॉलेज आईडी कार्ड"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "\"L\" plates front and rear",
+                "hi": "आगे और पीछे \"L\" प्लेट"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Nothing, as long as you ride slowly",
+                "hi": "कुछ नहीं, बस धीरे चलाएँ"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "A sticker of your licence number",
+                "hi": "आपके लाइसेंस नंबर का स्टिकर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-002",
+      "topic": "LL4",
+      "title": {
+        "en": "Learning under supervision",
+        "hi": "निगरानी में सीखना"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-LLC-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-002",
+        "text": {
+          "en": "A learner's licence is for learning under supervision: show \"L\" plates and be accompanied by a person who holds a valid driving licence for that vehicle (CMVR r.3).",
+          "hi": "लर्नर लाइसेंस निगरानी में सीखने के लिए होता है: \"L\" प्लेट लगाएँ और साथ में ऐसा व्यक्ति हो जिसके पास उस वाहन का वैध ड्राइविंग लाइसेंस हो (CMVR r.3)।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Central Motor Vehicles Rules 1989 r.3, learner's licence conditions (secondary sources only)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-002:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "When practising on a learner's licence, who must be with you?",
+            "hi": "लर्नर लाइसेंस पर अभ्यास करते समय आपके साथ कौन होना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Any adult friend",
+                "hi": "कोई भी बालिग दोस्त"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Nobody, if you go slowly",
+                "hi": "कोई नहीं, अगर आप धीरे चलें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "A person with a valid driving licence for that vehicle",
+                "hi": "उस वाहन का वैध ड्राइविंग लाइसेंस रखने वाला व्यक्ति"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Another learner",
+                "hi": "कोई दूसरा लर्नर"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL4-002:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Your friend lends you his bike while you hold only an LL, and you plan to ride alone without \"L\" plates. What is wrong?",
+            "hi": "आपके पास सिर्फ़ LL है, दोस्त अपनी बाइक देता है, और आप बिना \"L\" प्लेट के अकेले चलाने वाले हैं। इसमें क्या ग़लत है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Nothing; an LL lets you ride alone",
+                "hi": "कुछ नहीं; LL पर अकेले चला सकते हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Only the plates are missing",
+                "hi": "सिर्फ़ प्लेट की कमी है"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Nothing, if the bike's owner agrees",
+                "hi": "कुछ नहीं, अगर बाइक का मालिक राज़ी हो"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "You need \"L\" plates and must follow the LL conditions, including a licensed person with you",
+                "hi": "\"L\" प्लेट चाहिए और LL की शर्तें माननी होंगी, जिसमें साथ में लाइसेंस वाला व्यक्ति होना भी शामिल है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL4-002:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A learner's licence lets you drive alone as long as you are careful. True or false?",
+            "hi": "लर्नर लाइसेंस पर सावधानी से अकेले चला सकते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-003",
+      "topic": "LL4",
+      "title": {
+        "en": "How long an LL lasts",
+        "hi": "LL कितने समय तक वैध"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [
+        {
+          "file": "base/cmvr.json",
+          "id": "PRM-LL-VALIDITY-MONTHS",
+          "path": "output.value",
+          "expected": 6
+        }
+      ],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-003",
+        "text": {
+          "en": "A learner's licence is valid for 6 months from the date it is issued. Take your driving test before it runs out.",
+          "hi": "लर्नर लाइसेंस जारी होने की तारीख़ से 6 महीने तक वैध रहता है। इसके ख़त्म होने से पहले ड्राइविंग टेस्ट दें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "rulepacks PRM-LL-VALIDITY-MONTHS: Delhi Transport, Learner's Licence page: LL validity 6 months",
+          "url": "https://transport.delhi.gov.in/hi/node/3079",
+          "grade": "P-state",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "high",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-003:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "How long is a learner's licence valid?",
+            "hi": "लर्नर लाइसेंस कितने समय तक वैध रहता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "6 months",
+                "hi": "6 महीने"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "1 month",
+                "hi": "1 महीना"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "1 year",
+                "hi": "1 साल"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "5 years",
+                "hi": "5 साल"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-003:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Your LL was issued in January and you haven't taken the driving test yet. When does it run out?",
+            "hi": "आपका LL जनवरी में जारी हुआ और आपने अभी ड्राइविंग टेस्ट नहीं दिया। यह कब ख़त्म होगा?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "At the end of the same year",
+                "hi": "उसी साल के आख़िर में"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "6 months after it was issued",
+                "hi": "जारी होने के 6 महीने बाद"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "It never runs out",
+                "hi": "यह कभी ख़त्म नहीं होता"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "30 days after it was issued",
+                "hi": "जारी होने के 30 दिन बाद"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL4-003:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A learner's licence stays valid for a full year. True or false?",
+            "hi": "लर्नर लाइसेंस पूरे एक साल तक वैध रहता है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-004",
+      "topic": "LL4",
+      "title": {
+        "en": "When you can take the driving test",
+        "hi": "ड्राइविंग टेस्ट कब दे सकते हैं"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [
+        {
+          "file": "base/cmvr.json",
+          "id": "PRM-MIN-WAIT-DAYS",
+          "path": "output.value",
+          "expected": 30
+        }
+      ],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-004",
+        "text": {
+          "en": "You can take the driving test 30 days after your learner's licence is issued; use that time to practise. Your plan shows your state's exact date.",
+          "hi": "लर्नर लाइसेंस जारी होने के 30 दिन बाद आप ड्राइविंग टेस्ट दे सकते हैं; यह समय अभ्यास में लगाएँ। आपकी योजना में आपके राज्य की सही तारीख़ दिखती है।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "rulepacks PRM-MIN-WAIT-DAYS: Kashmir Life Dec 2025 (J&K) and South First (Kerala): 30 days after LL; CMVR [MK]",
+          "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "grade": "S",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-004:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "After your LL is issued, how soon can you take the driving test?",
+            "hi": "LL जारी होने के बाद आप कितनी जल्दी ड्राइविंग टेस्ट दे सकते हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The next day",
+                "hi": "अगले दिन"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "After 6 months",
+                "hi": "6 महीने बाद"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "After 30 days",
+                "hi": "30 दिन बाद"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The same day",
+                "hi": "उसी दिन"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL4-004:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You can take the driving test the day after your LL is issued. True or false?",
+            "hi": "LL जारी होने के अगले दिन आप ड्राइविंग टेस्ट दे सकते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-004:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What should you plan for after getting your LL?",
+            "hi": "LL मिलने के बाद आपको किस बात की योजना बनानी चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "The driving test the same week",
+                "hi": "उसी हफ़्ते ड्राइविंग टेस्ट"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Renewing the LL first",
+                "hi": "पहले LL का नवीनीकरण"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "A second LL test",
+                "hi": "दूसरा LL टेस्ट"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "At least 30 days of practice before the driving test",
+                "hi": "ड्राइविंग टेस्ट से पहले कम से कम 30 दिन का अभ्यास"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-005",
+      "topic": "LL4",
+      "title": {
+        "en": "Minimum age: geared motorcycle and car",
+        "hi": "न्यूनतम उम्र: गियर वाली मोटरसाइकिल और कार"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [
+        {
+          "file": "classes.json",
+          "id": "CLS-MCWG",
+          "path": "minAge",
+          "expected": 18
+        },
+        {
+          "file": "classes.json",
+          "id": "CLS-LMV-NT",
+          "path": "minAge",
+          "expected": 18
+        }
+      ],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-005",
+        "text": {
+          "en": "You can apply for a geared motorcycle (MCWG) or a car (LMV-NT) licence from age 18.",
+          "hi": "गियर वाली मोटरसाइकिल (MCWG) या कार (LMV-NT) के लाइसेंस के लिए 18 साल की उम्र से आवेदन कर सकते हैं।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "rulepacks classes.json CLS-MCWG / CLS-LMV-NT: Delhi Transport class table (18); MV Act 1988 s.4(1) [MK]",
+          "url": "https://transport.delhi.gov.in/hi/node/3079",
+          "grade": "P-state",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "high",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-005:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What is the minimum age for a licence to ride a geared motorcycle (MCWG)?",
+            "hi": "गियर वाली मोटरसाइकिल (MCWG) के लाइसेंस के लिए न्यूनतम उम्र कितनी है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "18 years",
+                "hi": "18 साल"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "16 years",
+                "hi": "16 साल"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "20 years",
+                "hi": "20 साल"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "21 years",
+                "hi": "21 साल"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-005:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You can get a car (LMV-NT) licence at 17 if a parent agrees. True or false?",
+            "hi": "माता-पिता राज़ी हों तो 17 साल में कार (LMV-NT) का लाइसेंस मिल सकता है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL4-005:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At what age can you apply for a car (LMV-NT) licence?",
+            "hi": "कार (LMV-NT) के लाइसेंस के लिए किस उम्र में आवेदन कर सकते हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "16 years",
+                "hi": "16 साल"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "18 years",
+                "hi": "18 साल"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "17 years",
+                "hi": "17 साल"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "25 years",
+                "hi": "25 साल"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-006",
+      "topic": "LL4",
+      "title": {
+        "en": "At 16–17: the 50 cc gearless licence",
+        "hi": "16–17 साल: 50 cc बिना गियर का लाइसेंस"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": [],
+      "rulepack_facts": [
+        {
+          "file": "classes.json",
+          "id": "CLS-MC50CC",
+          "path": "minAge",
+          "expected": 16
+        },
+        {
+          "file": "classes.json",
+          "id": "CLS-MC50CC",
+          "path": "maxCc",
+          "expected": 50
+        },
+        {
+          "file": "classes.json",
+          "id": "CLS-MC50CC",
+          "path": "guardianConsentUnder18",
+          "expected": true
+        }
+      ],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-006",
+        "text": {
+          "en": "Until 18 you can only get the gearless two-wheeler licence for engines up to 50 cc, with your parent's or guardian's consent. Most scooters are bigger than 50 cc.",
+          "hi": "18 साल से पहले सिर्फ़ 50 cc तक के बिना गियर वाले दोपहिया का लाइसेंस मिल सकता है, वह भी माता-पिता या अभिभावक की सहमति से। ज़्यादातर स्कूटर 50 cc से बड़े होते हैं।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "rulepacks classes.json CLS-MC50CC: Delhi Transport class table (16 with guardian consent); MV Act 1988 s.4(2) [MK]",
+          "url": "https://transport.delhi.gov.in/hi/node/3079",
+          "grade": "P-state",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "high",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-006:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "At 16 or 17, which licence can you apply for?",
+            "hi": "16 या 17 साल की उम्र में आप किस लाइसेंस के लिए आवेदन कर सकते हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "A geared motorcycle, with consent",
+                "hi": "गियर वाली मोटरसाइकिल, सहमति से"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Any scooter, with consent",
+                "hi": "कोई भी स्कूटर, सहमति से"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "A gearless two-wheeler up to 50 cc, with a parent's or guardian's consent",
+                "hi": "50 cc तक का बिना गियर वाला दोपहिया, माता-पिता या अभिभावक की सहमति से"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "A car, with consent",
+                "hi": "कार, सहमति से"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL4-006:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 4,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You are 17 and want to ride a 110 cc scooter. Can you get a licence for it now?",
+            "hi": "आप 17 साल के हैं और 110 cc का स्कूटर चलाना चाहते हैं। क्या अभी इसका लाइसेंस मिल सकता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Yes, with a parent's consent",
+                "hi": "हाँ, माता-पिता की सहमति से"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Yes, if you pass the LL test",
+                "hi": "हाँ, अगर LL टेस्ट पास कर लें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Yes, on a learner's licence",
+                "hi": "हाँ, लर्नर लाइसेंस पर"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Not yet; at 16–17 only the gearless up-to-50 cc licence is possible",
+                "hi": "अभी नहीं; 16–17 साल में सिर्फ़ 50 cc तक बिना गियर का लाइसेंस मिल सकता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL4-006:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Most common scooters have engines bigger than 50 cc. True or false?",
+            "hi": "ज़्यादातर आम स्कूटरों का इंजन 50 cc से बड़ा होता है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-007",
+      "topic": "LL4",
+      "title": {
+        "en": "Documents to carry",
+        "hi": "साथ रखने के दस्तावेज़"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-DOC-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-007",
+        "text": {
+          "en": "Carry, or be able to show, your driving licence and the vehicle's registration certificate (RC), insurance certificate and pollution under control (PUC) certificate.",
+          "hi": "अपना ड्राइविंग लाइसेंस और वाहन का रजिस्ट्रेशन सर्टिफ़िकेट (RC), बीमा सर्टिफ़िकेट और प्रदूषण नियंत्रण (PUC) सर्टिफ़िकेट साथ रखें या दिखा सकें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 as amended 2019 (section to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Central Motor Vehicles Rules 1989 (rule to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-007:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Which documents should you carry or be able to show when riding?",
+            "hi": "चलाते समय आपको कौन-से दस्तावेज़ साथ रखने या दिखा पाने चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Driving licence, registration certificate (RC), insurance and PUC certificate",
+                "hi": "ड्राइविंग लाइसेंस, रजिस्ट्रेशन सर्टिफ़िकेट (RC), बीमा और PUC सर्टिफ़िकेट"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Only your college ID card",
+                "hi": "सिर्फ़ कॉलेज आईडी कार्ड"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Only the vehicle's purchase bill",
+                "hi": "सिर्फ़ वाहन ख़रीदने का बिल"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only a photocopy of the RC",
+                "hi": "सिर्फ़ RC की फ़ोटोकॉपी"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-007:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A valid pollution under control (PUC) certificate is one of your vehicle's documents. True or false?",
+            "hi": "वैध प्रदूषण नियंत्रण (PUC) सर्टिफ़िकेट आपके वाहन के दस्तावेज़ों में से एक है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL4-007:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You borrow a friend's scooter. Which papers should be available?",
+            "hi": "आप दोस्त का स्कूटर उधार लेते हैं। कौन-से काग़ज़ उपलब्ध होने चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Only your friend's licence",
+                "hi": "सिर्फ़ दोस्त का लाइसेंस"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Its RC, insurance and PUC certificate, along with your own licence",
+                "hi": "उसकी RC, बीमा और PUC सर्टिफ़िकेट, साथ में आपका अपना लाइसेंस"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Nothing, since it isn't your scooter",
+                "hi": "कुछ नहीं, क्योंकि स्कूटर आपका नहीं है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only the service book",
+                "hi": "सिर्फ़ सर्विस बुक"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-008",
+      "topic": "LL4",
+      "title": {
+        "en": "Digital documents",
+        "hi": "डिजिटल दस्तावेज़"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-DOC-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-008",
+        "text": {
+          "en": "Digital copies of your licence and RC in DigiLocker or mParivahan are meant to be accepted like the originals; plain photos or scans are not. Acceptance in practice can vary by state, so carry the originals if you are unsure.",
+          "hi": "DigiLocker या mParivahan में रखी लाइसेंस और RC की डिजिटल कॉपी मूल दस्तावेज़ की तरह मानी जानी चाहिए; साधारण फ़ोटो या स्कैन नहीं। असल में यह राज्य के हिसाब से बदल सकता है, इसलिए पक्का न हो तो मूल दस्तावेज़ साथ रखें।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Central Motor Vehicles Rules 1989, documents in electronic form (r.139 as cited in PROMPTS §2.1; not fetched)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Per-state acceptance of DigiLocker / mParivahan copies is unverified (CURRICULUM LL4)."
+        }
+      ],
+      "confidence": "low",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-008:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Which apps can hold digital copies of your licence and RC?",
+            "hi": "कौन-से ऐप आपके लाइसेंस और RC की डिजिटल कॉपी रख सकते हैं?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Any photo gallery app",
+                "hi": "कोई भी फ़ोटो गैलरी ऐप"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "A chat message forwarded to you",
+                "hi": "आपको भेजा गया कोई चैट संदेश"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "DigiLocker and mParivahan",
+                "hi": "DigiLocker और mParivahan"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "A scan posted on social media",
+                "hi": "सोशल मीडिया पर डाला गया स्कैन"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL4-008:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A photo of your licence in your phone's gallery counts the same as the DigiLocker copy. True or false?",
+            "hi": "फ़ोन की गैलरी में रखी लाइसेंस की फ़ोटो DigiLocker की कॉपी के बराबर मानी जाती है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-008:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You left your paper RC at home. What can help if you are asked for it?",
+            "hi": "आप RC का काग़ज़ घर भूल आए। माँगे जाने पर क्या मदद कर सकता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "A photocopy someone sends you on chat",
+                "hi": "किसी के चैट पर भेजी फ़ोटोकॉपी"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Telling the officer the RC number",
+                "hi": "अधिकारी को RC नंबर बता देना"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Nothing can help",
+                "hi": "कुछ भी मदद नहीं कर सकता"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "The RC copy in DigiLocker or mParivahan",
+                "hi": "DigiLocker या mParivahan में रखी RC की कॉपी"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-009",
+      "topic": "LL4",
+      "title": {
+        "en": "Compulsory insurance",
+        "hi": "ज़रूरी बीमा"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-DOC-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-009",
+        "text": {
+          "en": "Every motor vehicle used in a public place must have at least third-party insurance, which covers your liability to other people. Riding without valid insurance is an offence.",
+          "hi": "सार्वजनिक जगह पर चलने वाले हर मोटर वाहन का कम से कम थर्ड-पार्टी बीमा होना ज़रूरी है, जो दूसरे लोगों के प्रति आपकी ज़िम्मेदारी को कवर करता है। बिना वैध बीमे के चलाना अपराध है।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 (compulsory third-party insurance; section to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "high",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-009:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Which motor insurance is compulsory for every vehicle used on public roads?",
+            "hi": "सार्वजनिक सड़कों पर चलने वाले हर वाहन के लिए कौन-सा बीमा ज़रूरी है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Third-party insurance",
+                "hi": "थर्ड-पार्टी बीमा"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Only comprehensive insurance",
+                "hi": "सिर्फ़ कॉम्प्रिहेंसिव बीमा"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "None; insurance is optional",
+                "hi": "कोई नहीं; बीमा अपनी मर्ज़ी है"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only theft insurance",
+                "hi": "सिर्फ़ चोरी का बीमा"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-009:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You may ride a scooter whose insurance has expired if it is only a short trip. True or false?",
+            "hi": "छोटा सफ़र हो तो ऐसा स्कूटर चला सकते हैं जिसका बीमा ख़त्म हो चुका है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL4-009:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does third-party insurance mainly cover?",
+            "hi": "थर्ड-पार्टी बीमा मुख्य रूप से क्या कवर करता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Repairs to your own vehicle only",
+                "hi": "सिर्फ़ आपके अपने वाहन की मरम्मत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Your liability for injury or damage to other people and their property",
+                "hi": "दूसरे लोगों और उनकी संपत्ति को हुए नुक़सान के लिए आपकी ज़िम्मेदारी"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Your fuel costs",
+                "hi": "आपके पेट्रोल का ख़र्च"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Your helmet",
+                "hi": "आपका हेलमेट"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-010",
+      "topic": "LL4",
+      "title": {
+        "en": "Duties after a road accident",
+        "hi": "सड़क हादसे के बाद के कर्तव्य"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-ACC-001", "RR-GHR-002"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-010",
+        "text": {
+          "en": "If you are involved in a road accident where someone is hurt, help them get medical care, call 112 and report it to the police (MV Act s.134).",
+          "hi": "अगर आप किसी ऐसे सड़क हादसे में शामिल हैं जिसमें कोई घायल हुआ है, तो उसे इलाज दिलाने में मदद करें, 112 पर कॉल करें और पुलिस को सूचना दें (MV Act s.134)।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.134 (not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "Margdarshak CURRICULUM M19 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-010:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "If you are involved in a road accident in which someone is hurt, what must you do?",
+            "hi": "अगर आप ऐसे सड़क हादसे में शामिल हैं जिसमें कोई घायल है, तो आपको क्या करना है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Leave quickly to avoid trouble",
+                "hi": "परेशानी से बचने के लिए जल्दी चले जाएँ"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Wait until someone else calls for help",
+                "hi": "किसी और के मदद बुलाने तक इंतज़ार करें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Help get medical care for the injured and report it to the police",
+                "hi": "घायल को इलाज दिलाने में मदद करें और पुलिस को सूचना दें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Move the vehicles and leave",
+                "hi": "वाहन हटाएँ और चले जाएँ"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL4-010:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A rider falls in front of you on a busy road. What comes first?",
+            "hi": "व्यस्त सड़क पर आपके सामने एक सवार गिर जाता है। सबसे पहले क्या करना है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Take photos and videos first",
+                "hi": "पहले फ़ोटो और वीडियो लें"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Ride on; someone else will stop",
+                "hi": "आगे बढ़ जाएँ; कोई और रुक जाएगा"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Argue about whose fault it was",
+                "hi": "किसकी ग़लती थी, इस पर बहस करें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Make the scene safe if you can, then call 112",
+                "hi": "हो सके तो जगह सुरक्षित करें, फिर 112 पर कॉल करें"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        },
+        {
+          "item_id": "C-LL4-010:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "If you are involved in a road accident, you should report it to the police. True or false?",
+            "hi": "अगर आप सड़क हादसे में शामिल हैं, तो पुलिस को सूचना देनी चाहिए। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-011",
+      "topic": "LL4",
+      "title": {
+        "en": "Good Samaritan protection",
+        "hi": "नेक मददगार की सुरक्षा"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-GHR-001", "RR-GHR-002"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-011",
+        "text": {
+          "en": "People who help a road accident victim in good faith are protected by law (MV Act s.134A, the Good Samaritan provision). Fear of trouble should not stop you from calling 112 and helping.",
+          "hi": "जो लोग नेक नीयत से सड़क हादसे के घायल की मदद करते हैं, उन्हें क़ानूनी सुरक्षा मिलती है (MV Act s.134A, नेक मददगार प्रावधान)। परेशानी का डर आपको 112 पर कॉल करने और मदद करने से न रोके।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.134A (not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-011:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "What does the Good Samaritan provision say about people who help accident victims in good faith?",
+            "hi": "नेक मददगार प्रावधान, नेक नीयत से हादसे के घायल की मदद करने वालों के बारे में क्या कहता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "They are protected and should not be harassed",
+                "hi": "उन्हें सुरक्षा मिलती है और उन्हें परेशान नहीं किया जाना चाहिए"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "They must pay the hospital bill",
+                "hi": "उन्हें अस्पताल का बिल भरना होगा"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "They must stay at the hospital until the police arrive",
+                "hi": "पुलिस आने तक उन्हें अस्पताल में रुकना होगा"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "They can be blamed for the accident",
+                "hi": "उन्हें हादसे का दोषी ठहराया जा सकता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-011:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 2,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "If you help an accident victim in good faith, the law protects you. True or false?",
+            "hi": "अगर आप नेक नीयत से हादसे के घायल की मदद करते हैं, तो क़ानून आपको सुरक्षा देता है। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        },
+        {
+          "item_id": "C-LL4-011:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "You hesitate to help an injured person because you fear police trouble. What should you know?",
+            "hi": "पुलिस की परेशानी के डर से आप घायल की मदद करने में हिचकते हैं। आपको क्या पता होना चाहिए?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Helping makes you responsible for the accident",
+                "hi": "मदद करने से आप हादसे के ज़िम्मेदार बन जाते हैं"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "The law protects people who help in good faith, so help and call 112",
+                "hi": "नेक नीयत से मदद करने वालों को क़ानून सुरक्षा देता है, इसलिए मदद करें और 112 पर कॉल करें"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Only doctors may help",
+                "hi": "सिर्फ़ डॉक्टर मदद कर सकते हैं"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "You must pay for treatment if you help",
+                "hi": "मदद करने पर इलाज का ख़र्च आपको देना होगा"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "b"
+          }
+        }
+      ]
+    },
+    {
+      "concept_id": "C-LL4-012",
+      "topic": "LL4",
+      "title": {
+        "en": "When a minor rides",
+        "hi": "जब नाबालिग गाड़ी चलाए"
+      },
+      "sign_family": null,
+      "sign_id": null,
+      "rule_ids": ["RR-U18-001"],
+      "rulepack_facts": [],
+      "explanation": {
+        "explanation_id": "EX-C-LL4-012",
+        "text": {
+          "en": "Under MV Act s.199A, the guardian or the vehicle's owner can be held responsible when a minor commits a motor-vehicle offence. Don't hand your vehicle to someone who can't hold a licence for it.",
+          "hi": "MV Act s.199A के तहत, नाबालिग के मोटर वाहन से जुड़े अपराध के लिए अभिभावक या वाहन मालिक को ज़िम्मेदार ठहराया जा सकता है। अपना वाहन किसी ऐसे व्यक्ति को न दें जो उसका लाइसेंस नहीं ले सकता।"
+        },
+        "review_status": "draft",
+        "hi_review_status": "pending_native_review"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles Act 1988 s.199A (not re-fetched)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "vehicle_scope": "All",
+      "available_to": "all",
+      "review_status": "draft",
+      "items": [
+        {
+          "item_id": "C-LL4-012:v1",
+          "variant": 1,
+          "pool": "practice",
+          "form": "rule_mcq",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "If a minor rides a motor vehicle and commits an offence, who can be held responsible?",
+            "hi": "अगर कोई नाबालिग मोटर वाहन चलाकर अपराध करे, तो किसे ज़िम्मेदार ठहराया जा सकता है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Nobody, because the rider is a minor",
+                "hi": "कोई नहीं, क्योंकि चलाने वाला नाबालिग है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Only the minor's school",
+                "hi": "सिर्फ़ नाबालिग का स्कूल"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "The guardian or the vehicle's owner",
+                "hi": "अभिभावक या वाहन मालिक"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "Only the shop that sold the vehicle",
+                "hi": "सिर्फ़ वाहन बेचने वाली दुकान"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "c"
+          }
+        },
+        {
+          "item_id": "C-LL4-012:v2",
+          "variant": 2,
+          "pool": "mock",
+          "form": "true_false",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "Letting your 15-year-old brother ride your scooter can make you liable as the owner. True or false?",
+            "hi": "अपने 15 साल के भाई को स्कूटर चलाने देने पर मालिक होने के नाते आप ज़िम्मेदार हो सकते हैं। सही या ग़लत?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "True",
+                "hi": "सही"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "False",
+                "hi": "ग़लत"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "a"
+          }
+        },
+        {
+          "item_id": "C-LL4-012:v3",
+          "variant": 3,
+          "pool": "practice",
+          "form": "scenario",
+          "similarity": {
+            "level": 3,
+            "basis": "authored"
+          },
+          "stem": {
+            "en": "A 16-year-old cousin asks to ride your 125 cc motorcycle around the block. What is the right answer?",
+            "hi": "16 साल का चचेरा भाई आपकी 125 cc मोटरसाइकिल मोहल्ले में घुमाना चाहता है। सही जवाब क्या है?"
+          },
+          "stem_assets": [],
+          "options": [
+            {
+              "option_id": "a",
+              "text": {
+                "en": "Yes, if it's only around the block",
+                "hi": "हाँ, अगर सिर्फ़ मोहल्ले में है"
+              }
+            },
+            {
+              "option_id": "b",
+              "text": {
+                "en": "Yes, if they wear a helmet",
+                "hi": "हाँ, अगर हेलमेट पहने"
+              }
+            },
+            {
+              "option_id": "c",
+              "text": {
+                "en": "Yes, if you sit behind them",
+                "hi": "हाँ, अगर आप पीछे बैठें"
+              }
+            },
+            {
+              "option_id": "d",
+              "text": {
+                "en": "No; they can't hold a licence for it, and the owner can be held responsible",
+                "hi": "नहीं; वह इसका लाइसेंस नहीं ले सकता, और मालिक को ज़िम्मेदार ठहराया जा सकता है"
+              }
+            }
+          ],
+          "key": {
+            "correct_option_id": "d"
+          }
+        }
+      ]
+    }
+  ]
+}

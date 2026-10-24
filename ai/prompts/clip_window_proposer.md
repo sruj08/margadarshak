@@ -2,7 +2,7 @@
 id: PRM-CLIPPROP
 version: 1.0.0
 agent: ClipWindowProposer (M-06), offline, inside Render Workflow clip_ingest.propose_windows
-model_env: MD_MODEL_VIDEO            # default gemini-3.8-flash
+model_env: GEMINI_MODEL_VIDEO            # default gemini-3.8-flash
 output_schema: margdarshak_ai.schemas.ClipProposal
 state_inputs: [clip_id, chunk_offset_s, chunk_len_s, clip_meta, canary]
 generation: { fps: 2, media_resolution: low, temperature: 0.2 }   # fps 4 for clips ≤ 90 s (04 §3.4)

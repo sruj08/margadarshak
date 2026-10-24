@@ -1,0 +1,8 @@
+# oapi-codegen configuration (MD-055). Models only: routes are hand-written chi handlers
+# that use these types and are checked against api/openapi.yaml by internal/httpapi contract tests.
+package: gen
+output: models.gen.go
+generate:
+  models: true
+output-options:
+  skip-prune: true

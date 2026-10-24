@@ -30,6 +30,9 @@ yarn-error.log*
 
 # ---- Next.js / build outputs ----
 .next/
+.next-real/
+# Per-agent / per-run web builds (NEXT_DIST_DIR) used so parallel e2e runs don't share .next
+apps/web/.next-*/
 out/
 dist/
 build/
@@ -60,6 +63,7 @@ htmlcov/
 coverage/
 playwright-report/
 test-results/
+test-results-*/
 blob-report/
 .lighthouseci/
 tests/load/results/

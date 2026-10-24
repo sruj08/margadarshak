@@ -1,0 +1,1957 @@
+{
+  "meta": {
+    "title": "Margdarshak",
+    "titleTemplate": "{page} · Margdarshak",
+    "description": "Your driving licence, step by step, without an agent. An independent guide for India's learner's licence and driving licence journey.",
+    "tagline": "Learner se licence tak, bina agent ke."
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content",
+    "mainNav": "Main",
+    "externalNewTab": "(opens in a new tab)",
+    "close": "Close"
+  },
+  "brand": {
+    "name": "Margdarshak",
+    "homeLink": "Margdarshak home"
+  },
+  "nav": {
+    "home": "Home",
+    "licence": "My Licence",
+    "learn": "Learn",
+    "help": "Help"
+  },
+  "topbar": {
+    "language": "Language",
+    "switchToHindi": "हिन्दी में देखें",
+    "switchToEnglish": "View in English",
+    "settings": "Settings"
+  },
+  "lang": {
+    "title": "Choose your language",
+    "hint": "You can change this any time in Settings.",
+    "hindiName": "Hindi",
+    "englishName": "English",
+    "dogriName": "Dogri",
+    "dogriCaption": "Voice input only: speak in Dogri, screens show Hindi. Coming soon.",
+    "more": "More languages are coming",
+    "moreBody": "We only list a language once every screen has been checked by a native speaker.",
+    "cta": "Continue",
+    "pickFirst": "Choose a language to continue"
+  },
+  "welcome": {
+    "title": "Before you start, three promises",
+    "promise1": "We're an independent guide, not the government. We're not affiliated with MoRTH, NIC or any State Transport Department.",
+    "promise2": "We never ask for your Aadhaar number, OTP or bank details. Those are typed only on Sarathi, the government portal.",
+    "promise3": "Fees and rules shown here come with their source and the date we checked them.",
+    "cta": "Got it",
+    "simulated": "This build uses simulated government data.",
+    "grievance": "Questions or a complaint? Contact our grievance officer."
+  },
+  "home": {
+    "h1": "Get your driving licence, step by step.",
+    "sub": "We'll show your exact plan before you fill anything.",
+    "tilesLabel": "What do you want to do?",
+    "tileFirst": "Get my first licence",
+    "tileFirstLine": "LL to DL",
+    "tilePractise": "Practise for the test",
+    "tilePractiseLine": "Free mock tests",
+    "tileRenew": "Renew or fix my licence",
+    "tileRenewLine": "Renew, address, duplicate",
+    "tileCheck": "Check my application",
+    "tileCheckLine": "Where am I?",
+    "all": "All services, by who you are"
+  },
+  "trust": {
+    "line": "Govt fee for one vehicle class: <num>{fee_one_class}</num> + <num>{fee_card}</num> card (your state may add a service charge). Never pay agents.",
+    "unavailable": "See the full fee breakdown in your licence plan. Never pay agents."
+  },
+  "source": {
+    "heading": "Where this comes from",
+    "checked": "checked {date}",
+    "confidence": "Confidence",
+    "confidenceHigh": "Checked",
+    "confidenceMedium": "Likely: confirm at your RTO if unsure",
+    "confidenceLow": "Verify at your RTO",
+    "openSource": "Open the source",
+    "trustDetail": "Learner's licence, LL test and driving test for one class, plus the licence fee. The smart card is separate. Your state may add its own service charge."
+  },
+  "simulated": {
+    "chip": "Simulated",
+    "detailSarathi": "Simulated: in production this step runs on Sarathi.",
+    "detailDigilocker": "Simulated: in production this step runs on DigiLocker.",
+    "detailSlots": "Simulated: in production slots come from the state's booking system.",
+    "sample": "Sample data"
+  },
+  "footer": {
+    "notAffiliated": "Independent prototype by team Chanakya. Not affiliated with MoRTH, NIC or any State Transport Department. Uses simulated government data.",
+    "privacy": "Privacy",
+    "grievance": "Grievance officer",
+    "accessibility": "Accessibility statement",
+    "about": "About this guide",
+    "updated": "Last updated {date}"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Saved on this phone only.",
+    "appearance": "Appearance",
+    "themeSystem": "Match my phone",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "contrast": "High contrast",
+    "contrastHint": "Darker text and stronger outlines.",
+    "motion": "Reduce motion",
+    "motionHint": "Fades instead of movement.",
+    "language": "Language",
+    "changeLanguage": "Change language",
+    "clearTitle": "Clear this device",
+    "clearHint": "Removes your language choice, settings and anything saved on this phone. Use it on a shared phone or at a cyber café.",
+    "clearCta": "Clear this device",
+    "clearConfirm": "This removes everything Margdarshak saved on this phone. You'll start again from the language screen.",
+    "clearKeep": "Keep my data",
+    "clearNow": "Clear now",
+    "done": "Done"
+  },
+  "placeholder": {
+    "badge": "Next build",
+    "back": "Back to home"
+  },
+  "licence": {
+    "title": "My Licence",
+    "emptyTitle": "Your road starts here.",
+    "emptyLine": "Find your licence plan in 3 taps. Your plan, documents and dates will live on this tab.",
+    "emptyCta": "Start my plan"
+  },
+  "learn": {
+    "title": "Learn",
+    "emptyTitle": "Practice opens in the next build.",
+    "emptyLine": "Mock LL tests, road signs and Nazar hazard practice will live here, and they will work offline.",
+    "emptyCta": "See all services"
+  },
+  "help": {
+    "title": "Help",
+    "intro": "Plain answers about the licence journey, and who to contact.",
+    "voiceTitle": "Voice guide",
+    "voiceBody": "Ask by speaking, in Hindi or English. The voice guide arrives in the next build. It will never book, pay or submit for you.",
+    "contactTitle": "Contact",
+    "govHelpdesk": "Questions about your application on Sarathi go to the government helpdesk:",
+    "ourGrievance": "Questions or complaints about Margdarshak:",
+    "scamTitle": "Watch out for fake apps",
+    "scamBody": "We never send apps (APK files) or ask for an OTP. Payments happen only on Sarathi or your state's gateway."
+  },
+  "plan": {
+    "title": "Your licence plan",
+    "emptyTitle": "Your plan in 3 taps is coming next.",
+    "emptyLine": "Answer your age, the vehicle you'll drive and your state. You'll see your classes, steps, fees and earliest licence date before you fill anything."
+  },
+  "services": {
+    "title": "All services, by who you are",
+    "intro": "Everything that is not the first-licence journey, grouped by person.",
+    "learning": "I'm learning to drive",
+    "learningItems": "Find my licence plan · Practise the LL test · Prepare for the driving test · Check my application",
+    "holder": "I have a licence",
+    "holderItems": "Renew my licence · Add a vehicle class · Change address · Duplicate · International Driving Permit",
+    "family": "Parent or family",
+    "familyItems": "Manage a parent's licence · My child wants to ride",
+    "soon": "These open one by one in the next builds."
+  },
+  "grievance": {
+    "title": "Grievance officer",
+    "body": "If something on Margdarshak is wrong, or you want to complain about how we handle your data, write to our grievance officer. We acknowledge within 24 hours and resolve within 15 days.",
+    "officer": "Grievance Officer, Nestiq Private Limited",
+    "emailLabel": "Email",
+    "board": "If you are not satisfied, you can approach the Data Protection Board of India.",
+    "notGov": "For your application itself, contact the government helpdesk. We cannot see or change anything on Sarathi."
+  },
+  "accessibility": {
+    "title": "Accessibility statement",
+    "body": "Margdarshak is an independent prototype by team Chanakya, not affiliated with MoRTH, NIC or any State Transport Department. We design and test it to WCAG 2.1 Level AA and the Guidelines for Indian Government Websites (GIGW 3.0).",
+    "canDo": "You can use it with TalkBack, VoiceOver or NVDA, zoom to 400%, and turn on High contrast or Reduce motion in Settings.",
+    "known": "Known issues: the voice guide and games are not built yet. We will list issues here as we find them.",
+    "tell": "Tell us about a problem through our grievance officer. We reply within 5 working days."
+  },
+  "privacy": {
+    "title": "Privacy",
+    "body": "This build keeps your language choice and settings on this phone only. It does not use analytics or advertising trackers, and it never asks for your Aadhaar number, OTP or biometrics.",
+    "clear": "To remove everything, open Settings and choose Clear this device."
+  },
+  "offline": {
+    "title": "You're offline",
+    "body": "You're offline. Mock tests and saved lessons still work.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "We can't find that page",
+    "body": "We can't find that page. Go to your home screen.",
+    "cta": "Go to home"
+  },
+  "status": {
+    "done": "Done",
+    "now": "Now",
+    "later": "Later"
+  },
+  "update": {
+    "ready": "A new version of Margdarshak is ready.",
+    "reload": "Reload"
+  },
+  "common": {
+    "home": "Home",
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "close": "Close",
+    "problem": "There is a problem",
+    "whyWeAsk": "Why we ask",
+    "somethingWrong": "Something went wrong on our side.",
+    "safeHere": "Your answers on this phone are kept. Try again in a moment.",
+    "onDevice": "Everything here stays on your phone.",
+    "yourChild": "your child",
+    "statusDone": "done",
+    "statusNow": "now",
+    "statusLater": "later",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year",
+    "state": {
+      "JK": "Jammu & Kashmir",
+      "DL": "Delhi",
+      "KL": "Kerala",
+      "PB": "Punjab",
+      "MH": "Maharashtra",
+      "TN": "Tamil Nadu"
+    },
+    "stateSarathi": {
+      "JK": "Jammu and Kashmir",
+      "DL": "Delhi",
+      "KL": "Kerala",
+      "PB": "Punjab",
+      "MH": "Maharashtra",
+      "TN": "Tamil Nadu"
+    },
+    "band": {
+      "under_16": "Under 16",
+      "16_17": "16 or 17",
+      "18_19": "18 or 19",
+      "20_39": "20 to 39",
+      "40_plus": "40 or over"
+    }
+  },
+  "journey": {
+    "notChecked": "date not recorded",
+    "backOnline": "Back online. {n, plural, one {# answer synced.} other {# answers synced.}}",
+    "offlineTitle": "You're offline",
+    "offlineBody": "Saved answers, your plan and mock tests still work. We'll save to our server when you're back online.",
+    "sarathiDownTitle": "Sarathi isn't responding right now",
+    "sarathiDownBody": "Your answers are saved here. Try again later; nothing is lost.",
+    "retry": "Try again",
+    "visitsDiff": "RTO visits: {before} → {after}"
+  },
+  "wizard": {
+    "progress": "{n} of {total}",
+    "ageTitle": "How old are you?",
+    "ageHint": "Or enter your date of birth for an exact plan.",
+    "ageWhy": "Age decides which vehicles you can learn, and whether you need a medical form. Your date of birth stays on this phone.",
+    "dobStays": "Your date of birth stays on this phone.",
+    "dobCleared": "Date of birth cleared",
+    "bandCleared": "Age band cleared",
+    "or": "or",
+    "dobLegend": "Date of birth",
+    "dobHint": "For example, 05 08 2007",
+    "yearLegend": "Year of birth",
+    "yearHint": "As printed on your Aadhaar, for example 2007",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year",
+    "yearOnly": "My Aadhaar shows only the year",
+    "yearOnlyDesc": "We'll plan with that, and tell you which document proves your full date of birth.",
+    "someoneElse": "Making a plan for someone else, like your child or a parent? Answer for the person who will drive.",
+    "band": {
+      "under_16": "Under 16",
+      "16_17": "16 or 17",
+      "18_19": "18 or 19",
+      "20_39": "20 to 39",
+      "40_plus": "40 or over"
+    },
+    "errAge": "Choose an age, or enter a date of birth.",
+    "errDate": "Enter a real date, like 05 08 2007.",
+    "errYear": "Enter a real year, like 2007.",
+    "errVehicle": "Choose at least one vehicle.",
+    "errAadhaar": "Tell us where your Aadhaar address is.",
+    "errBuild": "We couldn't build your plan. Nothing was lost. Try again.",
+    "buildingTitle": "Building your plan",
+    "buildAge": "Age rules",
+    "buildClasses": "Vehicle classes on one learner's licence",
+    "buildFees": "Fees for {state}",
+    "buildDates": "Earliest licence date",
+    "vehicleTitle": "What will you drive?",
+    "vehicleHint": "Pick all you want. One application can cover more than one.",
+    "vehicleMinor": "At 16 or 17 you can learn only a gearless vehicle up to 50 cc, with a parent's consent.",
+    "vehicleWhy": "Each vehicle is a separate licence class. Choosing them together now means one learner's licence and one 30-day wait.",
+    "nextCount": "Next ({n} selected)",
+    "moreVehicles": "More vehicle types ({n})",
+    "scooterVsBike": "Not sure? Scooter or bike",
+    "scooterVsBikeBody": "A scooter has no gears (class MCWOG). A bike with gears is class MCWG. They are separate classes. Most scooters are above 50 cc, so you need to be 18; the 50 cc class is only for vehicles up to 50 cc.",
+    "selectedCount": "{n} selected",
+    "fromAge": "From {age}",
+    "pic": {
+      "scooter": "Scooter, no gears",
+      "scooter_50cc": "Up to 50 cc, no gears",
+      "bike_gear": "Bike with gears",
+      "car": "Car",
+      "auto_rickshaw": "Auto, taxi or light goods",
+      "e_rickshaw": "E-rickshaw",
+      "e_cart": "E-cart",
+      "goods_medium": "Medium goods vehicle",
+      "truck": "Truck",
+      "bus": "Bus",
+      "heavy_transport": "Heavy transport vehicle",
+      "adapted_vehicle": "Adapted vehicle"
+    },
+    "stateTitle": "Which state or UT do you live in?",
+    "stateWhy": "Each state's rules differ a little: test at home or at the RTO, fees, the track. Your Aadhaar address decides whether you can take the online path.",
+    "showPlan": "Show my plan",
+    "fullRules": "Full rules",
+    "partialRules": "Partial rules",
+    "otherStates": "We have rules for these states now. Other states and UTs are being added; we won't guess their rules.",
+    "aadhaarTitle": "Is your Aadhaar address in this state, where you live now?",
+    "aadhaarYes": "Yes",
+    "aadhaarNo": "No, it's elsewhere",
+    "aadhaarNoDesc": "You can update it first, or apply with another address proof.",
+    "aadhaarNone": "I don't have Aadhaar",
+    "aadhaarNoneDesc": "You'll apply with other proofs and take the LL test at the RTO."
+  },
+  "planCard": {
+    "missingTitle": "This plan isn't on this phone",
+    "missingLine": "Make your plan again in 3 taps. It takes under a minute.",
+    "newPlan": "Make a new plan",
+    "expiredTitle": "This plan is over 30 days old",
+    "expiredLine": "Rules may have changed. Make a fresh one in 3 taps.",
+    "change": "Change my answers",
+    "share": "Share",
+    "h1": "Your licence plan",
+    "saved": "Saved",
+    "computedOnPhone": "Computed on your phone from rules dated {date}",
+    "approxAge": "Based on your age band",
+    "familyTitle": "Family mode",
+    "familyBody": "At 16–17 the case lives in a parent's account. The parent gives consent, and every feature works, AI included.",
+    "offlineTitle": "You're offline",
+    "offlineBody": "This plan was saved on your phone. Sharing needs internet.",
+    "eligible": "You can apply for",
+    "noneEligible": "Not yet",
+    "canApply": "Apply now",
+    "from": "From {date}",
+    "requires": {
+      "GUARDIAN_CONSENT": "Needs a parent's consent",
+      "FORM_1A": "Needs a medical certificate (Form 1A)"
+    },
+    "contentComing": "Plan and fees only. Learning content coming.",
+    "factsTitle": "Key facts",
+    "earliest": "Earliest licence",
+    "about": "about",
+    "unknown": "Not known yet",
+    "steps": "Steps",
+    "visits": "RTO visits",
+    "visitsValue": "{n, plural, one {# at most} other {# at most}}",
+    "fee": "Government fee",
+    "feeButton": "Government fee {fee}, show breakdown",
+    "documents": "Documents",
+    "toSort": "Things to sort out",
+    "toSortValue": "{n, plural, one {# to look at} other {# to look at}}",
+    "toSortNone": "Nothing in your way",
+    "earliestInfo": "Earliest possible if slots are free. Most people take 2.5 to 4 months.",
+    "needsYou": "Sort these out before Sarathi",
+    "bundleTitle": "One application, {n} vehicles",
+    "bundleBody": "Doing them one after the other would mean another {days}-day wait. Fees are still per class.",
+    "bundleSee": "See how",
+    "addClass": "Add another vehicle to this application",
+    "laterTitle": "Some classes come later",
+    "laterBody": "{classes}: you can add from {date}. We kept them in your plan as a later step.",
+    "road": "Your road",
+    "stepFrom": "From {date}",
+    "rtoVisit": "RTO visit {n}",
+    "llAtRto": "The LL test is at the RTO in your case.",
+    "llOnline": "The LL test can be taken online at home.",
+    "llFormat": "{q} questions, {pass} correct to pass.",
+    "nonAadhaarPath": "You're on the non-Aadhaar path: bring address proof to the RTO.",
+    "docsTitle": "Documents for your plan",
+    "docMaybe": "may be needed",
+    "keepInMind": "Keep in mind ({n})",
+    "rulesFor": "Rules for {state}",
+    "rulesDetail": "Rule pack version {version}. Every number on this card comes from it.",
+    "ctaWait": "Practise while you wait",
+    "cta": "Start my application",
+    "ctaMinor": "Start my application in family mode",
+    "whatsapp": "Send this plan to WhatsApp"
+  },
+  "fees": {
+    "title": "Government fee for your plan",
+    "forClasses": "for {n} classes",
+    "nowTotal": "Paid at the learner's licence stage",
+    "total": "Total",
+    "reportedTitle": "Reported by people (not added to the total)",
+    "stateExtra": "Your state may add a service or postage charge. Pay only on Sarathi or your state's payment page.",
+    "more": "If anyone asks for more, it isn't a government fee.",
+    "sourceDetail": "Integer amounts from the fee table in the rule pack (CMVR r.32). Agents' prices are not fees.",
+    "oneClassNote": "Each extra class adds its own learner's licence and driving-test fee."
+  },
+  "share": {
+    "title": "Share your plan",
+    "previewLabel": "Preview of the shared card",
+    "cardTitle": "Margdarshak · Licence plan",
+    "cardFee": "Govt fee {fee}",
+    "cardDate": "earliest ~{date}",
+    "cardSteps": "{steps} steps · {visits} RTO visits at most",
+    "cardDocs": "Documents: {docs}",
+    "cardAgents": "Never pay agents.",
+    "cardMade": "Made with Margdarshak, an independent guide. No name or date of birth is in this card.",
+    "waText": "My licence plan from Margdarshak: {classes}, govt fee {fee}, earliest {date}. {link}",
+    "whatsapp": "Send on WhatsApp",
+    "needsInternet": "Needs internet",
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "copyFailed": "Couldn't copy. Long-press the link to copy it.",
+    "more": "More ways to share",
+    "parentConsent": "I'm the parent or guardian, and I agree to share this plan",
+    "parentConsentDesc": "Sharing a plan for someone under 18 needs a parent's consent.",
+    "optIn": "Also message me reminders on WhatsApp (at most 1 a day)",
+    "optInDesc": "Separate from sharing. Off unless you turn it on.",
+    "optInNext": "Set up reminders in Privacy",
+    "noNumber": "Sending opens your own WhatsApp. We don't collect your number."
+  },
+  "issue": {
+    "severityPrefix": "Status:",
+    "sev": {
+      "blocker": "Stops this path",
+      "warning": "Changes your path",
+      "notice": "Keep in mind",
+      "fixed": "Sorted"
+    },
+    "howToFix": "How to fix",
+    "fixedAddress": "I've updated my Aadhaar address",
+    "fixedRelation": "My Aadhaar now shows the relation name",
+    "fixedMobile": "My mobile is linked now",
+    "fixedDevice": "I have a laptop with a webcam",
+    "fixedVehicle": "I've arranged a vehicle",
+    "fixedDob": "Enter my full date of birth",
+    "fixedForm1a": "I have Form 1A",
+    "fixedGeneric": "I've sorted this",
+    "markedSorted": "Marked as sorted. It comes back if your answers change.",
+    "rechecked": "We checked your plan again.",
+    "sortedCount": "{n, plural, one {# item marked sorted} other {# items marked sorted}}"
+  },
+  "blockers": {
+    "noPlan": "Make a plan first",
+    "makePlan": "Make my plan",
+    "backToPlan": "Back to my plan",
+    "h1": "Things to sort out first",
+    "summary": "We checked {total} common problems for your state. {need} need you. {mind} to keep in mind.",
+    "nothing": "Nothing in your way. All {total} checks passed.",
+    "needsYou": "Needs you ({n})",
+    "keepInMind": "Keep in mind ({n})",
+    "passed": "{n, plural, one {# check passed} other {# checks passed}}",
+    "cta": "Continue to my application"
+  },
+  "planner": {
+    "noPlan": "Make a plan first",
+    "makePlan": "Make my plan",
+    "backToPlan": "Back to my plan",
+    "h1": "Choose your vehicle classes",
+    "sub": "Add classes now and they share one learner's licence and one wait.",
+    "fromAge": "From {age}",
+    "addFrom": "Add from {date}",
+    "perClass": "Adds {fee} (LL fee and driving-test fee)",
+    "splitTitle": "Different ages, different dates",
+    "splitBody": "Classes you can't get yet move to a later step from {date}.",
+    "compareTitle": "Together, or one after the other",
+    "what": "Compared",
+    "together": "Together",
+    "sequential": "One then the other",
+    "waits": "Learner's licence waits",
+    "waitsValue": "{n, plural, one {# wait} other {# waits}}",
+    "earliest": "Earliest licence",
+    "fee": "Government fee",
+    "feeTbc": "Fee to be confirmed",
+    "ifSequential": "Only if you would otherwise do them one after the other. Fees are still charged per class.",
+    "chooseOne": "Choose at least one",
+    "update": "Update my plan"
+  },
+  "applyStart": {
+    "noPlanTitle": "Make your plan first",
+    "noPlanLine": "Your application starts from your plan, so we never ask twice.",
+    "makePlan": "Make my plan",
+    "backToPlan": "Back to my plan",
+    "h1": "Start your application",
+    "sub": "We'll save every answer as you go, so you can stop and come back.",
+    "existingTitle": "You already have an application on this phone",
+    "existingBody": "Starting again makes a new one.",
+    "existingLink": "Continue the one I have",
+    "conflictTitle": "You already have an open application for this licence",
+    "conflictBody": "We'll keep one application per licence class so nothing gets duplicated. Pick it up from My Licence.",
+    "conflictLink": "Go to My Licence",
+    "familyTitle": "Family mode",
+    "familyBody": "The licence is for someone under 18. Next, you'll tell us you're their parent or guardian and give consent.",
+    "promise1": "About 6 short questions. Your date of birth is not asked again.",
+    "promise2": "We never ask for your Aadhaar number, OTP or bank details.",
+    "promise3": "At the end you finish on Sarathi with every value ready to copy.",
+    "storeTitle": "What we store and why",
+    "storeServer": "On our server: your state, classes, path and answers like your category, so you can continue. No name or address.",
+    "storePhone": "On this phone only: your date of birth and, on the non-Aadhaar path, your name and address for the copy-pack.",
+    "storeNever": "Never: Aadhaar number, OTP, biometrics, bank details or document images.",
+    "cta": "Start"
+  },
+  "apply": {
+    "noCaseTitle": "No application on this phone yet",
+    "noCaseLine": "Start from your licence plan. It takes 3 taps.",
+    "makePlan": "Make my plan",
+    "h1": "Learner's licence application",
+    "pathAadhaar": "Aadhaar path",
+    "pathNonAadhaar": "Non-Aadhaar path",
+    "familyChip": "Family mode",
+    "familyChipNamed": "Family mode · for {name}",
+    "progress": "{done} of {n} done",
+    "tasksLabel": "Application tasks",
+    "status": {
+      "done": "Done",
+      "in_progress": "In progress",
+      "not_started": "Not started",
+      "locked": "After the others"
+    },
+    "task": {
+      "about": "About you",
+      "licence": "Your licence",
+      "route": "Your address route",
+      "health": "Health declaration",
+      "documents": "Photo and signature",
+      "check": "Check your answers"
+    },
+    "then": "Then: finish on Sarathi (eKYC, fee, submit). About 10 minutes. We'll give you every value to type.",
+    "issuesTitle": "Sort these out before Sarathi ({n})",
+    "staleTitle": "Showing what's saved on this phone",
+    "staleBody": "We couldn't reach our server. Your answers are kept and will sync.",
+    "continue": "Continue: {task}",
+    "toFee": "See the fee and finish",
+    "questionOf": "Question {i} of {n}",
+    "noQuestion": "We can't find that question",
+    "backToTasks": "Back to the task list",
+    "backToCheck": "Back to check your answers",
+    "backToFee": "Back to the fee",
+    "saveAndReturn": "Save and go back",
+    "err": {
+      "choose_one": "Choose one option.",
+      "agree_required": "Tick the box to continue.",
+      "fill_all": "Fill in every field.",
+      "no_identity_numbers": "Remove the long number. Never type an Aadhaar number or OTP here."
+    }
+  },
+  "autosave": {
+    "notYet": "Answers save as you go",
+    "justNow": "Saved just now",
+    "ago": "Saved {n} min ago",
+    "local": "Saved on this phone, will sync",
+    "conflict": "Saved. This application also changed on another device; check your answers."
+  },
+  "q": {
+    "for_whom": {
+      "title": "Who is this licence for?",
+      "short": "Licence for",
+      "why": "If it's for a family member, you stay the account holder. For someone under 18 you give consent as their parent.",
+      "o": {
+        "self": "Me",
+        "family": "Someone in my family"
+      },
+      "d": {
+        "family": "A child aged 16–17, a parent or another relative."
+      }
+    },
+    "member_kind": {
+      "title": "Who are you applying for?",
+      "short": "Family member",
+      "why": "We use this only to word the screens for them. We don't ask for their name.",
+      "o": {
+        "child": "My child",
+        "parent": "My parent",
+        "spouse": "My husband or wife",
+        "sibling": "My brother or sister",
+        "other": "Someone else in my family"
+      }
+    },
+    "parental_consent": {
+      "title": "Your consent as their parent or guardian",
+      "titleFor": "Your consent for {name}",
+      "short": "Parent's consent",
+      "why": "The law treats anyone under 18 as a child. A parent or guardian must agree before we keep a child's case.",
+      "b1": "The case for {name} is saved in your account. You can see, change or delete it any time.",
+      "b2": "Every feature works for them, AI included. You decide each permission in Privacy.",
+      "b3": "We never use a child's data for tracking, profiling or ads. Sharing and squads stay off unless you allow them.",
+      "b4": "At 16–17 the licence can only be for a gearless vehicle up to 50 cc, with your consent.",
+      "agree": "I'm the parent or guardian of {name}, I'm 18 or over, and I agree."
+    },
+    "category": {
+      "title": "Which category applies to you?",
+      "hint": "Most people choose General.",
+      "short": "Category",
+      "why": "Sarathi asks this first. Divyang applicants take a path with an RTO visit and medical certificates.",
+      "o": {
+        "general": "General",
+        "divyang": "Divyang (differently abled)",
+        "ex_servicemen": "Ex-servicemen",
+        "foreigner": "Foreign national",
+        "oci": "OCI card holder",
+        "repatriate": "Repatriate",
+        "refugee": "Refugee",
+        "diplomat": "Diplomat"
+      },
+      "noteDivyangTitle": "You have the right to apply",
+      "noteDivyang": "Sarathi's Divyang category needs an RTO visit with medical certificates. An adapted-vehicle class exists. Verify the details at your RTO."
+    },
+    "born_in_india": {
+      "title": "Were you born in India?",
+      "short": "Country of birth",
+      "why": "Sarathi asks for your country of birth. We fill India unless you change it.",
+      "o": {
+        "yes": "Yes, India",
+        "no": "No, another country"
+      }
+    },
+    "licence_held": {
+      "title": "Do you already hold a licence issued in India?",
+      "short": "Licence held",
+      "why": "Sarathi asks this on its first form. If you already have a learner's licence, we pick up from there.",
+      "o": {
+        "none": "No licence yet",
+        "ll": "A learner's licence",
+        "dl": "A driving licence"
+      },
+      "noteHeldTitle": "We can pick up from here",
+      "noteHeld": "Tell us your licence's issue date in My Licence and we'll place you on the road. We don't need the licence number."
+    },
+    "office": {
+      "title": "Which office will you visit?",
+      "hint": "On the non-Aadhaar path you take the LL test at this office.",
+      "short": "Office",
+      "why": "Choose carefully: you may need to visit this office later. Sarathi shows the same list."
+    },
+    "aadhaar_address_match": {
+      "title": "Is your Aadhaar address where you live now?",
+      "short": "Aadhaar address",
+      "why": "Sarathi's online path picks your office from your Aadhaar address.",
+      "o": {
+        "yes": "Yes",
+        "no": "No, it's elsewhere",
+        "none": "I don't have Aadhaar"
+      }
+    },
+    "mobile_linked": {
+      "title": "Is your mobile number linked to your Aadhaar?",
+      "hint": "Sarathi sends its OTP to that number.",
+      "short": "Mobile linked to Aadhaar",
+      "why": "If it isn't linked, Aadhaar eKYC on Sarathi fails. You can link it at an Aadhaar centre, or use the non-Aadhaar path.",
+      "o": {
+        "yes": "Yes",
+        "no": "No",
+        "not_sure": "I'm not sure"
+      },
+      "noteNoTitle": "This changes your path",
+      "noteNo": "Link your mobile at an Aadhaar centre first, or take the non-Aadhaar path with one more RTO visit."
+    },
+    "aadhaar_relation_line": {
+      "title": "Does your Aadhaar show your father's, mother's or husband's name?",
+      "hint": "Look for the S/o, D/o, W/o or C/o line.",
+      "short": "Relation name on Aadhaar",
+      "why": "Sarathi fills the relation name from Aadhaar and you can't edit it there.",
+      "o": {
+        "yes": "Yes",
+        "no": "No, it's blank or shows C/o",
+        "not_sure": "I'm not sure"
+      },
+      "noteNoTitle": "Sort this out before Sarathi",
+      "noteNo": "Update your Aadhaar first, or use the non-Aadhaar path, where you type the name with a document that shows it."
+    },
+    "personal": {
+      "title": "Your details, as on your proof",
+      "hint": "Sarathi asks you to type these on the non-Aadhaar path.",
+      "short": "Name, relative's name and address",
+      "why": "We keep these on this phone only, to put them in your copy-pack.",
+      "f": {
+        "full_name": "Your full name",
+        "relative_name": "Father's, mother's or husband's name",
+        "home": "Your address"
+      },
+      "vault": "Saved on this phone only. Never sent to our server."
+    },
+    "form1": {
+      "title": "The health self-declaration (Form 1)",
+      "hint": "Sarathi will ask you to tick a self-declaration of fitness.",
+      "short": "Form 1 self-declaration",
+      "why": "It's a legal declaration. The exact items on Sarathi weren't visible to us, so here is what it covers in general.",
+      "b1": "You confirm you have no illness that makes driving unsafe for others, like fits or blackouts.",
+      "b2": "You confirm you can see well enough to read a number plate at a distance, with glasses if you use them.",
+      "b3": "You tell the truth: a false declaration is an offence.",
+      "b4": "The exact wording on Sarathi may differ. Read it there before you tick.",
+      "agree": "I've read what Form 1 covers"
+    },
+    "form1a": {
+      "title": "Do you have a medical certificate (Form 1A)?",
+      "short": "Form 1A",
+      "why": "From 40, and for transport classes, a registered doctor's Form 1A is needed before applying.",
+      "o": {
+        "have": "Yes, I have it",
+        "not_yet": "Not yet"
+      },
+      "noteNotYetTitle": "Get it before you apply",
+      "noteNotYet": "A registered medical practitioner fills Form 1A. Sarathi has a 'Find doctor' page for your state."
+    },
+    "classes": {
+      "title": "Which vehicle classes are you applying for?",
+      "short": "Vehicle classes",
+      "why": "These come from your plan. Change them in the class planner."
+    }
+  },
+  "documents": {
+    "h1": "Your documents",
+    "subAadhaar": "On the Aadhaar path Sarathi uses your Aadhaar photo, so you need only your signature.",
+    "subNonAadhaar": "On the non-Aadhaar path you upload a photo and your signature.",
+    "fixTitle": "Fix these on this phone",
+    "signature": "Signature",
+    "signatureHint": "Black pen on white paper.",
+    "signaturePaper": "You'll sign on paper later",
+    "photo": "Photo",
+    "photoHint": "Plain light wall, face the camera.",
+    "photoAadhaar": "Not needed: Sarathi uses your Aadhaar photo.",
+    "readyOnPhone": "Ready on your phone",
+    "fixNow": "Fix it now",
+    "redo": "Redo",
+    "carryTitle": "What else you need",
+    "maybe": "may be needed",
+    "uploadRules": "Upload rules on Sarathi: JPG or PDF, under 300 KB, file name with no spaces or symbols. We make your files fit.",
+    "done": "Back to the task list",
+    "fixNext": "Fix the next one"
+  },
+  "fixer": {
+    "backToDocs": "Back to documents",
+    "photoTitle": "Photo",
+    "signatureTitle": "Signature",
+    "photoHint": "Stand against a plain light wall. Look straight at the camera.",
+    "signatureHint": "Sign on white paper with a black pen, then photograph it inside the box.",
+    "cameraLabel": "Camera preview",
+    "cameraOff": "The camera is off. Open it, or upload a photo you already have.",
+    "openCamera": "Open the camera",
+    "take": "Take photo",
+    "upload": "Upload from gallery",
+    "signOnScreen": "Sign on screen instead",
+    "paperLater": "I'll sign on paper later",
+    "coachDark": "Too dark. Face a window.",
+    "coachBright": "Too bright. Move out of direct sun.",
+    "coachStraight": "Look straight at the camera.",
+    "coachFlat": "Hold the paper flat inside the box.",
+    "deniedTitle": "Camera is off",
+    "deniedLine": "You can upload a photo instead, or allow the camera in your browser settings.",
+    "failTitle": "We couldn't fix that image",
+    "failBody": "Stand against a plain light wall and try again, or upload another photo.",
+    "resultPhoto": "Your photo",
+    "resultSignature": "Your signature",
+    "original": "Before",
+    "fixed": "After",
+    "altOriginal": "The original image",
+    "altFixed": "The fixed image, ready to save",
+    "check": {
+      "whitened": "Background whitened",
+      "cropped": "Cropped to {w} × {h} px",
+      "size": "Size {kb} KB (Sarathi limit {max} KB; commonly reported band {band} KB)",
+      "filename": "File name: {name}",
+      "light": "Light looks even"
+    },
+    "specTitle": "Size rule not published",
+    "specBody": "Sarathi doesn't publish the photo and signature size, so we use the commonly reported size. Verify on Sarathi when you upload.",
+    "finalTitle": "This photo goes on your licence",
+    "finalBody": "It will be printed on your LL and DL. Sarathi doesn't let you replace it later.",
+    "neverUploaded": "Fixed on this phone. Nothing is uploaded to Margdarshak.",
+    "save": "Save to my phone",
+    "retake": "Retake",
+    "padTitle": "Sign on screen",
+    "padHint": "Use the same signature you'll use at the RTO.",
+    "padLabel": "Signature pad",
+    "usePad": "Use this signature",
+    "clearPad": "Clear"
+  },
+  "check": {
+    "h1": "Check your answers",
+    "sub": "Sarathi won't let you edit after you pay. Check everything now.",
+    "fromPlan": "From your plan",
+    "dob": "Date of birth",
+    "yearOnly": "Year only: {year}",
+    "band": "Age band: {band}",
+    "classes": "Vehicle classes",
+    "documents": "Photo and signature",
+    "docsReady": "Ready on your phone",
+    "agreed": "Agreed",
+    "notAnswered": "Not answered",
+    "change": "Change",
+    "answerNow": "Answer now",
+    "show": "Show my details",
+    "hide": "Hide my details",
+    "issuesTitle": "Before you go to Sarathi ({n})",
+    "incompleteTitle": "Some tasks aren't finished",
+    "incompleteBody": "Answer the rows marked Not answered, then come back here.",
+    "confirm": "I've checked these answers and they match my documents.",
+    "errConfirm": "Tick the box to confirm your answers.",
+    "cta": "See the fee and finish"
+  },
+  "feeScreen": {
+    "h1": "Your fee",
+    "now": "On Sarathi you'll pay",
+    "breakdown": "What this covers",
+    "later": "Later, after your driving test",
+    "laterWhat": "driving licence fee and smart card",
+    "safeTitle": "Pay safely",
+    "safe1": "Pay only on sarathi.parivahan.gov.in or your state's payment page.",
+    "safe2": "UPI and net banking both work.",
+    "safe3": "If money is debited but the status doesn't change, don't pay again. Come back here; we'll guide you.",
+    "cta": "Go to Sarathi"
+  },
+  "handoff": {
+    "h1": "Finish on Sarathi",
+    "sub": "Sarathi is the government portal. You'll do 4 things there:",
+    "stepsLabel": "On Sarathi",
+    "step1": "Choose your state, then \"Apply for Learner Licence\".",
+    "step2": "Aadhaar eKYC with the OTP on your phone.",
+    "step2NonAadhaar": "Sarathi mobile authentication with an OTP on your phone.",
+    "step3": "Pay the fee ({fee}).",
+    "step4": "Note your application number.",
+    "packTitle": "Your copy-pack",
+    "packLine": "Every value, in Sarathi's order. Open it next to Sarathi.",
+    "tipsTitle": "Tips from people who've done it",
+    "tip1": "Allow pop-ups for sarathi.parivahan.gov.in.",
+    "tip2": "Use Chrome or Edge.",
+    "tip3": "Keep your Aadhaar-linked phone near you.",
+    "tip4": "Don't reload the page during the test.",
+    "seeEkyc": "See what the eKYC step looks like (simulated)",
+    "boundary": "Margdarshak can't see or change anything on Sarathi. Aadhaar, OTP and payment happen only there.",
+    "savedTitle": "Your answers are saved here",
+    "savedBody": "Come back when Sarathi is working. Your copy-pack is ready.",
+    "open": "Open Sarathi",
+    "openDown": "Sarathi seems down right now",
+    "needsInternet": "Needs internet",
+    "back": "I'm back from Sarathi"
+  },
+  "ekyc": {
+    "back": "Back to the hand-off",
+    "banner": "This is a picture of the step, for the demo. There are no fields here, and none should ever be typed outside Sarathi.",
+    "h1": "What Aadhaar eKYC looks like on Sarathi",
+    "sub": "You'll see this on Sarathi, not here.",
+    "stepsLabel": "The eKYC step on Sarathi",
+    "s1": "Choose \"Submit via Aadhaar Authentication\".",
+    "s2": "Type your Aadhaar number or VID on Sarathi.",
+    "s3": "Sarathi sends an OTP to your Aadhaar-linked mobile. Type it on Sarathi.",
+    "s4": "Tick the three consent boxes and press Authenticate. Your details come from Aadhaar.",
+    "shapeLabel": "Shape of the Sarathi eKYC screen",
+    "shapeTitle": "On Sarathi you'll see",
+    "fieldAadhaar": "Aadhaar number / VID (typed on Sarathi only)",
+    "fieldOtp": "OTP (typed on Sarathi only)",
+    "consents": "Three consent check-boxes: authentication, purpose, confidentiality.",
+    "never": "Never share your Aadhaar number or OTP with anyone, including us.",
+    "done": "Got it"
+  },
+  "pack": {
+    "back": "Back to the hand-off",
+    "h1": "Copy-pack",
+    "sub": "In Sarathi's order. Tap to copy.",
+    "show": "Show",
+    "hide": "Hide",
+    "failed": "We couldn't load the pack. Your answers are saved; try again.",
+    "copy": "Copy",
+    "copyLabel": "Copy {label}",
+    "copied": "{label} copied",
+    "copyFailed": "Couldn't copy. Type it instead.",
+    "typeOnly": "Type it: Sarathi blocks paste on this field.",
+    "dobAsAadhaar": "As on your Aadhaar (dd-MM-yyyy)",
+    "missing": "Not filled yet",
+    "never": "No Aadhaar number, OTP or bank detail is ever in this pack.",
+    "readAll": "Read all aloud",
+    "fromObserved": "Order and labels from Sarathi's screens as we observed them on 22 Oct 2026. Some fields behind the OTP were not visible.",
+    "screen": {
+      "select_state": "Screen: \"Select State\"",
+      "new_ll_form": "Screen: \"Application for Learner's Licence\"",
+      "aadhaar_ekyc": "Screen: \"Aadhaar Authentication\"",
+      "mobile_auth": "Screen: \"Sarathi Mobile Authentication\"",
+      "personal_details": "Screen: \"Applicant details\"",
+      "class_of_vehicle": "Screen: \"Class of Vehicle\"",
+      "date_of_birth": "Screens that ask your date of birth"
+    },
+    "note": {
+      "ekyc_on_sarathi": "You do eKYC with OTP here, on Sarathi. Nothing to copy.",
+      "mobile_auth_on_sarathi": "You verify your mobile with an OTP here, on Sarathi. Nothing to copy.",
+      "dob_type_only": "Sarathi asks this several times and blocks paste."
+    },
+    "label": {
+      "state": "State Name",
+      "category": "Select Category if required",
+      "licence_held": "Licence held",
+      "country_of_birth": "Country of Birth",
+      "full_name": "Applicant Name",
+      "relative_name": "Relation Name",
+      "home": "Address",
+      "classes": "Class of Vehicle (COV)",
+      "dob": "Date of Birth (dd-MM-yyyy)"
+    },
+    "value": {
+      "category": {
+        "general": "General",
+        "divyang": "Divyang (Differently Abled)",
+        "ex_servicemen": "Ex-Servicemen",
+        "foreigner": "Foreigners (But not Diplomats)",
+        "oci": "OCI",
+        "repatriate": "Repatriate",
+        "refugee": "Refugees",
+        "diplomat": "Diplomats (Foreigner)",
+        "none": "General"
+      },
+      "licence_held": {
+        "none": "Applicant does not hold any Driving/Learner licence issued in India",
+        "ll": "Applicant holds Learner Licence",
+        "dl": "Applicant holds Driving Licence"
+      },
+      "country_of_birth": {
+        "india": "INDIA",
+        "other": "Choose your country",
+        "none": "INDIA"
+      }
+    }
+  },
+  "return": {
+    "h1": "How did it go on Sarathi?",
+    "errChoose": "Choose what happened.",
+    "o": {
+      "paid": "Paid and got an application number",
+      "pending": "Money debited, status not updated",
+      "failed": "Payment failed, no money taken",
+      "stuck": "Got stuck on a screen",
+      "down": "Sarathi wasn't working",
+      "not_yet": "Haven't gone yet"
+    },
+    "failedTitle": "No money was taken? Try again",
+    "failedBody": "Your copy-pack is ready. Pay only on Sarathi.",
+    "openSarathi": "Open Sarathi",
+    "stuckTitle": "We can help you read the screen",
+    "stuckBody": "Help has the common Sarathi messages and what to do next.",
+    "stuckLink": "Open Help",
+    "downTitle": "Sarathi isn't responding",
+    "downBody": "Your answers are saved here. Try again later; nothing is lost."
+  },
+  "pending": {
+    "back": "Back",
+    "banner": "Money debited, Sarathi not updated",
+    "h1": "Don't pay again. Don't cancel.",
+    "cancel": "Cancelling an application on Sarathi forfeits the fee.",
+    "whatTitle": "What to do",
+    "step1": "Today: check on Sarathi, \"Verify Pay Status\" (application number and date of birth).",
+    "open": "Open",
+    "step2": "If still pending on {date}: Sarathi's FAQ says to visit your RTO's cashier counter with the bank message.",
+    "step3": "For a refund question, use your bank's UPI or net-banking complaint channel.",
+    "clock": "Payment day {date} · day {day} of 3",
+    "remind": "Remind me on {date}",
+    "remindDesc": "Off unless you turn it on. Needs a reminder channel in Privacy.",
+    "remindNext": "Set up reminders in Privacy",
+    "source": "Source: Sarathi FAQ, \"If payment request is pending for more than 3 days, please visit concerned RTO at cashier's counter\".",
+    "cta": "It's updated now: mark as paid"
+  },
+  "appNumber": {
+    "h1": "Your application number",
+    "sub": "Sarathi asks for it on later screens, and people lose it.",
+    "label": "Application number",
+    "hint": "We store it only on this phone so you never lose it. Our servers see only the last 4 digits.",
+    "save": "Save on this phone",
+    "skip": "Skip for now"
+  },
+  "pageTitles": {
+    "apply": "Your application",
+    "start": "Start your application",
+    "question": "Question",
+    "documents": "Your documents",
+    "photo": "Photo",
+    "signature": "Signature",
+    "check": "Check your answers",
+    "fee": "Your fee",
+    "handoff": "Finish on Sarathi",
+    "pack": "Copy-pack",
+    "ekyc": "eKYC on Sarathi",
+    "return": "How did it go?",
+    "pending": "Payment pending",
+    "appNumber": "Application number"
+  },
+  "voice": {
+    "cta": "Or just tell us",
+    "ctaLine": "The voice guide is coming. You can type now.",
+    "title": "Voice guide",
+    "comingSoon": "Coming in the next build",
+    "whatItWillDo": "You'll be able to ask in Hindi or English, by voice, and it will guide you and fill answers inside Margdarshak. Until then, type what you need.",
+    "boundary": "It can guide and fill. It can't book, pay or submit on Sarathi.",
+    "tellUs": "What do you need?",
+    "examples": "Examples",
+    "askChip": "Ask: {q}",
+    "chip1": "Licence for my father",
+    "chip2": "How much are the fees?",
+    "chip3": "When can I take the test?",
+    "go": "Find it",
+    "redactedTitle": "We removed a number",
+    "redacted": "It looked like an Aadhaar number, OTP or phone number. Never share those with anyone, including us.",
+    "intent": {
+      "plan": "Your licence plan shows the classes, steps, fees and earliest date.",
+      "fees": "Your plan shows every fee, line by line, with its source.",
+      "practise": "Practice for the LL test lives in Learn.",
+      "renew": "Renewal and fixes are in services for licence holders.",
+      "family": "You can make a plan and apply for a family member, and stay the account holder.",
+      "check": "My Licence shows where you are and what's next.",
+      "help": "Help has plain answers and who to contact."
+    },
+    "go_plan": "Make my plan",
+    "go_fees": "See the fees in my plan",
+    "go_practise": "Open Learn",
+    "go_renew": "See renewal",
+    "go_family": "Help a family member",
+    "go_check": "Open My Licence",
+    "go_help": "Open Help",
+    "privacy": "What you type is checked on this phone and not stored."
+  },
+  "clock": {
+    "unit": {
+      "unlock": "{n, plural, one {day until your driving test unlocks} other {days until your driving test unlocks}}",
+      "expiry": "{n, plural, one {day left on your learner's licence} other {days left on your learner's licence}}",
+      "expired": "{n, plural, one {day since your learner's licence expired} other {days since your learner's licence expired}}",
+      "renewal": "{n, plural, one {day until your licence expires} other {days until your licence expires}}",
+      "payment": "{n, plural, one {day since payment} other {days since payment}}"
+    },
+    "line": {
+      "unlock": "Unlocks on {date}",
+      "expiry": "Valid until {date}",
+      "expired": "Expired on {date}",
+      "renewal": "Valid until {date}. No grace period.",
+      "payment": "Paid on {date}"
+    },
+    "meterLabel": "Learner's licence clock",
+    "meterText": "{days} days to {date}",
+    "addToCalendar": "Add to calendar",
+    "ics": {
+      "unlock": "Driving test unlocks",
+      "expiry": "Learner's licence expires",
+      "renewal": "Driving licence expires"
+    },
+    "icsDescription": "From Margdarshak, an independent guide. Dates from your entries and your state's rules."
+  },
+  "tracker": {
+    "label": "Your licence road",
+    "aria": "Step {i} of {n}: {name}, {status}",
+    "status": {
+      "done": "Done",
+      "now": "Current",
+      "later": "Upcoming"
+    },
+    "step": {
+      "plan": "Plan made",
+      "applied": "Applied on Sarathi",
+      "ll_test": "LL test passed",
+      "practice": "30-day practice",
+      "book": "Book driving test",
+      "dl_test": "Driving test",
+      "approval": "Approval by RTO",
+      "card": "Licence printed and posted",
+      "digilocker": "In DigiLocker"
+    },
+    "who": {
+      "you": "You",
+      "sarathi": "Sarathi",
+      "rto": "RTO",
+      "post": "Post"
+    },
+    "now": {
+      "plan": "You: start your application from your plan.",
+      "applied": "You: finish on Sarathi, then tell us how it went.",
+      "ll_test": "You: take the LL test. Practise 10 questions a day.",
+      "practice": "You: practise a little every day until the test unlocks.",
+      "book": "You: book a driving-test slot on Sarathi.",
+      "dl_test": "RTO: the driving test on your slot date.",
+      "approval": "RTO: approval usually comes by SMS.",
+      "card": "Post: the card can take up to 45 days.",
+      "digilocker": "Sarathi: your DL appears in DigiLocker once approved."
+    }
+  },
+  "homeStage": {
+    "strip": "Journey stage {stage}",
+    "family": "Family mode",
+    "familyNamed": "Family mode · {name}",
+    "clockTitle": "Your phone's clock looks different from the real time",
+    "clockBody": "We're using the server time for your dates.",
+    "updated": "Updated {n} min ago (saved on this phone)",
+    "comingUp": "Coming up",
+    "seeTracker": "See my whole road",
+    "secondary": {
+      "share": "Share plan",
+      "blockers": "Check blockers",
+      "check": "Check answers",
+      "photo": "Fix photo",
+      "pack": "Open copy-pack",
+      "stuck": "What if it's stuck?",
+      "taken": "I've passed the LL test",
+      "tracker": "My licence road",
+      "slot_early": "Find a slot early",
+      "vehicle": "Vehicle for the test",
+      "what_if": "What if it expires?",
+      "digilocker": "Get it in DigiLocker",
+      "first_vehicle": "First-vehicle checklist",
+      "challan": "Challan check",
+      "form1a": "Do I need Form 1A?",
+      "why": "Why this happened"
+    },
+    "event": {
+      "APPLIED": "Applied on Sarathi",
+      "LL_ISSUED": "Learner's licence issued",
+      "LL_DAY_25_PREP": "Get ready to book your slot",
+      "LL_DAY_30_UNLOCK": "Driving test unlocks",
+      "LL_EXPIRY_M30": "30 days left on your LL",
+      "LL_EXPIRY_M7": "7 days left on your LL",
+      "LL_EXPIRY": "Learner's licence expires",
+      "TEST_DAY": "Driving test",
+      "DL_RENEWAL_M60": "Renewal reminder",
+      "DL_EXPIRY": "Driving licence expires",
+      "PAYMENT_PENDING_D3": "Check payment at the RTO counter"
+    },
+    "now": {
+      "PLAN": "Your plan is ready. Next: your application.",
+      "LL_APPLYING": "Your application is in progress.",
+      "HANDED_OFF": "You're finishing on Sarathi.",
+      "PAYMENT_PENDING": "Payment pending on Sarathi.",
+      "LL_TEST": "Your LL test is next.",
+      "BRIDGE": "30-day practice before the driving test.",
+      "DL_BOOKABLE": "You can book your driving test.",
+      "LL_EXPIRING": "Your learner's licence is about to expire.",
+      "TEST_BOOKED": "Driving test booked.",
+      "TEST_FAILED": "Your retest plan is ready.",
+      "AWAITING_APPROVAL": "Waiting for approval.",
+      "DL_ISSUED": "Licence issued.",
+      "DL_HOLDER": "Licence in hand.",
+      "LL_EXPIRED": "Your learner's licence expired.",
+      "RENEWAL_DUE": "Renewal due."
+    }
+  },
+  "stage": {
+    "PLAN": {
+      "h1": "Your plan is ready.",
+      "primary": "Start my application"
+    },
+    "LL_APPLYING": {
+      "h1": "Your application is saved. Pick up where you left off.",
+      "primary": "Continue where I left off"
+    },
+    "HANDED_OFF": {
+      "h1": "Finish on Sarathi, then tell us how it went.",
+      "primary": "I'm back from Sarathi"
+    },
+    "PAYMENT_PENDING": {
+      "h1": "Money debited, Sarathi not updated yet. Don't pay again.",
+      "primary": "What to do now"
+    },
+    "LL_TEST": {
+      "h1": "Your LL test is next.",
+      "primary": "Practise 10 questions"
+    },
+    "BRIDGE": {
+      "h1": "Driving test unlocks in {d} days.",
+      "primary": "Today's 5-minute practice"
+    },
+    "DL_BOOKABLE": {
+      "h1": "You can book your driving test now.",
+      "primary": "Find a test slot"
+    },
+    "LL_EXPIRING": {
+      "h1": "Your learner's licence expires in {d} days. Book your test now to avoid starting over.",
+      "primary": "Book before {date}"
+    },
+    "TEST_BOOKED": {
+      "h1": "Your driving test is booked.",
+      "primary": "Learn the track test"
+    },
+    "TEST_FAILED": {
+      "h1": "Not this time. Most people pass on a later try. Your plan is ready.",
+      "primary": "See my plan"
+    },
+    "AWAITING_APPROVAL": {
+      "h1": "You passed. Now we track your approval.",
+      "primary": "Track my licence"
+    },
+    "DL_ISSUED": {
+      "h1": "Licence issued.",
+      "primary": "See my licence"
+    },
+    "DL_HOLDER": {
+      "h1": "Licence in hand. Your new-rider year has begun.",
+      "primary": "See my licence"
+    },
+    "LL_EXPIRED": {
+      "h1": "Your learner's licence has expired. Here's the quickest restart.",
+      "primary": "Restart my LL"
+    },
+    "RENEWAL_DUE": {
+      "h1": "Your licence expires on {date}. Renew from now; there's no grace period.",
+      "primary": "Plan my renewal"
+    }
+  },
+  "personas": {
+    "open": "Demo personas",
+    "title": "Demo personas",
+    "description": "Synthetic people for the demo. Loading one replaces what's on this phone.",
+    "load": "Load this persona",
+    "chip": "Demo persona: {name}",
+    "p": {
+      "kabir_new": {
+        "name": "Kabir, new",
+        "line": "19, J&K. No plan yet: start from the home."
+      },
+      "kabir_day12": {
+        "name": "Kabir, LL day 12",
+        "line": "Motorcycle LL issued 12 days ago."
+      },
+      "kabir_day31": {
+        "name": "Kabir, LL day 31",
+        "line": "Driving test is unlocked."
+      },
+      "tanvi": {
+        "name": "Tanvi, with blockers",
+        "line": "19. Aadhaar in Kathua, lives in Jammu, no relation line."
+      },
+      "mohan": {
+        "name": "Mohan-ji, 52",
+        "line": "Car licence, renewal due, Form 1A."
+      },
+      "rahul": {
+        "name": "Rahul, 17",
+        "line": "50 cc plan in a parent's account, consent given."
+      },
+      "dl_holder": {
+        "name": "DL holder",
+        "line": "Licence issued 2 months ago."
+      }
+    }
+  },
+  "licenceTab": {
+    "road": "Your road",
+    "honest": "Dates are from your entries and {state}'s rules. We can't see Sarathi.",
+    "update": "Update a step",
+    "updateTitle": "What happened?",
+    "updateDesc": "Tell us, and we'll move your road on. We never need your licence number.",
+    "record": "Save this step",
+    "when": "When did it happen?",
+    "noNumbers": "Dates only. We don't ask for LL or DL numbers.",
+    "recorded": "Saved. Your road is updated.",
+    "errEvent": "Choose what happened and enter a real date.",
+    "errFuture": "That date is in the future.",
+    "needsInternet": "Needs internet to save. Try again when you're online.",
+    "clock": "Case clock",
+    "llTitle": "Learner's licence",
+    "dlTitle": "Driving licence",
+    "issued": "Issued",
+    "validUntil": "Valid until",
+    "renewFrom": "Renew from",
+    "classes": "Classes",
+    "number": "Number",
+    "llLeft": "{n, plural, one {# day of validity left} other {# days of validity left}}",
+    "digilocker": "Get it in DigiLocker",
+    "timeline": "Case timeline",
+    "tl": {
+      "scheduled": "scheduled",
+      "sent": "sent",
+      "done": "done",
+      "cancelled": "cancelled",
+      "superseded": "replaced"
+    },
+    "expiryTitle": "A real deadline",
+    "expiryBody": "If your learner's licence expires before your test, a new LL gets a new application number and an old slot won't carry over.",
+    "deleteCase": "Delete this case",
+    "ev": {
+      "ll_issued": "My learner's licence was issued",
+      "slot_booked": "I booked a driving-test slot",
+      "test_failed": "I took the driving test, not this time",
+      "test_passed": "I passed the driving test",
+      "approved": "My licence was approved",
+      "card_received": "I received the card"
+    }
+  },
+  "privacyCentre": {
+    "h1": "Your privacy",
+    "sub": "See and change every permission, download your data, or delete it.",
+    "neverTitle": "What we never collect",
+    "never": {
+      "aadhaar": "Aadhaar number",
+      "otp": "OTP",
+      "bio": "Biometrics",
+      "bank": "Bank or card details",
+      "images": "Document images"
+    },
+    "choicesTitle": "Your choices",
+    "familyNote": "In family mode you set these for your child's case too.",
+    "offlineTitle": "You're offline",
+    "offlineBody": "Your choices load when you're back online.",
+    "details": "About: {name}",
+    "dPurpose": "Purpose",
+    "dData": "Data used",
+    "dKept": "How long",
+    "dStatus": "Status",
+    "since": "On since {date} (notice {version})",
+    "off": "Off",
+    "granted": "Turned on",
+    "revoked": "Turned off. It stops now.",
+    "needsInternet": "Needs internet to change. Try again when you're online.",
+    "exportTitle": "Download my data",
+    "exportBody": "One file with everything we hold about you and everything saved on this phone.",
+    "exportCta": "Download my data",
+    "exportNote": "Server data and this phone's data. No Aadhaar number, OTP or image was ever collected.",
+    "exported": "Your file is downloading",
+    "deleteTitle": "Delete my account and case",
+    "deleteWhat": "Deletes your account, cases, answers, consents and messages. Reminders that were scheduled are cancelled.",
+    "deleteNot": "Anything you submitted on Sarathi stays on Sarathi. Your application there is not affected.",
+    "deleteWhen": "Gone from the app now. Backups roll off as our retention policy says.",
+    "deleteCta": "Delete my account and case",
+    "confirmTitle": "Delete everything?",
+    "confirmDesc": "This can't be undone.",
+    "typeWord": "Type {word} to confirm",
+    "deleteWord": "DELETE",
+    "keep": "Keep my data",
+    "deleteNow": "Delete now",
+    "deletedTitle": "Your account and case are deleted",
+    "deletedBody": "{n, plural, =0 {No reminders were scheduled.} one {# scheduled reminder was cancelled.} other {# scheduled reminders were cancelled.}} Anything on Sarathi stays on Sarathi.",
+    "helpTitle": "Questions or a complaint",
+    "grievance": "Grievance officer:",
+    "notice": "Read the privacy notice",
+    "version": "Notice version {version}",
+    "accountTitle": "Your account",
+    "accountIn": "You're signed in. Family mode is available.",
+    "accountOut": "You're using Margdarshak without an account. Sign in only if you want family mode.",
+    "signOut": "Sign out on this phone",
+    "signIn": "Sign in with your e-mail"
+  },
+  "purpose": {
+    "whatsapp_updates": {
+      "name": "WhatsApp reminders",
+      "ask": "Message me on WhatsApp about real dates in my case, at most once a day.",
+      "purpose": "Reminders tied to a real deadline, like the day your driving test unlocks.",
+      "data": "Your WhatsApp number, case dates.",
+      "kept": "Until you turn it off or reply STOP."
+    },
+    "email_updates": {
+      "name": "Email reminders",
+      "ask": "Email me about real dates in my case.",
+      "purpose": "Reminders tied to a real deadline.",
+      "data": "Your email address, case dates.",
+      "kept": "Until you turn it off."
+    },
+    "web_push": {
+      "name": "Phone notifications",
+      "ask": "Send notifications to this browser.",
+      "purpose": "Reminders tied to a real deadline.",
+      "data": "A notification token for this browser.",
+      "kept": "Until you turn it off."
+    },
+    "ai_coach": {
+      "name": "AI coach",
+      "ask": "Use AI to explain my practice results and Sarathi screens.",
+      "purpose": "Explanations in plain words. Every number is computed by our code, not the AI.",
+      "data": "Result and topic IDs, your language, a screenshot only if you share one. Sent to Google's Gemini service.",
+      "kept": "Prompts deleted after 7 days."
+    },
+    "ai_voice": {
+      "name": "Voice guide and microphone",
+      "ask": "Use my microphone for the voice guide. Audio isn't stored.",
+      "purpose": "Ask by speaking; the guide fills answers inside Margdarshak.",
+      "data": "Your voice while the mic is on. Google's Gemini; Sarvam for Dogri speech.",
+      "kept": "Audio isn't stored."
+    },
+    "analytics": {
+      "name": "Anonymous usage counts",
+      "ask": "Count how screens are used, with no name, number or free text.",
+      "purpose": "To find where people get stuck. Counts under 5 are never shown.",
+      "data": "Screen and step counts with a daily changing code.",
+      "kept": "Aggregates only."
+    },
+    "field_study": {
+      "name": "Research study",
+      "ask": "Take part in the journey test or the Nazar study (18 and over).",
+      "purpose": "Comparing journeys to improve the service. Pre-registered.",
+      "data": "Timings and answers in the study, with a participant code.",
+      "kept": "Deleted until anonymised."
+    },
+    "helper_link": {
+      "name": "Helper access",
+      "ask": "Let a helper see and fill my draft for a few days.",
+      "purpose": "A relative or a cyber café helps you apply.",
+      "data": "Your draft answers, for the days you choose.",
+      "kept": "Ends on the date you set, or when you stop it."
+    },
+    "school_share": {
+      "name": "Share with a driving school",
+      "ask": "Share my progress with a school I choose.",
+      "purpose": "Your school sees your practice record.",
+      "data": "Practice progress and sign-offs.",
+      "kept": "Until you stop it."
+    },
+    "parent_card": {
+      "name": "Progress card for a parent",
+      "ask": "Send a weekly progress card to a parent.",
+      "purpose": "Keep a parent in the loop.",
+      "data": "Weekly practice summary.",
+      "kept": "Until you stop it."
+    }
+  },
+  "notice": {
+    "h1": "Privacy notice",
+    "back": "Back to your privacy",
+    "lead": "Short, plain, and complete. It explains how we handle your data under India's DPDP Act 2023 and Rules 2025.",
+    "version": "Version {version}",
+    "who": {
+      "title": "Who we are",
+      "body": "Margdarshak is an independent app by Nestiq Private Limited. It is not affiliated with MoRTH, NIC or any State Transport Department."
+    },
+    "collect": {
+      "title": "What we collect",
+      "body": "Your date of birth and the vehicle classes you choose (to work out your dates and steps), the case facts you enter (like your LL issue date), and an email only if you sign in."
+    },
+    "never": {
+      "title": "What we never collect",
+      "body": "Your Aadhaar number, VID, OTP, fingerprints, face scan, bank details or images of your documents. Those steps happen on the government's Sarathi website."
+    },
+    "why": {
+      "title": "Why",
+      "body": "Only to show and remind you of your licence steps. No ads, no selling of data."
+    },
+    "ai": {
+      "title": "AI help",
+      "body": "Off until the account holder turns it on. It uses Google's Gemini service. It is sent result and topic IDs, your language, and a screenshot or voice only if you share one; never your contact details, date of birth, Aadhaar, OTP or licence numbers. Google may process it outside India."
+    },
+    "family": {
+      "title": "Children (under 18)",
+      "body": "A learner under 18 uses Margdarshak inside a parent's account (family mode). The parent gives verifiable consent. Every feature is available, AI included. We never use a child's data for tracking, profiling or targeted ads; sharing and squads stay off unless the parent allows them."
+    },
+    "processors": {
+      "title": "Who processes data for us",
+      "body": "Google (Gemini, for AI help), Sarvam (Dogri speech to text), our hosting provider, and email and WhatsApp delivery providers. Each only for the purpose above."
+    },
+    "kept": {
+      "title": "How long we keep it",
+      "body": "Anonymous plans 30 days. Accounts until you delete them; inactive accounts after 18 months, with a warning 48 hours before. AI prompts 7 days."
+    },
+    "rights": {
+      "title": "Your rights",
+      "body": "See, correct, download or delete your data any time in the Privacy centre. Withdraw any permission in one tap; it stops at once."
+    },
+    "complain": {
+      "title": "Questions or complaints",
+      "body": "Write to our Grievance Officer at {email}. We acknowledge within 24 hours and resolve within 15 days. You can also complain to the Data Protection Board of India."
+    }
+  },
+  "servicesList": {
+    "h1": "All services, by who you are",
+    "sub": "Everything that isn't the first-licence journey, grouped by person.",
+    "search": "Search services",
+    "searchHint": "Search: \"duplicate\", \"renew\", \"IDP\"",
+    "clear": "Clear search",
+    "jump": "Jump to group",
+    "results": "{n, plural, one {# service} other {# services}}",
+    "none": "No service called \"{q}\". Try \"renew\", or go to Help.",
+    "coming": "Coming",
+    "group": {
+      "learning": "I'm learning to drive",
+      "holder": "I have a licence",
+      "family": "Parent or family",
+      "helper": "Helper or cyber café",
+      "school": "Driving school",
+      "officer": "Transport officer"
+    },
+    "item": {
+      "plan": {
+        "title": "Find my licence plan",
+        "line": "Classes, steps, fees and earliest date, in 3 taps"
+      },
+      "apply": {
+        "title": "Apply for a learner's licence",
+        "line": "One question per screen, then Sarathi"
+      },
+      "practise": {
+        "title": "Practise the LL test",
+        "line": "Mock tests and road signs"
+      },
+      "book-test": {
+        "title": "Book or prepare for the driving test",
+        "line": "Slots and track explainer"
+      },
+      "check": {
+        "title": "Check my application",
+        "line": "Where am I, and what's next"
+      },
+      "renew": {
+        "title": "Renew my licence",
+        "line": "No grace period since 2019"
+      },
+      "add-class": {
+        "title": "Add a vehicle class",
+        "line": "For example, add a car"
+      },
+      "address": {
+        "title": "Change address",
+        "line": "On Sarathi's DL services"
+      },
+      "duplicate": {
+        "title": "Duplicate licence",
+        "line": "Lost or damaged card"
+      },
+      "idp": {
+        "title": "International Driving Permit",
+        "line": "Only for DL holders"
+      },
+      "challan": {
+        "title": "Check challans",
+        "line": "Only on the government site"
+      },
+      "family": {
+        "title": "Manage a parent's licence",
+        "line": "Renewal, Form 1A and more"
+      },
+      "minor-riding": {
+        "title": "My child wants to ride",
+        "line": "The legal 50 cc route at 16"
+      },
+      "privacy": {
+        "title": "Privacy and consent",
+        "line": "Choices, download, delete"
+      },
+      "helper": {
+        "title": "Help someone apply",
+        "line": "With their recorded consent"
+      },
+      "school": {
+        "title": "Driving school portal",
+        "line": "For schools and instructors"
+      },
+      "console": {
+        "title": "State console",
+        "line": "For transport departments"
+      }
+    }
+  },
+  "comingService": {
+    "back": "All services",
+    "badge": "Coming in a later build",
+    "todayTitle": "What you can do today",
+    "fallback": "Service",
+    "book-test": {
+      "title": "Book your driving test",
+      "what": "A list of offices, published slots and \"notify me\". You'll book on Sarathi; we don't book for you.",
+      "today": "Your unlock date and LL validity are in My Licence. Book on Sarathi when your test unlocks.",
+      "cta": "Open My Licence"
+    },
+    "test-day": {
+      "title": "Test-day co-pilot",
+      "what": "A step-by-step guide on the day of your driving test, with a papers check.",
+      "today": "Practise the LL test and road signs in Learn.",
+      "cta": "Open Learn"
+    },
+    "test-vehicle": {
+      "title": "Vehicle for the test",
+      "what": "A checklist for the test vehicle: RC, insurance, PUC and L plates.",
+      "today": "Your plan lists the test-vehicle papers. A driving school can provide a vehicle.",
+      "cta": "Open My Licence"
+    },
+    "retest": {
+      "title": "Retest plan",
+      "what": "A private debrief, a drill, and the earliest retest date from your state's rules.",
+      "today": "Practise in Learn, and record the result in My Licence.",
+      "cta": "Open Learn"
+    },
+    "approval": {
+      "title": "Approval tracker",
+      "what": "Tracks the days since your test and drafts a polite letter if approval is stuck.",
+      "today": "Record the approval in My Licence when the SMS comes.",
+      "cta": "Open My Licence"
+    },
+    "digilocker": {
+      "title": "DigiLocker copy",
+      "what": "Once approved, your DL appears in DigiLocker and counts the same as the card.",
+      "today": "Your licence details are in My Licence.",
+      "cta": "Open My Licence"
+    },
+    "ll-expiry": {
+      "title": "If your learner's licence expires",
+      "what": "A learner's licence is valid for 6 months. After that you apply afresh, with a new application number.",
+      "today": "My Licence shows how many days are left.",
+      "cta": "Open My Licence"
+    },
+    "renew": {
+      "title": "Renew my licence",
+      "what": "Renew from 1 year before to 1 year after expiry. There's no grace period; more than a year late means a retest. Form 1A from 40.",
+      "today": "My Licence shows your expiry date. Renewal planning arrives in a later build.",
+      "cta": "Open My Licence"
+    },
+    "add-class": {
+      "title": "Add a vehicle class",
+      "what": "Adding a class repeats the learner's licence and driving test for that class.",
+      "today": "Make a plan for the new class; it shows the steps and fees.",
+      "cta": "Make a plan"
+    },
+    "address": {
+      "title": "Change address",
+      "what": "Your DL is valid across India; the address is changed on Sarathi's DL services.",
+      "today": "Help has the contacts for questions about Sarathi.",
+      "cta": "Open Help"
+    },
+    "duplicate": {
+      "title": "Duplicate licence",
+      "what": "For a lost or damaged card, through Sarathi's DL services.",
+      "today": "Help has the contacts for questions about Sarathi.",
+      "cta": "Open Help"
+    },
+    "idp": {
+      "title": "International Driving Permit",
+      "what": "Only for people who hold an Indian driving licence. Applied for on Sarathi.",
+      "today": "Help has the contacts for questions about Sarathi.",
+      "cta": "Open Help"
+    },
+    "form-1a": {
+      "title": "Do I need Form 1A?",
+      "what": "From 40, and for transport classes, a medical certificate (Form 1A) from a registered doctor.",
+      "today": "Your plan tells you if Form 1A is needed for your age and classes.",
+      "cta": "Make a plan"
+    },
+    "first-vehicle": {
+      "title": "First-vehicle checklist",
+      "what": "ABS or CBS, a helmet with the ISI mark, insurance, PUC and RC checks.",
+      "today": "Road-safety lessons are in Learn.",
+      "cta": "Open Learn"
+    },
+    "challan": {
+      "title": "Check challans",
+      "what": "We hold no challan data. Check only on the government's e-challan site; never pay through a link in a message.",
+      "today": "Open the e-challan site below, or read the scam tips in Help.",
+      "cta": "Open Help"
+    },
+    "family": {
+      "title": "Manage a parent's licence",
+      "what": "Help a parent with renewal, Form 1A or a new class, from your account.",
+      "today": "Make a plan with your parent's age; the plan shows Form 1A if needed.",
+      "cta": "Make a plan"
+    },
+    "minor-riding": {
+      "title": "My child wants to ride",
+      "what": "If someone under 18 rides without the right licence, the law holds the guardian or owner responsible. At 16 a 50 cc learner's licence, with your consent, is the legal route. Most scooters are above 50 cc.",
+      "today": "Make a 50 cc plan with your child. It runs in family mode, in your account.",
+      "cta": "Make a plan"
+    },
+    "helper": {
+      "title": "Help someone apply",
+      "what": "A recorded, time-limited consent from the person you help, before you act for them.",
+      "today": "Help has plain answers you can share.",
+      "cta": "Open Help"
+    },
+    "school": {
+      "title": "Driving school portal",
+      "what": "Learner progress, practice sign-offs and test-vehicle listings for schools.",
+      "today": "Help has our contact for schools.",
+      "cta": "Open Help"
+    },
+    "console": {
+      "title": "State console",
+      "what": "Anonymised views of where applications stall, for transport departments.",
+      "today": "Help has our contact for transport departments.",
+      "cta": "Open Help"
+    }
+  },
+  "lab": {
+    "h1": "Journey-test lab",
+    "intro": "For the paired journey test only (FIELD_STUDY §3). Use the printed role cards. Never type real personal data.",
+    "setupTitle": "Researcher setup",
+    "setupBody": "Start a trial, then hand the laptop to the participant.",
+    "pid": "Participant code",
+    "cell": "Cell",
+    "order": "Order",
+    "card": "Role card",
+    "cardX": "X: Tanvi",
+    "cardY": "Y: Rajinder",
+    "startReplica": "Start replica trial",
+    "startMargdarshak": "Start Margdarshak trial",
+    "roleCardNote": "Role-card numbers (fake, accepted only here): Aadhaar {aadhaar}, mobile {mobile}.",
+    "blockersFound": "Blockers the participant identified",
+    "stopCap": "Stop (time cap)",
+    "logTitle": "Trials on this device ({n})",
+    "system": "System",
+    "time": "Time (s)",
+    "screens": "Screens",
+    "errors": "Errors",
+    "backs": "Back",
+    "status": "Status",
+    "completed": "Completed",
+    "stopped": "Stopped",
+    "running": "Running",
+    "endMargdarshak": "End trial",
+    "csv": "Download journey_sessions.csv",
+    "json": "Download JSON",
+    "send": "Send to the study API",
+    "sent": "{n, plural, one {# trial sent} other {# trials sent}}"
+  },
+  "rk": {
+    "elig": {
+      "under_min_age": "Not open at your age yet."
+    },
+    "step": {
+      "ll": {
+        "apply": "Apply for your learner's licence on Sarathi",
+        "tutorial": "Watch the road-safety tutorial (within 7 days)",
+        "test": {
+          "online": "LL test, online at home",
+          "at_rto": "LL test at the RTO"
+        }
+      },
+      "practice": "Wait 30 days and practise",
+      "dl": {
+        "book": "Book your driving test",
+        "hpt": "Hazard-perception test",
+        "test": "Driving test at the RTO",
+        "issue": "Driving licence issued"
+      }
+    },
+    "class": {
+      "mc50cc": "Gearless two-wheeler up to 50 cc",
+      "mcwog": "Scooter without gears",
+      "mcwg": "Motorcycle with gears",
+      "lmv_nt": "Car (private)",
+      "lmv_tr": "Taxi, auto-rickshaw or light goods (transport)",
+      "e_rickshaw": "E-rickshaw",
+      "e_cart": "E-cart (goods)",
+      "mgv": "Medium goods vehicle (transport)",
+      "hgmv": "Truck (heavy goods, transport)",
+      "hpmv": "Bus (heavy passenger, transport)",
+      "htv": "Heavy transport vehicle",
+      "adapted": "Adapted vehicle",
+      "prereq": {
+        "lmv_licence_1yr": "Some RTOs ask that you have held a car licence for a year. Verify at your RTO.",
+        "eighth_pass": "Some states still list an 8th-pass certificate. Verify at your RTO."
+      }
+    },
+    "fee": {
+      "ll_issue": "Learner's licence",
+      "ll_test": "LL test",
+      "dl_test": "Driving test",
+      "paid_with_ll": "Paid together with the LL fee",
+      "dl_issue": "Driving licence",
+      "smart_card": "Smart card",
+      "smart_card_state_may_vary": "Your state may charge differently for the card",
+      "ll_retest": "LL retest",
+      "dl_retest": "Driving retest",
+      "breakdown_unknown": "Breakdown not known",
+      "jk": {
+        "slot_booking_reported": "J&K, reported at driving-test slot booking",
+        "postage_reported": "J&K, postage reported"
+      }
+    },
+    "doc": {
+      "form_2": "Form 2: the learner's licence application (made on Sarathi)",
+      "form_1": "Form 1: self-declaration of fitness (a tick-box on Sarathi)",
+      "form_1a": "Form 1A: medical certificate from a registered doctor",
+      "form_1a_maybe": "Form 1A may be needed at the driving test, because you turn 40 before your LL expires",
+      "age_address_proof": "Proof of age and address (Aadhaar eKYC fills these in)",
+      "dob_proof": "A document with your full date of birth (birth certificate, Class 10 certificate or passport)",
+      "residence_address_proof": "Proof of where you live now (rent agreement, utility bill or another proof your state accepts)",
+      "relation_name_proof": "A document that shows your father's, mother's or guardian's name (non-Aadhaar path)",
+      "photo_signature": "Photo and signature (on the Aadhaar path, only the signature)",
+      "guardian_consent": "Written consent of a parent or guardian",
+      "education_transport": "Some states still list an 8th-pass certificate for transport classes. Verify at your RTO.",
+      "valid_ll": "Your valid learner's licence (Form 3; the PDF is fine)",
+      "test_vehicle_papers": "For the test vehicle: RC, insurance, PUC and L plates",
+      "dl": {
+        "education_transport": "Delhi still lists an 8th-pass certificate and a year on a car licence for transport classes. Verify at your RTO."
+      }
+    },
+    "docShort": {
+      "proof_of_age_and_address": "Aadhaar",
+      "photo_and_signature": "photo and signature",
+      "form_2_ll_application": "Form 2",
+      "form_1_self_declaration": "Form 1",
+      "form_1a_medical": "Form 1A",
+      "full_dob_proof": "date-of-birth proof",
+      "residence_address_proof": "address proof",
+      "relation_name_proof": "relation-name proof",
+      "guardian_consent": "parent's consent",
+      "education_proof_transport": "education proof",
+      "valid_learners_licence": "your LL",
+      "test_vehicle_rc_insurance_puc_lplate": "test-vehicle papers"
+    },
+    "blocker": {
+      "under_16": "No licence class opens before 16. The earliest is the 50 cc gearless licence from your 16th birthday, {date}, with a parent's consent.",
+      "dob_year_only": "Your Aadhaar shows only the year, so Sarathi may treat your birthday as 1 January. Carry a document with your full date of birth. Your dates here use 31 December, so you are never shown as older than you are.",
+      "address_mismatch": "Your Aadhaar address is not where you live. Either update Aadhaar and use the online path, or apply with another address proof on the non-Aadhaar path, with one more RTO visit.",
+      "relation_line_blank": "Sarathi takes the relation name from Aadhaar and you can't edit it there. If yours is blank, update Aadhaar, or use the non-Aadhaar path with a document that shows the name.",
+      "form1a_age40": "You are 40 or older, so you need a medical certificate (Form 1A) from a registered doctor before applying.",
+      "transport_under_20": "Transport vehicles need you to be 20. You can apply from {date}.",
+      "ll_expired": "Your learner's licence has expired. Apply for a fresh one; a new application number means an old slot won't carry over.",
+      "jk": {
+        "class_vs_vehicle": "Pick the class that matches your vehicle. A scooter above 50 cc is \"scooter without gears\" (MCWOG); the 50 cc class covers only up to 50 cc. A wrong class means a new LL and another 30 days.",
+        "address_mismatch": "Your Aadhaar address is not where you live. Update Aadhaar and use the online path, or apply with another address proof (non-Aadhaar path, one more RTO visit). How J&K offices handle this isn't known yet: ask at the counter.",
+        "relation_line_blank": "The father's or guardian's name may come back blank and locked from Aadhaar. Update Aadhaar, or use the non-Aadhaar path with a document that shows the name.",
+        "form1a_age40": "You are 40 or older, so you need a medical certificate (Form 1A) before applying. The RTO approves it before the LL test.",
+        "aadhaar_mobile_not_linked": "Sarathi sends the Aadhaar OTP to the mobile linked to your Aadhaar. Link it at an Aadhaar centre, or use the non-Aadhaar path.",
+        "home_test_device": "The home LL test needs a laptop or desktop with a webcam, Chrome or Edge, and pop-ups allowed. In J&K you can take it at a Common Service Centre instead.",
+        "disability_rights_card": "Divyang applicants take the path with an RTO visit. You have the right to apply; an adapted-vehicle class exists and you can ask for accessible formats.",
+        "photo_cannot_change_later": "Check your photo and signature before you pay: they can't be replaced later.",
+        "no_test_vehicle": "Bring a vehicle of your class to the test, with RC, insurance, PUC and L plates. A driving school near the RTO can provide one.",
+        "dob_year_only": "Your Aadhaar shows only the year, so Sarathi may treat your birthday as 1 January. Carry another date-of-birth document (birth certificate, Class 10 certificate or passport)."
+      }
+    },
+    "warning": {
+      "turning_40_mid_journey": "You turn 40 on {date}, before your learner's licence expires. If your driving test is on or after that day, you'll need Form 1A.",
+      "u18_mc50_only": "At 16–17 you can learn only a gearless vehicle up to 50 cc, with a parent's consent. Most scooters are above 50 cc. Other classes open from your 18th birthday, {date}.",
+      "transport_lmv_prereq": "Other conditions for transport classes vary, such as holding a car licence for a year. Verify at your RTO. An accredited driver-training centre certificate is another path.",
+      "aadhaar_mobile_not_linked": "The Aadhaar path sends an OTP to the mobile linked to your Aadhaar. Link it at an Aadhaar centre, or use the non-Aadhaar path.",
+      "home_test_device": "The home LL test needs a laptop or desktop with a webcam, Chrome or Edge, and pop-ups allowed. Without one, take the test at the RTO.",
+      "foreign_licence": "We found no direct conversion: you follow the LL to DL path. Some RTOs may exempt tests.",
+      "moving_state": "A learner's licence is issued by a state. If you move, we check your plan against the new state's rules.",
+      "no_test_vehicle": "You need a vehicle of your class for the driving test, with RC, insurance, PUC and L plates. A driving school can provide one.",
+      "ll_expiring": "Your learner's licence expires on {date}. Book a driving-test date before then.",
+      "kl": {
+        "slot_backlog": "In Kerala a driving-test date has often been 3 months or more after the LL (2024 reports). Book as soon as booking opens."
+      }
+    },
+    "notice": {
+      "family_mode": "Use Margdarshak inside a parent's or guardian's account (family mode). The adult account holder gives consent, and every feature works.",
+      "class_vs_vehicle": "The 50 cc class covers only vehicles up to 50 cc. Check the cc on the vehicle's RC: most scooters need the scooter-without-gears class (MCWOG).",
+      "sc_lmv_7500kg": "Car (LMV) licence holders may drive transport vehicles up to 7,500 kg (Supreme Court, 6 Nov 2024). Verify for commercial use.",
+      "ll_test_at_rto": "Your state doesn't offer the online LL test. Book an LL test slot at the RTO and bring your documents.",
+      "disability_rights_card": "Your rights: an adapted-vehicle class exists, you can ask for accessible formats, and the Divyang path includes an RTO visit.",
+      "deaf_applicants_advisory": "MoRTH advisories say driving is mainly visual; hearing loss by itself doesn't stop you getting a licence.",
+      "colour_vision": "Colour-vision questions may come up in the self-declaration and sign questions. Ask for a text alternative; verify at your RTO.",
+      "nri": "NRI applicants use the same LL to DL path with an Indian address proof. Document rules vary; verify at your RTO.",
+      "idp_dl_holders_only": "An International Driving Permit is only for people who already hold an Indian driving licence.",
+      "idp_available": "You can apply for an International Driving Permit on Sarathi with your DL, passport and visa.",
+      "photo_cannot_change_later": "Check your photo and signature before you pay: they can't be replaced later.",
+      "adtc_option": "An accredited driver-training centre course can replace the RTO driving test. The LL stage still applies.",
+      "state_charges_may_apply": "Your state may add a service charge or postage on top of these government fees.",
+      "partial_pack": "We have only some rules for your state. Verify the details at your RTO.",
+      "jk": {
+        "digilocker_equal": "Once approved, your DL in DigiLocker or mParivahan counts the same as the card (CMVR r.139).",
+        "three_sms_24h": "In J&K you usually get 3 SMS after the test (documents, result, approval) within 24 hours."
+      },
+      "dl": {
+        "adtt_fail_rate": "About half of applicants fail Delhi's automated track at first. Practise the track layout before your test day."
+      },
+      "kl": {
+        "hpt_in_your_test": "Your driving test falls after Kerala's hazard-perception test starts. Practise in Kerala's announced format.",
+        "hpt_may_apply": "If your driving test is on or after the start date, Kerala's hazard-perception test applies to you.",
+        "hpt_stayed": "Kerala's hazard-perception test is on hold. Practising hazards still helps on the road."
+      },
+      "pb": {
+        "faceless_services": "Punjab's faceless RTO services (Sewa Kendra and the 1076 doorstep helpline) can collect documents and deliver certificates.",
+        "ll_extension": "Punjab lists an \"extension of LL validity\" service. Ask before your LL expires."
+      },
+      "mh": {
+        "manual_test": "Your driving test is likely judged by an inspector. Never pay anyone for a \"guaranteed\" pass."
+      }
+    },
+    "fix": {
+      "wait_until_16": "Until then, road-sign lessons in Learn are open to you.",
+      "bring_dob_document": "Add a full date-of-birth document to your documents: birth certificate, Class 10 marksheet or passport.",
+      "address_two_paths": "Choose one: update your Aadhaar address first (about 2–4 weeks), or carry address proof and take the non-Aadhaar path now.",
+      "update_aadhaar_or_non_aadhaar": "Update your Aadhaar at an Aadhaar centre first, or take the non-Aadhaar path with a document that shows the name.",
+      "get_form1a_before_applying": "Get Form 1A from a registered medical practitioner before you apply. Sarathi has a \"Find doctor\" page.",
+      "plan_form1a": "Plan for Form 1A, or book your driving test before {date}.",
+      "mc50_or_wait_18": "Choose the 50 cc class now, or wait until 18 for a regular scooter or bike.",
+      "wait_until_20": "Add it to your plan later; we'll keep the date.",
+      "verify_at_rto": "Ask at your RTO counter before you apply.",
+      "link_mobile_or_non_aadhaar": "Link your mobile at an Aadhaar centre, or switch to the non-Aadhaar path.",
+      "laptop_webcam_or_rto": "Borrow a laptop with a webcam, or take the LL test at the RTO.",
+      "ask_rto_conversion": "Ask your RTO whether any test can be exempted.",
+      "reevaluate_new_state": "Make a new plan for the state you move to.",
+      "arrange_test_vehicle": "Arrange a vehicle with its papers, or ask a driving school near the RTO.",
+      "reapply_ll": "Restart your LL; we'll reuse your answers.",
+      "book_test_before_expiry": "Book a test slot before {date}.",
+      "book_slot_early": "Book your slot the day booking opens.",
+      "jk": {
+        "address_ask_at_counter": "Ask at your RTO counter which they accept, then choose your path. Tell us what you were told.",
+        "use_csc": "Find a Common Service Centre near you for the LL test."
+      }
+    }
+  },
+  "issuesSource": {
+    "server": "Checked by the Margdarshak server against your saved case, just now.",
+    "device": "Checked on this phone with the same rules (the server check isn't available).",
+    "cantTell": "Some answers are still missing, so we can't rule everything out yet."
+  },
+  "payOnline": {
+    "title": "Pay the LL fee on the state's gateway",
+    "body": "You can also pay {amount} here: we send you to the state's own payment page, which collects the fee. Margdarshak never takes your money.",
+    "cta": "Pay {amount} on the state's gateway",
+    "never": "You pay the state directly. We only learn whether the payment went through.",
+    "checking": "Checking the payment with the server…",
+    "paidTitle": "Payment received",
+    "paidBody": "The state's gateway confirmed your LL fee.",
+    "paidNext": "Add your application number",
+    "pendingTitle": "Payment pending: don't pay again",
+    "pendingBody": "Money may have left your account, but the gateway hasn't confirmed it yet.",
+    "pending409": "A payment for this application is still pending at the gateway, so we won't start a second one. Wait for it to clear first.",
+    "pendingNext": "What to do while it's pending",
+    "failedTitle": "The payment didn't go through",
+    "failedBody": "No money was taken. You can try again when you're ready.",
+    "staleTitle": "The fee table has changed",
+    "staleBody": "Reload this page to see the current fee before you pay.",
+    "unavailableTitle": "Can't reach the payment service",
+    "unavailableBody": "Nothing was charged. Try again in a little while, or pay on Sarathi."
+  },
+  "familySignIn": {
+    "h1": "Sign in to add a family member",
+    "sub": "Family mode lives in an adult's account: you add your child or parent, and you give the consent for them.",
+    "b1": "Sign in with your e-mail: we send you a link, no password.",
+    "b2": "What you've done on this phone so far moves into your account.",
+    "b3": "Everything else works without an account.",
+    "cta": "Sign in to continue",
+    "later": "Not now, back to the task list"
+  },
+  "signIn": {
+    "title": "Sign in",
+    "h1": "Sign in with your e-mail",
+    "sub": "Needed only for family mode, when you apply for your child or a parent.",
+    "why1": "Accounts are for adults (18 or over).",
+    "why2": "We e-mail you a sign-in link. No password.",
+    "why3": "Your plan and application on this phone move into your account.",
+    "emailLabel": "E-mail address",
+    "emailHint": "Used only to sign you in. We never show it to anyone.",
+    "send": "E-mail me a sign-in link",
+    "sentTitle": "Check your e-mail",
+    "sentBody": "Open the link on this phone soon. It works once.",
+    "again": "Use a different address or send it again",
+    "simTitle": "Simulated e-mail",
+    "simBody": "This demo has no e-mail server. Your sign-in link:",
+    "simLink": "Open the sign-in link",
+    "redeeming": "Signing you in…",
+    "loading": "Loading…",
+    "badLinkTitle": "This sign-in link doesn't work any more",
+    "badLinkBody": "Links work once and only for a short time. Ask for a new one.",
+    "signedIn": "You're signed in",
+    "merged": "Your plan and application from this phone are in your account.",
+    "signOut": "Sign out on this phone",
+    "err": {
+      "email": "Enter an e-mail address like name@example.com",
+      "offline": "You're offline. Sign-in needs the internet.",
+      "failed": "Something went wrong. Try again."
+    }
+  },
+  "publicStats": {
+    "title": "Field study so far",
+    "loading": "Loading the counters…",
+    "unavailable": "Live counters show when the Margdarshak server is connected.",
+    "suppressed": "fewer than 5",
+    "seconds": "{n} s",
+    "note": "Live counters as of {date}. A small convenience sample, pre-registered; any count under 5 is hidden.",
+    "label": {
+      "plans_computed": "Plans made",
+      "cases_started": "Applications started",
+      "lab_trials_recorded": "Journey-test trials",
+      "journey_participants": "Journey-test participants",
+      "nazar_participants": "Nazar study participants",
+      "median_portal": "Median time to find fee and documents: portal",
+      "median_margdarshak": "Median time to find fee and documents: Margdarshak"
+    }
+  }
+}

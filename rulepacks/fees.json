@@ -1,0 +1,167 @@
+{
+  "$schema": "./schema/rulepack.schema.json",
+  "fileKind": "fees",
+  "version": "2026.10.0",
+  "currency": "INR",
+  "unit": "paise",
+  "notes": "CMVR 1989 r.32 (revised table, GSR 1183(E) of 29 Dec 2016 [MK for the notification number]). Integer paise only. One class = 15000 + 5000 + 30000 + 20000 = 70000, + 20000 smart card = 90000. Each extra class adds LL 15000 + DL test 30000 = 45000. LL-stage totals 50000 / 95000 / 140000 match Delhi's published 500 / 950 / 1,400. State items with includedInTotal=false are shown as 'reported' and never added to a total.",
+  "excludes": ["state_service_charge", "postage"],
+  "items": [
+    {
+      "id": "FEE-LL-ISSUE",
+      "labelKey": "fee.ll_issue",
+      "amount": 15000,
+      "per": "class",
+      "stage": "LL",
+      "source": {
+        "title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "FEE-LL-TEST",
+      "labelKey": "fee.ll_test",
+      "amount": 5000,
+      "per": "application",
+      "stage": "LL",
+      "source": {
+        "title": "CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL page",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "FEE-DL-TEST",
+      "labelKey": "fee.dl_test",
+      "noteKey": "fee.paid_with_ll",
+      "amount": 30000,
+      "per": "class",
+      "stage": "LL",
+      "source": {
+        "title": "CMVR 1989 r.32: driving test fee per class, paid together with the LL fee",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "FEE-DL-ISSUE",
+      "labelKey": "fee.dl_issue",
+      "amount": 20000,
+      "per": "application",
+      "stage": "DL",
+      "source": {
+        "title": "CMVR 1989 r.32: issue of driving licence",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "FEE-SMART-CARD",
+      "labelKey": "fee.smart_card",
+      "noteKey": "fee.smart_card_state_may_vary",
+      "amount": 20000,
+      "per": "application",
+      "stage": "DL",
+      "smartCard": true,
+      "source": {
+        "title": "CMVR 1989 r.32 smart-card surcharge; MoRTH circular 18-07-2023 (r.81 note 2, laminated card)",
+        "url": "https://morth.nic.in/sites/default/files/circulars_document/2-RT-11036-219-2021-MVL%20dated%2018-07-2023001.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ],
+  "retest": [
+    {
+      "id": "FEE-LL-RETEST",
+      "labelKey": "fee.ll_retest",
+      "amount": 5000,
+      "per": "attempt",
+      "stage": "RETEST",
+      "source": {
+        "title": "Delhi Transport LL page: LL retest fee",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "FEE-DL-RETEST",
+      "labelKey": "fee.dl_retest",
+      "amount": 30000,
+      "per": "class_attempt",
+      "stage": "RETEST",
+      "source": {
+        "title": "CMVR 1989 r.32: driving test or repeat test, per class",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ],
+  "stateItems": [
+    {
+      "id": "FEE-JK-SLOT-BOOKING-REPORTED",
+      "state": "JK",
+      "labelKey": "fee.jk.slot_booking_reported",
+      "noteKey": "fee.breakdown_unknown",
+      "amount": 105000,
+      "per": "application",
+      "stage": "DL",
+      "includedInTotal": false,
+      "source": {
+        "title": "Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "FEE-JK-POSTAGE-REPORTED",
+      "state": "JK",
+      "labelKey": "fee.jk.postage_reported",
+      "amount": 5000,
+      "per": "application",
+      "stage": "DL",
+      "includedInTotal": false,
+      "source": {
+        "title": "Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ]
+}

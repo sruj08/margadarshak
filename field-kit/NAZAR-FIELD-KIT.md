@@ -44,7 +44,7 @@ H2: correlation between the 15-question LL-mock score and the Nazar score is wea
 H3: on 5 fresh clips after feedback, the mean per-clip score improves (paired, one-sided).
 H4: inter-rater agreement: median |Δonset| ≤ 0.5 s.
 Exclusions: sessions < 60 s total, or > 3 taps per second (spam); declared under 18.
-Analysis: analysis/nazar_stats.py, unchanged after data collection except bug fixes noted in the commit log.
+Analysis: analysis/nazar_stats.mjs, unchanged after data collection except bug fixes noted in the commit log.
 ```
 
 ## 4. Filming checklist (Fri 06:00–10:00)
@@ -68,7 +68,7 @@ Talk about their life, not our idea:
 Write down exact words. Use 2 quotes on the slide.
 
 ## 7. Data freeze and analysis (Sat 18:00)
-Run `python analysis/nazar_stats.py sessions.csv raters.csv` (script in `field-kit/nazar_stats.py`). It prints:
+Run `node analysis/nazar_stats.mjs sessions.csv raters.csv` (script in `field-kit/nazar_stats.mjs`). It prints:
 - N (after exclusions), % < 60/100 with a 95% CI (Wilson)
 - r(LL mock, Nazar) with a 95% CI (Fisher z)
 - median seconds late, converted to metres at the logged speed

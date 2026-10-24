@@ -1,0 +1,2536 @@
+{
+  "$schema": "../schema/findings.schema.json",
+  "file_kind": "findings",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "DEBRIEF_SPEC §2 taxonomy for all ten games with the §9 template texts (debrief.<findingId>.lacked / .could, and .how for positives). Numbers enter only through {{fact:key}} placeholders whose keys are the finding's facts; formatted values carry their own units (§5.2), so templates never type units after a placeholder. Every rule a finding may cite is listed, verified or not; allowlists filter to ai_citable. All template text is a draft awaiting two-person review; Hindi awaits native review; Golden Hour text also awaits medical sign-off.",
+  "findings": [
+    {
+      "finding_id": "NAZ_LATE_RESPONSE",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "any hazard scored with late_s ≥ 0.5",
+      "severity": "min(1, mean_late_s / 3)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "late_s",
+          "kind": "seconds"
+        },
+        {
+          "key": "speed_kmh",
+          "kind": "kmh"
+        },
+        {
+          "key": "metres",
+          "kind": "metres"
+        },
+        {
+          "key": "hazard_type",
+          "kind": "enum"
+        },
+        {
+          "key": "clip_ordinal",
+          "kind": "ordinal"
+        }
+      ],
+      "skill": {
+        "id": "SK-M18",
+        "resolution": "per_hazard_type"
+      },
+      "rule_ids": ["RR-HVY-001", "RR-JCT-001", "RR-PED-001", "RR-SRF-001"],
+      "rule_resolution": "per_hazard_type",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": {
+        "template": "DR-NAZ-OCCL-{hazard_type}",
+        "fact_key": "hazard_type"
+      },
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You spotted {{fact:hazard_type}} {{fact:late_s}} late. At {{fact:speed_kmh}} that is {{fact:metres}} further on.",
+          "hi": "आपने {{fact:hazard_type}} को {{fact:late_s}} देर से पहचाना; {{fact:speed_kmh}} पर यह {{fact:metres}} आगे है।"
+        },
+        "could": {
+          "en": "Watch for the early clue: feet under a bus, a door edge, a wheel turning. Cover the brake as soon as you see it.",
+          "hi": "पहले संकेत पर नज़र रखें: बस के नीचे पैर, दरवाज़े का किनारा, मुड़ता पहिया। दिखते ही ब्रेक पर उँगलियाँ रखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_MISSED_HAZARD",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "≥ 1 hazard with 0 points",
+      "severity": "min(1, 0.4 + 0.2 × missed_count)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "missed_count",
+          "kind": "times"
+        },
+        {
+          "key": "hazard_type",
+          "kind": "enum"
+        },
+        {
+          "key": "clip_ordinal",
+          "kind": "ordinal"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "per_hazard_type"
+      },
+      "rule_ids": ["RR-HVY-001", "RR-JCT-001", "RR-PED-001", "RR-SRF-001"],
+      "rule_resolution": "per_hazard_type",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": {
+        "template": "DR-NAZ-OCCL-{hazard_type}",
+        "fact_key": "hazard_type"
+      },
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "In clip {{fact:clip_ordinal}}, {{fact:hazard_type}} slipped past without a tap. This happened {{fact:missed_count}} in the set.",
+          "hi": "क्लिप {{fact:clip_ordinal}} में {{fact:hazard_type}} बिना टैप के निकल गया। इस सेट में ऐसा {{fact:missed_count}} हुआ।"
+        },
+        "could": {
+          "en": "Keep your eyes moving: ahead, the sides, then the mirrors. Tap as soon as something starts to change.",
+          "hi": "नज़र घुमाते रहें: आगे, किनारे, फिर शीशे। जैसे ही कुछ बदलना शुरू हो, टैप करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_REPEATED_TYPE_MISS",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "same hazard_type missed or late in ≥ 2 clips",
+      "severity": "0.8",
+      "critical": false,
+      "facts": [
+        {
+          "key": "hazard_type",
+          "kind": "enum"
+        },
+        {
+          "key": "times",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "per_hazard_type"
+      },
+      "rule_ids": ["RR-HVY-001", "RR-JCT-001", "RR-PED-001", "RR-SRF-001"],
+      "rule_resolution": "per_hazard_type",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": {
+        "template": "DR-NAZ-OCCL-{hazard_type}",
+        "fact_key": "hazard_type"
+      },
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You were late or missed {{fact:hazard_type}} {{fact:times}}. This one is worth a focused drill.",
+          "hi": "इस तरह के ख़तरे ({{fact:hazard_type}}) पर आप {{fact:times}} देर से रहे या चूके। इस पर अलग से अभ्यास करना फ़ायदेमंद है।"
+        },
+        "could": {
+          "en": "Learn the setting where this hazard starts, so you are already looking there before it happens.",
+          "hi": "जान लें कि यह ख़तरा किस जगह से शुरू होता है, ताकि होने से पहले ही आपकी नज़र वहाँ हो।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_PATTERN_CLICK",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "pattern rule voided ≥ 1 clip",
+      "severity": "min(1, 0.6 + 0.1 × pattern_clips)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "pattern_clips",
+          "kind": "times"
+        },
+        {
+          "key": "taps_in_1s",
+          "kind": "number"
+        }
+      ],
+      "skill": {
+        "id": "SK-M18",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NAZ-CALM"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Rapid tapping cancelled a clip {{fact:pattern_clips}}, with {{fact:taps_in_1s}} taps inside a single second.",
+          "hi": "लगातार तेज़ टैप से क्लिप {{fact:pattern_clips}} रद्द हुई; एक ही सेकंड में {{fact:taps_in_1s}} टैप हुए।"
+        },
+        "could": {
+          "en": "Tap once when you see a hazard start, then wait. Extra taps don't earn points.",
+          "hi": "ख़तरा शुरू होता दिखे तो एक बार टैप करें, फिर रुकें। ज़्यादा टैप से अंक नहीं मिलते।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_FALSE_ALARMS",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "practice: fa_per_min ≥ 4 [D]",
+      "severity": "min(1, fa_per_min / 10)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "fa_per_min",
+          "kind": "rate_per_min"
+        }
+      ],
+      "skill": {
+        "id": "SK-M18",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NAZ-QUIET"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You tapped when nothing was developing, about {{fact:fa_per_min}}.",
+          "hi": "जब कुछ नहीं बन रहा था तब भी आपने टैप किया, लगभग {{fact:fa_per_min}}।"
+        },
+        "could": {
+          "en": "Wait until a road user starts to move into your path, then tap. Calm, timely taps score best.",
+          "hi": "तब तक रुकें जब तक कोई आपके रास्ते की ओर बढ़ना शुरू न करे, फिर टैप करें। शांत और सही समय पर किया टैप सबसे अच्छा है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_EARLY_TAPS",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "learn: ≥ 2 early_taps",
+      "severity": "0.3",
+      "critical": false,
+      "facts": [
+        {
+          "key": "early_taps",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "per_hazard_type"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": [
+        "DR-NAZ-OCCL-BUS_STOP_PEDESTRIAN",
+        "DR-NAZ-OCCL-DOOR_OPENING",
+        "DR-NAZ-OCCL-AUTO_CUT_IN",
+        "DR-NAZ-OCCL-WRONG_SIDE_2W",
+        "DR-NAZ-OCCL-CATTLE_ANIMAL",
+        "DR-NAZ-OCCL-CHILD_SCHOOL",
+        "DR-NAZ-OCCL-PEDESTRIAN_MEDIAN",
+        "DR-NAZ-OCCL-VEHICLE_PULLING_OUT",
+        "DR-NAZ-OCCL-TRUCK_LEFT_TURN",
+        "DR-NAZ-OCCL-JUNCTION_EMERGING",
+        "DR-NAZ-OCCL-OVERTAKING_ONCOMING",
+        "DR-NAZ-OCCL-PARKED_VEHICLE_HIDDEN",
+        "DR-NAZ-OCCL-CYCLIST",
+        "DR-NAZ-OCCL-SURFACE_HAZARD",
+        "DR-NAZ-OCCL-OTHER"
+      ],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "In learn mode you tapped before the hazard began {{fact:early_taps}}.",
+          "hi": "लर्न मोड में आपने ख़तरा शुरू होने से पहले ही {{fact:early_taps}} टैप किया।"
+        },
+        "could": {
+          "en": "Look for the moment a road user starts to change speed or direction; that is when to tap.",
+          "hi": "उस पल को पहचानें जब कोई अपनी रफ़्तार या दिशा बदलना शुरू करे; टैप तभी करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false,
+      "notes": "Spec drill is DR-NAZ-OCCL-<TYPE>, but the finding carries no hazard_type fact, so no pattern can resolve it; every occlusion drill is listed and game-core picks the one for the clip's type."
+    },
+    {
+      "finding_id": "NAZ_OVERCONFIDENT",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "pre-mock predicted_pass − actual_pass ≥ 3",
+      "severity": "min(1, (pred − actual) / 6)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "predicted_pass",
+          "kind": "number"
+        },
+        {
+          "key": "actual_pass",
+          "kind": "number"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "calibration"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NAZ-MOCK"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Before the mock you expected to pass {{fact:predicted_pass}} clips; you passed {{fact:actual_pass}}.",
+          "hi": "मॉक से पहले आपको {{fact:predicted_pass}} क्लिप पास करने की उम्मीद थी; आपने {{fact:actual_pass}} पास कीं।"
+        },
+        "could": {
+          "en": "Before each mock, think about which hazard types still catch you, and let that guide your guess.",
+          "hi": "हर मॉक से पहले सोचें कि कौन से ख़तरे अब भी आपसे छूटते हैं, और उसी हिसाब से अंदाज़ा लगाएँ।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_BELOW_KERALA_MARK",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "mock total < pass mark",
+      "severity": "0.5 (informational; never the top finding if a skill finding exists)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "score_total",
+          "kind": "number"
+        },
+        {
+          "key": "pass_mark",
+          "kind": "number"
+        },
+        {
+          "key": "kerala_status",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "none"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "HPT-KL",
+          "row_pattern": "KL-PRM-HPT",
+          "fallback_row": "PRM-HPT"
+        }
+      ],
+      "drill_ids": ["DR-NAZ-MOCK"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your mock total was {{fact:score_total}}; the pass mark in Kerala's announced format (as reported) is {{fact:pass_mark}}.",
+          "hi": "आपका मॉक स्कोर {{fact:score_total}} रहा; केरल के घोषित फ़ॉर्मैट (जैसा बताया गया) में पास मार्क {{fact:pass_mark}} है।"
+        },
+        "could": {
+          "en": "Treat this as a practice score, not a result. Work on the hazard types below, then try a fresh mock.",
+          "hi": "इसे अभ्यास का स्कोर मानें, नतीजा नहीं। नीचे के ख़तरों पर अभ्यास करें, फिर नया मॉक दें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_COMM_MISSED_MENTION",
+      "game_id": "nazar",
+      "polarity": "negative",
+      "trigger": "commentary: hazard not mentioned in [a − 1 s, b]",
+      "severity": "min(1, 0.3 + 0.2 × count)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "hazard_type",
+          "kind": "enum"
+        },
+        {
+          "key": "count",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "per_hazard_type"
+      },
+      "rule_ids": ["RR-HVY-001", "RR-JCT-001", "RR-PED-001", "RR-SRF-001"],
+      "rule_resolution": "per_hazard_type",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NAZ-COMM"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You didn't name {{fact:hazard_type}} in your commentary in time. This happened {{fact:count}}.",
+          "hi": "कमेंट्री में आपने {{fact:hazard_type}} का ज़िक्र समय पर नहीं किया। ऐसा {{fact:count}} हुआ।"
+        },
+        "could": {
+          "en": "Say what you see and what might happen next as soon as you notice it: bus stopped, someone may step out.",
+          "hi": "जो दिखे और आगे क्या हो सकता है, तुरंत बोलें: बस रुकी है, कोई निकल सकता है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NAZ_IMPROVED",
+      "game_id": "nazar",
+      "polarity": "positive",
+      "trigger": "mean late_s improved ≥ 0.3 s vs the user's first 3 sessions",
+      "severity": null,
+      "critical": false,
+      "facts": [
+        {
+          "key": "gain_s",
+          "kind": "seconds"
+        },
+        {
+          "key": "gain_m",
+          "kind": "metres"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "none"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "how": {
+          "en": "You are responding {{fact:gain_s}} earlier than in your early sessions, which gives you {{fact:gain_m}} more room.",
+          "hi": "आप अपने शुरुआती सेशन से {{fact:gain_s}} पहले पहचान रहे हैं, यानी {{fact:gain_m}} ज़्यादा जगह।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "SD_OVERSPEED_FOR_SIGHT",
+      "game_id": "stopping_distance",
+      "polarity": "negative",
+      "trigger": "any round-3 item with chosen > v_max_opt",
+      "severity": "min(1, over_kmh / 20)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "chosen_kmh",
+          "kind": "kmh"
+        },
+        {
+          "key": "max_safe_kmh",
+          "kind": "kmh"
+        },
+        {
+          "key": "sight_m",
+          "kind": "metres"
+        },
+        {
+          "key": "surface",
+          "kind": "enum"
+        },
+        {
+          "key": "over_kmh",
+          "kind": "kmh"
+        }
+      ],
+      "skill": {
+        "id": "SK-M1",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-SPD-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": {
+        "template": "DR-SD-SIGHT-{surface}",
+        "fact_key": "surface"
+      },
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You chose {{fact:chosen_kmh}} with {{fact:sight_m}} of clear view; to stop in time, keep to {{fact:max_safe_kmh}} or less.",
+          "hi": "{{fact:sight_m}} साफ़ दिख रही सड़क पर आपने {{fact:chosen_kmh}} चुनी; समय पर रुकने के लिए {{fact:max_safe_kmh}} या उससे कम रखें।"
+        },
+        "could": {
+          "en": "Before a bend or a parked bus, ask: could I stop within what I can see? If not, ease off.",
+          "hi": "मोड़ या खड़ी बस से पहले सोचें: क्या जितना दिख रहा है, उतने में रुकना मुमकिन है? नहीं तो रफ़्तार कम करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "SD_UNDERESTIMATE",
+      "game_id": "stopping_distance",
+      "polarity": "negative",
+      "trigger": "mean signed error < −20%",
+      "severity": "min(1, |err_pct| / 50)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "speed_kmh",
+          "kind": "kmh"
+        },
+        {
+          "key": "surface",
+          "kind": "enum"
+        },
+        {
+          "key": "predicted_m",
+          "kind": "metres"
+        },
+        {
+          "key": "true_m",
+          "kind": "metres"
+        },
+        {
+          "key": "error_pct",
+          "kind": "percent"
+        }
+      ],
+      "skill": {
+        "id": "SK-M1",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-SPD-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-SD-PREDICT"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "At {{fact:speed_kmh}} on a {{fact:surface}}, you guessed {{fact:predicted_m}}; the real stopping distance was {{fact:true_m}}.",
+          "hi": "{{fact:surface}} पर {{fact:speed_kmh}} की रफ़्तार से आपका अंदाज़ा {{fact:predicted_m}} था; असली रुकने की दूरी {{fact:true_m}} थी।"
+        },
+        "could": {
+          "en": "Stopping distance is thinking distance plus braking distance, and braking grows with the square of speed.",
+          "hi": "रुकने की दूरी यानी सोचने की दूरी और ब्रेक की दूरी, और ब्रेक की दूरी रफ़्तार के वर्ग के हिसाब से बढ़ती है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "SD_WET_GAP",
+      "game_id": "stopping_distance",
+      "polarity": "negative",
+      "trigger": "wet error ≥ 2× dry error",
+      "severity": "0.6",
+      "critical": false,
+      "facts": [
+        {
+          "key": "wet_err_pct",
+          "kind": "percent"
+        },
+        {
+          "key": "dry_err_pct",
+          "kind": "percent"
+        }
+      ],
+      "skill": {
+        "id": "SK-M16",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-FOG-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-SD-PREDICT-WET"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your wet-road estimates were off by {{fact:wet_err_pct}}, against {{fact:dry_err_pct}} on dry roads.",
+          "hi": "गीली सड़क पर आपका अंदाज़ा {{fact:wet_err_pct}} ग़लत रहा, जबकि सूखी सड़क पर {{fact:dry_err_pct}}।"
+        },
+        "could": {
+          "en": "Tyres grip less on wet roads, so braking takes much longer. Slow down and leave a longer gap.",
+          "hi": "गीली सड़क पर टायर की पकड़ कम होती है, इसलिए रुकने में ज़्यादा दूरी लगती है। धीमे चलें और ज़्यादा फ़ासला रखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "SD_COLLISION",
+      "game_id": "stopping_distance",
+      "polarity": "negative",
+      "trigger": "round-2 collision",
+      "severity": "0.5 + 0.5 × (impact_band ≥ \"between\")",
+      "critical": false,
+      "facts": [
+        {
+          "key": "speed_kmh",
+          "kind": "kmh"
+        },
+        {
+          "key": "rt_s",
+          "kind": "seconds"
+        },
+        {
+          "key": "impact_band",
+          "kind": "enum"
+        },
+        {
+          "key": "stop_m",
+          "kind": "metres"
+        },
+        {
+          "key": "child_m",
+          "kind": "metres"
+        }
+      ],
+      "skill": {
+        "id": "SK-M2",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-SPD-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-SD-STREET"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "At {{fact:speed_kmh}} you could not stop before the child, who was {{fact:child_m}} ahead; you needed {{fact:stop_m}} to stop.",
+          "hi": "{{fact:speed_kmh}} पर आप बच्चे से पहले नहीं रुक पाए, जो {{fact:child_m}} आगे था; रुकने के लिए {{fact:stop_m}} चाहिए थे।"
+        },
+        "could": {
+          "en": "On streets with parked cars and children around, a lower speed is what gives you room to stop.",
+          "hi": "जहाँ गाड़ियाँ खड़ी हों और बच्चे आस-पास हों, वहाँ कम रफ़्तार ही रुकने की जगह देती है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false,
+      "notes": "Not critical: not a protocol error, it is the lesson (DEBRIEF_SPEC §2.2). Templates never describe injury."
+    },
+    {
+      "finding_id": "SD_SPEED_CHOICE_GOOD",
+      "game_id": "stopping_distance",
+      "polarity": "positive",
+      "trigger": "all round-3 items ≤ v_max_opt",
+      "severity": null,
+      "critical": false,
+      "facts": [
+        {
+          "key": "sight_m",
+          "kind": "metres"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "none"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "how": {
+          "en": "Every speed you chose let you stop within the road you could see.",
+          "hi": "आपकी चुनी हर रफ़्तार पर आप दिख रही सड़क के भीतर रुक सकते थे।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "BS_LEFT_OVERTAKE",
+      "game_id": "blind_spot",
+      "polarity": "negative",
+      "trigger": "overtook on the left while the truck indicated left",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [
+        {
+          "key": "vehicle_type",
+          "kind": "enum"
+        },
+        {
+          "key": "truck_signal",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M5",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HVY-003", "RR-HVY-002"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-BS-RIDE-LEFTTURN"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You passed the {{fact:vehicle_type}} on its left while it was signalling to turn left.",
+          "hi": "{{fact:vehicle_type}} बाएँ मुड़ने का इशारा दे रहा था और आपने उसे बाईं ओर से पार किया।"
+        },
+        "could": {
+          "en": "When a large vehicle signals left, hold back behind it until the turn is done.",
+          "hi": "जब बड़ा वाहन बाएँ मुड़ने का इशारा दे, तो मोड़ पूरा होने तक उसके पीछे रुके रहें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "BS_NOZONE_TIME",
+      "game_id": "blind_spot",
+      "polarity": "negative",
+      "trigger": "share_pct ≥ 10",
+      "severity": "min(1, share_pct / 25)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "share_pct",
+          "kind": "percent"
+        },
+        {
+          "key": "vehicle_type",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M4",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HVY-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-BS-RIDE"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You spent {{fact:share_pct}} of the ride where the {{fact:vehicle_type}} driver couldn't see you.",
+          "hi": "सवारी का {{fact:share_pct}} समय आप ऐसी जगह रहे जहाँ {{fact:vehicle_type}} का ड्राइवर आपको नहीं देख सकता था।"
+        },
+        "could": {
+          "en": "If you can't see the driver's face in their mirror, drop back or pass with a clear gap.",
+          "hi": "अगर शीशे में ड्राइवर का चेहरा नहीं दिखता, तो पीछे हटें या पूरे फ़ासले के साथ आगे निकलें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "BS_PLACEMENT_WRONG",
+      "game_id": "blind_spot",
+      "polarity": "negative",
+      "trigger": "≥ 1 Part A probe wrong",
+      "severity": "0.2 × probes_wrong",
+      "critical": false,
+      "facts": [
+        {
+          "key": "probes_wrong",
+          "kind": "times"
+        },
+        {
+          "key": "probe_label",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M4",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HVY-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-BS-PLACE"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "In the placing round the bike ended up in a no-zone {{fact:probes_wrong}}, for example {{fact:probe_label}}.",
+          "hi": "जगह चुनने वाले राउंड में बाइक {{fact:probes_wrong}} नो-ज़ोन में रही, जैसे {{fact:probe_label}}।"
+        },
+        "could": {
+          "en": "Remember the four no-zones: right in front, right behind, and along both sides, with the left side the biggest.",
+          "hi": "चार नो-ज़ोन याद रखें: ठीक आगे, ठीक पीछे और दोनों किनारे, जिनमें बायाँ किनारा सबसे बड़ा है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "BS_NO_MIRROR_CHECK",
+      "game_id": "blind_spot",
+      "polarity": "negative",
+      "trigger": "mirror_before_pct < 60 with ≥ 2 lane changes",
+      "severity": "1 − mirror_before_pct/100",
+      "critical": false,
+      "facts": [
+        {
+          "key": "mirror_before_pct",
+          "kind": "percent"
+        },
+        {
+          "key": "lane_changes",
+          "kind": "number"
+        }
+      ],
+      "skill": {
+        "id": "SK-M4",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HVY-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-BS-MIRROR"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You checked the mirror before only {{fact:mirror_before_pct}} of your lane changes.",
+          "hi": "आपने सिर्फ़ {{fact:mirror_before_pct}} लेन बदलावों से पहले शीशा देखा।"
+        },
+        "could": {
+          "en": "Mirror, signal, then a quick look over your shoulder, every time you move across.",
+          "hi": "हर बार लेन बदलते समय: शीशा, इंडिकेटर, फिर कंधे के ऊपर से एक नज़र।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "BS_NO_HOLD_BACK",
+      "game_id": "blind_spot",
+      "polarity": "negative",
+      "trigger": "left-turn event without hold-back (not an overtake)",
+      "severity": "0.7",
+      "critical": false,
+      "facts": [
+        {
+          "key": "left_turn_events",
+          "kind": "times"
+        },
+        {
+          "key": "held_back",
+          "kind": "number"
+        }
+      ],
+      "skill": {
+        "id": "SK-M4",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HVY-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-BS-RIDE-LEFTTURN"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "A large vehicle turned left {{fact:left_turn_events}}; you held back for {{fact:held_back}} of those turns.",
+          "hi": "बड़ा वाहन {{fact:left_turn_events}} बाएँ मुड़ा; उनमें से {{fact:held_back}} बार आप पीछे रुके।"
+        },
+        "could": {
+          "en": "A truck turning left sweeps across the space on its left. Stay behind until it has finished the turn.",
+          "hi": "बाएँ मुड़ता ट्रक अपनी बाईं ओर की जगह घेर लेता है। मोड़ पूरा होने तक पीछे रहें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "JS_COLLISION",
+      "game_id": "junction_scan",
+      "polarity": "negative",
+      "trigger": "collision",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [
+        {
+          "key": "threat_side",
+          "kind": "enum"
+        },
+        {
+          "key": "gap_s",
+          "kind": "seconds"
+        }
+      ],
+      "skill": {
+        "id": "SK-M6",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-JCT-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-JS-SCAN"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "A vehicle from the {{fact:threat_side}} reached the junction while you were crossing; the gap was {{fact:gap_s}}.",
+          "hi": "{{fact:threat_side}} से आता वाहन तब पहुँचा जब आप पार कर रहे थे; फ़ासला सिर्फ़ {{fact:gap_s}} था।"
+        },
+        "could": {
+          "en": "Slow, look right, left and right again, then go only if the gap is long enough to clear.",
+          "hi": "धीमे हों, दाएँ, बाएँ और फिर दाएँ देखें, और तभी जाएँ जब पार करने लायक फ़ासला हो।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "JS_NO_SCAN_THREAT_SIDE",
+      "game_id": "junction_scan",
+      "polarity": "negative",
+      "trigger": "GO with no look to the threat side in the last 3 s",
+      "severity": "0.95",
+      "critical": true,
+      "facts": [
+        {
+          "key": "threat_side",
+          "kind": "enum"
+        },
+        {
+          "key": "last_look",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M6",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-JCT-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-JS-SCAN"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You went without a last look to the {{fact:threat_side}}, the side the traffic was coming from.",
+          "hi": "आप आख़िरी पलों में {{fact:threat_side}} देखे बिना निकल गए, जबकि ट्रैफ़िक वहीं से आ रहा था।"
+        },
+        "could": {
+          "en": "Make your last look before going toward the side the nearest traffic comes from.",
+          "hi": "निकलने से पहले आख़िरी नज़र उस ओर डालें जहाँ से सबसे पास का ट्रैफ़िक आता है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "JS_NOT_RIGHT_LAST",
+      "game_id": "junction_scan",
+      "polarity": "negative",
+      "trigger": "looked both ways but not right last",
+      "severity": "0.5",
+      "critical": false,
+      "facts": [
+        {
+          "key": "last_look",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M6",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-JCT-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-JS-SCAN"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You looked both ways, but your last look was to the {{fact:last_look}}.",
+          "hi": "आपने दोनों ओर देखा, पर आपकी आख़िरी नज़र {{fact:last_look}} थी।"
+        },
+        "could": {
+          "en": "In left-hand traffic the near lane comes from the right, so look right again just before you go.",
+          "hi": "भारत में बाईं ओर ट्रैफ़िक चलता है, इसलिए पास वाली लेन दाईं ओर से आती है; निकलने से ठीक पहले फिर दाएँ देखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "JS_SHORT_GAP",
+      "game_id": "junction_scan",
+      "polarity": "negative",
+      "trigger": "gap_s < 4.0",
+      "severity": "min(1, (4 − gap_s) / 2)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "gap_s",
+          "kind": "seconds"
+        }
+      ],
+      "skill": {
+        "id": "SK-M6",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-JCT-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-JS-GAP"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You took a gap of {{fact:gap_s}}, which leaves little room if anything changes.",
+          "hi": "आपने {{fact:gap_s}} का फ़ासला लिया, जिसमें कुछ बदलने पर बहुत कम गुंजाइश रहती है।"
+        },
+        "could": {
+          "en": "Wait for a gap you can clearly complete, even if it means waiting for the next one.",
+          "hi": "ऐसे फ़ासले का इंतज़ार करें जिसमें आप आराम से निकल सकें, भले अगले फ़ासले तक रुकना पड़े।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "JS_NO_CREEP",
+      "game_id": "junction_scan",
+      "polarity": "negative",
+      "trigger": "occluded and GO without creeping",
+      "severity": "0.6",
+      "critical": false,
+      "facts": [
+        {
+          "key": "occluded",
+          "kind": "boolean"
+        }
+      ],
+      "skill": {
+        "id": "SK-M6",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-JCT-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-JS-CREEP"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your view was blocked, and you went without creeping forward to see.",
+          "hi": "आपकी नज़र रुकी हुई थी, और आप धीरे-धीरे आगे बढ़कर देखे बिना निकल गए।"
+        },
+        "could": {
+          "en": "When a bus or wall blocks your view, edge forward slowly until you can see, then decide.",
+          "hi": "जब बस या दीवार नज़र रोके, तो धीरे-धीरे आगे बढ़ें जब तक दिखने न लगे, फिर फ़ैसला करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "JS_YIELD_MISSED",
+      "game_id": "junction_scan",
+      "polarity": "negative",
+      "trigger": "failed to yield to a pedestrian or a vehicle in the junction",
+      "severity": "0.8",
+      "critical": false,
+      "facts": [
+        {
+          "key": "yield_missed",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M18",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-JCT-002", "RR-PED-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-JS-YIELD"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You didn't give way to {{fact:yield_missed}}.",
+          "hi": "आपने {{fact:yield_missed}} को रास्ता नहीं दिया।"
+        },
+        "could": {
+          "en": "Before you move, give way to people on a crossing and to traffic already in the junction.",
+          "hi": "चलने से पहले क्रॉसिंग पर लोगों को और चौराहे में पहले से मौजूद वाहनों को रास्ता दें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "TT_IMMEDIATE_FAIL",
+      "game_id": "track_twin",
+      "polarity": "negative",
+      "trigger": "off track or > 1.5× time",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [
+        {
+          "key": "fault",
+          "kind": "enum"
+        },
+        {
+          "key": "fault_location",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-DL1",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "track spec",
+          "row_pattern": "{STATE}-PRM-DL-TEST",
+          "fallback_row": "PRM-DL-TEST"
+        }
+      ],
+      "drill_ids": ["DR-TT-FIG8-SLOW"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "The run stopped at {{fact:fault_location}}: {{fact:fault}}.",
+          "hi": "{{fact:fault_location}} पर चक्कर रुक गया: {{fact:fault}}।"
+        },
+        "could": {
+          "en": "Ride the practice layout slowly first. Slow and steady keeps you on the track.",
+          "hi": "पहले अभ्यास ट्रैक को धीमी रफ़्तार पर चलाएँ। धीमे और सधे रहने से आप ट्रैक पर बने रहते हैं।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "TT_FOOT_DOWN",
+      "game_id": "track_twin",
+      "polarity": "negative",
+      "trigger": "≥ 1 foot-down",
+      "severity": "min(1, 0.4 + 0.2 × count)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "count",
+          "kind": "times"
+        },
+        {
+          "key": "fault_location",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-DL1",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "track spec",
+          "row_pattern": "{STATE}-PRM-DL-TEST",
+          "fallback_row": "PRM-DL-TEST"
+        }
+      ],
+      "drill_ids": ["DR-TT-FIG8-SLOW"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your foot touched down {{fact:count}}, mostly at {{fact:fault_location}}.",
+          "hi": "आपका पैर {{fact:count}} ज़मीन पर लगा, ज़्यादातर {{fact:fault_location}} पर।"
+        },
+        "could": {
+          "en": "Take the turns slower and wider so you don't need a foot down.",
+          "hi": "मोड़ों को धीमे और चौड़ा लें, ताकि पैर नीचे रखने की ज़रूरत न पड़े।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "TT_LINE_TOUCH",
+      "game_id": "track_twin",
+      "polarity": "negative",
+      "trigger": "≥ 1 line touch",
+      "severity": "min(1, 0.2 × count)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "count",
+          "kind": "times"
+        },
+        {
+          "key": "fault_location",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-DL1",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "track spec",
+          "row_pattern": "{STATE}-PRM-DL-TEST",
+          "fallback_row": "PRM-DL-TEST"
+        }
+      ],
+      "drill_ids": ["DR-TT-FIG8-WIDE"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You touched a line {{fact:count}}, mostly at {{fact:fault_location}}.",
+          "hi": "आपने {{fact:count}} लाइन छुई, ज़्यादातर {{fact:fault_location}} पर।"
+        },
+        "could": {
+          "en": "Start each turn a little wider and look through the turn to where you will come out.",
+          "hi": "हर मोड़ थोड़ा चौड़ा शुरू करें और मोड़ के पार वहाँ देखें जहाँ से निकलना है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "TT_CONE_HIT",
+      "game_id": "track_twin",
+      "polarity": "negative",
+      "trigger": "≥ 1 cone",
+      "severity": "min(1, 0.3 × count)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "count",
+          "kind": "times"
+        },
+        {
+          "key": "fault_location",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-DL1",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "track spec",
+          "row_pattern": "{STATE}-PRM-DL-TEST",
+          "fallback_row": "PRM-DL-TEST"
+        }
+      ],
+      "drill_ids": ["DR-TT-FIG8-WIDE"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You touched a cone {{fact:count}}, mostly at {{fact:fault_location}}.",
+          "hi": "आपसे {{fact:count}} कोन छू गया, ज़्यादातर {{fact:fault_location}} पर।"
+        },
+        "could": {
+          "en": "Give the cones more room by keeping your line wide and your speed low.",
+          "hi": "लाइन चौड़ी और रफ़्तार कम रखकर कोन से ज़्यादा दूरी रखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "TT_OVER_TIME",
+      "game_id": "track_twin",
+      "polarity": "negative",
+      "trigger": "over the time limit",
+      "severity": "min(1, over_s / 30)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "time_s",
+          "kind": "seconds"
+        },
+        {
+          "key": "time_limit_s",
+          "kind": "seconds"
+        }
+      ],
+      "skill": {
+        "id": "SK-DL1",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "track spec",
+          "row_pattern": "{STATE}-PRM-DL-TEST",
+          "fallback_row": "PRM-DL-TEST"
+        }
+      ],
+      "drill_ids": ["DR-TT-TIMED"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "The run took {{fact:time_s}}; the practice limit is {{fact:time_limit_s}}.",
+          "hi": "चक्कर में {{fact:time_s}} लगे; अभ्यास की समय-सीमा {{fact:time_limit_s}} है।"
+        },
+        "could": {
+          "en": "Keep a steady, unhurried pace and avoid stopping mid-layout; smooth beats rushed.",
+          "hi": "एक जैसी, बिना जल्दबाज़ी की रफ़्तार रखें और बीच में न रुकें; सधा हुआ चलना जल्दबाज़ी से बेहतर है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "TT_ROLLBACK",
+      "game_id": "track_twin",
+      "polarity": "negative",
+      "trigger": "car gradient rollback > 30 cm",
+      "severity": "0.6",
+      "critical": false,
+      "facts": [
+        {
+          "key": "rollback_cm",
+          "kind": "centimetres"
+        }
+      ],
+      "skill": {
+        "id": "SK-DL1",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "track spec",
+          "row_pattern": "{STATE}-PRM-DL-TEST",
+          "fallback_row": "PRM-DL-TEST"
+        }
+      ],
+      "drill_ids": ["DR-TT-GRADIENT"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "The car rolled back {{fact:rollback_cm}} on the gradient start.",
+          "hi": "चढ़ाई पर शुरू करते समय कार {{fact:rollback_cm}} पीछे लुढ़की।"
+        },
+        "could": {
+          "en": "Use the handbrake to hold the car until you are ready to move off.",
+          "hi": "आगे बढ़ने के लिए तैयार होने तक हैंडब्रेक से कार को रोके रखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false,
+      "notes": "Car gradient content is Phase 3+ (DR-TT-GRADIENT availability phase_3_plus)."
+    },
+    {
+      "finding_id": "HF_STRAP_STEP_SKIPPED",
+      "game_id": "helmet_fit",
+      "polarity": "negative",
+      "trigger": "strap or two-finger step not confirmed",
+      "severity": "0.9",
+      "critical": false,
+      "facts": [
+        {
+          "key": "step",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M3",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HLM-003", "RR-HLM-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HF-STRAP"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "The {{fact:step}} step wasn't confirmed.",
+          "hi": "{{fact:step}} वाला कदम पूरा नहीं हुआ।"
+        },
+        "could": {
+          "en": "Fasten the strap so only two fingers fit under it, and check that the helmet doesn't rock.",
+          "hi": "स्ट्रैप इतना कसें कि नीचे सिर्फ़ दो उँगलियाँ आएँ, और देखें कि हेलमेट हिले नहीं।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HF_STEPS_OUT_OF_ORDER",
+      "game_id": "helmet_fit",
+      "polarity": "negative",
+      "trigger": "≥ 2 steps out of order",
+      "severity": "0.4",
+      "critical": false,
+      "facts": [
+        {
+          "key": "steps_done",
+          "kind": "number"
+        }
+      ],
+      "skill": {
+        "id": "SK-M3",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HLM-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HF-STRAP"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Some fit steps were done out of order; you completed {{fact:steps_done}} steps.",
+          "hi": "फ़िटिंग के कुछ कदम क्रम से बाहर हुए; आपने {{fact:steps_done}} कदम पूरे किए।"
+        },
+        "could": {
+          "en": "Follow the order: size, position on the forehead, strap, then the two-finger and rock checks.",
+          "hi": "क्रम से करें: साइज़, माथे पर सही जगह, स्ट्रैप, फिर दो उँगली और हिलने की जाँच।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HF_ISI_CONFUSION",
+      "game_id": "helmet_fit",
+      "polarity": "negative",
+      "trigger": "≥ 2 wrong ISI-label items",
+      "severity": "0.3 + 0.15 × wrong",
+      "critical": false,
+      "facts": [
+        {
+          "key": "quiz_wrong_families",
+          "kind": "enum_list"
+        }
+      ],
+      "skill": {
+        "id": "SK-M3",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HLM-002"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HF-ISI"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Some ISI-label questions tripped you up: {{fact:quiz_wrong_families}}.",
+          "hi": "ISI लेबल वाले कुछ सवालों में दिक़्क़त हुई: {{fact:quiz_wrong_families}}।"
+        },
+        "could": {
+          "en": "A genuine label shows the ISI mark and the helmet standard's number; check both.",
+          "hi": "असली लेबल पर ISI मार्क और हेलमेट मानक का नंबर होता है; दोनों देखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HF_PILLION_GAP",
+      "game_id": "helmet_fit",
+      "polarity": "negative",
+      "trigger": "wrong on pillion/child items",
+      "severity": "0.5",
+      "critical": false,
+      "facts": [
+        {
+          "key": "wrong",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": "SK-M13",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-PIL-001", "RR-HLM-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HF-PILLION"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Questions on pillion and child helmets went wrong {{fact:wrong}}.",
+          "hi": "पीछे की सवारी और बच्चों के हेलमेट वाले सवालों में {{fact:wrong}} ग़लती हुई।"
+        },
+        "could": {
+          "en": "Everyone on the bike needs a helmet that fits, including the person behind you and children.",
+          "hi": "बाइक पर हर व्यक्ति को सही नाप का हेलमेट चाहिए, पीछे बैठी सवारी और बच्चों को भी।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "GH_HELMET_REMOVED",
+      "game_id": "golden_hour",
+      "polarity": "negative",
+      "trigger": "removed the helmet with a possible neck injury",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [],
+      "skill": {
+        "id": "SK-M19",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-GHR-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-GH-ORDER"],
+      "drill_pattern": null,
+      "template_only": true,
+      "templates": {
+        "lacked": {
+          "en": "You took the helmet off.",
+          "hi": "आपने हेलमेट उतार दिया।"
+        },
+        "could": {
+          "en": "If the neck might be hurt, leave the helmet on and keep the head still until help arrives.",
+          "hi": "अगर गर्दन में चोट हो सकती है, तो हेलमेट न उतारें और मदद आने तक सिर को स्थिर रखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": true
+    },
+    {
+      "finding_id": "GH_MOVED_VICTIM",
+      "game_id": "golden_hour",
+      "polarity": "negative",
+      "trigger": "moved the victim without immediate danger",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [],
+      "skill": {
+        "id": "SK-M19",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-GHR-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-GH-ORDER"],
+      "drill_pattern": null,
+      "template_only": true,
+      "templates": {
+        "lacked": {
+          "en": "You moved the person when there was no immediate danger.",
+          "hi": "कोई तुरंत ख़तरा न होने पर भी आपने व्यक्ति को हिलाया।"
+        },
+        "could": {
+          "en": "Move someone only if staying put is more dangerous, such as fire or oncoming traffic.",
+          "hi": "किसी को तभी हिलाएँ जब वहीं रहना ज़्यादा ख़तरनाक हो, जैसे आग या आता हुआ ट्रैफ़िक।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": true
+    },
+    {
+      "finding_id": "GH_NO_CALL",
+      "game_id": "golden_hour",
+      "polarity": "negative",
+      "trigger": "never called 112/108",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [],
+      "skill": {
+        "id": "SK-M19",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-GHR-002"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-GH-ORDER"],
+      "drill_pattern": null,
+      "template_only": true,
+      "templates": {
+        "lacked": {
+          "en": "You didn't call for help.",
+          "hi": "आपने मदद के लिए कॉल नहीं किया।"
+        },
+        "could": {
+          "en": "Once the scene is safe, call the emergency number straight away.",
+          "hi": "जगह सुरक्षित होते ही तुरंत आपातकालीन नंबर पर कॉल करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": true,
+      "notes": "V1 forbids digits, so the template says 'the emergency number'; the card should show the one-tap 112 control (F-15) beside it."
+    },
+    {
+      "finding_id": "GH_LATE_CALL",
+      "game_id": "golden_hour",
+      "polarity": "negative",
+      "trigger": "call at step ≥ 3",
+      "severity": "0.3 + 0.15 × (call_step − 2)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "call_step",
+          "kind": "ordinal"
+        }
+      ],
+      "skill": {
+        "id": "SK-M19",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-GHR-002"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-GH-ORDER"],
+      "drill_pattern": null,
+      "template_only": true,
+      "templates": {
+        "lacked": {
+          "en": "You called for help only at step {{fact:call_step}}.",
+          "hi": "आपने मदद के लिए कॉल सिर्फ़ कदम {{fact:call_step}} पर किया।"
+        },
+        "could": {
+          "en": "Call right after making the scene safe; help takes time to arrive.",
+          "hi": "जगह सुरक्षित करने के तुरंत बाद कॉल करें; मदद पहुँचने में समय लगता है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": true
+    },
+    {
+      "finding_id": "GH_ORDER_GAP",
+      "game_id": "golden_hour",
+      "polarity": "negative",
+      "trigger": "order_lcs / protocol_len < 0.8",
+      "severity": "1 − order_lcs/protocol_len",
+      "critical": false,
+      "facts": [
+        {
+          "key": "order_lcs",
+          "kind": "number"
+        },
+        {
+          "key": "protocol_len",
+          "kind": "number"
+        }
+      ],
+      "skill": {
+        "id": "SK-M19",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-GHR-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-GH-ORDER"],
+      "drill_pattern": null,
+      "template_only": true,
+      "templates": {
+        "lacked": {
+          "en": "{{fact:order_lcs}} of the {{fact:protocol_len}} steps were in the right order.",
+          "hi": "{{fact:protocol_len}} में से {{fact:order_lcs}} कदम सही क्रम में थे।"
+        },
+        "could": {
+          "en": "The order is: make the scene safe, call, protect the neck, then care for the person until help arrives.",
+          "hi": "क्रम यह है: जगह सुरक्षित करें, कॉल करें, गर्दन को बचाएँ, फिर मदद आने तक व्यक्ति का ध्यान रखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": true
+    },
+    {
+      "finding_id": "GH_LAW_MYTH",
+      "game_id": "golden_hour",
+      "polarity": "negative",
+      "trigger": "≥ 1 myth item wrong",
+      "severity": "0.2 × wrong",
+      "critical": false,
+      "facts": [
+        {
+          "key": "myths_wrong",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": "SK-M19",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-GHR-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-GH-MYTHS"],
+      "drill_pattern": null,
+      "template_only": true,
+      "templates": {
+        "lacked": {
+          "en": "Myths about helping after a road accident caught you {{fact:myths_wrong}}.",
+          "hi": "सड़क हादसे के बाद मदद से जुड़े मिथकों में आप {{fact:myths_wrong}} उलझे।"
+        },
+        "could": {
+          "en": "Fear of trouble stops many people from helping. Read the myth cards to see what the law says.",
+          "hi": "परेशानी के डर से बहुत लोग मदद नहीं करते। मिथक कार्ड पढ़ें और जानें कि क़ानून क्या कहता है।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": true
+    },
+    {
+      "finding_id": "NG_HIT_UNLIT",
+      "game_id": "night_glare",
+      "polarity": "negative",
+      "trigger": "collision with an unlit hazard",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [
+        {
+          "key": "hazard_type",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M8",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-NGT-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NG-RANGE"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You couldn't stop in time for {{fact:hazard_type}} that had no lights.",
+          "hi": "बिना लाइट वाले {{fact:hazard_type}} के लिए आप समय पर नहीं रुक पाए।"
+        },
+        "could": {
+          "en": "At night, ride at a speed that lets you stop within your headlight beam; unlit things appear late.",
+          "hi": "रात में ऐसी रफ़्तार रखें कि हेडलाइट की रोशनी के भीतर रुक सकें; बिना लाइट की चीज़ें देर से दिखती हैं।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false,
+      "notes": "hazard_type here is the night game's own hazard enum (unlit tractor, dark-clad pedestrian, animal), not the Nazar enum."
+    },
+    {
+      "finding_id": "NG_HIGH_BEAM_ONCOMING",
+      "game_id": "night_glare",
+      "polarity": "negative",
+      "trigger": "high beam inside d_dip",
+      "severity": "min(1, 0.3 × events)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "events",
+          "kind": "times"
+        },
+        {
+          "key": "dist_m",
+          "kind": "metres"
+        }
+      ],
+      "skill": {
+        "id": "SK-M8",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-NGT-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NG-DIP"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your high beam was on for oncoming traffic {{fact:events}}, once as close as {{fact:dist_m}}.",
+          "hi": "सामने से आते ट्रैफ़िक के लिए हाई बीम {{fact:events}} चालू रही, एक बार तो {{fact:dist_m}} की दूरी पर।"
+        },
+        "could": {
+          "en": "Dip to low beam as soon as you see oncoming lights, and when you follow another vehicle.",
+          "hi": "सामने से रोशनी दिखते ही और किसी के पीछे चलते समय लो बीम कर दें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NG_GLARE_NO_LEFT_EDGE",
+      "game_id": "night_glare",
+      "polarity": "negative",
+      "trigger": "glare_hold_pct < 60",
+      "severity": "1 − glare_hold_pct/100",
+      "critical": false,
+      "facts": [
+        {
+          "key": "glare_hold_pct",
+          "kind": "percent"
+        }
+      ],
+      "skill": {
+        "id": "SK-M8",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-NGT-002"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NG-GLARE"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "When dazzled you looked toward the left edge only {{fact:glare_hold_pct}} of the time.",
+          "hi": "चकाचौंध के समय आपने सिर्फ़ {{fact:glare_hold_pct}} समय बाएँ किनारे की ओर देखा।"
+        },
+        "could": {
+          "en": "Look at the left edge line, not into the lights, and ease off until your eyes recover.",
+          "hi": "रोशनी की ओर नहीं, बाएँ किनारे की लाइन की ओर देखें, और आँखें ठीक होने तक धीमे चलें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NG_OUTRIDING_LIGHTS",
+      "game_id": "night_glare",
+      "polarity": "negative",
+      "trigger": "speed above v_max for the beam",
+      "severity": "min(1, over_kmh / 20)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "chosen_kmh",
+          "kind": "kmh"
+        },
+        {
+          "key": "max_safe_kmh",
+          "kind": "kmh"
+        },
+        {
+          "key": "sight_m",
+          "kind": "metres"
+        },
+        {
+          "key": "beam",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-M8",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-NGT-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NG-RANGE"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "On {{fact:beam}} you could see {{fact:sight_m}}, but you rode at {{fact:chosen_kmh}}, above {{fact:max_safe_kmh}}.",
+          "hi": "{{fact:beam}} पर {{fact:sight_m}} दिख रहा था, पर आप {{fact:chosen_kmh}} पर चले, जो {{fact:max_safe_kmh}} से ज़्यादा है।"
+        },
+        "could": {
+          "en": "Match your speed to your lights: if you can see only a short way, ride slowly enough to stop in it.",
+          "hi": "रफ़्तार को रोशनी के हिसाब से रखें: थोड़ी दूर तक दिखे तो इतना धीमे चलें कि उतने में रुक सकें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "NG_FOG_HIGH_BEAM",
+      "game_id": "night_glare",
+      "polarity": "negative",
+      "trigger": "high beam in fog level",
+      "severity": "0.7",
+      "critical": false,
+      "facts": [],
+      "skill": {
+        "id": "SK-M16",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-FOG-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-NG-FOG"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You used high beam in fog.",
+          "hi": "आपने कोहरे में हाई बीम का इस्तेमाल किया।"
+        },
+        "could": {
+          "en": "High beam reflects back off fog. Use low beam, slow down and keep a longer gap.",
+          "hi": "हाई बीम कोहरे से टकराकर वापस चमकती है। लो बीम रखें, धीमे चलें और ज़्यादा फ़ासला रखें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HR_OFF_EDGE",
+      "game_id": "hill_road",
+      "polarity": "negative",
+      "trigger": "left the road edge",
+      "severity": "1.0",
+      "critical": true,
+      "facts": [
+        {
+          "key": "bend_ordinal",
+          "kind": "ordinal"
+        }
+      ],
+      "skill": {
+        "id": "SK-M14",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HIL-002"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HR-GEAR"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You left the road edge at bend {{fact:bend_ordinal}}.",
+          "hi": "मोड़ {{fact:bend_ordinal}} पर आप सड़क के किनारे से बाहर चले गए।"
+        },
+        "could": {
+          "en": "Slow down in a low gear before the bend, not in it, and keep to your side.",
+          "hi": "मोड़ से पहले नीचे के गियर में धीमे हों, मोड़ के अंदर नहीं, और अपनी तरफ़ रहें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HR_BRAKE_FADE",
+      "game_id": "hill_road",
+      "polarity": "negative",
+      "trigger": "brake heat > 0.7 for > 5 s",
+      "severity": "min(1, brake_heat_peak_pct / 100)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "brake_heat_peak_pct",
+          "kind": "percent"
+        },
+        {
+          "key": "gear_low_pct",
+          "kind": "percent"
+        }
+      ],
+      "skill": {
+        "id": "SK-M14",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HIL-002"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HR-GEAR"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your brakes heated up to {{fact:brake_heat_peak_pct}}, and you were in a low gear for {{fact:gear_low_pct}} of the descent.",
+          "hi": "आपके ब्रेक {{fact:brake_heat_peak_pct}} तक गर्म हुए, और ढलान के {{fact:gear_low_pct}} हिस्से में ही आप नीचे के गियर में थे।"
+        },
+        "could": {
+          "en": "On long descents let a low gear hold your speed, and use the brakes in short presses.",
+          "hi": "लंबी ढलान पर नीचे का गियर रफ़्तार संभाले, और ब्रेक थोड़ा-थोड़ा दबाएँ।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HR_NO_YIELD_UPHILL",
+      "game_id": "hill_road",
+      "polarity": "negative",
+      "trigger": "pushed on in a narrow encounter while going downhill",
+      "severity": "0.8",
+      "critical": false,
+      "facts": [
+        {
+          "key": "encounters",
+          "kind": "number"
+        },
+        {
+          "key": "yield_missed",
+          "kind": "number"
+        }
+      ],
+      "skill": {
+        "id": "SK-M14",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HIL-001", "RR-HIL-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HR-YIELD"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Going downhill on narrow stretches, you pushed on {{fact:yield_missed}} of {{fact:encounters}} times.",
+          "hi": "तंग हिस्सों में ढलान उतरते हुए आप {{fact:encounters}} में से {{fact:yield_missed}} बार रुके बिना आगे बढ़ गए।"
+        },
+        "could": {
+          "en": "On a narrow stretch, stop at a widening and let the oncoming vehicle pass.",
+          "hi": "तंग रास्ते पर चौड़ी जगह पर रुकें और सामने के वाहन को निकलने दें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false,
+      "notes": "RR-HIL-001 (uphill priority, law) is verified=false; the spec's fallback RR-HIL-003 is listed. Templates use only the practice wording (wait at a widening)."
+    },
+    {
+      "finding_id": "HR_BEND_OVERTAKE",
+      "game_id": "hill_road",
+      "polarity": "negative",
+      "trigger": "overtook on a bend",
+      "severity": "0.8",
+      "critical": false,
+      "facts": [
+        {
+          "key": "bend_overtakes",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": "SK-M14",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HIL-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HR-BENDS"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You overtook on a bend {{fact:bend_overtakes}}.",
+          "hi": "आपने मोड़ पर {{fact:bend_overtakes}} ओवरटेक किया।"
+        },
+        "could": {
+          "en": "Overtake only on a straight stretch where you can see the road clear ahead.",
+          "hi": "सिर्फ़ सीधे हिस्से पर ओवरटेक करें, जहाँ आगे सड़क साफ़ दिखे।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HR_NO_HORN_BLIND",
+      "game_id": "hill_road",
+      "polarity": "negative",
+      "trigger": "missed horn at ≥ 1 blind bend",
+      "severity": "0.2 × horn_missed",
+      "critical": false,
+      "facts": [
+        {
+          "key": "horn_missed",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": "SK-M14",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-HIL-003"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HR-BENDS"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You didn't sound the horn at a blind bend {{fact:horn_missed}}.",
+          "hi": "अंधे मोड़ पर आपने {{fact:horn_missed}} हॉर्न नहीं दिया।"
+        },
+        "could": {
+          "en": "A short horn before a blind bend tells oncoming traffic you are there.",
+          "hi": "अंधे मोड़ से पहले छोटा हॉर्न सामने वालों को बताता है कि आप आ रहे हैं।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HR_STOP_UNDER_SLOPE",
+      "game_id": "hill_road",
+      "polarity": "negative",
+      "trigger": "stopped in a shooting-stone zone",
+      "severity": "0.7",
+      "critical": false,
+      "facts": [],
+      "skill": {
+        "id": "SK-M15",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-LSD-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HR-TRIP"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You stopped in a stretch marked for shooting stones.",
+          "hi": "आप गिरते पत्थरों वाले हिस्से में रुके।"
+        },
+        "could": {
+          "en": "Keep moving through loose-slope stretches and stop only where the slope is stable.",
+          "hi": "ढीली ढलान वाले हिस्से से चलते हुए निकलें और वहीं रुकें जहाँ ढलान स्थिर हो।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "HR_TRIP_PLAN_GAP",
+      "game_id": "hill_road",
+      "polarity": "negative",
+      "trigger": "trip plan < 15",
+      "severity": "(15 − trip_plan_score)/15",
+      "critical": false,
+      "facts": [
+        {
+          "key": "trip_plan_parts",
+          "kind": "enum_list"
+        }
+      ],
+      "skill": {
+        "id": "SK-M15",
+        "resolution": "fixed"
+      },
+      "rule_ids": ["RR-LSD-001"],
+      "rule_resolution": "fixed",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-HR-TRIP"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your trip plan missed some parts: {{fact:trip_plan_parts}}.",
+          "hi": "आपकी सफ़र की योजना में कुछ हिस्से छूटे: {{fact:trip_plan_parts}}।"
+        },
+        "could": {
+          "en": "Before a hill trip, check the J&K Traffic Police road status and plan your stops.",
+          "hi": "पहाड़ी सफ़र से पहले J&K ट्रैफ़िक पुलिस से सड़क की स्थिति देखें और रुकने की जगहें तय करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "LL_OVERCONFIDENT",
+      "game_id": "ll_sim",
+      "polarity": "negative",
+      "trigger": "wrong_at_100 ≥ 3 in the last 40 answers, or overconfidence > 0.15",
+      "severity": "min(1, 0.4 + 0.1 × wrong_at_100)",
+      "critical": false,
+      "facts": [
+        {
+          "key": "wrong_at_100",
+          "kind": "times"
+        },
+        {
+          "key": "brier",
+          "kind": "ratio"
+        },
+        {
+          "key": "overconfidence",
+          "kind": "ratio"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "calibration"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-LL-CALIB"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You were fully sure and wrong {{fact:wrong_at_100}}.",
+          "hi": "आप पूरे यक़ीन के साथ {{fact:wrong_at_100}} ग़लत थे।"
+        },
+        "could": {
+          "en": "Before you choose full confidence, pause and read the symbol, not just the shape.",
+          "hi": "पूरा भरोसा चुनने से पहले रुकें और सिर्फ़ आकार नहीं, निशान भी पढ़ें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "LL_WEAK_TOPIC",
+      "game_id": "ll_sim",
+      "polarity": "negative",
+      "trigger": "any LL topic mastery < 0.6",
+      "severity": "1 − M_t",
+      "critical": false,
+      "facts": [
+        {
+          "key": "topic",
+          "kind": "enum"
+        },
+        {
+          "key": "mastery_pct",
+          "kind": "percent"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "per_topic"
+      },
+      "rule_ids": [
+        "RR-ACC-001",
+        "RR-ALC-001",
+        "RR-BLT-001",
+        "RR-DOC-001",
+        "RR-FOG-001",
+        "RR-FOL-001",
+        "RR-GHR-001",
+        "RR-GHR-002",
+        "RR-HIL-001",
+        "RR-HIL-002",
+        "RR-HIL-003",
+        "RR-HLM-001",
+        "RR-HVY-002",
+        "RR-JCT-001",
+        "RR-JCT-002",
+        "RR-LLC-001",
+        "RR-LSD-001",
+        "RR-NGT-001",
+        "RR-NGT-002",
+        "RR-PED-001",
+        "RR-PHN-001",
+        "RR-SPD-001",
+        "RR-SPD-002",
+        "RR-U18-001",
+        "RR-WRG-001"
+      ],
+      "rule_resolution": "per_topic",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": {
+        "template": "DR-LL-TOPIC-{topic}",
+        "fact_key": "topic"
+      },
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your mastery of {{fact:topic}} is at {{fact:mastery_pct}} for now.",
+          "hi": "{{fact:topic}} में आपकी पकड़ अभी {{fact:mastery_pct}} है।"
+        },
+        "could": {
+          "en": "A few short review sessions on this topic, spread over the week, will lift it.",
+          "hi": "इस विषय पर हफ़्ते भर में थोड़े-थोड़े रिवीज़न से पकड़ मज़बूत होगी।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "LL_SIGN_FAMILY_CONFUSION",
+      "game_id": "ll_sim",
+      "polarity": "negative",
+      "trigger": "≥ 2 wrong in the same sign family",
+      "severity": "0.3 + 0.15 × wrong",
+      "critical": false,
+      "facts": [
+        {
+          "key": "sign_family",
+          "kind": "enum"
+        },
+        {
+          "key": "wrong",
+          "kind": "times"
+        }
+      ],
+      "skill": {
+        "id": "SK-LL1",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "per_sign_family",
+      "rulepack_refs": [],
+      "drill_ids": [],
+      "drill_pattern": {
+        "template": "DR-LL-SIGNS-{sign_family}",
+        "fact_key": "sign_family"
+      },
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You mixed up {{fact:sign_family}} {{fact:wrong}}.",
+          "hi": "{{fact:sign_family}} में आपसे {{fact:wrong}} गड़बड़ हुई।"
+        },
+        "could": {
+          "en": "Pause on each sign and read the symbol inside, not just the shape and colour.",
+          "hi": "हर संकेत पर रुकें: सिर्फ़ आकार और रंग नहीं, अंदर का निशान पढ़ें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false,
+      "notes": "Rules are the SIGN-* entries of the family (catalogue/signs.json), not RR rows."
+    },
+    {
+      "finding_id": "LL_TIMEOUTS",
+      "game_id": "ll_sim",
+      "polarity": "negative",
+      "trigger": "≥ 2 timeouts",
+      "severity": "0.2 × timeouts",
+      "critical": false,
+      "facts": [
+        {
+          "key": "timeouts",
+          "kind": "times"
+        },
+        {
+          "key": "per_q_timer_s",
+          "kind": "seconds"
+        }
+      ],
+      "skill": {
+        "id": "SK-LL0",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "LLT-<state>",
+          "row_pattern": "{STATE}-PRM-LL-FORMAT",
+          "fallback_row": "PRM-LL-FORMAT"
+        }
+      ],
+      "drill_ids": ["DR-LL-MOCK"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Time ran out on a question {{fact:timeouts}}; each question allowed {{fact:per_q_timer_s}}.",
+          "hi": "सवाल का समय {{fact:timeouts}} ख़त्म हुआ; हर सवाल के लिए {{fact:per_q_timer_s}} थे।"
+        },
+        "could": {
+          "en": "Answer what you know first and keep moving; read the options once, then decide.",
+          "hi": "जो आता है पहले उसका जवाब दें और आगे बढ़ते रहें; विकल्प एक बार पढ़ें, फिर तय करें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "LL_MOCK_BELOW_PASS",
+      "game_id": "ll_sim",
+      "polarity": "negative",
+      "trigger": "mock correct < pass",
+      "severity": "0.6",
+      "critical": false,
+      "facts": [
+        {
+          "key": "correct",
+          "kind": "number"
+        },
+        {
+          "key": "total",
+          "kind": "number"
+        },
+        {
+          "key": "pass_mark",
+          "kind": "number"
+        },
+        {
+          "key": "format_source",
+          "kind": "enum"
+        }
+      ],
+      "skill": {
+        "id": "SK-LL0",
+        "resolution": "fixed"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [
+        {
+          "spec_ref": "LLT-<state>",
+          "row_pattern": "{STATE}-PRM-LL-FORMAT",
+          "fallback_row": "PRM-LL-FORMAT"
+        }
+      ],
+      "drill_ids": ["DR-LL-MOCK"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "You got {{fact:correct}} of {{fact:total}} right; this format needs {{fact:pass_mark}} to pass.",
+          "hi": "आपके {{fact:total}} में से {{fact:correct}} सही रहे; इस फ़ॉर्मैट में पास होने के लिए {{fact:pass_mark}} चाहिए।"
+        },
+        "could": {
+          "en": "Practise the weak topics below, then take a fresh mock with questions you haven't seen.",
+          "hi": "नीचे के कमज़ोर विषयों का अभ्यास करें, फिर नए सवालों वाला नया मॉक दें।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false
+    },
+    {
+      "finding_id": "LL_UNDERCONFIDENT",
+      "game_id": "ll_sim",
+      "polarity": "positive",
+      "trigger": "accuracy at 50% confidence ≥ 0.85 over ≥ 10",
+      "severity": "0.2",
+      "critical": false,
+      "facts": [
+        {
+          "key": "accuracy_pct_50",
+          "kind": "percent"
+        }
+      ],
+      "skill": {
+        "id": null,
+        "resolution": "calibration"
+      },
+      "rule_ids": [],
+      "rule_resolution": "none",
+      "rulepack_refs": [],
+      "drill_ids": ["DR-LL-CALIB"],
+      "drill_pattern": null,
+      "template_only": false,
+      "templates": {
+        "lacked": {
+          "en": "Your low-confidence answers were right {{fact:accuracy_pct_50}} of the time.",
+          "hi": "कम भरोसे वाले आपके जवाब {{fact:accuracy_pct_50}} बार सही थे।"
+        },
+        "could": {
+          "en": "When you have a reason for your answer, it's fine to pick a higher confidence.",
+          "hi": "जब जवाब की कोई वजह हो, तो ज़्यादा भरोसा चुनना ठीक है।"
+        },
+        "how": {
+          "en": "When you were unsure, you were still right {{fact:accuracy_pct_50}} of the time. You know more than you think.",
+          "hi": "जब आप पक्के नहीं थे, तब भी {{fact:accuracy_pct_50}} बार सही थे। आप जितना सोचते हैं, उससे ज़्यादा जानते हैं।"
+        }
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review",
+      "medical_review_required": false,
+      "notes": "Positive framing (DEBRIEF_SPEC §5.1 step 6 lists it as a positive detector) but it also has a severity and a drill, so it carries lacked/could templates as well as how."
+    }
+  ]
+}

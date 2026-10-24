@@ -1,6 +1,6 @@
 # ADR-0004: Phaser 4 + `@margdarshak/game-core` with server replay
 > Project: Margdarshak · Owner: Games lead · Status: Accepted · Date: 2026-10-23
-> Related: [Architecture §6, §10.4](../ARCHITECTURE.md) · [Backend §9](../BACKEND.md) · [Tech stack §3](../TECH_STACK.md) · ADR-0002 · ADR-0003
+> Related: [Architecture §6, §10.4](../ARCHITECTURE.md) · [Backend §9](../BACKEND.md) · [Tech stack §3](../TECH_STACK.md) · ADR-0011 (supersedes ADR-0002) · ADR-0003
 
 ## Context and problem statement
 The game layer (F-23 Nazar, F-24 simulations, F-25 debrief, F-26 gamification) must: run at 60 fps (30 fps fallback) on low-end Android; work offline; be accessible (no-audio, tap-only, screen-reader alternatives); and produce **scores that cannot be faked**, because scores feed share cards, the Practice Record, squad scores and the field study (D-22). The council requires deterministic scoring by code, with Gemini only narrating (D-09, D-11).
@@ -13,7 +13,7 @@ The game layer (F-23 Nazar, F-24 simulations, F-25 debrief, F-26 gamification) m
 
 ## Considered options
 1. **Phaser 4.2.1 for top-down sims + HTML video/SVG/React for Nazar and decision games; scoring in a pure TS package `@margdarshak/game-core`; a stateless Node score verifier replays every session and overwrites the client score.**
-2. Same engines, but re-implement scoring in Python on the API for verification.
+2. Same engines, but re-implement scoring in the backend language (now Go, ADR-0011) on the API for verification.
 3. Trust client scores; detect cheating heuristically.
 4. PixiJS 8 or KAPLAY instead of Phaser; or Three.js/R3F 3D.
 

@@ -1,0 +1,180 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M8",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Night riding and glare",
+    "hi": "रात में चलाना और चकाचौंध"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Lessons + Nazar night clips; G8 storyboard",
+  "skill_id": "SK-M8",
+  "game_ids": ["night_glare", "nazar"],
+  "drill_ids": ["DR-NG-DIP", "DR-NG-GLARE", "DR-NG-RANGE", "DR-NG-FOG"],
+  "rule_ids": ["RR-NGT-001", "RR-NGT-002", "RR-NGT-003"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M8-1",
+      "text": {
+        "en": "Dip the beam for oncoming traffic and when following.",
+        "hi": "सामने से आते ट्रैफ़िक के लिए और पीछे चलते समय बीम डिप करें।"
+      }
+    },
+    {
+      "id": "LO-M8-2",
+      "text": {
+        "en": "When dazzled, look to the left edge and slow down.",
+        "hi": "चकाचौंध होने पर बाएँ किनारे की ओर देखें और धीमे हों।"
+      }
+    },
+    {
+      "id": "LO-M8-3",
+      "text": {
+        "en": "Keep within the stopping distance of your lights.",
+        "hi": "अपनी लाइट की पहुँच के भीतर रुक सकने वाली रफ़्तार रखें।"
+      }
+    },
+    {
+      "id": "LO-M8-4",
+      "text": {
+        "en": "Be visible (reflective gear) and spot unlit tractors, dark-clad pedestrians and animals.",
+        "hi": "दिखाई दें (रिफ़्लेक्टिव गियर) और बिना लाइट के ट्रैक्टर, गहरे कपड़ों वाले पैदल यात्री और जानवर पहचानें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M8-1",
+      "title": {
+        "en": "Your lights are your sight distance",
+        "hi": "आपकी लाइट ही आपकी देखने की दूरी है"
+      }
+    },
+    {
+      "id": "LS-M8-2",
+      "title": {
+        "en": "Glare: left edge, slow",
+        "hi": "चकाचौंध: बायाँ किनारा, धीमे"
+      }
+    },
+    {
+      "id": "LS-M8-3",
+      "title": {
+        "en": "Things you won't see until late",
+        "hi": "चीज़ें जो देर से दिखती हैं"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M8-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Night (18:00–06:00) accounted for 42.1% of road accidents in 2023 and 42.5% in 2024; 18:00–21:00 is the single peak (20.8%).",
+        "hi": "रात (18:00–06:00) में 2023 में 42.1% और 2024 में 42.5% सड़क हादसे हुए; 18:00–21:00 सबसे ज़्यादा हादसों का समय है (20.8%)।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 7.3 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "MoRTH, Road Accidents in India 2024 (RAI24), Table 7.3 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M8-2",
+      "kind": "evidence",
+      "text": {
+        "en": "J&K's night share is lower (28.5%) because hill traffic runs mostly in daylight; Punjab's is 43.1%.",
+        "hi": "J&K में रात का हिस्सा कम (28.5%) है क्योंकि पहाड़ी ट्रैफ़िक ज़्यादातर दिन में चलता है; पंजाब में यह 43.1% है।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Annex 42 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M8-3",
+      "kind": "law",
+      "text": {
+        "en": "Dip headlights for oncoming traffic and when following.",
+        "hi": "सामने से आते ट्रैफ़िक के लिए और पीछे चलते समय हेडलाइट डिप करें।"
+      },
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017 (gazette text not fetched; regulation no. to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-NGT-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M8-1",
+      "myth": {
+        "en": "High beam is always better at night.",
+        "hi": "रात में हाई बीम हमेशा बेहतर है।"
+      },
+      "correction": {
+        "en": "High beam dazzles oncoming drivers and those ahead; dip it for them.",
+        "hi": "हाई बीम सामने और आगे वाले ड्राइवरों की आँखें चौंधियाती है; उनके लिए डिप करें।"
+      },
+      "rule_id": "RR-NGT-001"
+    }
+  ],
+  "concepts": {
+    "target": 6,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G8 mastered (Night Ready badge) or, in Phase 1–2, night-tagged Nazar types ≥ 0.8.",
+      "hi": "G8 में महारत (नाइट रेडी बैज) या, फ़ेज़ 1–2 में, रात वाले नज़र ख़तरे ≥ 0.8।"
+    },
+    "readiness": "road",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Photosensitivity review of glare effects (WCAG 2.3.1, ≤ 3 flashes per second)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

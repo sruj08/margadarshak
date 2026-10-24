@@ -47,7 +47,7 @@
 | **Blended cost per MAU** | **≈ ₹6 (Y1), ₹7 (Y2), ₹5 (Y3 after optimisation)** | Levers in §2.4 |
 | **Cost to serve one full licence journey** (≈ 4 active months, LL to card) | **≈ ₹24–28** | vs an agent's ₹2,000–20,000 (`00-JOURNEY-MAP` row 15) and the government fee of ₹700 + ₹200 card for one class (CMVR r.32) |
 
-Under-18 users (P-07) use rules-only features, so their AI and telemetry cost is zero (D-13).
+Learners under 18 (P-07) use the full product, AI included, in family mode; they cost the same as any MAU and are inside the blended figure above (D-13 revised).
 
 ### 2.3 State tenant (B2G)
 | Item | Implementation (one-time) | Annual support + ops |
@@ -169,6 +169,6 @@ Not relevant to us: BIRAC (biotech) and iDEX (defence).
 ## 7. Hackathon build (Phase 1–2) vs Production (Phase 3+)
 | | Hackathon | Production |
 |---|---|---|
-| Spend | Render ($50 credit/participant; Workflows billed per second, no charge when idle, B-sponsors §1), Gemini paid tier for real field-study users (D-13), n8n Pro (sponsor), Meta WhatsApp test number | Per §3.2 |
+| Spend | Render ($50 credit/participant; Workflows billed per second, no charge when idle, B-sponsors §1), Gemini paid tier for real field-study users (D-13 revised), n8n Pro (sponsor), Meta WhatsApp test number | Per §3.2 |
 | Revenue | None | Per §3.1 |
 | Metrics on stage | Cost per Nazar session and per debrief, measured from Render and Gemini usage during the event | Monthly cost per MAU on the dashboard (`docs/05-ops/COST.md`) |

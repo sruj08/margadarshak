@@ -1,0 +1,142 @@
+{
+  "cases": [
+    {
+      "id": "P-01-kabir-bike-jk",
+      "description": "US-010: Kabir, 19, bike with gears, J&K: MCWG, 1 RTO visit, Rs 700 + Rs 200 card, no warnings",
+      "refs": ["P-01", "F-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2007-03-14",
+        "dob_precision": "day",
+        "vehicles": ["bike_gear"],
+        "aadhaar_address_matches_residence": true
+      },
+      "expect": {
+        "age": { "years_min": 19, "band": "18_19" },
+        "classes": [{ "class_code": "MCWG", "eligible": true, "content_depth": "deep" }],
+        "max_rto_visits": 1,
+        "earliest_dates": {
+          "ll_issue": "2026-10-23",
+          "dl_test_unlock": "2026-11-22",
+          "earliest_licence": "2026-11-22"
+        },
+        "fees": { "subtotal_govt_fee_paise": 70000, "total_paise": 90000 },
+        "blockers": [],
+        "warnings": [],
+        "documents": {
+          "$includes": [
+            { "doc_id": "proof_of_age_and_address" },
+            { "doc_id": "photo_and_signature" }
+          ]
+        },
+        "recommended_path": "aadhaar_contactless",
+        "family_mode_required": false
+      }
+    },
+    {
+      "id": "P-01-kabir-bike-and-car",
+      "description": "US-015: Kabir adds the car: MCWG + LMV-NT on one LL, extra 45000 for the second class",
+      "refs": ["P-01", "F-03", "EC-21"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2007-03-14",
+        "vehicles": ["bike_gear", "car"]
+      },
+      "expect": {
+        "bundles": [{ "classes": ["MCWG", "LMV-NT"], "rule_ids": ["PLN-ONE-LL-MANY-CLASSES"] }],
+        "fees": { "subtotal_govt_fee_paise": 115000, "total_paise": 135000 },
+        "saving": {
+          "applications_saved": 1,
+          "wait_days_saved": 30,
+          "rule_ids": ["PLN-ONE-LL-MANY-CLASSES", "PLN-SAVING-IF-SEQUENTIAL"]
+        }
+      }
+    },
+    {
+      "id": "P-02-tanvi-migrant",
+      "description": "Tanvi, 19, scooter, Aadhaar in Kathua, no relation line, no vehicle: MCWOG plus blockers",
+      "refs": ["P-02", "EC-02", "EC-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2007-07-07",
+        "vehicles": ["scooter"],
+        "aadhaar_address_matches_residence": false,
+        "aadhaar_has_relation_line": false,
+        "has_test_vehicle": false
+      },
+      "expect": {
+        "classes": [{ "class_code": "MCWOG", "eligible": true }],
+        "warnings": [
+          { "rule_id": "JK-B02" },
+          { "rule_id": "JK-B03" },
+          { "rule_id": "JK-B09", "fix_key": "fix.arrange_test_vehicle" }
+        ],
+        "recommended_path": "non_aadhaar",
+        "max_rto_visits": 2,
+        "notices": { "$includes": [{ "rule_id": "JK-B01" }] }
+      }
+    },
+    {
+      "id": "P-03-mohanji-car-52",
+      "description": "Mohan-ji, 52, car: Form 1A up front, LL test at the RTO",
+      "refs": ["P-03", "EC-04"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "1974-02-11", "vehicles": ["car"] },
+      "expect": {
+        "blockers": [{ "rule_id": "JK-B04" }],
+        "age": { "years_min": 52, "band": "40_plus" },
+        "ll_test": { "mode": "rto" },
+        "max_rto_visits": 2
+      }
+    },
+    {
+      "id": "P-04-helper-no-laptop",
+      "description": "Helper at a cyber cafe for an applicant without a laptop/webcam or linked mobile: J&K suggests a CSC",
+      "refs": ["P-04", "F-04"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "1999-12-12",
+        "vehicles": ["scooter"],
+        "home_test_device": false,
+        "aadhaar_mobile_linked": false
+      },
+      "expect": {
+        "warnings": [{ "rule_id": "JK-B05" }, { "rule_id": "JK-B06", "fix_key": "fix.jk.use_csc" }],
+        "recommended_path": "non_aadhaar"
+      }
+    },
+    {
+      "id": "P-05-kerala-school-student",
+      "description": "Driving-school student in Kerala testing in Jan 2027: HPT applies, LL at the RTO",
+      "refs": ["P-05", "EC-10", "EC-28"],
+      "input": { "as_of": "2026-12-20", "state": "KL", "dob": "2005-01-01", "vehicles": ["car"] },
+      "expect": {
+        "hpt": { "applies": true },
+        "earliest_dates": { "dl_test_unlock": "2027-01-19" },
+        "max_rto_visits": 2,
+        "steps": { "$includes": [{ "key": "dl.hpt" }] }
+      }
+    },
+    {
+      "id": "P-07-rahul-17",
+      "description": "US-020: Rahul, 17, 50 cc moped on his parent's phone: MC50CC with guardian consent; 18th-birthday warning date",
+      "refs": ["P-07", "EC-05", "EC-17"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2009-02-20",
+        "vehicles": ["scooter_50cc"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "MC50CC", "eligible": true, "requires": ["GUARDIAN_CONSENT"] }],
+        "family_mode_required": true,
+        "warnings": [{ "rule_id": "WRN-U18-MC50-ONLY", "due_on": "2027-02-20" }],
+        "documents": { "$includes": [{ "doc_id": "guardian_consent", "required": true }] },
+        "notices": { "$includes": [{ "rule_id": "JK-B01" }, { "rule_id": "NTC-FAMILY-MODE" }] }
+      }
+    }
+  ]
+}

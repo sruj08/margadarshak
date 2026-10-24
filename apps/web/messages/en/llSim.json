@@ -1,0 +1,105 @@
+{
+  "title": "LL test simulator",
+  "back": "Practise",
+  "label": "Practice and familiarisation, not certification.",
+  "states": {
+    "JK": "Jammu & Kashmir",
+    "DL": "Delhi",
+    "KL": "Kerala",
+    "PB": "Punjab",
+    "MH": "Maharashtra",
+    "TN": "Tamil Nadu"
+  },
+  "format": {
+    "stateLabel": "State",
+    "for": "Format for {state}",
+    "line": "{q} questions, {p} to pass.",
+    "unknownTitle": "Format not confirmed for {state}",
+    "unknown": "Format not confirmed for {state}. Using {q} questions, {p} to pass, as a practice format.",
+    "timer": "{s} s per question",
+    "source": "Source: {s}",
+    "checked": "checked {date}",
+    "confidence": "Confidence: {c}",
+    "conf": { "high": "high", "medium": "medium", "low": "low" },
+    "disagree": "Sources disagree on the format in some states. Check at your RTO.",
+    "rto": "In {state} the LL test is taken at the RTO. This practice uses the same question style; the screen there may look different.",
+    "guided": "Take the guided run ({min} min)",
+    "start": "Start the exam",
+    "practice": "Practise with feedback",
+    "yourMocks": "Your mocks: {list}",
+    "deviceNote": "Without the server, a practice exam uses practice questions and is scored on this phone as a practice result."
+  },
+  "exam": {
+    "title": "LL practice exam",
+    "loading": "Getting your questions ready",
+    "q": "Question {i} of {n}",
+    "next": "Next",
+    "submit": "Submit",
+    "secondsLeft": "{s} seconds left"
+  },
+  "guided": {
+    "title": "Guided run",
+    "count": "Tip {i} of {n}",
+    "next": "Next tip",
+    "finish": "Got it, start a practice exam",
+    "skip": "Skip tour",
+    "timerSample": "0:28",
+    "sampleStem": "What does this sign mean?",
+    "sampleA": "Stop",
+    "sampleB": "Give way",
+    "tips": {
+      "timer": {
+        "title": "The timer",
+        "body": "Some states time each question. When the timer reaches 0 the test moves on by itself. Your state's format says if there is one."
+      },
+      "pick": {
+        "title": "Pick and change an answer",
+        "body": "Tap an answer to pick it. To change it, tap another one before you press Next."
+      },
+      "next": {
+        "title": "Next and Submit",
+        "body": "Next takes you to the next question. On the last question the button says Submit, which ends the test."
+      },
+      "timeout": {
+        "title": "If time runs out",
+        "body": "When a question's time runs out, the test moves to the next question and that question counts as blank."
+      },
+      "result": {
+        "title": "The result",
+        "body": "At the end you see your score and the pass mark, then the questions to practise."
+      },
+      "device": {
+        "title": "The device check",
+        "body": "On the real test site, a camera check runs before the test. That happens on Sarathi, not here: this simulator never uses your camera. Keep the camera on there and don't refresh the page."
+      }
+    }
+  },
+  "result": {
+    "title": "Practice exam result",
+    "passMark": "Pass mark: {p}",
+    "passed": "Passed",
+    "not": "Not this time: {r} / {n}. Pass mark {p}.",
+    "provisional": "Practice result scored on this phone. It counts for practice only.",
+    "details": "See your answers",
+    "guess": "How many did you think you got?",
+    "guessNote": "You thought {g}, you got {r}. Noticing the gap is how calibration improves.",
+    "wrongBy": "Wrong answers, by sign family",
+    "youChose": "You chose: {a}",
+    "noAnswer": "No answer given",
+    "answer": "Answer: {a}",
+    "colour": "If you have a colour-vision condition, see what the medical rules say in Help.",
+    "practise": "Practise these {n}",
+    "again": "Take another exam",
+    "readiness": "See your readiness",
+    "missing": "This result isn't on this phone.",
+    "label": "Practice and familiarisation, not certification."
+  },
+  "family": {
+    "MANDATORY": "Mandatory signs",
+    "CAUTIONARY": "Cautionary signs",
+    "INFORMATORY": "Informatory signs",
+    "MARKINGS": "Road markings",
+    "SIGNALS": "Traffic lights",
+    "OTHER": "Rules and duties"
+  }
+}

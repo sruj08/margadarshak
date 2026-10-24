@@ -1,0 +1,194 @@
+# Rule-pack changelog
+
+All notable changes to Margdarshak's rule packs (`rulepacks/`) are recorded here, newest at the top. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions are CalVer `YYYY.MM.n` per pack (MD-028).
+
+The `/rules/changes` page renders from this file and every source chip links here (MD-035, D-05). Each entry gives the date, the reason and the source. Every plan and case records `rule_pack.version` and `rule_pack.hash`, so a decision made under an older version can be detected and reproduced (EC-27).
+
+Grades: **OBS** observed on the live portal · **P** primary (statute, court, government) · **P-state** state transport department · **S** secondary (news, guides) · **MK** model knowledge, not re-verified · **unknown**. A row with **Verified = no** shows a "verify at your RTO" chip, and AI allowlists never include it.
+
+## [2026.10.0] - 2026-10-23
+
+Status: **draft**. The initial seeded version of every pack. It needs PD + BE maker-checker sign-off by hand before it is published (MD-030, until MD-511).
+
+### Added
+- **IN-base@2026.10.0**: central base pack (MV Act 1988 as amended in 2019, CMVR 1989).
+  - LL test mode, default LL format, tutorial window (7 days), minimum wait (30 days), LL validity (6 months), retest gap (7 days, unverified), remedial training after a fail, Form 1A age (40), DL-test format (unknown), HPT (none).
+  - Eligibility per class, with route rules (no online LL, age 40+, Divyang, foreign licence) and the planner rules.
+  - Documents, plus blocker, warning and notice rows for EC-01..EC-07, EC-10, EC-12, EC-13 and EC-21.
+- **JK@2026.10.0**: Jammu & Kashmir v1, full.
+  - Blockers JK-B01..JK-B10:
+    - B01 class vs vehicle
+    - B02 Aadhaar address mismatch
+    - B03 relation line blank
+    - B04 Form 1A at 40+
+    - B05 Aadhaar-linked mobile
+    - B06 home-test device / CSC
+    - B07 Divyang rights card
+    - B08 photo can't be replaced
+    - B09 test vehicle papers
+    - B10 year-only DOB
+  - LL test: 10 questions, 6 to pass (Kashmir Life, Dec 2025; medium confidence, unverified). Taken online at home or at a CSC.
+  - Tracks: S-track / 8-track in Kashmir.
+  - DigiLocker equivalence and the 3-SMS approval pattern.
+  - PSGA timelines recorded as unknown.
+  - Office stubs: RTO Jammu, RTO Kashmir, ARTO Kathua, CSCs.
+- **DL, KL, MH, TN, PB@2026.10.0**: partial packs, each labelled "partial: verify at your RTO" (MD-031).
+  - Kerala: no online LL test since 2022 (EC-10). HPT announced from 1 Dec 2026, with a `status` field (announced / in_force / stayed / postponed) for EC-28.
+  - Tamil Nadu: RTO approval for applicants over 40.
+  - Delhi, Punjab and Tamil Nadu: automated tracks.
+  - Maharashtra: at-home LL test and manual tests.
+  - Punjab: faceless services and LL extension.
+- **fees.json@2026.10.0**: CMVR r.32 in integer paise.
+  - Per class: LL 15000 and driving test 30000.
+  - Per application: LL test 5000, DL issue 20000 and smart card 20000.
+  - Retests: LL 5000 and DL 30000.
+  - One class = 70000 + 20000 card. Each extra class adds 45000.
+  - J&K Rs 1,050 slot-booking payment (incl. Rs 50 postage) shown as reported (verified = no). It is never added to totals.
+- **classes.json@2026.10.0**: all 12 classes.
+  - The classes: MC50CC, MCWOG, MCWG, LMV-NT, LMV-TR, E-RICKSHAW, E-CART, MGV, HGMV, HPMV, HTV and ADAPTED.
+  - Each class has picture keys, minimum age, Form 1A trigger and content depth.
+  - Transport prerequisites (1 year on LMV, 8th pass) are flagged unverified (D-25).
+
+### Open conflicts recorded in this version
+- **Kerala online LL**: the 2022 reports say it was scrapped. The Sarathi Kerala modal (observed 2026-10-22) lists "Issue of LL" as faceless. The pack keeps `onlineAvailable: false` with verified = no.
+- **Form 1A age**: sources say "over 40". The engine applies it from the 40th birthday (age 40 or more), as in EDGE_CASES EC-04 and 03-lifecycle.
+- **Year-only DOB**: Sarathi may store 1 Jan. The engine uses 31 Dec for eligibility, so the applicant is never shown as older than they are, and 1 Jan for upper limits (Form 1A). This follows BACKEND §4.3 and EDGE_CASES EC-01. USER_STORIES US-016 says "computed from 1 January" and should be aligned.
+- **E-rickshaw / e-cart**: Delhi lists them at 18 with Form 1A. Whether they count as transport is unverified.
+
+### Every row in this version
+
+| Pack | Rule ID | What | Grade | Confidence | Verified | Checked on | Source |
+|---|---|---|---|---|---|---|---|
+| IN-base | `PRM-LL-TEST-MODE` | param | S | medium | yes | 2026-10-22 | [MoRTH contactless services (18 services incl. LL with online test) in effect from 3 Mar 2021](https://www.motorbeam.com/?p=275090) |
+| IN-base | `PRM-LL-FORMAT` | param | MK | low | **no** | 2026-10-22 | [Delhi Transport LL page (60% pass mark); 15/9 Sarathi default [MK, unverified]](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `PRM-TUTORIAL-DAYS` | param | S | medium | yes | 2026-10-22 | [CMVR (Sixteenth Amendment) Rules 2022, r.11 online tutorial](https://teamleaseregtech.com/updates/article/19226/central-motor-vehicles-sixteenth-amendment-rules-2022) |
+| IN-base | `PRM-MIN-WAIT-DAYS` | param | S | medium | yes | 2026-10-22 | [Kashmir Life Dec 2025 (J&K) and South First (Kerala): 30 days after LL; CMVR [MK]](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| IN-base | `PRM-LL-VALIDITY-MONTHS` | param | P-state | high | yes | 2026-10-22 | [Delhi Transport, Learner's Licence page: LL validity 6 months](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `PRM-RETEST-GAP-DAYS` | param | S | low | **no** | 2026-10-22 | [Sarathi appointment notices (secondary, low reliability); CMVR r.15 [MK] - check on Sarathi](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `PRM-REMEDIAL-AFTER-FAIL` | param | P | medium | yes | 2026-10-23 | [MV (Amendment) Bill 2019 cl.5(iv), s.9 proviso (PRS text)](https://prsindia.org/files/bills_acts/bills_parliament/2019/Motor%20Vehicles%20(Amendment)%20Bill,%202019.pdf) |
+| IN-base | `PRM-FORM1A-AGE` | param | P-state | medium | yes | 2026-10-22 | [Delhi Transport LL page and TN STA contactless LL flow (2022): Form 1A for applicants over 40](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `PRM-DL-TEST` | param | unknown | low | **no** | 2026-10-22 | [CMVR r.15 driving test; test conduct is set by each state [MK]](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `PRM-HPT` | param | MK | medium | yes | 2026-10-22 | [CMVR 1989 r.11 and r.15 contain no hazard-perception test [MK]](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `PLN-ONE-LL-MANY-CLASSES` | planner | P-state | high | yes | 2026-10-22 | [Delhi Transport LL page: LL-stage totals Rs 500 / 950 / 1,400 for 1 / 2 / 3 classes](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `PLN-SPLIT-BY-AGE` | planner | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4 minimum ages per class [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `PLN-SAVING-IF-SEQUENTIAL` | planner | S | low | **no** | 2026-10-22 | [CMVR 1989 r.32 per-application fee heads (LL test, DL issue, card); fee for adding a class later is [MK]](https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf) |
+| IN-base | `PLN-NON-AADHAAR-AT-RTO` | planner | P-state | medium | yes | 2026-10-22 | [TN STA contactless LL flow (2022); udayavani on non-Aadhaar route](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `ELIG-MIN-AGE` | eligibility | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4 [MK]; Delhi Transport class table (16 / 18 / 20)](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `ELIG-GUARDIAN-CONSENT` | eligibility | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(2) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `ELIG-U18-ALTERNATIVE-MC50` | eligibility | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(2) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `ELIG-FORM1A-ALWAYS` | eligibility | P-state | medium | yes | 2026-10-22 | [Delhi Transport LL page; TN STA flow: Form 1A for all transport-vehicle applicants (and e-rickshaw in Delhi)](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `ELIG-TRANSPORT-LMV-PREREQ` | eligibility | S | low | **no** | 2026-10-22 | [MV Act s.7 as quoted by the Supreme Court in Bajaj Allianz v. Rambha Devi; 2019 change unverified](https://www.scobserver.in/cases/validity-of-light-motor-vehicle-licence-to-drive-transport-vehicle-bajaj-allianz-general-insurance-v-rambha-devi/) |
+| IN-base | `ELIG-ORAL-LL-TEST` | eligibility | P-state | medium | **no** | 2026-10-22 | [Delhi Transport LL page: e-rickshaw / e-cart oral preliminary test](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `ELIG-ADAPTED-VERIFY` | eligibility | MK | low | **no** | 2026-10-22 | [MV Act 1988 s.10(2) invalid carriage [MK]; Sarathi Divyang category (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `RT-NO-ONLINE-LL` | route | OBS | medium | yes | 2026-10-22 | [State LL test mode from the state pack (PRM-LL-TEST-MODE)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `RT-AGE-40` | route | P-state | medium | yes | 2026-10-22 | [TN STA contactless LL flow (2022); Delhi Transport LL page](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `RT-DISABILITY-NON-FACELESS` | route | OBS | low | **no** | 2026-10-22 | [Sarathi LL form: Divyang category (observed 2026-10-22); product-lock blocker list](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `RT-FOREIGN-LICENCE` | route | unknown | low | **no** | 2026-10-23 | [Foreign DL conversion rules not verified (research/ps1-deep/03-lifecycle.md section B)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `DOC-FORM-2` | document | P-state | high | yes | 2026-10-22 | [Delhi Transport LL page; TN STA flow: Form 2 generated online](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `DOC-FORM-1` | document | P-state | high | yes | 2026-10-22 | [Delhi Transport LL page; TN STA flow](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `DOC-FORM-1A` | document | P-state | medium | yes | 2026-10-22 | [Delhi Transport LL page; TN STA flow: over 40 and all transport](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `DOC-FORM-1A-MAYBE` | document | P-state | medium | **no** | 2026-10-22 | [Delhi Transport LL page; TN STA flow (Form 1A over 40); EC-04](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `DOC-AGE-ADDRESS-PROOF` | document | P-state | high | yes | 2026-10-22 | [CMVR r.4 [MK]; TN STA flow: Aadhaar e-KYC fills name, DOB, address, photo](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `DOC-DOB-PROOF` | document | MK | medium | **no** | 2026-10-23 | [Council verification list: Aadhaar with year of birth only (stored as 1 Jan) [MK]](https://uidai.gov.in/) |
+| IN-base | `DOC-RESIDENCE-PROOF` | document | P-state | medium | yes | 2026-10-22 | [TN STA contactless LL flow: non-Aadhaar route needs separate address proof](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `DOC-RELATION-NAME-PROOF` | document | S | low | **no** | 2026-10-22 | [India Herald, 19 Feb 2026: relation-name field blank from Aadhaar (news report, not a rule)](https://www.indiaherald.com/Politics/Read/994879460/-Aadhaar-Update-Stalled-Technical-Glitch-on-the-Sarathi-Portal-Stalls-Thousands-of-Driving-Licence-Applications) |
+| IN-base | `DOC-PHOTO-SIGNATURE` | document | OBS | high | yes | 2026-10-22 | [Sarathi upload photo and signature screen (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `DOC-GUARDIAN-CONSENT` | document | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(2) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `DOC-EDU-TRANSPORT` | document | MK | low | **no** | 2026-10-22 | [Delhi Transport class table lists 8th pass; 2019 removal [MK]](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `DOC-VALID-LL` | document | S | high | yes | 2026-10-22 | [CMVR r.14 DL application within LL validity [MK]; J&K guides](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| IN-base | `DOC-TEST-VEHICLE-PAPERS` | document | S | medium | **no** | 2026-10-22 | [J&K guides; CMVR r.3 L plate [MK]](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| IN-base | `BLK-UNDER-16` | blocker | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4 [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `BLK-DOB-YEAR-ONLY` | blocker | MK | medium | **no** | 2026-10-23 | [Council verification list: Aadhaar with year of birth only (stored as 1 Jan) [MK]](https://uidai.gov.in/) |
+| IN-base | `BLK-ADDRESS-MISMATCH` | warning | P-state | medium | yes | 2026-10-22 | [TN STA contactless LL flow: RTO auto-assigned from the Aadhaar PIN code](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `BLK-RELATION-LINE-BLANK` | warning | S | low | **no** | 2026-10-22 | [India Herald, 19 Feb 2026 (news report, not a rule)](https://www.indiaherald.com/Politics/Read/994879460/-Aadhaar-Update-Stalled-Technical-Glitch-on-the-Sarathi-Portal-Stalls-Thousands-of-Driving-Licence-Applications) |
+| IN-base | `BLK-FORM1A-AGE40` | blocker | P-state | medium | yes | 2026-10-22 | [Delhi Transport LL page; TN STA flow: Form 1A over 40](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `WRN-TURNING-40` | warning | P-state | medium | **no** | 2026-10-22 | [Delhi Transport LL page; TN STA flow: Form 1A over 40](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| IN-base | `WRN-U18-MC50-ONLY` | warning | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(2) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `NTC-FAMILY-MODE` | notice | MK | medium | yes | 2026-10-23 | [DPDP Act 2023: verifiable parental consent for under-18s [MK]](https://www.meity.gov.in/) |
+| IN-base | `NTC-CLASS-VS-VEHICLE` | notice | P-state | high | yes | 2026-10-22 | [Delhi Transport class table (MCWOG up to 50 cc at 16)](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `BLK-TRANSPORT-UNDER-20` | blocker | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4 [MK]; Delhi Transport class table (20 for transport)](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `WRN-TRANSPORT-LMV-PREREQ` | warning | S | low | **no** | 2026-10-22 | [MV Act s.7 as quoted in Bajaj Allianz v. Rambha Devi (SC); 2019 change unverified](https://www.scobserver.in/cases/validity-of-light-motor-vehicle-licence-to-drive-transport-vehicle-bajaj-allianz-general-insurance-v-rambha-devi/) |
+| IN-base | `NTC-SC-LMV-7500KG` | notice | S | medium | **no** | 2026-10-22 | [SC Observer: Bajaj Allianz v. Rambha Devi, judgment of 6 Nov 2024](https://www.scobserver.in/cases/validity-of-light-motor-vehicle-licence-to-drive-transport-vehicle-bajaj-allianz-general-insurance-v-rambha-devi/) |
+| IN-base | `NTC-LL-AT-RTO` | notice | OBS | medium | yes | 2026-10-22 | [State LL test mode from the state pack (PRM-LL-TEST-MODE)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `WRN-MOBILE-NOT-LINKED` | warning | OBS | high | yes | 2026-10-22 | [Sarathi Aadhaar OTP screen: 'Aadhaar holder should have registered mobile number' (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `WRN-HOME-TEST-DEVICE` | warning | OBS | high | yes | 2026-10-22 | [Sarathi LL test sign-in and face-authentication screens (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/authenticationaction.do) |
+| IN-base | `NTC-DISABILITY-RIGHTS` | notice | P-state | medium | **no** | 2026-10-22 | [Sarathi Divyang category (observed); MoRTH advisories via Puducherry Transport circular, Nov 2023](https://transport.py.gov.in/sites/default/files/All-PDF/Cir-Hearing.pdf) |
+| IN-base | `NTC-DEAF-ADVISORY` | notice | P-state | medium | yes | 2026-10-22 | [MoRTH advisories 14-06-2016, 28-10-2016, letter of 06-11-2023, quoted in Puducherry Transport circular](https://transport.py.gov.in/sites/default/files/All-PDF/Cir-Hearing.pdf) |
+| IN-base | `NTC-COLOUR-VISION` | notice | MK | low | **no** | 2026-10-22 | [Form 1 / Form 1A fitness declarations [MK]](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `WRN-FOREIGN-LICENCE` | warning | unknown | low | **no** | 2026-10-23 | [Foreign DL conversion not verified (research/ps1-deep/03-lifecycle.md section B)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `NTC-NRI` | notice | unknown | low | **no** | 2026-10-23 | [NRI rules not verified (research/ps1-deep/03-lifecycle.md gaps)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `WRN-MOVING-STATE` | warning | MK | low | **no** | 2026-10-23 | [MV (Amendment) Act 2019: apply to any licensing authority in the State [MK]](https://prsindia.org/files/bills_acts/bills_parliament/2019/Motor%20Vehicles%20(Amendment)%20Bill,%202019.pdf) |
+| IN-base | `NTC-IDP-DL-ONLY` | notice | MK | high | yes | 2026-10-23 | [Sarathi IDP service needs a valid DL, passport and visa [MK]](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `NTC-IDP-AVAILABLE` | notice | MK | low | **no** | 2026-10-23 | [Sarathi IDP service, valid 1 year [MK]](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `WRN-TEST-VEHICLE` | warning | S | medium | **no** | 2026-10-22 | [J&K guides; CMVR r.3 L plate [MK]](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| IN-base | `NTC-PHOTO-FINAL` | notice | OBS | medium | yes | 2026-10-22 | [Sarathi upload photo and signature screen (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| IN-base | `BLK-LL-EXPIRED` | blocker | P-state | high | yes | 2026-10-22 | [Delhi Transport LL page: LL validity 6 months](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `WRN-LL-EXPIRING` | warning | P-state | high | yes | 2026-10-22 | [Delhi Transport LL page: LL validity 6 months](https://transport.delhi.gov.in/hi/node/3079) |
+| IN-base | `NTC-ADTC-OPTION` | notice | S | medium | **no** | 2026-10-22 | [MoRTH ADTC rules effective 1 Jul 2021 (Tribune/PTI)](https://www.tribuneindia.com/news/road-ministry-notifies-rules-for-accredited-driver-training-centres-266863) |
+| IN-base | `NTC-STATE-CHARGES` | notice | S | medium | yes | 2026-10-22 | [CMVR 1989 r.32 covers central fee heads only; state charges vary](https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf) |
+| IN-base | `NTC-PARTIAL-PACK` | notice | OBS | high | yes | 2026-10-23 | [Margdarshak rule-pack coverage (partial state pack)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| DL | `DL-PRM-LL-TEST-MODE` | overrides PRM-LL-TEST-MODE | P-state | high | yes | 2026-10-22 | [Delhi Transport, Learner's Licence page](https://transport.delhi.gov.in/hi/node/3079) |
+| DL | `DL-PRM-DL-TEST` | overrides PRM-DL-TEST | S | medium | **no** | 2026-10-22 | [Business Today, 26 Dec 2022: Delhi driving tests fully automated](https://www.businesstoday.in/auto/story/driving-licence-tests-in-delhi-to-become-completely-automated-by-jan-end-357714-2022-12-26) |
+| DL | `DL-NTC-ADTT-FAIL-RATE` | notice | S | medium | **no** | 2026-10-22 | [Business Today, Dec 2022 (Transport Minister: ~50% failure)](https://www.businesstoday.in/auto/story/driving-licence-tests-in-delhi-to-become-completely-automated-by-jan-end-357714-2022-12-26) |
+| DL | `DL-DOC-EDU-TRANSPORT` | overrides DOC-EDU-TRANSPORT | P-state | low | **no** | 2026-10-22 | [Delhi Transport class table (transport: 8th pass, 1 year LMV)](https://transport.delhi.gov.in/hi/node/3079) |
+| JK | `JK-PRM-LL-TEST-MODE` | overrides PRM-LL-TEST-MODE | S | medium | yes | 2026-10-22 | [Kashmir Life, 03 Dec 2025 (online at home or CSC, instant LL); Sarathi J&K eKYC LL service (observed 2026-10-22)](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-PRM-LL-FORMAT` | overrides PRM-LL-FORMAT | S | medium | **no** | 2026-10-22 | [Kashmir Life, Dec 2025, quoting the Srinagar ARTO: 10 questions, 6 to pass](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-PRM-MIN-WAIT-DAYS` | overrides PRM-MIN-WAIT-DAYS | S | medium | yes | 2026-10-22 | [Kashmir Life, Dec 2025: DL test after 30 days](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-PRM-LL-VALIDITY-MONTHS` | overrides PRM-LL-VALIDITY-MONTHS | P-state | high | yes | 2026-10-22 | [Delhi Transport LL page: LL validity 6 months (central CMVR rule); no J&K variation found](https://transport.delhi.gov.in/hi/node/3079) |
+| JK | `JK-PRM-RETEST-GAP-DAYS` | overrides PRM-RETEST-GAP-DAYS | S | low | **no** | 2026-10-22 | [Sarathi appointment notices (secondary, low reliability); CMVR r.15 [MK]; no J&K source](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| JK | `JK-PRM-DL-TEST` | overrides PRM-DL-TEST | S | medium | **no** | 2026-10-22 | [Kashmir Life, 03 Dec 2025: RTO Kashmir rolls out S-track](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-PRM-PSGA-TIMELINE` | param | unknown | low | **no** | 2026-10-22 | [Greater Kashmir: J&K Public Services Guarantee Act (schedule not retrieved)](https://m.greaterkashmir.com/article/greater-kashmirs-understanding-the-law-initiative-empowering-citizens-jk-public-services-guarantee-act/293926) |
+| JK | `JK-B01` | overrides NTC-CLASS-VS-VEHICLE | OBS | high | yes | 2026-10-22 | [Sarathi class picker (observed 2026-10-22); Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| JK | `JK-B02` | overrides BLK-ADDRESS-MISMATCH | P-state | low | **no** | 2026-10-22 | [TN STA contactless LL flow (PIN-based RTO assignment); J&K behaviour unknown](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| JK | `JK-B03` | overrides BLK-RELATION-LINE-BLANK | S | low | **no** | 2026-10-22 | [India Herald, 19 Feb 2026 (news report, not a rule)](https://www.indiaherald.com/Politics/Read/994879460/-Aadhaar-Update-Stalled-Technical-Glitch-on-the-Sarathi-Portal-Stalls-Thousands-of-Driving-Licence-Applications) |
+| JK | `JK-B04` | overrides BLK-FORM1A-AGE40 | P-state | medium | yes | 2026-10-22 | [Delhi Transport LL page; TN STA flow: Form 1A over 40, RTO approval](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| JK | `JK-B05` | overrides WRN-MOBILE-NOT-LINKED | OBS | high | yes | 2026-10-22 | [Sarathi Aadhaar OTP screen (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| JK | `JK-B06` | overrides WRN-HOME-TEST-DEVICE | OBS | high | yes | 2026-10-22 | [Sarathi LL test sign-in and face authentication (observed 2026-10-22); Kashmir Life (CSC)](https://sarathi.parivahan.gov.in/sarathiservice/authenticationaction.do) |
+| JK | `JK-B07` | overrides NTC-DISABILITY-RIGHTS | OBS | medium | **no** | 2026-10-22 | [Sarathi Divyang category (observed); MoRTH advisories via Puducherry Transport circular, Nov 2023](https://transport.py.gov.in/sites/default/files/All-PDF/Cir-Hearing.pdf) |
+| JK | `JK-B08` | overrides NTC-PHOTO-FINAL | OBS | medium | yes | 2026-10-22 | [Sarathi upload photo and signature screen (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| JK | `JK-B09` | overrides WRN-TEST-VEHICLE | S | medium | **no** | 2026-10-22 | [J&K guides (Kashmir Life); CMVR r.3 L plate [MK]](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-B10` | overrides BLK-DOB-YEAR-ONLY | MK | medium | **no** | 2026-10-23 | [Council verification list: Aadhaar with year of birth only (stored as 1 Jan) [MK]](https://uidai.gov.in/) |
+| JK | `JK-NTC-DIGILOCKER` | notice | S | medium | yes | 2026-10-22 | [Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-NTC-APPROVAL-SMS` | notice | S | low | **no** | 2026-10-22 | [Kashmir Life, Dec 2025](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-OFC-RTO-JAMMU` | office | OBS | low | **no** | 2026-10-22 | [Sarathi J&K state office list (observed 2026-10-22); details pending field visit](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| JK | `JK-OFC-RTO-KASHMIR` | office | S | medium | **no** | 2026-10-22 | [Kashmir Life, 03 Dec 2025: RTO Kashmir S-track](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| JK | `JK-OFC-ARTO-KATHUA` | office | OBS | low | **no** | 2026-10-22 | [Sarathi J&K state office list (observed 2026-10-22); details unknown](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| JK | `JK-OFC-CSC` | office | S | medium | **no** | 2026-10-22 | [Kashmir Life, Dec 2025: LL test at home or at a CSC](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| KL | `KL-PRM-LL-TEST-MODE` | overrides PRM-LL-TEST-MODE | S | medium | **no** | 2026-10-22 | [Onmanorama, 02 Aug 2022: Kerala abandons online learner licence test](https://onmanorama.com/news/business/2022/08/02/kerala-abandons-online-test-learner-licence-fraud-reported.html) |
+| KL | `KL-PRM-HPT` | overrides PRM-HPT | S | medium | **no** | 2026-10-22 | [Onmanorama, 14 Sep 2026: Kerala adds hazard perception test for driving licences from Dec 1](https://www.onmanorama.com/news/kerala/2026/09/14/kerala-adds-hazard-perception-test-for-driving-licences-from-dec-1-first-in-india.html) |
+| KL | `KL-PRM-DL-TEST` | overrides PRM-DL-TEST | S | medium | **no** | 2026-10-22 | [Onmanorama, 19 Sep 2024: Kerala test reforms (Circular 4/2024)](https://onmanorama.com/news/kerala/2024/09/19/high-driving-test-failure-rate-post-reforms-kerala-government-revise-daily-limit.html) |
+| KL | `KL-NTC-HPT` | notice | S | medium | **no** | 2026-10-22 | [Onmanorama, 14 Sep 2026; South First on the HPT circular](https://thesouthfirst.com/kerala/how-fast-can-you-spot-danger-keralams-new-licence-test-faces-driving-school-block/) |
+| KL | `KL-NTC-HPT-UPCOMING` | notice | S | medium | **no** | 2026-10-22 | [Onmanorama, 14 Sep 2026](https://www.onmanorama.com/news/kerala/2026/09/14/kerala-adds-hazard-perception-test-for-driving-licences-from-dec-1-first-in-india.html) |
+| KL | `KL-NTC-HPT-STAYED` | notice | S | medium | **no** | 2026-10-22 | [Kerala HPT status row (changes when a stay or postponement is published)](https://www.onmanorama.com/news/kerala/2026/09/14/kerala-adds-hazard-perception-test-for-driving-licences-from-dec-1-first-in-india.html) |
+| KL | `KL-WRN-SLOT-BACKLOG` | warning | S | low | **no** | 2026-10-22 | [Onmanorama, Sep 2024: test backlog after reforms](https://onmanorama.com/news/kerala/2024/09/19/high-driving-test-failure-rate-post-reforms-kerala-government-revise-daily-limit.html) |
+| MH | `MH-PRM-LL-TEST-MODE` | overrides PRM-LL-TEST-MODE | S | medium | **no** | 2026-10-22 | [Udayavani: Maharashtra RTOs let people take the learner's licence test from home](https://www.udayavani.com/english-news/maha-rtos-to-let-people-take-learners-licence-test-from-home) |
+| MH | `MH-PRM-DL-TEST` | overrides PRM-DL-TEST | S | medium | **no** | 2026-10-22 | [Team-BHP: Maharashtra to introduce AI-based driving tests](https://www.team-bhp.com/news/maharashtra-introduce-ai-based-driving-tests) |
+| MH | `MH-NTC-MANUAL-TEST` | notice | S | medium | **no** | 2026-10-22 | [Team-BHP (manual tests); Onmanorama 2024 (Mumbai audit of fake tests)](https://www.team-bhp.com/news/maharashtra-introduce-ai-based-driving-tests) |
+| PB | `PB-PRM-LL-TEST-MODE` | overrides PRM-LL-TEST-MODE | OBS | low | **no** | 2026-10-22 | [Sarathi Punjab contactless/faceless modal (observed 2026-10-22)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |
+| PB | `PB-PRM-DL-TEST` | overrides PRM-DL-TEST | S | medium | **no** | 2026-10-22 | [Governance Now: in Punjab getting a driving licence will be easier](https://www.governancenow.com/gov-next/egov/in-punjab-getting-driving-licence-will-be-easier) |
+| PB | `PB-NTC-FACELESS` | notice | S | medium | **no** | 2026-10-22 | [Patrika: faceless RTO services launched in Punjab, 56 services](https://www.patrika.com/en/national-news/faceless-rto-services-launched-in-punjab-56-services-now-digital-20062212) |
+| PB | `PB-NTC-LL-EXTENSION` | notice | S | low | **no** | 2026-10-22 | [Tribune: Punjab DL services (lists extension of LL validity)](https://www.tribuneindia.com/news/punjab/explainer-what-is-the-driving-licence-scam-all-about) |
+| TN | `TN-PRM-LL-TEST-MODE` | overrides PRM-LL-TEST-MODE | P-state | high | yes | 2026-10-22 | [TN STA contactless LL flow (2022)](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| TN | `TN-RT-AGE-40` | overrides RT-AGE-40 | P-state | high | yes | 2026-10-22 | [TN STA contactless LL flow (2022)](https://tnsta.gov.in/video/flow_LLNew2022_english.pdf) |
+| TN | `TN-PRM-DL-TEST` | overrides PRM-DL-TEST | S | medium | **no** | 2026-10-22 | [Storyboard18: Maruti Suzuki adds automated driving test tracks in Tamil Nadu](https://www.storyboard18.com/how-it-works/maruti-suzuki-expands-its-road-safety-efforts-adds-7-automated-driving-test-tracks-adtts-in-tamil-nadu-under-its-csr-initiative-91033.htm) |
+| fees | `FEE-LL-ISSUE` | items | S | medium | yes | 2026-10-22 | [CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL fee totals](https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf) |
+| fees | `FEE-LL-TEST` | items | S | medium | yes | 2026-10-22 | [CMVR 1989 r.32 (HP reproduction, search excerpt) + Delhi Transport LL page](https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf) |
+| fees | `FEE-DL-TEST` | items | S | medium | yes | 2026-10-22 | [CMVR 1989 r.32: driving test fee per class, paid together with the LL fee](https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf) |
+| fees | `FEE-DL-ISSUE` | items | S | medium | yes | 2026-10-22 | [CMVR 1989 r.32: issue of driving licence](https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf) |
+| fees | `FEE-SMART-CARD` | items | S | medium | yes | 2026-10-22 | [CMVR 1989 r.32 smart-card surcharge; MoRTH circular 18-07-2023 (r.81 note 2, laminated card)](https://morth.nic.in/sites/default/files/circulars_document/2-RT-11036-219-2021-MVL%20dated%2018-07-2023001.pdf) |
+| fees | `FEE-LL-RETEST` | retest | P-state | medium | yes | 2026-10-22 | [Delhi Transport LL page: LL retest fee](https://transport.delhi.gov.in/hi/node/3079) |
+| fees | `FEE-DL-RETEST` | retest | S | medium | yes | 2026-10-22 | [CMVR 1989 r.32: driving test or repeat test, per class](https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf) |
+| fees | `FEE-JK-SLOT-BOOKING-REPORTED` | stateItems | S | low | **no** | 2026-10-22 | [Kashmir Life, Dec 2025: Rs 1,050 paid at DL slot booking, includes Rs 50 postage; breakdown unknown](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| fees | `FEE-JK-POSTAGE-REPORTED` | stateItems | S | low | **no** | 2026-10-22 | [Kashmir Life, Dec 2025: Rs 50 postage inside the slot-booking payment](https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/) |
+| classes | `CLS-MC50CC` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(2) [MK]; Delhi Transport class table (16 with guardian consent)](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-MCWOG` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-MCWG` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-LMV-NT` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(1) [MK]; Delhi Transport class table (18)](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-LMV-TR` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(3) (20 for transport) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-E-RICKSHAW` | classes | P-state | medium | **no** | 2026-10-22 | [Delhi Transport class table: e-rickshaw from 2015, age 18, oral preliminary test, Form 1A](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-E-CART` | classes | P-state | medium | **no** | 2026-10-22 | [Delhi Transport class table: e-cart from 2015, age 18, oral preliminary test](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-MGV` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(3) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-HGMV` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(3) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-HPMV` | classes | P-state | high | yes | 2026-10-22 | [MV Act 1988 s.4(3) [MK]; Delhi Transport class table](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-HTV` | classes | MK | medium | **no** | 2026-10-22 | [MV Act 1988 s.4(3) [MK]; state class lists vary](https://transport.delhi.gov.in/hi/node/3079) |
+| classes | `CLS-ADAPTED` | classes | MK | low | **no** | 2026-10-22 | [MV Act 1988 s.10(2) invalid carriage class [MK]; Sarathi Divyang category (observed)](https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do) |

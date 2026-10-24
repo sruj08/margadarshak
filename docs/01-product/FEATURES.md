@@ -37,13 +37,13 @@
 | F-14 | Approval tracker + escalation letter (user approves and sends) | S7 | P-01, P-02 | Should | T | P2 | P3 | n8n W11, API-45 | `ff_escalation_letter` | A | US-180–US-184 |
 | F-15 | New-rider year (pledge, refresher, missions, first-vehicle checklist, scam shield, golden-hour card, riding lock) | S8 | P-01, P-03 | Should | T | P2 | P3 | F-23, F-33 | `ff_riding_lock`, `ff_golden_hour_reviewed` (off) | B | US-083, US-190–US-197 |
 | F-16 | Renew / fix (renewal reminders, add class, address, duplicate, IDP) | S9 | P-03, P-02 | Should (surface) | T | P2 | P3 | F-42, F-07 | — | A | US-024, US-200–US-204 |
-| F-17 | Family and Helper mode (consented helper, clear device, s.199A card) | Cross | P-03, P-04, P-01 | Should (surface) | T | P2 | P3 | F-54 (consent), E-29 | `ff_helper_mode`, `ff_shared_device` | C | US-025, US-040, US-205–US-209 |
+| F-17 | Family and Helper mode (family mode for a learner under 18, consented helper, clear device, s.199A card) | Cross | P-03, P-04, P-01, P-07 | Should (surface) | T | P2 | P3 | F-54 (consent), E-29 | `ff_helper_mode`, `ff_shared_device` | C | US-025, US-040, US-205–US-209 |
 | F-20 | Learn hub (LL syllabus + 22 safety modules; variants; FSRS) | S3–S4 | P-01, P-02, P-03, P-07 | Must | D (LL) / T (modules) | P1 | P3 | ts-fsrs 5.x, API-30–32 | — | B | US-050–US-052 |
 | F-21 | Test Readiness Score (knowledge − calibration; advisory 85 gate) | S3–S6 | P-01 | Must | D (Deep-A) | P1 | P1 | F-20, API-33 | — | B | US-053–US-055 |
 | F-22 | LL Test Simulator (state format from config, guided first run) | S3 | P-01, P-03, P-07 | Must | D (Deep-B) | P1 | P1 | F-42, F-51 | — | B | US-039, US-056, US-057, US-060 |
 | F-23 | **Nazar** hazard perception (Kerala's announced format) + clip pipeline | S4 | P-01, P-02, P-05 | Must (hero) | D (Deep-B) | P1 | P1 | Render Workflows, R2, M-06, M-09, F-25, F-57 | `ff_nazar_mock`, `ff_nazar_learn`, `kl_hpt_status` (rule-pack enum) | B | US-071–US-076, US-086, US-089–US-091, US-233, US-316 |
 | F-24 | Simulation mini-games (8) | S4 | P-01, P-03 | Must (4 deep), Should (rest) | D: Stopping Distance, Blind Spot, Junction Scan, Track Test Twin (figure-8) · T: Helmet Fit, Golden Hour · R: Night & Glare, Hill Road | P1 | P3 | Phaser 4, game-core, MediaPipe | `ff_game_stopping`, `ff_game_blindspot`, `ff_game_junction`, `ff_game_tracktwin`, `ff_game_helmet`, `ff_game_goldenhour`, `ff_game_night` (off), `ff_game_hill` (off) | B | US-077–US-085, US-092 |
-| F-25 | AI Debrief (code computes, Gemini narrates; record-then-score commentary) | S3–S8 | P-01 | Must | D (Deep-B) | P1 | P1 | ADK 2.12, M-02, M-03, validator, F-24 | `ff_ai_debrief`, `ff_commentary` | TL | US-073, US-086, US-100–US-103, US-112 |
+| F-25 | AI Debrief (code computes, Gemini narrates; record-then-score commentary) | S3–S8 | P-01, P-07 | Must | D (Deep-B) | P1 | P1 | ADK 2.12, M-02, M-03, validator, F-24 | `ff_ai_debrief`, `ff_commentary` | TL | US-073, US-086, US-100–US-103, US-112 |
 | F-26 | Gamification engine (XP, ranks, streaks, squads, 9 badges, share cards, dark-pattern lint) | S3–S8 | P-01 | Must | D (XP, badges, card) / T (streaks, squads) / R (duels) | P1 | P3 | F-23, F-24, API-38–39 | `ff_squads`, `ff_share_cards`, `ff_percentile` (off until ≥ 200 mocks), `ff_duels` (off) | B | US-092, US-120–US-129, US-185, US-197 |
 | F-27 | Road Sign Snap | S3 | P-01 | Could | R | P3 | P3 | M-07, sign catalogue | `ff_sign_snap` (off) | B | US-059 |
 | F-28 | Practice Record (signed, QR, never "verified") | S4–S7 | P-01, P-05 | Should | T | P2 | P3 | F-23, F-40, API-46–47 | `ff_practice_record` | B | US-087, US-088, US-234 |
@@ -58,7 +58,7 @@
 | F-51 | Lite mode / offline PWA (< 300 KB, offline mocks, cached clips) | Cross | P-07, P-02, P-03 | Must | D (Deep-C) | P1 | P1 | Serwist | `ff_lite_auto` | C | US-060, US-292, US-293 |
 | F-52 | Accessibility (WCAG 2.1 AA / GIGW 3.0 / UX4G) | Cross | All | Must | D (Deep-C) | P1 | P4 (audit) | axe, design tokens | — | C | US-023, US-076, US-077, US-294–US-297 |
 | F-53 | Notifications (WhatsApp templates, email, web push; SMS after DLT) | Cross | P-01, P-02, P-03 | Must | D (Deep-C) | P1 | P3 (approved templates), P4 (SMS) | n8n, Meta Cloud API, email provider | `ff_whatsapp_channel`, `ff_email_channel`, `ff_webpush_channel`, `ff_sms_channel` (off) | TL | US-014, US-220–US-223, US-227, US-228 |
-| F-54 | Privacy centre (consent artefacts, export, delete, grievance; minor gating) | Cross | All | Must | D (Deep-C) | P1 | P3 (DPIA) | E-15, API-60–62 | `ff_age_verify_digilocker` (off in R0) | PL | US-108, US-113, US-270–US-276, US-278 |
+| F-54 | Privacy centre (consent artefacts, export, delete, grievance; family mode) | Cross | All | Must | D (Deep-C) | P1 | P3 (DPIA) | E-15, API-60–62 | `ff_age_verify_digilocker` (off in R0) | PL | US-108, US-113, US-270–US-276, US-278 |
 | F-55 | Privacy-preserving analytics (no PII, aggregated) | Cross | All | Must | D (Deep-C) | P1 | P1 | API-63 | — | TL | US-255, US-277 |
 | F-56 | Government adapter layer (7 adapters, mock + real, same contract tests) | Platform | P-06 | Must | D (mocks + OpenAPI + contract tests) | P1 | P4 (first real adapter) | — | `adapter_mode.<adapter>` per tenant | TL | US-036, US-041, US-300, US-301, US-304–US-306 |
 | F-57 | Field-study module (lab replica, Nazar study, pre-registration) | Evidence | — | Must | D (Deep-B) | P1 | P2 | F-23, API-70–71, Workflows | `ff_lab_replica` (field build only), `ff_public_stats` | C (journey test), B (Nazar study) | US-310–US-316 |
@@ -153,7 +153,7 @@ flowchart LR
 
 ### 2.1 Build order (critical path for R0)
 1. **H0–H6:** F-42 rule packs (`fees.json`, `rules/JK.json`, `rules/KL.json`) → F-02/F-03/F-04 (API-01–03, API-13); clip filming and the F-23 pipeline skeleton (clip pipeline and field study first, D-03).
-2. **H6–H18:** F-23 mock + learn modes, server replay (API-35); F-05/F-06/F-07 guided flow; F-08 state machine; F-54 age gate + consent; F-55 analytics schema.
+2. **H6–H18:** F-23 mock + learn modes, server replay (API-35); F-05/F-06/F-07 guided flow; F-08 state machine; F-54 family mode + parental consent; F-55 analytics schema.
 3. **H18–H30:** F-25 debrief + validator + evals; F-24 four deep games; F-21/F-22; F-09 sweeper Workflow + n8n W1/W4; F-53 WhatsApp test number.
 4. **H30–H40:** thin breadth (F-10–F-17, F-40–F-42 UIs, F-31–F-33); F-57 study live; F-51 budget; F-52 axe pass.
 5. **H40–end:** zero-dead-button crawl, evals in CI, rehearsal, video. Exact hours are managed in HACKATHON_PLAN.
@@ -166,7 +166,7 @@ Flags live in the tenant config (E-31) and an env overlay; evaluation is server-
 
 | Flag | Feature | Default: hackathon (R0) | Default: pilot (R1) | Default: state (R2) | Owner | Notes |
 |---|---|---|---|---|---|---|
-| `ff_mic_entry` | F-01 / F-30 | on (18+) | on (18+) | on | TL | Hidden for minors regardless |
+| `ff_mic_entry` | F-01 / F-30 | on | on | on | TL | Family mode: the parent gives mic consent |
 | `ff_plan_whatsapp` | F-02 | on (test number) | on | on | TL | Requires per-message opt-in |
 | `ff_offline_drafts` | F-05 | on | on | on | C | IndexedDB queue |
 | `ff_sarathi_mode_b` | F-07 | off | off | on per tenant after contract tests | TL | Never on with a mock adapter in production |
@@ -179,23 +179,23 @@ Flags live in the tenant config (E-31) and an env overlay; evaluation is server-
 | `ff_golden_hour_reviewed` | F-15, F-24 | off ("draft") | on after medical review | on | B | Rah-Veer amounts only after re-verification |
 | `ff_helper_mode` | F-17 | on | on | on | C | — |
 | `ff_shared_device` | F-17 | auto (café profile) | auto | auto | C | 10-min idle logout |
-| `ff_nazar_mock` | F-23 | on (18+) | on | on | B | — |
-| `ff_nazar_learn` | F-23 | on (18+) | on | on | B | Static hazard lesson for minors |
+| `ff_nazar_mock` | F-23 | on | on | on | B | — |
+| `ff_nazar_learn` | F-23 | on | on | on | B | — |
 | `kl_hpt_status` (rule-pack enum) | F-23, F-40 | `announced` | per news/MVD | per MVD | B | `announced` · `in_force` · `stayed` · `postponed` (EC-28) |
 | `ff_game_stopping` / `_blindspot` / `_junction` / `_tracktwin` | F-24 | on | on | on | B | Deep four |
 | `ff_game_helmet` / `_goldenhour` | F-24 | on (thin; golden hour "draft") | on | on | B | — |
 | `ff_game_night` / `_hill` | F-24 | off (storyboard only) | on (P3) | on | B | Hill Road J&K tenant first |
-| `ff_ai_debrief` ⛔ | F-25 | on (18+) | on | on | TL | Off → templates everywhere |
-| `ff_commentary` | F-25 | on (one clip, 18+) | on | on | TL | Audio discarded after transcription |
-| `ff_squads` | F-26 | on (18+) | on | on | B | Never for under-18 |
+| `ff_ai_debrief` ⛔ | F-25 | on | on | on | TL | Off → templates everywhere |
+| `ff_commentary` | F-25 | on (one clip) | on | on | TL | Audio discarded after transcription |
+| `ff_squads` | F-26 | on | on | on | B | Minor's profile: parent's consent required |
 | `ff_share_cards` | F-26 | on | on | on | B | Own domain only |
 | `ff_percentile` | F-26 | off (until ≥ 200 verified mocks) | auto | auto | B | Never fake a percentile |
 | `ff_duels` | F-26 | off | on | on | B | — |
-| `ff_sign_snap` | F-27 | off | on (P3) | on | B | 18+ |
+| `ff_sign_snap` | F-27 | off | on (P3) | on | B | — |
 | `ff_practice_record` | F-28 | on | on | on | B | — |
 | `ff_voice_live` ⛔ | F-30 | on (one scripted flow), fallback recorded | on | on | TL | Not on the critical demo path |
 | `ff_dogri_voice` | F-30 | on (thin) | on | on | TL | Voice-in only |
-| `ff_tutor` / `ff_decoder` | F-31, F-32 | on (18+) | on | on | TL | — |
+| `ff_tutor` / `ff_decoder` | F-31, F-32 | on | on | on | TL | — |
 | `ff_scam_checker` | F-33 | on | on | on | A | Never outputs "safe" |
 | `ff_school_portal` / `ff_school_pro` | F-40 | on / on (demo school) | on / beta | on / on | PL | "Sponsored" label enforced |
 | `ff_console` | F-41 | on (sample aggregates) | beta (pilot RTO) | on | TL | k ≥ 5 always |
@@ -265,6 +265,6 @@ Source boxes: [`research/ps1-deep/00-ps1-checklist.md`](../../../research/ps1-de
 ## 6. What "done" means per depth (for reviewers)
 | Depth | Definition of done |
 |---|---|
-| **Deep** | Production-grade code path: auth/age gate, migrations, OpenAPI entry, error/empty/offline states, analytics events from the taxonomy, a11y checked, unit + integration + e2e tests, PRD acceptance criteria green, shown in the demo |
+| **Deep** | Production-grade code path: auth/family-mode consent, migrations, OpenAPI entry, error/empty/offline states, analytics events from the taxonomy, a11y checked, unit + integration + e2e tests, PRD acceptance criteria green, shown in the demo |
 | **Thin** | Works end to end on mocks with real routing and state; honest labels ("simulated", "sample data", "draft", "verify at your RTO"); at least one e2e path; no lorem ipsum; no dead buttons |
 | **Roadmap** | Not built; may appear as a disabled tile with "coming" and a reason; never claimed in the pitch as working |

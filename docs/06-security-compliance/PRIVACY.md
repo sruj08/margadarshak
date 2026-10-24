@@ -17,7 +17,7 @@
 2. **No document images stored** (E-06 stores only `check_type`, `result`, `checked_at`). Photo and signature checks run on the device (F-06).
 3. **Pseudonymous by default.** An applicant (E-01) is a UUID with an age band, language and flags. Contact (E-14) is a separate, encrypted table, joined only when a message is sent.
 4. **The plan works with no login** (F-02, API-01). We learn nothing personal from a plan unless the user chooses to save or send it.
-5. **Minors are kept out**: no account, no AI, no telemetry, no streaks, no squads (D-13).
+5. **Minors get the full product in family mode** (D-13 revised): a learner under 18 uses Margdarshak, including every AI feature, inside a parent's adult account; the parent gives verifiable parental consent; a child's data is never used for behavioural tracking, profiling or targeted ads; squads and share cards for a minor's profile need the parent's consent.
 6. **Purpose-bound consent artefacts** (E-15) for every optional purpose; one tap to withdraw.
 7. **Aggregates only** for analytics (F-55), the state console (F-41, k ≥ 10) and Live Intel (F-11, k ≥ 5).
 8. **Short retention** with automatic deletion (§3).
@@ -35,10 +35,10 @@ Legend for **legal basis**: **C** = consent (DPDP s.6) recorded as a consent art
 | Entity · field | Example | Purpose | Basis | Retention | Who sees it | Notes |
 |---|---|---|---|---|---|---|
 | E-01 `applicant_id` | UUIDv7 | Link records | V | Life of account + 30 days | U, O | Pseudonymous |
-| E-01 `age_band` | `18_plus` | Eligibility (F-02), AI gate (D-13) | V | Life of account | U, O | Derived server-side; raw DOB not kept on E-01 |
+| E-01 `age_band` | `under_16`, `16_17`, `18_25`, `26_40`, `41_60`, `60_plus` | Eligibility (F-02), family mode (D-13 revised) | V | Life of account | U, O | Derived server-side; raw DOB not kept on E-01 |
 | E-02 `dob` (in case) | 2007-03-14 | Exact eligibility dates (EC-04 turning 40, EC-05, EC-21) | V | Life of case + 30 days | U, H | Encrypted column; never sent to AI; year-only flag (EC-01) |
 | E-01 `language` | `hi` | UI language | V | Life of account | U | — |
-| E-01 `flags.minor` / `flags.helper` | — | Gating | V | Life of account | O | — |
+| E-01 `flags.minor` / `flags.helper` | — | Family-mode profile (parent consent, no profiling) / helper scope | V | Life of account | O | — |
 | E-01 `disability_needs` (optional) | `deaf`, `colour_vision` | Show rights card and adapted-class path (EC-13) | **C** (explicit, separate tick) | Until withdrawn | U | Health-adjacent; optional; never shared with schools unless separately consented |
 | E-02 Case: `state`, `stage`, `path`, `classes`, `office_id`, dates | JK, S4, aadhaar_path | The journey (F-08, F-09) | V | Life of case; closed cases 12 months after S7 then anonymised | U, H | — |
 | E-03 ClassSelection | MCWG + LMV-NT | Planner (F-03) | V | With case | U, H | — |
@@ -55,11 +55,11 @@ Legend for **legal basis**: **C** = consent (DPDP s.6) recorded as a consent art
 | E-28 Letter | escalation/RTI draft | User-sent letters (F-13, F-14) | V | 12 months | U | The user sends it; we don't |
 | E-30 AuditLog | event type, actor hash, time | Security, CERT-In, DPDP Rule 8(3) | L | **1 year** in India (Phase 3+) | O, SEC | No content values |
 
-### 2.2 Learning and games (18+ only for anything stored)
+### 2.2 Learning and games (stored for everyone; a minor's data sits in the parent's account)
 
 | Entity · field | Purpose | Basis | Retention | Who sees it | Notes |
 |---|---|---|---|---|---|
-| E-16 GameSession: seed, verified score, version | Readiness (F-21), anti-cheat | V | 24 months or account deletion | U; S if consented | Under-18: not created |
+| E-16 GameSession: seed, verified score, version | Readiness (F-21), anti-cheat | V | 24 months or account deletion | U; S if consented | Minor profile: created in the parent's account; never used for profiling |
 | E-17 GameEvent (bounded, no PII) | Score replay, debrief | V | 90 days raw, then aggregated | System | Taps and timings only |
 | E-18 TopicMastery (FSRS, Brier) | Spaced repetition (F-20) | V | Life of account | U | — |
 | E-19 Debrief: findings JSON, narration, validator verdict, model ID | AI debrief (F-25) | **C** (AI features consent) | 12 months | U | Narration text from Gemini contains no PII (guarded) |
@@ -81,7 +81,7 @@ Legend for **legal basis**: **C** = consent (DPDP s.6) recorded as a consent art
 
 ### 2.4 Analytics (F-55, API-63)
 - Event names from a fixed allowlist (`plan_created`, `stage_entered`, `game_completed`, ...), device-session pseudonym rotated every 24 h, no IP stored (truncated to /24 at the edge and dropped), no user agent beyond family, no PII fields accepted by the schema. Aggregated nightly; raw events deleted after 30 days. **Not personal data** once aggregated; the raw stream is treated as personal data until then.
-- No third-party analytics, ad SDKs or trackers. Under-18: no analytics at all (s.9(3)).
+- No third-party analytics, ad SDKs or trackers. A minor profile's events are used only in these allowlisted aggregates (k ≥ 5), never for behavioural tracking, profiling or targeted ads (s.9(3)).
 
 ### 2.5 Data we never collect
 Aadhaar number/VID, OTP, biometrics, face templates, captcha, Sarathi/DigiLocker passwords, payment card/UPI details (fees are paid on Sarathi or the state gateway), precise location (no GPS; office chosen from a list), contacts list, photos of documents (checks run on-device), religion/caste, income.
@@ -107,7 +107,7 @@ Modelled on the DEPA / Account Aggregator artefact pattern (machine-readable, si
   "artefact_id": "ca_01JAX9...",
   "version": "1.0",
   "tenant_id": "jk",
-  "data_principal": { "applicant_id": "ap_01JAX...", "age_band": "18_plus" },
+  "data_principal": { "applicant_id": "ap_01JAX...", "age_band": "18_25" },
   "acting_for": null,
   "data_fiduciary": { "name": "Nestiq Private Limited", "role": "fiduciary", "grievance_contact": "grievance@<domain>" },
   "purpose": {
@@ -133,17 +133,17 @@ Modelled on the DEPA / Account Aggregator artefact pattern (machine-readable, si
 
 | Code | Purpose | Default | Who can grant | Withdraw effect |
 |---|---|---|---|---|
-| PUR-ACCOUNT | Save and resume my case on any device (email login) | Off until sign-up | 18+ | Account deletion flow |
-| PUR-REMIND-WA | WhatsApp reminders for my case (template messages, max 1 nudge a day) | Off | 18+ | Stop within 1 min; also "STOP" reply (EC-30) |
-| PUR-REMIND-EMAIL | Email reminders | Off | 18+ | Stop immediately |
-| PUR-PLAN-SEND | Send this plan to my WhatsApp once (F-02, API-04) | Off (one-off) | Anyone 18+ entering their own number | One-off; number not kept after send unless PUR-REMIND-WA |
-| PUR-AI-FEATURES | Use AI features (voice guide, tutor, debrief narration, screenshot decoder, sign snap) | Off | 18+ only | AI surfaces switch to templates |
-| PUR-MIC | Use my microphone for voice and commentary (audio not stored) | Off, asked at use | 18+ | Mic features hidden |
-| PUR-DISABILITY | Use my disability needs to tailor guidance | Off | 18+ (or parent for minor, roadmap) | Field deleted |
-| PUR-SCHOOL-SHARE | Share my progress and Practice Record with *this* school | Off | 18+ | School loses access immediately |
-| PUR-HELPER | Let *this* helper view/edit my draft for *N* days | Off | 18+ applicant | Helper sessions killed (EC-25) |
+| PUR-ACCOUNT | Save and resume my case on any device (email login) | Off until sign-up | Adult account holder (for a family member's case: parent's verifiable consent) | Account deletion flow |
+| PUR-REMIND-WA | WhatsApp reminders for my case (template messages, max 1 nudge a day) | Off | Adult account holder (for a family member's case: parent's verifiable consent) | Stop within 1 min; also "STOP" reply (EC-30) |
+| PUR-REMIND-EMAIL | Email reminders | Off | Adult account holder (for a family member's case: parent's verifiable consent) | Stop immediately |
+| PUR-PLAN-SEND | Send this plan to my WhatsApp once (F-02, API-04) | Off (one-off) | Adult account holder (or adult visitor) entering their own number | One-off; number not kept after send unless PUR-REMIND-WA |
+| PUR-AI-FEATURES | Use AI features (voice guide, tutor, debrief narration, screenshot decoder, sign snap) | Off | Adult account holder (for a family member's case: parent's verifiable consent); no age limit on the feature | AI surfaces switch to templates |
+| PUR-MIC | Use my microphone for voice and commentary (audio not stored) | Off, asked at use | Adult account holder (for a family member's case: parent's verifiable consent) | Mic features hidden |
+| PUR-DISABILITY | Use my disability needs to tailor guidance | Off | Adult account holder (for a family member's case: parent's verifiable consent) | Field deleted |
+| PUR-SCHOOL-SHARE | Share my progress and Practice Record with *this* school | Off | Adult account holder (for a family member's case: parent's verifiable consent) | School loses access immediately |
+| PUR-HELPER | Let *this* helper view/edit my draft for *N* days | Off | Adult account holder (for a family member's case: parent's verifiable consent) | Helper sessions killed (EC-25) |
 | PUR-STUDY | Take part in the Nazar study / journey test (F-57) | Off | 18+ | Data deleted until anonymisation |
-| PUR-LIVEINTEL | Submit structured reports about an office | Off | 18+ | Future reports blocked; past reports stay as aggregates |
+| PUR-LIVEINTEL | Submit structured reports about an office | Off | Adult account holder (for a family member's case: parent's verifiable consent) | Future reports blocked; past reports stay as aggregates |
 
 Rules: no pre-ticked boxes; no bundling (each purpose separate; CCPA dark-patterns guidelines also ban forced action); withdrawing is as easy as giving (one tap in F-54); consent screens in the user's language; every artefact references a **notice version**.
 
@@ -179,30 +179,32 @@ Rule 3 requires a notice that stands alone, is clear and plain, itemises the per
 > [आगे बढ़ें] [पूरी प्राइवेसी सूचना पढ़ें]
 
 ### 5.3 AI features notice (EN)
-> **Turn on AI help?** (adults only)
+> **Turn on AI help?** (the adult account holder decides, also for a family member under 18)
 > AI help uses Google's Gemini service to explain your practice results, decode a screenshot of a Sarathi screen, or guide you by voice.
 > **Sent to Google:** the IDs of your results and topics, your language, and any screenshot or voice you choose to share. **Never sent:** your contact details, date of birth, Aadhaar, OTP or licence numbers.
 > Google may process or briefly store this data outside India. We use Google's paid service, under which Google says it doesn't use your prompts to improve its products; it keeps them for a limited time to detect abuse.
 > The AI can't book, pay or submit anything. Every number you see is computed by our code, not by the AI.
-> Google's terms require users to be 18 or older.
+> You must be 18 or older to turn this on. If you're setting this up for your child, you're giving consent as their parent.
 > [Turn on AI help] [Not now]
 
 ### 5.4 AI सहायता सूचना (हिंदी)
-> **AI सहायता चालू करें?** (केवल वयस्कों के लिए)
+> **AI सहायता चालू करें?** (खाताधारक वयस्क तय करते हैं, 18 से कम उम्र के परिवार के सदस्य के लिए भी)
 > AI सहायता Google की Gemini सेवा का उपयोग करके आपके अभ्यास के नतीजे समझाती है, सारथी स्क्रीन के स्क्रीनशॉट का मतलब बताती है, या आवाज़ से रास्ता दिखाती है।
 > **Google को भेजा जाता है:** आपके नतीजों और विषयों के ID, आपकी भाषा, और वह स्क्रीनशॉट या आवाज़ जो आप साझा करना चुनें। **कभी नहीं भेजा जाता:** आपका संपर्क विवरण, जन्मतिथि, आधार, OTP या लाइसेंस नंबर।
 > Google यह डेटा भारत के बाहर प्रोसेस या थोड़े समय के लिए स्टोर कर सकता है। हम Google की पेड सेवा का उपयोग करते हैं, जिसमें Google कहता है कि वह आपके प्रॉम्प्ट से अपने प्रोडक्ट नहीं सुधारता; दुरुपयोग रोकने के लिए वह इन्हें सीमित समय तक रखता है।
 > AI कोई बुकिंग, भुगतान या सबमिशन नहीं कर सकता। आपको दिखने वाली हर संख्या हमारा कोड निकालता है, AI नहीं।
-> Google की शर्तों के अनुसार उपयोगकर्ता की उम्र 18 वर्ष या उससे अधिक होनी चाहिए।
+> इसे चालू करने के लिए आपकी उम्र 18 वर्ष या उससे अधिक होनी चाहिए। अगर आप इसे अपने बच्चे के लिए चालू कर रहे हैं, तो आप माता-पिता के रूप में सहमति दे रहे हैं।
 > [AI सहायता चालू करें] [अभी नहीं]
 
 ### 5.5 Helper consent (EN / HI)
 > **Let {helper_name} help with your application for {days} days?** They can view and edit your draft. They **cannot** see your test results, change your phone or email, download or delete your data, or send letters. You can stop this any time in *Privacy centre → Helpers*.
 > **क्या {helper_name} को {days} दिनों तक आपके आवेदन में मदद करने दें?** वे आपका ड्राफ़्ट देख और बदल सकते हैं। वे आपके टेस्ट नतीजे नहीं देख सकते, आपका फ़ोन या ईमेल नहीं बदल सकते, आपका डेटा डाउनलोड या डिलीट नहीं कर सकते, और पत्र नहीं भेज सकते। आप इसे कभी भी *प्राइवेसी सेंटर → हेल्पर* में बंद कर सकते हैं।
 
-### 5.6 Under-18 screen (EN / HI)
-> **You're under 18, so Margdarshak works in simple mode.** You get your licence plan, the checklist and the lessons. We don't save an account, use AI, or track your practice. At 16–17 you can only get a licence for a gearless two-wheeler up to 50 cc, with your guardian's consent. Most scooters are bigger than 50 cc.
-> **आपकी उम्र 18 से कम है, इसलिए मार्गदर्शक सरल मोड में चलता है।** आपको अपना लाइसेंस प्लान, चेकलिस्ट और पाठ मिलते हैं। हम कोई खाता सेव नहीं करते, AI का उपयोग नहीं करते, और आपके अभ्यास को ट्रैक नहीं करते। 16–17 वर्ष की उम्र में आप केवल 50 cc तक के बिना गियर वाले दोपहिया का लाइसेंस, अभिभावक की सहमति से, ले सकते हैं। ज़्यादातर स्कूटर 50 cc से बड़े होते हैं।
+### 5.6 Family-mode notice (EN / HI)
+> **Learning for someone under 18? Add them to your account (family mode).** As their parent, you hold the account and give consent for them. They get everything Margdarshak offers, including AI help, practice and progress. We never use a child's data for tracking, profiling or ads. Squads and share cards for them stay off unless you allow them. At 16–17 they can only get a licence for a gearless two-wheeler up to 50 cc, with your consent. Most scooters are bigger than 50 cc.
+> [Add a family member] [Not now]
+> **18 से कम उम्र के किसी के लिए सीख रहे हैं? उन्हें अपने खाते में जोड़ें (फ़ैमिली मोड)।** उनके माता-पिता के रूप में खाता आपका है और सहमति आप देते हैं। उन्हें मार्गदर्शक की हर सुविधा मिलती है, जिसमें AI सहायता, अभ्यास और प्रगति शामिल हैं। हम किसी बच्चे के डेटा का उपयोग ट्रैकिंग, प्रोफ़ाइलिंग या विज्ञापन के लिए कभी नहीं करते। उनके लिए स्क्वॉड और शेयर कार्ड तब तक बंद रहते हैं जब तक आप अनुमति न दें। 16–17 वर्ष की उम्र में वे केवल 50 cc तक के बिना गियर वाले दोपहिया का लाइसेंस, आपकी सहमति से, ले सकते हैं। ज़्यादातर स्कूटर 50 cc से बड़े होते हैं।
+> [परिवार का सदस्य जोड़ें] [अभी नहीं]
 
 The full privacy notice (`/privacy`, EN + HI) expands each item of §2 by purpose, lists processors (§8), rights (§6), retention (§3) and the Board complaint route. Dogri and other languages: rule-pack-ready translations only after native review (D-21).
 
@@ -212,21 +214,21 @@ The full privacy notice (`/privacy`, EN + HI) expands each item of §2 by purpos
 
 DPDP Act s.2(f) defines a child as under 18. s.9(1) requires verifiable parental consent; s.9(3) bars tracking, behavioural monitoring and targeted advertising directed at children. Rule 10 sets due diligence that the parent is an identifiable adult, using details already held or details/virtual tokens from an authorised entity including a DigiLocker service provider ([dpdpa.com Rule 10](https://dpdpa.com/dpdparules/rule10.html) **[secondary]**). The Rule 12 / Fourth Schedule exemptions cover classes such as educational and clinical establishments; a B2C learner app is not one ([LiveLaw](https://www.livelaw.in/articles/dpdp-child-data-rules-demand-edtech-platforms-555317) **[secondary]**).
 
-**Our design (Phase 1–2 and Phase 3+ until a parental flow exists):**
+**Our design: family mode (D-13 revised, 23 Oct 2026).** The full product, including every AI feature, is available to every user. A learner under 18 uses Margdarshak on a parent's or guardian's phone, inside the parent's (adult) account, as a family member's case. The parent is the account holder and the Data Principal's lawful guardian for consent.
 
-| Feature | 16–17 (P-07) | Under 16 |
+| Feature | Minor's profile in family mode (16–17, P-07; also under 16) | Control |
 |---|---|---|
-| Plan card (F-02), class info, ≤ 50 cc path, guardian-consent explainer | ✓ (computed, not stored) | ✓ shows "you can apply at 16 for ≤ 50 cc gearless, at 18 for other classes" |
-| Checklist, static lessons, LL syllabus (F-20 static) | ✓ | ✓ |
-| LL simulator / Nazar practice | Local-only, no server session, no stored score | Same |
-| Account, case saving, reminders | ✗ (roadmap: Rule 10 parental flow via DigiLocker) | ✗ |
-| AI (all M-xx) | ✗ | ✗ |
-| Telemetry, analytics, streaks, XP, squads, share cards | ✗ | ✗ |
-| WhatsApp/email | ✗ | ✗ |
-| Live Intel, reviews | ✗ | ✗ |
+| Plan card (F-02), class info, ≤ 50 cc path, guardian-consent explainer | ✓ (under 16: "you can apply at 16 for ≤ 50 cc gearless, at 18 for other classes") | — |
+| Checklist, lessons, LL syllabus, LL simulator, Nazar and all games | ✓, stored in the parent's account | Verified scores like everyone's |
+| Case saving, reminders (WhatsApp/email to the parent's contact) | ✓ | Parent's purpose consents |
+| AI (all M-01..M-11) | ✓ | Parent's `PUR-AI-FEATURES` (and `PUR-MIC`) consent, `acting_for` = parent |
+| Streaks, XP, badges | ✓ | Weekly, repairable, silent when broken (as for everyone) |
+| Squads, share cards | Only with the parent's consent | Per-item consent, revocable |
+| Analytics | Allowlisted aggregate events only (k ≥ 5) | Never used for behavioural tracking, profiling or targeted ads (s.9(3)); no ad SDKs |
+| Live Intel, reviews | Submitted by the adult account holder | — |
 | Parent awareness (s.199A juvenile liability, F-17) | Shown to parents in family mode, not to the minor as shaming | — |
 
-**Parental-consent flow (roadmap, Phase 3+):** parent (18+) signs in → verifies adult status via DigiLocker (Rule 10 Case 2) → creates the minor's case under the parent's account → consent artefact `acting_for` = parent → still no AI, telemetry or tracking (s.9(3)).
+**Family-mode consent flow:** parent (18+) signs in → confirms they are the parent or lawful guardian and an adult (hackathon build: declaration recorded in the consent artefact; production: Rule 10 verification via details already held or DigiLocker, Rule 10 Case 2) → adds the minor's case under the parent's account → consent artefacts `acting_for` = parent for each purpose, including AI → the minor's data is never used for tracking, behavioural monitoring or targeted ads (s.9(3)). Provider terms on minors: see R-13 (RISK_REGISTER).
 
 ---
 
@@ -307,10 +309,10 @@ Margdarshak is not a notified Significant Data Fiduciary (s.10), so a DPIA isn't
 
 | Step | Finding |
 |---|---|
-| **Description** | Citizen journey assistant for driving licences; pseudonymous case data; optional contact; optional AI on 18+ users; aggregates for states and schools |
+| **Description** | Citizen journey assistant for driving licences; pseudonymous case data; optional contact; optional AI for every user (a minor through a parent's account); aggregates for states and schools |
 | **Necessity and proportionality** | Every field in §2 maps to a feature; no Aadhaar/biometrics; DOB needed for legal eligibility; contact only for opted-in reminders |
-| **Risks to people** | (1) Re-identification of a learner's test fails → embarrassment (P-01); (2) contact leak → phishing using our brand (AC-04); (3) minors' data → s.9 breach; (4) AI misinformation about eligibility → wasted fees and time; (5) bystanders in clips; (6) Live Intel used to harass officials; (7) cross-border processing by Gemini; (8) helper misuse at cyber cafés |
-| **Likelihood × severity (before → after controls)** | (1) M×M → L×M; (2) M×H → L×M; (3) M×H → L×H; (4) M×M → L×L (code owns facts); (5) M×M → L×L; (6) M×H → L×M; (7) H×L → H×L (accepted for 18+ consented users, Phase 3 moves to India); (8) M×M → L×M |
+| **Risks to people** | (1) Re-identification of a learner's test fails → embarrassment (P-01); (2) contact leak → phishing using our brand (AC-04); (3) minors' data processed without verifiable parental consent or used for profiling → s.9 breach; (4) AI misinformation about eligibility → wasted fees and time; (5) bystanders in clips; (6) Live Intel used to harass officials; (7) cross-border processing by Gemini; (8) helper misuse at cyber cafés |
+| **Likelihood × severity (before → after controls)** | (1) M×M → L×M; (2) M×H → L×M; (3) M×H → L×H; (4) M×M → L×L (code owns facts); (5) M×M → L×L; (6) M×H → L×M; (7) H×L → H×L (accepted for consented users, with the parent consenting for a minor; Phase 3 moves to India); (8) M×M → L×M |
 | **Controls** | SECURITY_ARCHITECTURE §3–§12; §1–§9 above |
 | **Residual risk** | Medium overall in Phase 1–2 (synthetic data limits impact); Low target for Phase 3+ after India residency and external VAPT |
 | **Sign-off** | LC + SEC, reviewed with each new purpose or processor; next review before Phase 3 gate |
@@ -323,6 +325,6 @@ Margdarshak is not a notified Significant Data Fiduciary (s.10), so a DPIA isn't
 |---|---|---|
 | Real people's data | **None before the confirmed start (R-14)**; then only consented 18+ field-study participants (journey test n 5–8, Nazar n 40–80) on the Gemini paid tier | Citizens at scale |
 | Residency | Render Singapore, Gemini global | India: MeghRaj/empanelled CSP, Vertex AI India region or Bhashini, self-hosted n8n |
-| Children | Rules-only, account-less | + Rule 10 parental flow via DigiLocker (still no AI/tracking) |
+| Children | Family mode: full product incl. AI inside the parent's account; parent's declaration + consent artefacts; no tracking/profiling/ads | + Rule 10 verification via DigiLocker or details already held; same full product, still no tracking/profiling/ads |
 | Consent managers | Own artefacts | Accept registered consent managers |
 | Fiduciary | Nestiq | STD (fiduciary) + Nestiq (processor) in government mode |

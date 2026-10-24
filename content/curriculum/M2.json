@@ -1,0 +1,126 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M2",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Impact speed",
+    "hi": "टक्कर की रफ़्तार"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Inside G2 only",
+  "skill_id": "SK-M2",
+  "game_ids": ["stopping_distance"],
+  "drill_ids": ["DR-SD-STREET"],
+  "rule_ids": ["RR-SPD-003"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M2-1",
+      "text": {
+        "en": "Link speed choice to how badly the other person can be hurt.",
+        "hi": "रफ़्तार के चुनाव को इस बात से जोड़ें कि दूसरे व्यक्ति को कितनी चोट लग सकती है।"
+      }
+    },
+    {
+      "id": "LO-M2-2",
+      "text": {
+        "en": "Use only the two published reference points; no invented curve.",
+        "hi": "सिर्फ़ दो प्रकाशित संदर्भ बिंदुओं का इस्तेमाल करें; कोई गढ़ा हुआ ग्राफ़ नहीं।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M2-1",
+      "title": {
+        "en": "Who's around you: two reference points",
+        "hi": "आपके आस-पास कौन है: दो संदर्भ बिंदु"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M2-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Pedestrian death risk is under 20% below 50 km/h and about 60% at 80 km/h.",
+        "hi": "50 किमी/घंटा से कम पर पैदल यात्री की मृत्यु का जोखिम 20% से कम और 80 किमी/घंटा पर लगभग 60% होता है।"
+      },
+      "sources": [
+        {
+          "title": "WHO road traffic injuries fact sheet (not re-fetched)",
+          "url": "https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries",
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-SPD-003"
+    },
+    {
+      "id": "KF-M2-2",
+      "kind": "evidence",
+      "text": {
+        "en": "Pedestrians were 35,221 of road deaths (20.4%) in 2023.",
+        "hi": "2023 में सड़क पर मरने वालों में 35,221 (20.4%) पैदल यात्री थे।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 4.4 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M2-1",
+      "myth": {
+        "en": "A few km/h make no difference to a pedestrian.",
+        "hi": "कुछ किमी/घंटा से पैदल यात्री पर कोई फ़र्क़ नहीं पड़ता।"
+      },
+      "correction": {
+        "en": "The chance of serious harm rises sharply with impact speed; slower gives the other person a far better chance.",
+        "hi": "टक्कर की रफ़्तार के साथ गंभीर चोट की आशंका तेज़ी से बढ़ती है; धीमी रफ़्तार दूसरे व्यक्ति को कहीं बेहतर मौक़ा देती है।"
+      },
+      "rule_id": "RR-SPD-003"
+    }
+  ],
+  "concepts": {
+    "target": 3,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "5-item scenario choice ≥ 4/5; FSRS mastery ≥ 0.8.",
+      "hi": "5 सवालों वाले परिदृश्य में ≥ 4/5; FSRS महारत ≥ 0.8।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Re-fetch the WHO source", "Tone review (no gore, no fear appeal)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

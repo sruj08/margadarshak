@@ -2,7 +2,7 @@
 id: PRM-DECODER
 version: 1.0.0
 agent: ScreenDecoderAgent (M-05)
-model_env: MD_MODEL_VISION           # default gemini-3.6-flash
+model_env: GEMINI_MODEL_VISION           # default gemini-3.6-flash
 output_schema: margdarshak_ai.schemas.DecoderDraft
 state_inputs: [candidates, ocr_hint, locale, canary]
 temperature: 0.0

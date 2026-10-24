@@ -1,0 +1,254 @@
+{
+  "name": "W13 · Analytics digest (weekly, Monday 21:00 IST) → backend aggregates → Slack + email",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 21 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "d13c0013-0000-4000-8000-000000000001",
+      "name": "Every Monday 21:00 IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 200],
+      "notes": "Weekly digest (F-55). Workflow timezone = Asia/Kolkata."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 21 * * *"
+            }
+          ]
+        }
+      },
+      "id": "d13c0013-0000-4000-8000-000000000002",
+      "name": "Daily 21:00 IST (hackathon week only)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 400],
+      "disabled": true,
+      "notes": "MD-141 asks for a daily 21:00 digest during the hackathon. Enable this trigger for the event week, then disable it again (the weekly trigger stays)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Sign the digest read (GET, empty body): Margdarshak-Signature over `${ts}.` (body = '').\n// Reshape only; n8n never queries Postgres (DB credentials stay out of n8n).\nconst crypto = require('crypto');\nlet daily = false;\ntry { daily = $('Daily 21:00 IST (hackathon week only)').isExecuted; } catch (e) { daily = false; }\nconst period = daily ? 'day' : 'week';\nconst ts = Math.floor(Date.now() / 1000).toString();\nconst v1 = crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.`).digest('hex');\nreturn [{ json: { period, signature: `t=${ts},v1=${v1}` } }];"
+      },
+      "id": "d13c0013-0000-4000-8000-000000000003",
+      "name": "Sign digest request (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $vars.MD_API_BASE }}/internal/analytics/digest",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "period",
+              "value": "={{ $json.period }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "d13c0013-0000-4000-8000-000000000004",
+      "name": "GET /internal/analytics/digest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300],
+      "notes": "Proposed endpoint (x-proposed; N8N_WORKFLOWS.md lists it as POST /internal/jobs/analytics-digest). The backend runs the versioned SQL in ops/queries/*.sql and returns aggregates only, with every cell n ≥ 5 (MD-141): { period, from, to, publishable, k_min, sql_version, sections: [{ title, rows: [{ label, value }] }] }. Funnel plan → apply → LL → bridge → DL; Nazar latency day 1 → N; readiness distribution; debrief fallback rate; AI cost."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-publishable",
+              "leftValue": "={{ $json.publishable === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d13c0013-0000-4000-8000-000000000005",
+      "name": "Backend marked it publishable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [720, 300],
+      "notes": "The k ≥ 5 suppression is computed in the backend; n8n only refuses to post a digest the backend did not mark publishable."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format the backend's aggregates for Slack and email. Presentation only.\nconst d = $json;\nconst head = `Margdarshak ${d.period} digest · ${d.from} → ${d.to}`;\nconst lines = [`*${head}*`, `_Aggregates only; every cell n ≥ ${d.k_min} (suppressed in the backend). Synthetic hackathon data._`];\nfor (const s of d.sections || []) {\n  lines.push('', `*${s.title}*`);\n  for (const r of s.rows || []) lines.push(`• ${r.label}: ${r.value}`);\n}\nlines.push('', `Source: GET /internal/analytics/digest · SQL ${d.sql_version || 'ops/queries'}`);\nconst slack = lines.join('\\n');\nreturn [{ json: { slack_text: slack, email_subject: head, email_text: slack.replace(/[*_]/g, '') } }];"
+      },
+      "id": "d13c0013-0000-4000-8000-000000000006",
+      "name": "Format digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [960, 200]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $vars.MD_SLACK_DIGEST_CHANNEL }}",
+          "mode": "id"
+        },
+        "text": "={{ $json.slack_text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "d13c0013-0000-4000-8000-000000000007",
+      "name": "Post to team Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1200, 120],
+      "credentials": {
+        "slackApi": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak Slack bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $vars.MD_DIGEST_EMAIL_TO }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailType": "text",
+        "message": "={{ $json.email_text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d13c0013-0000-4000-8000-000000000008",
+      "name": "Email team digest",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1200, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak notifications mailbox"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Analytics digest not publishable (backend said publishable={{ $json.publishable }}). Nothing was posted. Runbook: docs/05-ops/RUNBOOK.md"
+      },
+      "id": "d13c0013-0000-4000-8000-000000000009",
+      "name": "Not publishable → W12",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [960, 420]
+    }
+  ],
+  "connections": {
+    "Every Monday 21:00 IST": {
+      "main": [[{ "node": "Sign digest request (HMAC)", "type": "main", "index": 0 }]]
+    },
+    "Daily 21:00 IST (hackathon week only)": {
+      "main": [[{ "node": "Sign digest request (HMAC)", "type": "main", "index": 0 }]]
+    },
+    "Sign digest request (HMAC)": {
+      "main": [[{ "node": "GET /internal/analytics/digest", "type": "main", "index": 0 }]]
+    },
+    "GET /internal/analytics/digest": {
+      "main": [[{ "node": "Backend marked it publishable?", "type": "main", "index": 0 }]]
+    },
+    "Backend marked it publishable?": {
+      "main": [
+        [{ "node": "Format digest", "type": "main", "index": 0 }],
+        [{ "node": "Not publishable → W12", "type": "main", "index": 0 }]
+      ]
+    },
+    "Format digest": {
+      "main": [
+        [
+          { "node": "Post to team Slack", "type": "main", "index": 0 },
+          { "node": "Email team digest", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "executionTimeout": 300,
+    "errorWorkflow": "REPLACE_WITH_W12_WORKFLOW_ID",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "margdarshak" },
+    { "name": "F-55 analytics" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "margdarshak": {
+      "workflow_id": "W13",
+      "ticket": "MD-141",
+      "owner": "Ops lead",
+      "doc": "docs/05-ops/N8N_WORKFLOWS.md#w13",
+      "business_logic": "none (aggregation and k >= 5 suppression run in the backend; n8n formats and posts)",
+      "executions_per_month": 5,
+      "required_variables": [
+        "MD_API_BASE",
+        "MD_HMAC_SECRET",
+        "MD_N8N_READ_TOKEN",
+        "MD_SLACK_DIGEST_CHANNEL",
+        "MD_DIGEST_EMAIL_TO"
+      ]
+    }
+  },
+  "active": false,
+  "versionId": "00000000-0000-4000-8000-00000000d131"
+}

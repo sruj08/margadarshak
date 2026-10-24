@@ -1,0 +1,125 @@
+{
+  "$comment": "Placeholder still-frame descriptions for the screen-reader alternative (EC-18, D-21) until each published clip carries its authored sr_alt_url file. Content, not UI chrome: loaded only by the /sr route. Draft text; Hindi pending native review.",
+  "questions": [
+    {
+      "id": "sr-bus-stop",
+      "hazard_type": "bus_stop_pedestrian",
+      "scene": {
+        "en": "Riding on a busy city road. A bus has stopped at a bus stop on the left.",
+        "hi": "भीड़ वाली शहर की सड़क पर सवारी। बाईं ओर बस स्टॉप पर एक बस रुकी है।"
+      },
+      "frames": [
+        {
+          "hazard": false,
+          "en": "A shopkeeper stands behind his counter, away from the road.",
+          "hi": "एक दुकानदार सड़क से दूर अपने काउंटर के पीछे खड़ा है।"
+        },
+        {
+          "hazard": true,
+          "en": "Feet are visible under the front of the stopped bus, moving towards the road.",
+          "hi": "रुकी बस के आगे के हिस्से के नीचे पैर दिख रहे हैं, जो सड़क की ओर बढ़ रहे हैं।"
+        },
+        {
+          "hazard": false,
+          "en": "A car far ahead in the same lane, keeping its distance.",
+          "hi": "उसी लेन में काफ़ी आगे एक कार, दूरी बनाए हुए।"
+        },
+        {
+          "hazard": false,
+          "en": "A parked scooter on the footpath with no rider.",
+          "hi": "फ़ुटपाथ पर खड़ा एक स्कूटर, उस पर कोई नहीं है।"
+        }
+      ]
+    },
+    {
+      "id": "sr-door",
+      "hazard_type": "door_opening",
+      "scene": {
+        "en": "A narrow street with cars parked along the left side.",
+        "hi": "एक संकरी गली, जिसकी बाईं ओर कारें खड़ी हैं।"
+      },
+      "frames": [
+        {
+          "hazard": true,
+          "en": "A parked car's brake lights are on and someone is moving inside, next to the driver's door.",
+          "hi": "एक खड़ी कार की ब्रेक लाइट जली है और ड्राइवर के दरवाज़े के पास अंदर कोई हिल रहा है।"
+        },
+        {
+          "hazard": false,
+          "en": "An empty parked car with its windows closed.",
+          "hi": "खिड़कियाँ बंद, एक खाली खड़ी कार।"
+        },
+        {
+          "hazard": false,
+          "en": "A tree at the corner of the street.",
+          "hi": "गली के कोने पर एक पेड़।"
+        },
+        {
+          "hazard": false,
+          "en": "A road sign for a speed breaker ahead, already passed.",
+          "hi": "आगे स्पीड ब्रेकर का बोर्ड, जो पीछे छूट चुका है।"
+        }
+      ]
+    },
+    {
+      "id": "sr-auto",
+      "hazard_type": "auto_cut_in",
+      "scene": {
+        "en": "Two lanes of traffic moving slowly towards a junction.",
+        "hi": "दो लेन का ट्रैफ़िक धीरे-धीरे एक चौराहे की ओर बढ़ रहा है।"
+      },
+      "frames": [
+        {
+          "hazard": false,
+          "en": "A bus in the far lane, moving straight.",
+          "hi": "दूर वाली लेन में एक बस, सीधी चलती हुई।"
+        },
+        {
+          "hazard": false,
+          "en": "A pedestrian waiting on the footpath, looking at a phone.",
+          "hi": "फ़ुटपाथ पर इंतज़ार करता एक व्यक्ति, फ़ोन देखता हुआ।"
+        },
+        {
+          "hazard": true,
+          "en": "An auto in the next lane drifts towards your lane, its front wheel turned.",
+          "hi": "बगल की लेन का एक ऑटो आपकी लेन की ओर खिसक रहा है, उसका आगे का पहिया मुड़ा हुआ है।"
+        },
+        {
+          "hazard": false,
+          "en": "A traffic signal ahead showing green.",
+          "hi": "आगे का सिग्नल हरा है।"
+        }
+      ]
+    },
+    {
+      "id": "sr-cattle",
+      "hazard_type": "cattle_animal",
+      "scene": {
+        "en": "A road at the edge of town with open ground on both sides.",
+        "hi": "शहर के किनारे की सड़क, दोनों ओर खुली ज़मीन।"
+      },
+      "frames": [
+        {
+          "hazard": false,
+          "en": "A milestone at the side of the road.",
+          "hi": "सड़क किनारे एक मील का पत्थर।"
+        },
+        {
+          "hazard": false,
+          "en": "A truck parked far off the road, engine off.",
+          "hi": "सड़क से काफ़ी दूर खड़ा एक ट्रक, इंजन बंद।"
+        },
+        {
+          "hazard": false,
+          "en": "Clear road ahead with no vehicles.",
+          "hi": "आगे खाली सड़क, कोई गाड़ी नहीं।"
+        },
+        {
+          "hazard": true,
+          "en": "A cow at the roadside lifts its head and turns towards the road.",
+          "hi": "सड़क किनारे एक गाय सिर उठाकर सड़क की ओर मुड़ती है।"
+        }
+      ]
+    }
+  ]
+}

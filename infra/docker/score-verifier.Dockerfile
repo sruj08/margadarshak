@@ -16,12 +16,17 @@ WORKDIR /repo
 FROM base AS build
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc* ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm fetch --frozen-lockfile
-COPY packages/game-core ./packages/game-core
+COPY packages ./packages
+COPY content ./content
+COPY rulepacks ./rulepacks
 COPY services/score-verifier ./services/score-verifier
 COPY tsconfig*.json ./
+# build:content writes services/score-verifier/content (server LL answer keys, formats, SD/BS
+# documents): generated here, never committed, copied into the runtime image below.
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --offline --filter "@margdarshak/score-verifier..." \
  && pnpm --filter "@margdarshak/score-verifier..." build \
+ && pnpm --filter @margdarshak/score-verifier build:content --no-index \
  # produce a self-contained, prod-only deployment folder (pnpm deploy)
  && pnpm --filter "@margdarshak/score-verifier" deploy --prod /out
 
@@ -31,12 +36,15 @@ LABEL org.opencontainers.image.title="margdarshak-score-verifier" \
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.description="Server-side deterministic replay of game sessions (anti-cheat)"
 ENV NODE_ENV=production PORT=8081 TZ=UTC \
+    VERIFIER_CONTENT_DIR=/app/content \
+    VERIFIER_BODY_LIMIT_BYTES=1048576 \
     # determinism guard: game-core must not read wall-clock or Math.random at replay time
     GAME_CORE_STRICT_DETERMINISM=1
 RUN groupadd --system --gid 10001 app \
  && useradd --system --uid 10001 --gid app --home-dir /app --shell /usr/sbin/nologin app
 WORKDIR /app
 COPY --from=build --chown=app:app /out ./
+COPY --from=build --chown=app:app /repo/services/score-verifier/content ./content
 USER 10001:10001
 EXPOSE 8081
 

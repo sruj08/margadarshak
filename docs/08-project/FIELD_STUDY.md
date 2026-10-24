@@ -1,7 +1,7 @@
 # Field Study
 > Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Product/design lead (study lead) · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) §3, §7 · [BACKLOG](BACKLOG.md) EP-17a, EP-17b, EP-38 · [TEAM](TEAM.md) · [GLOSSARY](GLOSSARY.md) §8 · [PRIVACY](../06-security-compliance/PRIVACY.md) · [METRICS](../01-product/METRICS.md) · [PITCH](../00-overview/PITCH.md)
-> Inputs: `field-kit/NAZAR-FIELD-KIT.md` (protocols, consent, hypotheses draft), `field-kit/nazar_stats.py` (analysis script), PROJECT_BRIEF §12, directive D-22, `research/ps1-current-state/01-sarathi-screens.md` (lab replica source).
+> Inputs: `field-kit/NAZAR-FIELD-KIT.md` (protocols, consent, hypotheses draft), `field-kit/nazar_stats.mjs` (analysis script), PROJECT_BRIEF §12, directive D-22, `research/ps1-current-state/01-sarathi-screens.md` (lab replica source).
 
 This document turns the field kit into the study protocol for Margdarshak (F-57). It covers two studies run during the hackathon, the before/after product metrics, and the larger studies that follow in production. **Nothing in this file is collected before gate G0 (the confirmed start), and HYPOTHESES.md is committed after G0 and before the first participant session** (R-14, MD-241).
 
@@ -42,7 +42,7 @@ flowchart LR
   H --> S2
   H --> S1[S1 journey sessions]
   R2[Recruit S1<br/>§5.2] --> S1
-  S1 --> Z[Data freeze → nazar_stats.py + journey_stats.py → results]
+  S1 --> Z[Data freeze → nazar_stats.mjs + journey_stats.py → results]
   S2 --> Z
   S2b --> Z
 ```
@@ -54,7 +54,7 @@ flowchart LR
 | Role | Who | Duties |
 |---|---|---|
 | Study lead (PI) | PD | Protocol, consent, recruitment, deviations log, reporting; final say on what is claimed |
-| Analyst | BE | Exports, `nazar_stats.py` run, `journey_stats.py` (written before journey data exists), RW-4 counters |
+| Analyst | BE | Exports, `nazar_stats.mjs` run, `journey_stats.py` (written before journey data exists), RW-4 counters |
 | Lab builder and observer | FE | Lab replica (MD-139), session logging checks, observes S1 sessions |
 | Raters (2) | Two people not told each other's marks | Independent hazard windows per clip (MD-219) |
 | Observers (1–2) | Recruited helpers | S1 note-taking; never help participants beyond the scripted lines |
@@ -140,7 +140,7 @@ Estimate how many licence holders in our sample score below Kerala's announced p
 
 **In person (3–5 people):** sit beside them, ask them to think aloud, and record audio-only or faceless 10-second reactions with separate consent, for the video.
 
-**AI in the study cohort.** The study cohort uses the **template debrief only** (no Gemini calls), unless Gemini paid-tier billing is confirmed (DEC-020) and the AI consent purpose is granted. This keeps the study inside the Gemini terms and D-13.
+**AI in the study cohort.** The study cohort uses the **template debrief only** (no Gemini calls), unless Gemini paid-tier billing is confirmed (DEC-020) and the AI consent purpose is granted. This keeps the study inside the Gemini paid-tier terms (the free tier allows human review of prompts).
 
 ### 4.4 Scoring (pre-registered)
 - **Window per hazard:** onset `a` = mean of the two raters' onsets; end `b` = mean of the two raters' ends. Clips with rater |Δonset| > 1.0 s go to a third rater; if still > 1.0 s, the clip is dropped before any participant data is scored (logged).
@@ -262,8 +262,8 @@ Exclusions: participant reveals real personal data (stop, delete, exclude); syst
 Small n: every participant's row is reported; no claims beyond "in this sample".
 
 ## Analysis code (frozen at this commit)
-analysis/nazar_stats.py   sha256: <hash>   (copied unchanged from field-kit/nazar_stats.py)
-analysis/journey_stats.py sha256: <hash>
+analysis/nazar_stats.mjs   sha256: <hash>   (copied unchanged from field-kit/nazar_stats.mjs)
+analysis/journey_stats.mjs sha256: <hash>
 Changes after data collection: bug fixes only, each listed in analysis/DEVIATIONS.md with the commit.
 
 ## Reporting promise
@@ -277,13 +277,13 @@ Every hypothesis is reported, whichever way it comes out. If the replica beats M
 ### 7.1 Scripts
 | Script | Status | Inputs | Outputs |
 |---|---|---|---|
-| `analysis/nazar_stats.py` | Exists (`field-kit/nazar_stats.py`); copied unchanged into the repo after G0 | `sessions.csv` (`anon_id, ll_score(0–15), hpt_score(0–100), pre_mean(0–10), post_mean(0–10), median_late_s, speed_kmh, total_s, max_taps_per_s, age_ok, retake_of`), optional `raters.csv` (`clip_id, rater_a_onset_s, rater_b_onset_s`) | N after exclusions; H1 % below 60 with Wilson 95% CI; H2 r with Fisher-z 95% CI; median seconds late and metres at the median speed; H3 mean gain with one-sided Wilcoxon p (normal approximation); test-retest r if ≥ 8 retakes; H4 median inter-rater |Δonset| |
-| `analysis/journey_stats.py` | **To write before journey data exists** (MD-627), stdlib only | `journey_sessions.csv` (§3.6) | Per system: median and IQR time, full-success k/N with Wilson CI, blockers found, errors, backtracks, help requests, SUS mean with 95% CI; paired: Wilcoxon (exact for n ≤ 20 by enumerating sign assignments), exact McNemar (binomial on discordant pairs), paired-t CI for SUS difference (t critical values df 4–9: 2.776, 2.571, 2.447, 2.365, 2.306, 2.262), agent intent pre→post (exact McNemar) and median max-₹; order-effect table (A-first vs B-first) |
-| `analysis/nazar_secondary.py` | To write before data (MD-627) | `clip_responses.csv` (`anon_id, form, clip_id, block, phase(test|fresh), score_primary, score_alt, first_tap_s, n_taps, timing_mode, trust`) | Sensitivity analysis with `score_alt`; difficulty-matched gain (fresh-clip score minus the mean score of the same clips when they were test clips for other participants); false alarms on no-hazard clips; results by licence type and years driving (descriptive only) |
+| `analysis/nazar_stats.mjs` | Exists (`field-kit/nazar_stats.mjs`); copied unchanged into the repo after G0 | `sessions.csv` (`anon_id, ll_score(0–15), hpt_score(0–100), pre_mean(0–10), post_mean(0–10), median_late_s, speed_kmh, total_s, max_taps_per_s, age_ok, retake_of`), optional `raters.csv` (`clip_id, rater_a_onset_s, rater_b_onset_s`) | N after exclusions; H1 % below 60 with Wilson 95% CI; H2 r with Fisher-z 95% CI; median seconds late and metres at the median speed; H3 mean gain with one-sided Wilcoxon p (normal approximation); test-retest r if ≥ 8 retakes; H4 median inter-rater |Δonset| |
+| `analysis/journey_stats.mjs` | **To write before journey data exists** (MD-627), stdlib only | `journey_sessions.csv` (§3.6) | Per system: median and IQR time, full-success k/N with Wilson CI, blockers found, errors, backtracks, help requests, SUS mean with 95% CI; paired: Wilcoxon (exact for n ≤ 20 by enumerating sign assignments), exact McNemar (binomial on discordant pairs), paired-t CI for SUS difference (t critical values df 4–9: 2.776, 2.571, 2.447, 2.365, 2.306, 2.262), agent intent pre→post (exact McNemar) and median max-₹; order-effect table (A-first vs B-first) |
+| `analysis/nazar_secondary.mjs` | To write before data (MD-627) | `clip_responses.csv` (`anon_id, form, clip_id, block, phase(test|fresh), score_primary, score_alt, first_tap_s, n_taps, timing_mode, trust`) | Sensitivity analysis with `score_alt`; difficulty-matched gain (fresh-clip score minus the mean score of the same clips when they were test clips for other participants); false alarms on no-hazard clips; results by licence type and years driving (descriptive only) |
 
 **Export mapping (MD-238).** `hpt_score` = primary test score over the 10 test clips; `pre_mean` = mean per-clip primary score over the 10 test clips; `post_mean` = mean per-clip primary score over the 5 fresh clips; `median_late_s` = median `late_s` over clips where the participant tapped inside a window; `speed_kmh` = median curator speed estimate of those clips; `age_ok` = 1 if the consent screen's 18+ box was ticked; `max_taps_per_s` = highest taps in any 1-second window. A second file `sessions_alt.csv` carries the sensitivity score in `hpt_score` so the same script runs unchanged for the sensitivity analysis.
 
-**Known limits of `nazar_stats.py` (stated, not fixed after data):** the Wilcoxon p uses a normal approximation and returns NaN below 6 non-zero differences; H3 in this script is the simple pre/post difference (difficulty matching lives in `nazar_secondary.py`); r and its CI are printed without a decision rule (the rule is §7.2); test-retest needs ≥ 8 retakes.
+**Known limits of `nazar_stats.mjs` (stated, not fixed after data):** the Wilcoxon p uses a normal approximation and returns NaN below 6 non-zero differences; H3 in this script is the simple pre/post difference (difficulty matching lives in `nazar_secondary.py`); r and its CI are printed without a decision rule (the rule is §7.2); test-retest needs ≥ 8 retakes.
 
 ### 7.2 Decision rules (pre-registered wording for the results)
 | Hypothesis | "Supported" | "Consistent with, not confirmed" | "Not supported" |
@@ -305,7 +305,7 @@ Every hypothesis is reported, whichever way it comes out. If the replica beats M
 ### 7.4 Data freeze and run
 1. Freeze at the pre-set time (field-kit default: Sat 18:00 IST, adjusted in the deviations log if G0 moved). After the freeze, new sessions go into a "post-freeze" file that is never mixed into the reported numbers.
 2. Export the four CSVs (MD-238, MD-140); record their sha256.
-3. Run: `python analysis/nazar_stats.py sessions.csv raters.csv`, `python analysis/nazar_stats.py sessions_alt.csv`, `python analysis/nazar_secondary.py clip_responses.csv`, `python analysis/journey_stats.py journey_sessions.csv`.
+3. Run: `node analysis/nazar_stats.mjs sessions.csv raters.csv`, `node analysis/nazar_stats.mjs sessions_alt.csv`, `node analysis/nazar_secondary.mjs clip_responses.csv`, `node analysis/journey_stats.mjs journey_sessions.csv`.
 4. RW-4 (MD-239) recomputes the same numbers for the live counters; any mismatch is a bug to fix before reporting.
 5. Save outputs with the script hashes in `analysis/results/<date>/`; write `analysis/DEVIATIONS.md`.
 
@@ -356,14 +356,14 @@ Every hypothesis is reported, whichever way it comes out. If the replica beats M
 
 ## 10. Ethics and data protection
 
-- **Adults only.** 18+ for both studies; the app gate is server-side (MD-049); declared minors are excluded and deleted.
+- **Adults only.** 18+ for both studies (research-ethics eligibility, not a product rule; the product serves under-18s through family mode, D-13 revised); the study's 18+ consent check is server-side (MD-237); declared minors are excluded and deleted.
 - **No personal data by design.** S2 stores an anonymous ID, bands and scores only; S1 uses synthetic identities and participant codes. No faces, names, phone numbers, licence numbers or locations are collected. Audio quotes only with separate consent.
 - **Bystanders.** Clips are filmed in public from a passenger seat or fixed mount, never by the rider and never while breaking traffic rules; faces and plates are blurred and 100% audited before anything is published; raw footage is deleted after the audit.
 - **No deception.** The lab replica is labelled as a research replica; participants are debriefed at the end.
 - **No performance-tied incentives.** The S1 recharge is the same for everyone; S2 has no incentive.
 - **Feedback framing.** "Practice score", never a verdict on anyone's driving; no fear or gore content.
 - **Non-affiliation.** "Kerala's announced format", never "the Kerala test"; not affiliated with any MVD, MoRTH or NIC.
-- **AI.** No participant data goes to an AI service in the study cohort unless Gemini paid tier and the AI consent purpose are both in place (D-13); the default is the template debrief.
+- **AI.** No participant data goes to an AI service in the study cohort unless Gemini paid tier and the AI consent purpose are both in place (DEC-020); the default is the template debrief.
 - **Storage and access.** Study data live in the project database (Render, Singapore, synthetic-data project) and a team-only sheet (W14) with pseudonymous codes; never in the public repo. Published outputs are aggregates plus a de-identified row table (no free text unless quote consent).
 - **Retention.** Row-level study data deleted 90 days after the event unless a participant-approved follow-up is pre-registered [design choice; owner PD]; aggregates and the analysis outputs are kept.
 - **Reporting either way.** Every pre-registered result is published, including unfavourable ones.
@@ -382,7 +382,7 @@ Every hypothesis is reported, whichever way it comes out. If the replica beats M
 
 **Before S2 link drop**
 - [ ] ≥ 12 audited clips published; forms A/B/C configured; LL mock set fixed.
-- [ ] Consent screen in en + hi; under-18 gate tested; study cohort flag on; AI off for the cohort.
+- [ ] Consent screen in en + hi; study 18+ eligibility check tested; study cohort flag on; AI off for the cohort.
 - [ ] RW-4 counters and W14 sheet tested with two team dry runs (then deleted and excluded).
 - [ ] Recruitment messages scheduled for each group.
 
@@ -402,3 +402,7 @@ Every hypothesis is reported, whichever way it comes out. If the replica beats M
 | RTO pilot evaluation | Baseline vs pilot period at one office: wait times, document rejections, agent use, first-attempt pass rate, counter queries | One J&K RTO/ARTO | Office-level change with honest limits (no causal claim beyond the design) | MD-714, MD-718 |
 
 Each production study gets its own pre-registration file before data, following §6.4.
+
+---
+
+**Dated note (2026-10-24, ADR-0013):** the Nazar clips are AI-generated (Gemini video generation, labelled "AI-generated scene"), so every S2 result, slide line and honesty footnote must say "on AI-generated road scenes", and `HYPOTHESES.md` (MD-241, a human task) must state that the clips are AI-generated before any data is collected.

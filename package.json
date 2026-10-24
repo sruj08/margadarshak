@@ -4,107 +4,60 @@
   "private": true,
   "description": "Margdarshak: a reference citizen front end plus an open adapter specification for India's driving-licence journey. Independent prototype, not affiliated with MoRTH/NIC/State Transport Departments.",
   "license": "Apache-2.0",
-  "packageManager": "pnpm@12.15.0",
+  "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": ">=22.12.0 <23",
-    "pnpm": ">=12.15.0"
+    "pnpm": ">=11.9.0"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "services/score-verifier",
-    "tests/e2e"
-  ],
   "scripts": {
-    "dev": "concurrently -k -n web,console,api,verifier -c blue,magenta,green,yellow \"pnpm --filter @margdarshak/web dev\" \"pnpm --filter @margdarshak/console dev\" \"pnpm api:dev\" \"pnpm --filter @margdarshak/score-verifier dev\"",
-    "build": "pnpm -r --filter \"./packages/**\" build && pnpm -r --filter \"./apps/**\" --filter @margdarshak/score-verifier build",
-    "clean": "node scripts/clean.mjs",
-
-    "lint": "pnpm lint:ts && pnpm lint:next && pnpm lint:py && pnpm lint:facts",
-    "lint:ts": "biome check .",
-    "lint:next": "pnpm -r --filter @margdarshak/web --filter @margdarshak/console exec eslint . --max-warnings 0",
-    "lint:py": "cd services/api && uv run ruff check . && uv run ruff format --check . && uv run lint-imports",
-    "lint:facts": "tsx scripts/lint_wording.ts && uv run --project services/api python scripts/lint_facts.py",
-    "format": "biome format --write . && cd services/api && uv run ruff format .",
-
-    "typecheck": "pnpm -r exec tsc --noEmit && pnpm typecheck:py",
-    "typecheck:py": "cd services/api && uv run mypy src tests && cd ../workflows && uv run mypy src",
-
-    "test": "pnpm test:ts && pnpm test:py",
-    "test:ts": "vitest run --coverage",
-    "test:py": "cd services/api && uv run pytest -n auto --cov=margdarshak --cov-report=term-missing",
-    "test:golden": "cd services/api && uv run pytest tests/golden -q",
-    "test:contract": "cd services/api && uv run pytest tests/contract -q -m \"not real\"",
-    "test:contract:real": "cd services/api && uv run pytest tests/contract -q -m real",
-    "test:replay": "pnpm --filter @margdarshak/game-core test:replay",
-    "test:e2e": "pnpm --filter @margdarshak/e2e exec playwright test",
-    "test:smoke": "pnpm --filter @margdarshak/e2e exec playwright test --grep @smoke",
-    "test:load": "k6 run tests/load/plan-burst.js",
-    "test:ec-coverage": "uv run --project services/api python scripts/check_ec_coverage.py",
-
-    "ai:eval": "cd services/api && uv run adk eval src/margdarshak/adapters/outbound/ai/agents ../../ai/evals",
-
-    "size": "size-limit",
-    "lhci": "lhci autorun",
-
+    "dev": "turbo run dev --filter=@margdarshak/web",
+    "dev:all": "concurrently -k -n web,api -c blue,green \"pnpm --filter @margdarshak/web dev\" \"pnpm api:dev\"",
+    "build": "turbo run build",
+    "build:web": "turbo run build --filter=@margdarshak/web",
+    "clean": "turbo run clean",
+    "lint": "pnpm lint:biome && pnpm lint:facts && pnpm lint:patterns && pnpm lint:i18n",
+    "lint:biome": "biome check .",
+    "lint:facts": "node scripts/lint_wording.mjs && node scripts/lint_fee_literals.mjs && node scripts/lint_wording.mjs --self-test && node scripts/lint_fee_literals.mjs --self-test",
+    "lint:i18n": "pnpm --filter @margdarshak/web i18n:check",
+    "lint:patterns": "node scripts/lint_patterns.mjs && node scripts/lint_patterns.mjs --self-test",
+    "lint:wording": "node scripts/lint_wording.mjs",
+    "lint:fees": "node scripts/lint_fee_literals.mjs",
+    "lint:go": "cd services/api && go vet ./...",
+    "format": "biome format --write .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:go": "cd services/api && go test ./...",
+    "test:e2e": "pnpm --filter @margdarshak/e2e e2e",
+    "test:e2e:real": "pnpm --filter @margdarshak/e2e e2e:real",
+    "test:smoke": "pnpm --filter @margdarshak/e2e e2e --grep @smoke",
+    "size": "size-limit && pnpm --filter @margdarshak/web size:first-load",
     "gen:api": "pnpm --filter @margdarshak/api-client generate",
-    "gen:rules": "pnpm --filter @margdarshak/rules generate",
-
-    "api:dev": "cd services/api && uv run uvicorn margdarshak.main:create_app --factory --reload --port 8000",
-    "workflows:dev": "cd services/workflows && render workflows dev -- uv run python -m margdarshak_workflows",
-    "py:sync": "cd services/api && uv sync --all-extras --dev && cd ../workflows && uv sync --dev",
-
-    "infra:up": "docker compose -f infra/docker/compose.dev.yml up -d",
-    "infra:down": "docker compose -f infra/docker/compose.dev.yml down",
-    "db:migrate": "cd services/api && uv run alembic upgrade head",
-    "db:revision": "cd services/api && uv run alembic revision --autogenerate",
-    "db:seed": "cd services/api && uv run python -m margdarshak.scripts.seed",
-    "db:reset": "docker compose -f infra/docker/compose.dev.yml down -v && pnpm infra:up",
-
-    "n8n:import": "docker compose -f infra/docker/compose.dev.yml exec n8n n8n import:workflow --separate --input=/n8n/workflows",
-
+    "api:dev": "node -e \"process.env.DEV_EMBEDDED_PG??='true';process.exit(require('node:child_process').spawnSync('go',['run','./cmd/api','serve'],{cwd:'services/api',stdio:'inherit'}).status??1)\"",
+    "api:seed": "node -e \"process.env.DEV_EMBEDDED_PG??='true';process.exit(require('node:child_process').spawnSync('go',['run','./cmd/seed','--profile','demo','--synthetic'],{cwd:'services/api',stdio:'inherit'}).status??1)\"",
+    "api:build": "cd services/api && go build -o bin/api ./cmd/api",
+    "infra:up": "docker compose -f infra/docker/compose.yaml up -d",
+    "infra:down": "docker compose -f infra/docker/compose.yaml down",
     "release": "echo Releases are cut by the release-please GitHub Action on main; see docs/03-engineering/GIT_WORKFLOW.md section 6.2",
-    "prepare": "lefthook install"
+    "test:a11y": "pnpm --filter @margdarshak/e2e e2e --grep @a11y"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.2",
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
-    "@lhci/cli": "0.15.1",
-    "@size-limit/preset-app": "14.3.0",
-    "@types/node": "26.6.5",
-    "@vitest/coverage-v8": "5.0.5",
+    "@size-limit/file": "14.3.0",
+    "@types/node": "22.20.5",
     "concurrently": "10.0.6",
-    "knip": "6.42.1",
     "lefthook": "2.2.2",
-    "release-please": "17.11.2",
     "size-limit": "14.3.0",
-    "syncpack": "15.3.3",
-    "tsx": "4.23.15",
-    "typescript": "6.0.3",
-    "vitest": "5.0.5"
+    "turbo": "2.11.10",
+    "typescript": "6.0.3"
   },
   "size-limit": [
     {
-      "name": "web: Lite first load (/hi/lite)",
-      "path": "apps/web/.next/static/**/lite-*.js",
-      "limit": "90 KB",
-      "brotli": true
-    },
-    {
-      "name": "web: full home route JS",
-      "path": "apps/web/.next/static/chunks/app/[[]locale[]]/(citizen)/page-*.js",
-      "limit": "120 KB",
+      "name": "web: global CSS (every chunked stylesheet; P2 adds games, learn and curator styles). The JS bloat ceiling is the first-load union in apps/web/scripts/first-load.mjs, which excludes lazily loaded game chunks (Turbopack hashes chunk names, so size-limit globs cannot)",
+      "path": "apps/web/.next/static/chunks/*.css",
+      "limit": "50 KB",
       "brotli": true
     }
-  ],
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "esbuild",
-      "lefthook",
-      "sharp"
-    ],
-    "overrides": {}
-  }
+  ]
 }

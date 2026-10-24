@@ -1,0 +1,573 @@
+{
+  "name": "W14 · Field-test capture (session end → sheet) + hourly nightly_stats → team summary",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "md/session-end",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "e1400014-0000-4000-8000-000000000001",
+      "name": "Session end (from API)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 200],
+      "webhookId": "e1400014-5ebb-4c1d-9a2e-000000000101",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "MD inbound webhook token"
+        }
+      },
+      "notes": "Posted by the Go API (internal/study hooks.go OnSessionVerified, API env N8N_STUDY_WEBHOOK_PATH) after a server-verified session in cohort field_test. Signed envelope { ts, payload: '<JSON string>', sig }. payload = { event: 'session_end', event_id, cohort: 'field_test', participant_code: 'P-NNN', game, session_id, score, latency_ms, calibration: { n, brier, overconfidence }, server_checked, verified_at }. No names or contact details."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verify the signed envelope before any work. Crypto only; no business logic (same scheme as W02).\nconst crypto = require('crypto');\nconst b = $json.body || {};\nconst ts = String(b.ts ?? '');\nconst payload = typeof b.payload === 'string' ? b.payload : '';\nconst sig = String(b.sig ?? '');\nconst expected = 'sha256=' + crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${payload}`).digest('hex');\nconst fresh = /^\\d+$/.test(ts) && Math.abs(Date.now() / 1000 - Number(ts)) <= 300;\nconst a = Buffer.from(expected);\nconst g = Buffer.from(sig);\nconst sigOk = a.length === g.length && crypto.timingSafeEqual(a, g);\nlet parsed = null;\nif (sigOk && fresh) {\n  try { parsed = JSON.parse(payload); } catch (e) { parsed = null; }\n}\nconst valid = parsed !== null && typeof parsed === 'object';\nreturn [{ json: { valid, reason: valid ? 'ok' : !sigOk ? 'bad_signature' : !fresh ? 'stale' : 'bad_payload', payload: valid ? parsed : null } }];"
+      },
+      "id": "e1400014-0000-4000-8000-000000000002",
+      "name": "Verify envelope (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 200],
+      "notes": "Needs the built-in `crypto` module in Code nodes (allowed on n8n Cloud; self-hosted: NODE_FUNCTION_ALLOW_BUILTIN=crypto)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-valid",
+              "leftValue": "={{ $json.valid === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e1400014-0000-4000-8000-000000000003",
+      "name": "Envelope valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ accepted: true, event_id: $json.payload.event_id ?? null }) }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "e1400014-0000-4000-8000-000000000004",
+      "name": "Respond 202",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 120]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ accepted: false, reason: $json.reason }) }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "e1400014-0000-4000-8000-000000000005",
+      "name": "Respond 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Whitelist the sheet columns. Pseudonymous participant code only: no name, phone, email or free\n// text ever reaches the sheet (FIELD_STUDY §10). Shape checks only; the score is the server's.\nconst p = $('Verify envelope (HMAC)').first().json.payload || {};\nif (p.event !== 'session_end' || p.cohort !== 'field_test') return [];\nconst eventId = String(p.event_id ?? '');\nif (!/^[A-Za-z0-9_.:-]{8,64}$/.test(eventId)) throw new Error('bad event_id');\nconst code = String(p.participant_code ?? '');\nif (!/^P-\\d{3,4}$/.test(code)) throw new Error('bad participant_code');\nconst game = String(p.game ?? '');\nif (!/^[a-z][a-z0-9_]{1,31}$/.test(game)) throw new Error('bad game');\nconst sid = typeof p.session_id === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(p.session_id) ? p.session_id : '';\nconst num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : '');\nconst cal = p.calibration && typeof p.calibration === 'object' ? p.calibration : {};\nconst iso = (v) => (typeof v === 'string' && /^\\d{4}-\\d{2}-\\d{2}T[0-9:.]+(Z|[+-]\\d{2}:\\d{2})$/.test(v) ? v : '');\nreturn [{ json: {\n  event_id: eventId,\n  participant_code: code,\n  game,\n  session_id: sid,\n  score: num(p.score),\n  latency_ms: num(p.latency_ms),\n  calibration_n: num(cal.n),\n  calibration_brier: num(cal.brier),\n  calibration_overconfidence: num(cal.overconfidence),\n  server_checked: p.server_checked === true,\n  verified_at: iso(p.verified_at),\n  received_at: new Date().toISOString(),\n} }];"
+      },
+      "id": "e1400014-0000-4000-8000-000000000006",
+      "name": "Keep sheet columns only (no PII)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 120]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $vars.MD_FIELD_SHEET_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sessions",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": ["event_id"],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "e1400014-0000-4000-8000-000000000007",
+      "name": "Append to field-study sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1100, 120],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak field-study sheet"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Team-only sheet (FIELD_STUDY §10), tab `sessions`. appendOrUpdate keyed on event_id, so a re-delivered event updates its row instead of adding a second one. A deletion request removes the rows too (backend → W14 sub-flow, later)."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "e1400014-0000-4000-8000-000000000008",
+      "name": "Every hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 600],
+      "notes": "Hourly while the field test runs (FIELD_STUDY §5); deactivate the workflow after the data freeze. W13 keeps the nightly run."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build + sign API-67 POST /internal/jobs/nightly_stats. One key per IST hour, so a retried or\n// duplicated trigger starts one run. Reshape only (D-16).\nconst crypto = require('crypto');\nconst hour = $now.setZone('Asia/Kolkata').toFormat(\"yyyy-MM-dd'T'HH\");\nconst statsId = `stats-${hour}`;\nconst body = JSON.stringify({ args: { stats_id: statsId } });\nconst ts = Math.floor(Date.now() / 1000).toString();\nconst v1 = crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex');\nreturn [{ json: { body, signature: `t=${ts},v1=${v1}`, idempotency_key: `nightly-stats:${hour}`, stats_id: statsId } }];"
+      },
+      "id": "e1400014-0000-4000-8000-000000000009",
+      "name": "Build + sign nightly_stats request (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 600]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.MD_API_BASE }}/internal/jobs/nightly_stats",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "e1400014-0000-4000-8000-00000000000a",
+      "name": "API-67 start nightly_stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 600],
+      "onError": "continueRegularOutput",
+      "notes": "POST /internal/jobs/nightly_stats (API-67). The API starts the Render Workflows task nightly_stats (RW-4): study.export_csv → node field-kit/nazar_stats.mjs (unchanged, sha256 recorded) → stats.field_study_publish → API-71 cache. 202 → JobRun. No built-in retry: a retry must be re-signed."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ok"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $runIndex < 2 && (!$json.statusCode || Number($json.statusCode) === 429 || Number($json.statusCode) >= 500) }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "retry"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "fail"
+        }
+      },
+      "id": "e1400014-0000-4000-8000-00000000000b",
+      "name": "nightly_stats: result",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [660, 600],
+      "notes": "ok = 2xx. retry = network error, 429 or 5xx, at most 3 attempts (re-signed). Anything else fails the run (→ W12)."
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "e1400014-0000-4000-8000-00000000000c",
+      "name": "nightly_stats: wait 10 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [880, 760],
+      "webhookId": "e1400014-5ebb-4c1d-9a2e-00000000010c",
+      "notes": "Back-off, then re-sign (same Idempotency-Key, fresh timestamp and signature)."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=nightly_stats was not started: HTTP {{ $json.statusCode || 'network error' }} {{ ($json.body && $json.body.title) || $json.error?.message || '' }}. Runbook: docs/05-ops/RUNBOOK.md"
+      },
+      "id": "e1400014-0000-4000-8000-00000000000d",
+      "name": "nightly_stats: failed → W12",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [880, 920]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $vars.MD_API_BASE }}/v1/stats/public",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "e1400014-0000-4000-8000-00000000000e",
+      "name": "GET /v1/stats/public",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 520],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "API-71, public and unauthenticated (security: [{}]), so a plain retry is safe. Returns { as_of, nazar, journey_test, counters, disclaimer_key }."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Presentation only: every number comes from API-71, computed by the backend and the pre-registered\n// nazar_stats.mjs (RW-4). n8n computes no statistic.\nconst s = $json || {};\nconst z = s.nazar || {};\nconst j = s.journey_test || {};\nconst c = s.counters || {};\nconst num = (v) => (typeof v === 'number' && Number.isFinite(v) ? String(v) : 'n/a');\nconst pct = (v) => (typeof v === 'number' && Number.isFinite(v) ? `${Math.round(v * 100)}%` : 'n/a');\nconst ci = Array.isArray(z.r_ci95) ? ` (95% CI ${z.r_ci95.map(num).join(' to ')})` : '';\nlet runId = 'n/a';\ntry { runId = $('API-67 start nightly_stats').first().json.body?.run_id ?? 'n/a'; } catch (e) { runId = 'n/a'; }\nconst lines = [\n  `*Field test · hourly summary* (stats as of ${s.as_of ?? 'unknown'})`,\n  `• Nazar participants: ${num(z.participants)} · below 60/100: ${pct(z.below_kerala_60_pct)} · r(LL quiz, Nazar) = ${num(z.r_ll_quiz_vs_nazar)}${ci}`,\n  `• Journey-test participants: ${num(j.participants)}`,\n  `• Game sessions counted: ${num(c.game_sessions_counted)} · plans computed: ${num(c.plans_computed)}`,\n  `_Convenience sample (${z.sample ?? 'n/a'}); analysis pre-registered. This hour's nightly_stats run (${runId}) shows in the next summary._`,\n];\nreturn [{ json: { slack_text: lines.join('\\n') } }];"
+      },
+      "id": "e1400014-0000-4000-8000-00000000000f",
+      "name": "Format summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 520]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $vars.MD_SLACK_TEAM_CHANNEL }}",
+          "mode": "id"
+        },
+        "text": "={{ $json.slack_text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "e1400014-0000-4000-8000-000000000010",
+      "name": "Post to team channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1320, 520],
+      "credentials": {
+        "slackApi": {
+          "id": "REPLACE_ON_IMPORT",
+          "name": "Margdarshak Slack bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Session end (from API)": {
+      "main": [
+        [
+          {
+            "node": "Verify envelope (HMAC)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify envelope (HMAC)": {
+      "main": [
+        [
+          {
+            "node": "Envelope valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envelope valid?": {
+      "main": [
+        [
+          {
+            "node": "Respond 202",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond 202": {
+      "main": [
+        [
+          {
+            "node": "Keep sheet columns only (no PII)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep sheet columns only (no PII)": {
+      "main": [
+        [
+          {
+            "node": "Append to field-study sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every hour": {
+      "main": [
+        [
+          {
+            "node": "Build + sign nightly_stats request (HMAC)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build + sign nightly_stats request (HMAC)": {
+      "main": [
+        [
+          {
+            "node": "API-67 start nightly_stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API-67 start nightly_stats": {
+      "main": [
+        [
+          {
+            "node": "nightly_stats: result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nightly_stats: result": {
+      "main": [
+        [
+          {
+            "node": "GET /v1/stats/public",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "nightly_stats: wait 10 s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "nightly_stats: failed → W12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nightly_stats: wait 10 s": {
+      "main": [
+        [
+          {
+            "node": "Build + sign nightly_stats request (HMAC)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET /v1/stats/public": {
+      "main": [
+        [
+          {
+            "node": "Format summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format summary": {
+      "main": [
+        [
+          {
+            "node": "Post to team channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "executionTimeout": 300,
+    "errorWorkflow": "REPLACE_WITH_W12_WORKFLOW_ID",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "margdarshak"
+    },
+    {
+      "name": "F-57 field test"
+    },
+    {
+      "name": "D-22 field study"
+    }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "margdarshak": {
+      "workflow_id": "W14",
+      "owner": "Field-study analyst",
+      "doc": "docs/05-ops/N8N_WORKFLOWS.md#w14",
+      "business_logic": "none (scores are server-verified in Go; statistics come from nazar_stats.mjs in the Render Workflows task nightly_stats; n8n copies whitelisted columns and formats)",
+      "executions_per_month": "≈ 400 session events + 24 per day while the field test runs",
+      "pii": "pseudonymous participant code only; no names, contact details or free text; successful executions are not saved",
+      "endpoints": [
+        "webhook md/session-end (inbound, signed envelope)",
+        "POST /internal/jobs/nightly_stats (API-67)",
+        "GET /v1/stats/public (API-71)"
+      ],
+      "signature_scheme": "inbound: header auth + envelope sig = sha256=hex(HMAC(MD_HMAC_SECRET, ts + '.' + payload)); outbound: Bearer MD_N8N_READ_TOKEN + Margdarshak-Signature t=<unix>,v1=<hex hmac(t + '.' + body)> + Idempotency-Key",
+      "required_variables": [
+        "MD_API_BASE",
+        "MD_HMAC_SECRET",
+        "MD_N8N_READ_TOKEN",
+        "MD_FIELD_SHEET_ID",
+        "MD_SLACK_TEAM_CHANNEL"
+      ]
+    }
+  },
+  "active": false,
+  "versionId": "00000000-0000-4000-8000-00000000e141"
+}

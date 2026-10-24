@@ -52,7 +52,7 @@ Definitions are written for this project. Where a term carries a legal or numeri
 
 | Code | Plain name | Minimum age (as sourced) | Notes |
 |---|---|---|---|
-| **MC50CC** | Motorcycle up to 50 cc (gearless) | 16, with parent/guardian consent | Most scooters exceed 50 cc, so the 16–17 path is narrow (EC-05); rules-only experience for under-18s |
+| **MC50CC** | Motorcycle up to 50 cc (gearless) | 16, with parent/guardian consent | Most scooters exceed 50 cc, so the 16–17 path is narrow (EC-05); an under-18 learner uses family mode in a parent's account (D-13 revised) |
 | **MCWOG** | Motorcycle without gear (scooter) | 18 (above 50 cc) | Content depth: deep |
 | **MCWG** | Motorcycle with gear | 18 | Content depth: deep |
 | **LMV-NT** | Light Motor Vehicle, non-transport (car) | 18 | Content depth: deep. SC (6 Nov 2024, *Bajaj Allianz v Rambha Devi*) held LMV holders may drive transport vehicles ≤ 7,500 kg; shown with "verify for commercial use" |
@@ -108,7 +108,7 @@ Source: `research/ps1-current-state/02-rules-process.md` §2; `research/ps1-deep
 | **Online Gaming Act 2025** | Promotion and Regulation of Online Gaming Act: bans online money games, recognises social/educational games; Rules in force 1 May 2026 | verification VG-9 (SECONDARY) |
 | **TRAI DLT** | TRAI's Distributed Ledger Technology registration for commercial SMS (entity, headers, templates); SMS stays off until done | verification VG-11 (HUNCH) |
 | **RTI Act 2005** | Right to Information Act | — |
-| **Gemini API terms** | Users must be 18+; no use in a client "likely to be accessed by" under-18s; the free tier allows human review of prompts | verification VG-8 |
+| **Gemini API terms** | Account holder must be 18+; services "likely to be accessed by" under-18s are restricted (open legal item R-13); the free tier allows human review of prompts | verification VG-8 |
 | **PSGA (J&K)** | J&K Public Services Guarantee Act: time limits for services; DL timelines not retrieved (unknown) | `02-rules-process.md` §8 |
 | **RTS Act** | Right to Services acts in other states (e.g. Kerala RTS Act 2012); DL timelines unknown | `02-rules-process.md` §8 |
 | **OSS Policy 2015** | Policy on Adoption of Open Source Software for GoI: OSS preferred for new e-Gov applications | `07-govt-plug-and-play.md` A9 |
@@ -198,7 +198,7 @@ Source: `research/ps1-current-state/02-rules-process.md` §2; `research/ps1-deep
 | **Ranks: Gali → Mohalla → Shehar → Highway → Ghat** | Lane → neighbourhood → city → highway → hill; gated by mastery, not XP |
 | **Nazar Pledge** | The voluntary novice pledge in the new-rider year |
 | **Riding lock** | The UI shows only "Pull over to use Margdarshak" when the device moves faster than about 10 km/h |
-| **Helper mode / family mode** | A consented link for a cyber-café/CSC helper or a family member to manage someone's case (F-17) |
+| **Helper mode / family mode** | A consented link for a cyber-café/CSC helper or a family member to manage someone's case (F-17). Family mode also holds a minor's case inside a parent's (adult) account, with verifiable parental consent; the minor gets the full product, including AI (D-13 revised) |
 | **Lite mode** | The < 300 KB first-load, offline-capable path for low-end phones (F-51) |
 | **Track Test Twin** | Layout-familiarisation simulation of the driving-test track (G5) |
 | **Scam shield / scam checker** | Rules decide whether a message matches a known government sender; AI only explains; no "safe" verdict (F-33) |
@@ -235,7 +235,7 @@ Source: `research/ps1-current-state/02-rules-process.md` §2; `research/ps1-deep
 | **Number-provenance validator** | Our check that model text has no digits outside `{{fact:*}}` placeholders and only allowed IDs |
 | **PII plugin / redaction** | Removing Aadhaar-like numbers, OTPs, phones and emails before any model call or log |
 | **Evalset (`adk eval`)** | ADK's evaluation format and runner; ≥ 30 cases per agent, 150 for the debrief |
-| **Red-team set** | Adversarial cases: injections, PII leaks, invented fees, minors |
+| **Red-team set** | Adversarial cases: injections, PII leaks, invented fees, minors trying to bypass family mode |
 | **Circuit breaker** | Switches to templates when AI fails too often (> 20% fallback over 5 min) |
 | **Sarvam Saaras / Bulbul** | Sarvam's speech-to-text (lists Dogri `doi-IN`) / text-to-speech (no Dogri) |
 | **IndicTrans2** | Open Indic translation model, for Dogri screen text after native review |

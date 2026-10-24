@@ -24,7 +24,7 @@ Chosen option: **1**, because RLS gives a database-enforced wall at low cost, co
 - Requests carry `X-Tenant`; it must match the session's tenant and the host's allowed tenants.
 - Cross-tenant jobs use the `mg_jobs` role with `BYPASSRLS`, audit-logged.
 - Independent mode shows **no state emblem**; state branding only in government-hosted mode (D-01).
-- Bad: RLS + async SQLAlchemy needs care (no session-level settings leaking between pooled connections) → verify at H0 (owner Backend lead, 2026-10-24).
+- Bad: RLS with pgx v5 pooling needs care (use transaction-scoped `SET LOCAL app.tenant_id` so no setting leaks between pooled connections; ADR-0011) → verify at H0 (owner Backend lead, 2026-10-24).
 
 ### Hackathon vs production
 | Aspect | Hackathon | Production |

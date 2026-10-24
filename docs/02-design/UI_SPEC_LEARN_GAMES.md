@@ -56,7 +56,7 @@ Every screen has the same blocks, in the same order:
 4. **No rupee literal** in any UI string (D-06). Fees always come from `fees.json` via API-03 with "source: CMVR r.32, checked <date>".
 5. **Games label**: every game's brief and results carry *"Practice and familiarisation, not certification"* / *"अभ्यास और परिचय के लिए, प्रमाणन नहीं"* (D-11).
 6. **AI surfaces label**: every surface where Gemini text appears carries *"AI can't book, pay or submit"* / *"AI बुकिंग, भुगतान या सबमिट नहीं कर सकता"* (verification §3.3) and labels its text "Coach notes" (AI) or "Auto notes" (template).
-7. **Age band** (D-13, EC-05): if the session's age band is `u18`, every screen in this file renders its *rules-only* variant: static lessons, LL simulator and practice games scored **on the device only**; no account history, no XP, streak, squads, share cards, Practice Record, AI debrief, voice guide, Road Sign Snap, or analytics events. Each screen's States block says what the u18 variant shows.
+7. **Family mode** (D-13 revised, EC-05): a learner under 18 uses Margdarshak on a parent's phone, inside the parent's (adult) account, with the parent's consent (DPDP s.9(1), Rule 10). Every screen in this file works exactly as for any user: lessons, LL simulator, games, server-verified scores, XP, streaks, Practice Record, AI debrief, tutor, voice guide and Road Sign Snap. Two differences only: squads and share cards for the minor's profile need the parent's consent, and the minor's data is never used for behavioural tracking, profiling or targeted ads (s.9(3)). Each screen's States block lists the `family` state where it differs.
 8. **Riding lock** (D-14, verification row 11): if the device reports speed > 10 km/h (Geolocation `coords.speed`, only if the user has already granted location for another feature; we never ask for it for this), every learner screen is covered by a full-screen card: *"Pull over to use Margdarshak."* / *"Margdarshak इस्तेमाल करने के लिए गाड़ी किनारे रोकें।"* with a single button *"I'm a passenger"* / *"मैं सवारी (पैसेंजर) हूँ"* that dismisses it for 30 minutes. No location permission means no lock (we do not request location to enforce it).
 9. **Server time is the source of truth** for streak weeks, readiness freshness, squad weeks and countdowns (EC-15). The client shows a quiet note if the device clock is off by more than 5 minutes: *"Your phone's clock looks off. We're using Margdarshak's time."*
 10. **Numbers in copy come from code** (D-10). Every `{placeholder}` below is filled by the client from API data or by `game-core`; no Gemini text contains digits (08 §5.5).
@@ -129,7 +129,7 @@ Four bottom tabs (team report §redesign, kept by the council): **Home · My Lic
 The Learn tab has a segmented control at the top: **Learn · Practise · Me** / **सीखें · अभ्यास · मेरी प्रगति**.
 - **Learn** = hub (skill tree + review queue), lessons, readiness. Route `/learn`.
 - **Practise** = LL simulator + games grid. Route `/learn/practise`.
-- **Me** = XP, rank, badges, streak, squads, Practice Record. Route `/learn/me`. Hidden for u18 (shows "Your progress stays on this phone" card instead).
+- **Me** = XP, rank, badges, streak, squads, Practice Record. Route `/learn/me`. Shown in family mode too (D-13 revised); the squad and share entries show a parent-consent step until the parent turns them on.
 
 ### 1.4 Component inventory (defined once, used everywhere in this file)
 | Component | Built on | Props (key) | Notes |
@@ -166,12 +166,12 @@ The Learn tab has a segmented control at the top: **Learn · Practise · Me** / 
 | `loading` | Skeleton blocks in `--surface-2` with a 1.2 s shimmer (reduced motion: static) | — (skeleton) | — |
 | `offline` | Top banner `--primary-soft`, Lite badge | "You're offline. Mock tests and saved lessons still work." | "आप ऑफ़लाइन हैं। मॉक टेस्ट और सेव किए गए पाठ फिर भी चलेंगे।" |
 | `error` | Inline card, Diya "think" state, one retry | "That didn't load. Your progress is saved." · Retry | "यह लोड नहीं हुआ। आपकी प्रगति सेव है।" · फिर कोशिश करें |
-| `u18` | Calm info card, no lock icon (not a punishment) | "Under 18: lessons and practice work here, and your progress stays on this phone." | "18 से कम उम्र: पाठ और अभ्यास यहाँ चलेंगे, और आपकी प्रगति इसी फ़ोन पर रहेगी।" |
+| `family` | Calm info chip, no lock icon (D-13 revised) | "Family mode: you're learning in {account_holder}'s account. Everything works here, AI included." | "फ़ैमिली मोड: आप {account_holder} के अकाउंट में सीख रहे हैं। यहाँ सब कुछ चलता है, AI समेत।" |
 | `ai_off` (EC-29) | Grey "Auto notes" label on cards | "Coach is resting. These are auto notes, same facts." | "कोच अभी उपलब्ध नहीं। ये ऑटो नोट्स हैं, तथ्य वही हैं।" |
 | `not_counted` (integrity) | Neutral chip, never an accusation (08 §2.3-4) | "This session wasn't counted for your card." | "यह सेशन आपके कार्ड में नहीं गिना गया।" |
 
 ### 1.6 Analytics envelope (F-55, API-63)
-Every event below is sent as `{event, ts_server, session_band: "adult", locale, lite: bool, offline_queued: bool, props}`. **Never** sent: uid in clear (a rotating daily pseudonym is used), name, DOB, phone, RTO, case data, free text, coordinates, camera or audio. u18 sessions send **nothing** (D-13). Events queue in IndexedDB offline and flush idempotently by `(pseudonym, seq)`.
+Every event below is sent as `{event, ts_server, session_band: "adult", locale, lite: bool, offline_queued: bool, props}`. **Never** sent: uid in clear (a rotating daily pseudonym is used), name, DOB, phone, RTO, case data, free text, coordinates, camera or audio. Events from a minor's profile (family mode) follow the same allowlist and are never used for behavioural tracking, profiling or ads (s.9(3), D-13 revised). Events queue in IndexedDB offline and flush idempotently by `(pseudonym, seq)`.
 
 ---
 
@@ -265,7 +265,7 @@ Node states (08 §4.3): **locked** (lock glyph, "Opens after M1"), **learning** 
 - `nothing due`: copy `learn.review.empty` + Diya idle + CTA to Nazar.
 - `offline`: queue computed on device by ts-fsrs from the cached deck (works fully offline, 08 §4.4); banner `offline`; games that need clips not downloaded show "Download practice pack (≈ {mb} MB)" with size shown before download (no silent download, 08 §1.3).
 - `error`: tree from the last cached copy + `error` banner.
-- `u18`: tree shows, review queue works from device storage only; rank chip, streak and dial hidden; card `u18` at top.
+- `family`: identical to every user (tree, server review queue, rank chip, streak, dial); `family` chip at top.
 - `EC-22` (already holds an LL): the hub opens with a one-time sheet *"Already have your learner's licence? We'll start you on the driving-test skills."* · *"Start there"* / *"पहले से लर्नर लाइसेंस है? हम आपको ड्राइविंग टेस्ट वाले कौशल से शुरू कराएँगे।"* · *"वहीं से शुरू करें"*.
 - `EC-21` (two classes, different eligibility ages, e.g. 17-year-old wanting MC50CC now and LMV later): the class switch shows LMV as *"Opens at 18"* and its tree read-only.
 
@@ -275,7 +275,7 @@ Node states (08 §4.3): **locked** (lock glyph, "Opens after M1"), **learning** 
 
 **Analytics.** `learn_hub_viewed {due_count, nodes_learning, nodes_mastered, nodes_fading, class}` · `learn_review_started {due_count}` · `learn_node_opened {node_id, state}` · `learn_tree_list_toggled {to}` · `learn_class_switched {class}`.
 
-**Edge cases.** EC-05 (u18 variant), EC-19 (Lite: SVG tree replaced by list by default; first load of the hub ≤ 60 KB incl. data), EC-21, EC-22, EC-15 (queue "due" uses server date when online, device date offline, reconciled on sync with server winning).
+**Edge cases.** EC-05 (family mode: identical, D-13 revised), EC-19 (Lite: SVG tree replaced by list by default; first load of the hub ≤ 60 KB incl. data), EC-21, EC-22, EC-15 (queue "due" uses server date when online, device date offline, reconciled on sync with server winning).
 
 ---
 
@@ -326,7 +326,7 @@ Node states (08 §4.3): **locked** (lock glyph, "Opens after M1"), **learning** 
 
 The "why" figure is a template filled from the curriculum table (`02-accident-curriculum.md` M-rows, with its source); no AI. Tone rule: one fact, no gore, no "you would die" (05 principle; tone lint).
 
-**States.** `loading` skeleton; `coming` (no content for this class, D-05); `locked` (CTA becomes *"Opens after {prereq}"*, secondary *"Go to {prereq}"*); `offline` (CTA disabled only if the game needs uncached assets, with the download size). `u18`: identical, no mastery % from server (device %).
+**States.** `loading` skeleton; `coming` (no content for this class, D-05); `locked` (CTA becomes *"Opens after {prereq}"*, secondary *"Go to {prereq}"*); `offline` (CTA disabled only if the game needs uncached assets, with the download size). `family`: identical.
 
 **Motion.** Shared-axis slide in (16 px + fade, 240 ms). Reduced motion: fade.
 
@@ -376,7 +376,7 @@ End of queue:
 | `review.done.next` | Next review: {when} | अगला रिविज़न: {when} |
 | `review.close.confirm` | Leave now? Your answers so far are saved. | अभी छोड़ें? अब तक के जवाब सेव हैं। |
 
-**States.** `offline`: works fully (ts-fsrs on device); answers queue for API-32. `error` on sync: silent retry with exponential backoff; a small "Saved on this phone, will sync" chip. `u18`: device-only, no XP line.
+**States.** `offline`: works fully (ts-fsrs on device); answers queue for API-32. `error` on sync: silent retry with exponential backoff; a small "Saved on this phone, will sync" chip. `family`: identical, XP line included.
 
 **Motion / sound / haptics.** Card advance: 240 ms horizontal slide. Correct: 2-note marimba C5→G5 + `[12]`; wrong: soft "tok" + `[8, 40, 8]` (B9; Android only; iOS has no Vibration API). End screen: XP number ticks up 400 ms (no spring; spring is for game rewards). Reduced motion: no slide, no tick-up.
 
@@ -435,7 +435,7 @@ Step types: `explain` (text + image), `animate` (Motion/Rive with captions and a
 | `lesson.done.cta` | Practise it in {game} | {game} में अभ्यास करें |
 | `lesson.tutor` | Why was I wrong? | मैं गलत क्यों था? |
 
-**States.** `loading` (text first, media lazy); `offline` (cached lessons work; uncached show "Saved lessons only" with list); `error` (media failed → alt text shown in a `--surface-2` box, lesson continues). `u18`: same; tutor link hidden (AI).
+**States.** `loading` (text first, media lazy); `offline` (cached lessons work; uncached show "Saved lessons only" with list); `error` (media failed → alt text shown in a `--surface-2` box, lesson continues). `family`: same, tutor link included.
 
 **Motion.** Step change: 16 px shared-axis slide. `animate` steps pause at each caption; never autoplay with sound. Reduced motion: `animate` steps show a 3-frame still sequence with captions instead.
 
@@ -443,7 +443,7 @@ Step types: `explain` (text + image), `animate` (Motion/Rive with captions and a
 
 **Analytics.** `lesson_started {lesson_id}` · `lesson_step_viewed {lesson_id, step, type}` · `lesson_completed {lesson_id, check_right}` · `lesson_abandoned {lesson_id, step}` · `tutor_opened {surface:"lesson"}`.
 
-**Personal tutor sheet (F-31, M-04).** "Why was I wrong?" opens a bottom sheet with 2–3 sentences grounded only in the reviewed explanation for that question (M-04 content-grounded), a `SourceChip`, and the AI label. Offline / u18 / EC-29: the sheet shows the reviewed explanation verbatim under "Auto notes". API-41.
+**Personal tutor sheet (F-31, M-04).** "Why was I wrong?" opens a bottom sheet with 2–3 sentences grounded only in the reviewed explanation for that question (M-04 content-grounded), a `SourceChip`, and the AI label. Offline / AI consent off / EC-29: the sheet shows the reviewed explanation verbatim under "Auto notes". API-41.
 
 ---
 
@@ -494,7 +494,7 @@ After **Check** (wrong, was "Certain"):
 │ You were certain on this one.      │ calibration note (private)
 │ Worth a second look.               │
 │                                    │
-│ Why was I wrong?                   │ tutor (adult, AI)
+│ Why was I wrong?                   │ tutor (AI, every user)
 │ ┌────────────────────────────────┐ │
 │ │           Continue →           │ │
 │ └────────────────────────────────┘ │
@@ -571,7 +571,7 @@ After **Check** (wrong, was "Certain"):
 
 **Route.** `/learn/readiness`.
 
-**Feature / data.** F-21. API-33 `GET /v1/readiness` returns `{score, knowledge, calibration_penalty, topics[{id, mastery, weight, weight_source}], last_mocks[], trend, gate:{threshold:85, topics_ok, mocks_ok}}`. The client never computes the score itself (except u18 on-device mode with the same `game-core` function).
+**Feature / data.** F-21. API-33 `GET /v1/readiness` returns `{score, knowledge, calibration_penalty, topics[{id, mastery, weight, weight_source}], last_mocks[], trend, gate:{threshold:85, topics_ok, mocks_ok}}`. The client never computes the score itself (offline it shows the last cached score).
 
 **Formula shown to the user** (08 §4.4): `Readiness = 100 × Σ w_t·M_t − CalPenalty`, `CalPenalty = min(10, 40 × max(0, OC − 0.05))`. Weights are equal across the 4 LL topics and labelled *"equal weights: the government's topic mix isn't published"* (02 §4).
 
@@ -651,7 +651,7 @@ Copy-lint note: this screen deliberately avoids the banned word "official" (D-19
 
 **"Book anyway" confirmation** (one neutral sheet, never confirm-shaming): *"You're at {s}. Most people who pass practise until 85, but you know your schedule. Book now?"* · **Book now** · **Not now**. HI: *"आप {s} पर हैं। पास होने वाले ज़्यादातर लोग 85 तक अभ्यास करते हैं, पर अपना समय आप जानते हैं। अभी बुक करें?"* · **अभी बुक करें** · **अभी नहीं**. [unverified] the clause "most people who pass practise until 85" is a design hypothesis, not a measured fact; until `HYPOTHESES.md` data exists, use the neutral fallback *"We suggest 85, but you know your schedule. Book now?"* (owner: research lead, recheck after the field study, 24 Oct 2026).
 
-**States.** `nodata` (< 20 answers: dial greyed with `ready.nodata`; "Book anyway" still visible); `loading`; `offline` (last cached score with *"as of {time}"*); `u18` (score computed on the device from local evidence, label *"on this phone only"*); `stale` (no activity 14+ days: trend shows decay honestly, `ready.trend.down`); `EC-10` (state has no online LL test: CTA copy becomes *"Book your LL test at the RTO"* and the simulator note says the RTO format may differ); `EC-07/EC-09` not applicable here.
+**States.** `nodata` (< 20 answers: dial greyed with `ready.nodata`; "Book anyway" still visible); `loading`; `offline` (last cached score with *"as of {time}"*); `family` (identical, server score); `stale` (no activity 14+ days: trend shows decay honestly, `ready.trend.down`); `EC-10` (state has no online LL test: CTA copy becomes *"Book your LL test at the RTO"* and the simulator note says the RTO format may differ); `EC-07/EC-09` not applicable here.
 
 **Motion / sound / haptics.** Dial fill animates from 0 → score with a spring `{stiffness:120, damping:20}` (B7) on first view per day; later views show the number immediately. Crossing 85 for the first time: 4-note resolve + Diya cheer + `[15, 40, 25]` haptic (B9), lock-open animation 400 ms. Reduced motion: static dial, no lock animation; sound still allowed (respecting silent mode).
 
@@ -729,7 +729,7 @@ The J&K "10 questions, 6 to pass" values come from `01-abroad.md` as cited in 08
 - `offline`: works fully (config + 3 cached question sets, F-51).
 - `format_unknown`: as above.
 - `EC-10` (the state has no online LL test, e.g. tests are held at the RTO): the card shows *"In {state} the LL test is taken at the RTO. This practice uses the same question style; the screen there may look different."* / *"{state} में LL टेस्ट RTO पर होता है। यह अभ्यास उसी तरह के सवालों से है; वहाँ की स्क्रीन अलग दिख सकती है।"*
-- `u18`: works, results stay on the device; MC50CC learners take the same test.
+- `family`: works as for every user; MC50CC learners take the same test.
 
 **Analytics.** `llsim_format_viewed {state, format_known, confidence}` · `llsim_mode_chosen {mode: guided|exam|practice}`.
 
@@ -862,7 +862,7 @@ Under 5 s, the timer digits switch to bold `--warning-ink` on `--warning-soft`, 
 ```
 When the learner doesn't pass, the line reads *"Not this time: 5 / 10. Pass mark 6."* / *"इस बार नहीं: 5 / 10। पास के लिए 6 चाहिए।"*, in `--ink`. It is never red (B12: "Failed test: private, no red"), and the word "FAILED" never appears.
 
-**Debrief.** The simulator uses the debrief card (§6), with finding `LL_OVERCONFIDENT` when it applies (08 §3.12), plus the "wrong answers grouped by sign family" list built by code. AI narration only for adults with consent; otherwise Auto notes.
+**Debrief.** The simulator uses the debrief card (§6), with finding `LL_OVERCONFIDENT` when it applies (08 §3.12), plus the "wrong answers grouped by sign family" list built by code. AI narration for every user with AI consent (family mode included, D-13 revised); otherwise Auto notes.
 
 **Copy.**
 | Key | EN | HI |
@@ -883,7 +883,7 @@ When the learner doesn't pass, the line reads *"Not this time: 5 / 10. Pass mark
 - EC-10 (as in §3.1).
 - EC-13: under sign questions where the real test may include colour-dependent signs, a note reads *"If you have a colour-vision condition, see what the medical rules say"*, linking to Help.
 - EC-19: the whole simulator is ≤ 120 KB of JS plus cached question JSON, and works on 2G.
-- EC-05: u18 variant as in §3.1.
+- EC-05: family mode as in §0.2-7 (identical).
 
 ---
 
@@ -962,7 +962,7 @@ The 38 MB is a placeholder computed at build time from the clip manifest (`Σ as
 
 **States.**
 - `offline`: tiles for games with cached assets are active; the others show `practise.needpack`.
-- `u18`: all games are playable, scores stay on the device, no "last score" sync.
+- `family`: all games playable with server-verified scores and "last score" sync, as for every user.
 - `lite`: the Phaser games are replaced by their SVG decision versions, labelled `practise.lite` (08 §1.3).
 
 **Analytics.** `practise_grid_viewed {cached_games}` · `practise_suggested_tapped {game_id}` · `practise_tile_tapped {game_id}` · `practice_pack_download_started {mb}` · `practice_pack_download_completed {mb, secs_bucket}`.
@@ -1029,9 +1029,9 @@ The 38 MB is a placeholder computed at build time from the clip manifest (`Σ as
 - `assets-loading`: Start shows a determinate progress ring with `brief.loading`. For video games, **the whole MP4 must be preloaded before Start enables** (EC-18; verification §3.2-18).
 - `asset-failed`: `brief.failed` plus a button.
 - `offline-not-cached`.
-- `u18`: Mock mode is available with results on the device; commentary mode is hidden.
+- `family`: Mock, practice and commentary modes all available, as for every user.
 
-**Accessibility.** The brief is plain DOM and fully readable. Options are real checkboxes. Settings persist per user (localStorage wrapped in try/catch, plus the server profile for adults).
+**Accessibility.** The brief is plain DOM and fully readable. Options are real checkboxes. Settings persist per user (localStorage wrapped in try/catch, plus the server profile, family mode included).
 
 **Analytics.** `game_brief_viewed {game_id, level, mode}` · `game_option_toggled {game_id, option, value}` · `game_started {game_id, level, mode, input_mode, a11y_modes[]}`.
 
@@ -1051,7 +1051,7 @@ The 38 MB is a placeholder computed at build time from the clip manifest (`Σ as
 | **One hand** | Every game can be played with one thumb: tap-only plus left/right layouts | Stated in each brief |
 
 ### 4.4 Pause
-Triggers: the Pause button, `P`/`Esc`, `visibilitychange` hidden (mandatory auto-pause, 08 §2.1), an incoming call, or the orb (adults). A timed item that is in progress is **voided** when the tab is hidden (integrity rule) and re-dealt with a new seed on resume.
+Triggers: the Pause button, `P`/`Esc`, `visibilitychange` hidden (mandatory auto-pause, 08 §2.1), an incoming call, or the orb. A timed item that is in progress is **voided** when the tab is hidden (integrity rule) and re-dealt with a new seed on resume.
 
 ```
 ┌────────────────────────────────────┐
@@ -1064,7 +1064,7 @@ Triggers: the Pause button, `P`/`Esc`, `visibilitychange` hidden (mandatory auto
 │ │  Restart this level            │ │
 │ │  How to play                   │ │
 │ │  Options (sound, layout …)     │ │
-│ │  Ask the guide  ◉              │ │ adults only
+│ │  Ask the guide  ◉              │ │ every user
 │ │  Quit: progress saved,         │ │
 │ │  this run won't be scored      │ │
 │ ╰────────────────────────────────╯ │
@@ -1152,7 +1152,7 @@ Each game below lists only what differs from the shared frame in §4. Scoring pa
 | **Mock (Kerala format)** | 10 clips, tap anywhere, scored /100; up to 2 hazards per clip; pass mark 60 *as reported* | None between clips (test fidelity); full replay in the debrief |
 | **Practice** | Same clips pool (seen allowed), any count | Per-clip reveal after each clip |
 | **Learn (occlusion and prediction)** | The clip freezes 0.5 s before onset [D] and asks "What happens next?" (4 picture options from the `hazard_type` enum), then "Tap where" | Immediate, with the cue circled |
-| **Commentary** (*bolke chalao*) | Adult, online, opt-in. Record your spoken commentary over one clip; audio is transcribed (Gemini, or Sarvam Saaras for Dogri, M-08); a deterministic matcher lines up mentioned hazards against the curator list; the debrief narrates the result. **Record, then score; never live** (D-12) | In the debrief only |
+| **Commentary** (*bolke chalao*) | Every user (family mode included), online, opt-in. Record your spoken commentary over one clip; audio is transcribed (Gemini, or Sarvam Saaras for Dogri, M-08); a deterministic matcher lines up mentioned hazards against the curator list; the debrief narrates the result. **Record, then score; never live** (D-12) | In the debrief only |
 
 **Pre-mock calibration (one screen).** *"How many of the 10 clips do you think you'll pass?"* ( 0–10 stepper ) / *"आपको लगता है 10 में से कितनी क्लिप में पास होंगे?"*; compared after the mock (08 §4.5).
 
@@ -1219,7 +1219,7 @@ Scoring display rule: "band 1" is the earliest fifth of the window and scores 5;
 
 [unverified] audio retention: "then delete the audio" must match the AI privacy doc's retention for Gemini/Saaras transcription (04 §2); owner: AI lead, confirm by 24 Oct 2026 before this string ships.
 
-**States.** `clips-loading` (determinate); `no-unseen-clips` (mock unavailable: *"You've seen every clip we have. Practice mode still works; new clips arrive weekly."* / *"आप हमारी सारी क्लिप देख चुके हैं। अभ्यास मोड चलता रहेगा; नई क्लिप हर हफ़्ते आती हैं।"*); `offline` (practice/mock on cached clips; mock eligibility checked on sync, and the result may be marked practice if a clip turns out to be seen); `u18` (mock and practice on device; commentary hidden; no Nazar Score sync, no share); `EC-28` Kerala HPT stayed or postponed (config flag `kerala_hpt_status`): the format line becomes *"Kerala's hazard test was announced for Dec 2026; its status changed on {date}. The practice is still useful anywhere."* with a SourceChip; nothing else changes.
+**States.** `clips-loading` (determinate); `no-unseen-clips` (mock unavailable: *"You've seen every clip we have. Practice mode still works; new clips arrive weekly."* / *"आप हमारी सारी क्लिप देख चुके हैं। अभ्यास मोड चलता रहेगा; नई क्लिप हर हफ़्ते आती हैं।"*); `offline` (practice/mock on cached clips; mock eligibility checked on sync, and the result may be marked practice if a clip turns out to be seen); `family` (all modes and Nazar Score sync as for every user; the share card needs the parent's consent); `EC-28` Kerala HPT stayed or postponed (config flag `kerala_hpt_status`): the format line becomes *"Kerala's hazard test was announced for Dec 2026; its status changed on {date}. The practice is still useful anywhere."* with a SourceChip; nothing else changes.
 
 **Motion / sound / haptics.** Tap ring 160 ms ripple (reduced motion: ring appears without ripple). Sound **off** by default for Nazar play (the skill is visual; also good for deaf users); if the user turns sound on, an early-band tap plays a bright chime whose pitch rises with earliness, a late tap a muted thud (B9). Haptic `[18]` on an in-window tap only in practice mode (mock mode gives no in-window cue, which would leak the window). No vibration during commentary recording (mic noise, B9).
 
@@ -1284,7 +1284,7 @@ Reveal: the bike animates along the strip in two coloured-and-patterned segments
 | `sd.ride` | Ride at this speed | इस रफ़्तार से चलें |
 | `sd.wet` | Wet road | गीली सड़क |
 
-**States.** `offline` (fully offline; no assets beyond SVG); `u18` (on device); `lite` (identical: SVG game is already Lite).
+**States.** `offline` (fully offline; no assets beyond SVG); `family` (identical); `lite` (identical: SVG game is already Lite).
 
 **Motion / sound / haptics.** Reveal animation 1.5 s per run at real-time-proportional speed (reduced motion: the two segments draw instantly with labels). Brake tap haptic `[12]`. Freeze before contact: no sound, no shake. Correct speed choice: 2-note marimba.
 
@@ -1356,7 +1356,7 @@ Mirror check shows a 1 s inset of the truck's mirror view (driver's face visible
 | `bs.lane.l` / `.c` / `.r` | Left / Centre / Right | बाएँ / बीच / दाएँ |
 | `bs.crit` | The truck was turning left. Never pass on the left of a turning truck. | ट्रक बाएँ मुड़ रहा था। मुड़ते ट्रक के बाएँ से कभी न निकलें। |
 
-**States.** `offline` (works); `lite` (Part B replaced by "tap the safe position" on 4 static diagrams, 08 §1.3); `u18` (on device).
+**States.** `offline` (works); `lite` (Part B replaced by "tap the safe position" on 4 static diagrams, 08 §1.3); `family` (identical).
 
 **Motion / sound / haptics.** Indicator blink ≤ 2 Hz. Part B scroll at a constant, modest speed (no speed choices: D-11). Reduced motion: Part B becomes stepwise ("next scene" button between 6 static frames). Critical-fault freeze: haptic `[8, 40, 8]`, no alarm sound.
 
@@ -1403,7 +1403,7 @@ Mirror check shows a 1 s inset of the truck's mirror view (driver's face visible
 | `js.tip.right` | Look right again last: traffic reaches you from the right first. | आखिर में दोबारा दाएँ देखें: ट्रैफ़िक पहले दाएँ से आता है। |
 | `js.freeze` | An auto was coming from the right, hidden by the bus. | बस के पीछे छिपा एक ऑटो दाएँ से आ रहा था। |
 
-**States.** `lite` (static "which arm do you check last?" diagrams); `offline`; `u18`.
+**States.** `lite` (static "which arm do you check last?" diagrams); `offline`; `family` (identical).
 
 **Accessibility.** Buttons only; arrows + words for directions; sight-lines solid against hatching (not colour). Keyboard: `←` look left, `→` look right, `↑` look ahead, hold `Shift` to creep, `Space` = GO. Screen-reader version: a sequence quiz ("Put these in order: look right, look left, creep, look right, go").
 
@@ -1471,7 +1471,7 @@ Mirror check shows a 1 s inset of the truck's mirror view (driver's face visible
 | `tt.assist` | Assist mode: steering only | असिस्ट मोड: सिर्फ़ स्टीयरिंग |
 | `tt.calibrate` | Calibrate | कैलिब्रेट करें |
 
-**States.** `tilt-denied` (*"Tilt isn't allowed on this phone. Use touch instead."* auto-switch); `no-gyro`; `lite` (step-by-step explainer quiz); `offline`; `u18`.
+**States.** `tilt-denied` (*"Tilt isn't allowed on this phone. Use touch instead."* auto-switch); `no-gyro`; `lite` (step-by-step explainer quiz); `offline`; `family` (identical).
 
 **Motion / sound / haptics.** Rive (canvas-lite) only for the separate track explainer (F-12), not here. Phaser scene at 60 fps, 30 fps fallback with identical logic. Fault haptic as above. Reduced motion: camera never shakes; wobble shown as the meter only.
 
@@ -1532,7 +1532,7 @@ Steps: 1 framing (face centred, chin visible) → 2 strap + two-finger rule (sel
 | `hf.shake` | Shake your head "no". Did the helmet stay put? | सिर "ना" में हिलाएँ। क्या हेलमेट अपनी जगह रहा? |
 | `hf.badge` | Self-checked | खुद जाँचा |
 
-**States.** `permission-prompt` (our explainer before the browser prompt); `permission-denied` (*"No problem. Do the check without the camera."* → no-camera path); `no-camera-device`; `model-loading` (MediaPipe WASM + model; size shown; fall back to no-camera after 10 s); `low-light` (*"It's a bit dark. Face a window."*); `u18` (no-camera path is the default; camera optional since it never leaves the device — decision for privacy review, owner: privacy lead, 24 Oct 2026).
+**States.** `permission-prompt` (our explainer before the browser prompt); `permission-denied` (*"No problem. Do the check without the camera."* → no-camera path); `no-camera-device`; `model-loading` (MediaPipe WASM + model; size shown; fall back to no-camera after 10 s); `low-light` (*"It's a bit dark. Face a window."*); `family` (identical; the camera never leaves the device and the parent's consent covers the camera prompt).
 
 **Motion / sound / haptics.** Oval guide turns from dashed to solid when framed (shape change, not colour). Step done: `[12]`. Reduced motion: no guide pulsing.
 
@@ -1590,7 +1590,7 @@ Each choice changes the next state. The "Police arrive" branch dispels myths ("D
 | `gh.draft` | Draft, not medical advice | ड्राफ़्ट, चिकित्सा सलाह नहीं |
 | `gh.notmedical` | Not medical training. | यह चिकित्सा प्रशिक्षण नहीं है। |
 
-**States.** `draft` (default until sign-off); `offline` (fully offline, static); `u18` (playable; it is static content).
+**States.** `draft` (default until sign-off); `offline` (fully offline, static); `family` (identical).
 
 **Motion / sound / haptics.** Card select 160 ms; no urgency sounds, no sirens. Reduced motion: none needed beyond fades.
 
@@ -1669,7 +1669,7 @@ Scoring (08 G6) [D]: dipping within X m of oncoming 25, left-edge hold during gl
 
 **Route.** `/learn/practise/sessions/[sid]/debrief`.
 
-**Data.** E-19 Debrief (deterministic findings + AI narration of IDs only + validator verdict), E-16. API-36 `GET /v1/games/sessions/{id}/debrief`. Pipeline (08 §5.3): `load_and_gate → build_facts → debrief_agent (M-02, Gemini Flash-Lite) → validate → render`; fallback to the template on offline, a > 6 s timeout [D], 2 validation failures, under-18, no AI consent, or an open circuit breaker (EC-29).
+**Data.** E-19 Debrief (deterministic findings + AI narration of IDs only + validator verdict), E-16. API-36 `GET /v1/games/sessions/{id}/debrief`. Pipeline (08 §5.3): `load_and_gate → build_facts → debrief_agent (M-02, Gemini Flash-Lite) → validate → render`; fallback to the template on offline, a > 6 s timeout [D], 2 validation failures, no AI consent, or an open circuit breaker (EC-29). A minor's profile in family mode gets the AI debrief like everyone else (D-13 revised).
 
 **Template-first rendering.** The template card (Auto notes) renders **instantly** from `findings[].facts`; when the coach card (Coach notes) arrives, it cross-fades in place (240 ms) with no layout jump, so the user never waits (08 §5.8). If the coach card never arrives, nothing changes and no error is shown.
 
@@ -1751,12 +1751,12 @@ Scoring (08 G6) [D]: dipping within X m of oncoming 25, left-edge hold during gl
 | `db.wrong.ai` | Something wrong in these notes? | इन नोट्स में कुछ गलत है? |
 
 **States.**
-- `template_only` (EC-29 / u18 / no consent / offline): Auto notes label; identical structure.
+- `template_only` (EC-29 / no consent / offline): Auto notes label; identical structure.
 - `coach_arrived`: cross-fade, label switches to Coach notes.
 - `zero_findings`: "Where you lacked" card is replaced by *"Nothing to fix in this session. Try a harder level."* / *"इस सेशन में सुधारने को कुछ नहीं। अगला लेवल आज़माएँ।"*.
 - `not_counted` (integrity): debrief still shows, with the `db.notcounted` chip.
 - `loading` (session result not yet re-scored by API-35): skeleton for ≤ 1 s, then the client-score template with "checking" chip.
-- `voice_read` (adult, online): **Listen to this** reads the *rendered* card verbatim (Bulbul hi-IN or a Live session told to read verbatim; 08 §5.7). If the transcript of the spoken audio differs from the card (similarity < 0.9 [D]), the on-screen text is highlighted as authoritative with *"The text on screen is the correct version."*.
+- `voice_read` (online, every user): **Listen to this** reads the *rendered* card verbatim (Bulbul hi-IN or a Live session told to read verbatim; 08 §5.7). If the transcript of the spoken audio differs from the card (similarity < 0.9 [D]), the on-screen text is highlighted as authoritative with *"The text on screen is the correct version."*.
 - `report`: "Something wrong in these notes?" opens a 3-option sheet (number wrong · rule wrong · tone) → logged to the eval review queue; no free text (EC-20).
 
 **Motion / sound / haptics.** Cards stack in with a 60 ms stagger (`--ease-out-expo`, 240 ms). Swipe between cards with spring snap; Previous/Next buttons always present. Reduced motion: all four cards visible as a vertical list (the default layout at ≥ 600 px anyway). No sound except the optional read-out.
@@ -1765,7 +1765,7 @@ Scoring (08 G6) [D]: dipping within X m of oncoming 25, left-edge hold during gl
 
 **Analytics.** `debrief_viewed {game_id, mode, source: coach|template, fallback_reason?}` · `debrief_coach_swapped_in {latency_bucket}` · `debrief_card_viewed {index}` · `debrief_watch_moment {finding_id}` · `debrief_next_drill_tapped {drill_id}` · `debrief_listen {engine}` · `debrief_reported {kind}`.
 
-**Edge cases.** EC-29 (template fallback), EC-05 (u18 template only, no Listen), EC-20 (no free-text input on this screen), EC-18.
+**Edge cases.** EC-29 (template fallback), EC-05 (family mode: AI debrief and Listen as for every user), EC-20 (no free-text input on this screen), EC-18.
 
 ### 6.2 Golden Hour and LL debrief variants
 - **Golden Hour:** template-only by policy (no AI), header label "Auto notes", no Listen in Phase 1–2 (static TTS of reviewed text allowed in Phase 3+).
@@ -1828,7 +1828,7 @@ Scoring (08 G6) [D]: dipping within X m of oncoming 25, left-edge hold during gl
 
 ## 7. Gamification surfaces (F-26, F-27, F-28)
 
-All gamification is **adult-only** and off for u18 (D-13). The 13 CCPA dark patterns are banned by lint (08 §4.10). XP is earned only for learning acts; there is no XP for opening the app, sharing or inviting.
+All gamification works for every user, including a minor's profile in family mode (D-13 revised). Squads and share cards for a minor's profile need the parent's consent. The 13 CCPA dark patterns are banned by lint (08 §4.10). XP is earned only for learning acts; there is no XP for opening the app, sharing or inviting.
 
 ### 7.1 Me tab: XP, rank, badges
 **Purpose.** Show progress honestly: XP, the current rider rank and what the next rank needs, badges earned and their criteria. Primary action: **What's next for {rank}** (deep link to the gating skill).
@@ -1893,7 +1893,7 @@ Badge detail sheet: shape, name, criterion, progress ("2 of 3 counted mocks"), d
 | `me.badge.tap` | Tap a badge to see what it needs. | बैज पर टैप करके देखें कि उसके लिए क्या चाहिए। |
 | `me.xp.how` | How XP works | XP कैसे मिलते हैं |
 | `me.selfdecl` | Self-declared | खुद बताया गया |
-| `me.u18` | Under 18: your progress stays on this phone. Badges, ranks and squads open at 18. | 18 से कम: आपकी प्रगति इसी फ़ोन पर रहती है। बैज, रैंक और स्क्वॉड 18 पर खुलते हैं। |
+| `me.u18` | Family mode: squads and share cards open once your parent says yes. Everything else is on. | फ़ैमिली मोड: स्क्वॉड और शेयर कार्ड आपके माता-पिता की हाँ के बाद खुलते हैं। बाकी सब चालू है। |
 
 **Motion / sound / haptics.** Badge unlock (once, at the end of the session that earned it, not as a push): dotLottie ≤ 60 KB, lazy-loaded, ≤ 1.2 s, skippable; sound: 3-note arpeggio; haptic `[10, 30, 10]`. Rank up: Diya "proud" state + 4-note resolve. Reduced motion: static badge with a 160 ms fade; Lite: CSS only.
 
@@ -1901,7 +1901,7 @@ Badge detail sheet: shape, name, criterion, progress ("2 of 3 counted mocks"), d
 
 **Analytics.** `me_viewed {rank, badges_earned}` · `badge_detail_opened {badge_id, earned}` · `badge_earned {badge_id}` · `rank_up {to}` · `xp_howto_opened`.
 
-**Edge cases.** EC-05 (u18 card), EC-26 (account deleted mid-case: achievements deleted with the account; the Me tab after deletion shows the fresh-start state).
+**Edge cases.** EC-05 (family-mode card `me.u18`), EC-26 (account deleted mid-case: achievements deleted with the account; the Me tab after deletion shows the fresh-start state).
 
 ### 7.2 Khud Licence declaration
 Route `/learn/me/badges/khud-licence`. A plain yes/no in the user's language (CCPA trick-question rule): *"Did you get your driving licence without paying an agent?"* · **Yes, I did it myself** · **No** / *"क्या आपने एजेंट को पैसे दिए बिना ड्राइविंग लाइसेंस लिया?"* · **हाँ, मैंने खुद किया** · **नहीं**, then the DL issue date (month/year picker; no DL number). Optional: DigiLocker "DL present" check in Phase 3+ via the adapter (no number stored). The badge reads "Khud Licence · self-declared". Choosing **No** shows no shaming copy (confirm-shaming rule): *"Thanks for telling us. Your progress is still yours."*
@@ -1960,15 +1960,15 @@ Route `/learn/me/badges/khud-licence`. A plain yes/no in the user's language (CC
 
 **Analytics.** `streak_viewed {weeks, potholes}` · `streak_goal_changed {from, to}` · `streak_week_completed {week_index}` · `streak_pothole_filled` · `streak_freeze_applied` (server-side event).
 
-**Edge cases.** EC-15 (device clock), EC-05 (hidden for u18), EC-30 (no streak messages on WhatsApp at all; streaks never generate notifications).
+**Edge cases.** EC-15 (device clock), EC-05 (streaks work in family mode, D-13 revised), EC-30 (no streak messages on WhatsApp at all; streaks never generate notifications).
 
 ### 7.4 Squads (co-op)
 **Purpose.** Let 3–5 friends prepare together, where the score is shared and one weak member pulls everyone down, so they help each other. Primary action: **Invite a friend** (forming) or **Play the squad's clips** (active).
 
 **Routes.** `/learn/me/squad` · `/learn/me/squad/new` · `/s/[inviteToken]` (join link, our own domain only). API-39 `POST /v1/squads`.
 
-**Rules (08 §4.7; D-13 wins over 08 where they differ).**
-- 3–5 members, invite-only by link. **Adults only** (no u18 squads at all, D-13; 08's class-code squads for minors are not built; see §15).
+**Rules (08 §4.7; D-13 revised wins over 08 where they differ).**
+- 3–5 members, invite-only by link. Open to every user. A minor's profile (family mode) joins only after the parent consents (D-13 revised); 08's class-code squads are not built in P1–2 (see §15).
 - **Squad score** = mean over members of (Nazar Score × (1 − Brier)). Shown as one number; individual members' scores are **not** shown to each other, only "done this week ✓/○".
 - **Weekly squad goal:** e.g. "Squad does 15 sessions". Everyone gets the badge, or nobody does.
 - **Duels:** same seed, same 10 clips, played live; the result shows anticipation and calibration, never raw reaction speed alone.
@@ -1998,7 +1998,7 @@ Route `/learn/me/badges/khud-licence`. A plain yes/no in the user's language (CC
 ```
 **Copy.** `sq.score` "Squad score {s}" / "स्क्वॉड स्कोर {s}" · `sq.goal` "Goal this week: {n} sessions" / "इस हफ़्ते का लक्ष्य: {n} सेशन" · `sq.done` "done this week" / "इस हफ़्ते हो गया" · `sq.notyet` "not yet" / "अभी नहीं" · `sq.duel` "Duel: same 10 clips, live" / "मुकाबला: वही 10 क्लिप, लाइव" · `sq.invite` "Invite a friend ({k} spots left)" / "दोस्त को बुलाएँ ({k} जगह बाकी)" · `sq.leave` "Leave squad" / "स्क्वॉड छोड़ें" · `sq.how` "Your squad score goes up when everyone practises. Nobody's score is shown to others." / "सब अभ्यास करें तो स्क्वॉड स्कोर बढ़ता है। किसी का स्कोर दूसरों को नहीं दिखता।".
 
-**States.** `forming` (< 3 members: *"Squads start at 3. Invite 2 more."*); `full`; `invite-expired` (links expire in 7 days [D]); `u18` (not shown; Me tab card explains); `offline` (read-only cached).
+**States.** `forming` (< 3 members: *"Squads start at 3. Invite 2 more."*); `full`; `invite-expired` (links expire in 7 days [D]); `family` (parent-consent step first, card `me.u18`; then as for everyone); `offline` (read-only cached).
 
 **Moderation.** Squad names are chosen from a curated generator (place + number) or typed and checked against a blocklist; no free-text chat (IT Rules 2021 intermediary exposure, G12).
 
@@ -2037,7 +2037,7 @@ Route `/learn/me/badges/khud-licence`. A plain yes/no in the user's language (CC
 
 Note on the field-kit share text (`NAZAR-FIELD-KIT.md` §1: *"Kerala would fail me 😬"*): it is fine in a user's own WhatsApp message, but the card itself never says "fail" or uses fear; see §15.
 
-**States.** `ineligible` (< 3 counted mocks); `low-trust` (`not_counted`); `u18` (not available); `offline` (share link queued; image from cache if rendered).
+**States.** `ineligible` (< 3 counted mocks); `low-trust` (`not_counted`); `family` (needs the parent's consent; card `me.u18`); `offline` (share link queued; image from cache if rendered).
 
 **Analytics.** `share_preview_viewed` · `share_name_mode {mode}` · `share_completed {channel}` · `share_card_landing_viewed` (public, cookieless) · `share_card_challenge_started`.
 
@@ -2118,7 +2118,7 @@ States for the check page: `match`; `revoked` (*"The holder stopped sharing this
 ### 7.7 Road Sign Snap (F-27, M-07)
 **Purpose.** Point the camera at a real road sign as a passenger or pedestrian, learn what it means, and add it to the review deck. Primary action: **Snap**.
 
-**Route.** `/learn/snap`. Adult-only (M-07 is Gemini vision; u18 get the sign catalogue browser at `/learn/signs` instead).
+**Route.** `/learn/snap`. Every user, including family mode (D-13 revised). The sign catalogue browser at `/learn/signs` is the fallback when the camera or AI is off.
 
 **Safety first.** The riding lock (§0.2-8) applies, and the screen opens with a one-time card: *"Only use Snap when you're not riding or driving."* / *"Snap सिर्फ़ तब इस्तेमाल करें जब आप गाड़ी नहीं चला रहे हों।"* · **I'm not riding**.
 
@@ -2156,7 +2156,7 @@ Result:
 
 [unverified] "Photo not kept" must match the Gemini paid-tier data terms and our retention config (04 §0.2); owner: AI lead, confirm by 24 Oct 2026.
 
-**States.** `permission-denied` → sign list; `offline` → *"Snap needs internet. The sign list works offline."*; `ai_off` (EC-29) → sign list; `u18` → sign list only.
+**States.** `permission-denied` → sign list; `offline` → *"Snap needs internet. The sign list works offline."*; `ai_off` (EC-29) → sign list; `family` → identical.
 
 **Analytics.** `snap_opened` · `snap_taken` · `snap_result {matched: bool, picked_from_list: bool}` · `snap_added`.
 
@@ -2166,7 +2166,7 @@ Result:
 
 ### 8.1 Orb placement and behaviour
 - A 72 px orb docked bottom-centre above the tab bar, expandable to a 50%-height sheet with live captions (06 B10). Built in Rive (canvas-lite, ~222 KB brotli; lazy-loaded after first interaction) with inputs `state` (enum of 8) and `level` (0–1 amplitude); **CSS concentric-ring fallback** in Lite mode and before Rive loads.
-- **Adults only** (M-01 18+). For u18 the orb is replaced by a "Help" text button that opens the static help search.
+- **Every user** (D-13 revised), including a learner under 18 in a parent's account; the parent's mic consent covers the minor's case.
 - **Never** submits, pays or books on Sarathi (F-30). It navigates within Margdarshak and fills fields inside Margdarshak, always waiting for confirmation.
 - Languages: Hindi and English via Gemini Live native audio (M-01); **Dogri speech-in** via Sarvam Saaras (M-08), answered in Hindi text + voice.
 - Answers ≤ 2 sentences + one action button + a **rule-ID SourceChip**.
@@ -2227,7 +2227,7 @@ Orb animations are Rive state-machine driven; transitions 240 ms. **No haptics d
 `voice_opened {surface}` · `voice_prompt_chip {chip_id}` · `voice_turn {intent_enum, latency_bucket, lang: hi|en|doi}` · `voice_field_filled {field_id, confirmed}` · `voice_didnt_catch` · `voice_handoff {target}` · `voice_pii_redacted {kind: aadhaar|otp}` · `voice_typed_instead`.
 
 ### 8.7 Edge cases
-EC-20 (redaction), EC-29 (AI unavailable → state 7 variant: *"The guide is resting. Search help instead."* with the help search), EC-05 (u18 no orb), EC-14 (shared phone/Helper mode: the guide announces *"Helping {initials}'s case"* and never reads out personal fields), EC-19 (Lite: CSS orb; voice needs online), EC-11 (Sarathi outage: hand-off state adds *"Sarathi isn't responding right now; your answers are saved here."*).
+EC-20 (redaction), EC-29 (AI unavailable → state 7 variant: *"The guide is resting. Search help instead."* with the help search), EC-05 (family mode: orb as for everyone), EC-14 (shared phone/Helper mode: the guide announces *"Helping {initials}'s case"* and never reads out personal fields), EC-19 (Lite: CSS orb; voice needs online), EC-11 (Sarathi outage: hand-off state adds *"Sarathi isn't responding right now; your answers are saved here."*).
 
 ---
 
@@ -2239,7 +2239,7 @@ EC-20 (redaction), EC-29 (AI unavailable → state 7 variant: *"The guide is res
 
 **Roles.** `school_owner` (everything incl. billing), `instructor` (own learners, sign-offs, logs), `front_desk` (bookings, vehicle requests). Every action writes E-30 AuditLog.
 
-**Consent model.** A learner links to a school from their app (*"Share my progress with {school}"* with a per-item choice: progress, Nazar sessions, Practice Record). The school sees **only** what the learner shares, and loses access the moment the learner revokes. u18 learners cannot be linked (no account history, D-13); schools see them only as walk-ins.
+**Consent model.** A learner links to a school from their app (*"Share my progress with {school}"* with a per-item choice: progress, Nazar sessions, Practice Record). The school sees **only** what the learner shares, and loses access the moment the learner revokes. A learner under 18 is linked from the family-mode profile, and the parent gives the share consent (D-13 revised).
 
 **Phase.** Hackathon: **Thin** (learners list, learner detail, hazard-training log export, sign-off). **Slide**: bookings, vehicle hire, Pro billing. Production: all, plus parent updates via n8n W5/W7 and remedial-training referrals.
 
@@ -2380,7 +2380,7 @@ Copy: `bk.title` "Bookings" / "बुकिंग" · `bk.accept` "Accept" / "�
 - **Billing** (Phase 3+): Pro tier; if it exists, **cancel in one tap** (subscription-trap rule); invoice download. No subscription in the hackathon build.
 
 ### 9.8 School portal edge cases
-EC-08 (remedial referral), EC-25 (consent revoked mid-relationship), EC-26 (learner deleted account: rows disappear; exported PDFs already downloaded keep the record with the "as of" time), EC-30 (learner said STOP on WhatsApp: the school's nudge button shows *"This learner turned off WhatsApp messages"* and offers nothing else), EC-05 (u18 not linkable).
+EC-08 (remedial referral), EC-25 (consent revoked mid-relationship), EC-26 (learner deleted account: rows disappear; exported PDFs already downloaded keep the record with the "as of" time), EC-30 (learner said STOP on WhatsApp: the school's nudge button shows *"This learner turned off WhatsApp messages"* and offers nothing else), EC-05 (a minor is linkable with the parent's consent).
 
 ---
 
@@ -2626,7 +2626,7 @@ Checklist (all must be ✓): blur audit passed · photosensitivity passed · two
 
 ## 13. Analytics event catalogue
 
-All learner events use the envelope in §1.6 (API-63, F-55): rotating daily pseudonym, no PII, no free text, no audio or images, buckets instead of raw values where a value could identify someone. **u18 sessions send nothing.** Portal events are operational and go to E-30 AuditLog as well. The funnel digest (n8n W13) reads only these aggregates.
+All learner events use the envelope in §1.6 (API-63, F-55): rotating daily pseudonym, no PII, no free text, no audio or images, buckets instead of raw values where a value could identify someone. Events from a minor's profile (family mode) follow the same rules and are never used for behavioural tracking, profiling or ads (s.9(3)). Portal events are operational and go to E-30 AuditLog as well. The funnel digest (n8n W13) reads only these aggregates.
 
 | Area | Events | Key props | F-xx |
 |---|---|---|---|
@@ -2691,7 +2691,7 @@ All learner events use the envelope in §1.6 (API-63, F-55): rotating daily pseu
 ### 14.2 Edge cases → where handled in this file
 | EC | Handling | Section |
 |---|---|---|
-| EC-05 Aged 16–17 | `u18` rules-only variant on every screen; no AI, telemetry, streaks, squads, share, voice | §0.2-7, all States blocks, §7, §8.1 |
+| EC-05 Aged 16–17 | Family mode (D-13 revised): full product on every screen, AI and voice included; squads and share cards need the parent's consent | §0.2-7, all States blocks, §7, §8.1 |
 | EC-07 LL expires waiting for a slot | Console funnel blocker code | §10.2 |
 | EC-08 3+ fails, remedial training | School portal chip + referral | §9.1, §9.8 |
 | EC-09 Payment pending | Console funnel blocker code | §10.2 |
@@ -2728,7 +2728,7 @@ Every primary action carries `data-testid="<screen>.<action>"` (e.g. `readiness.
 | 1 | Nazar spam rule | `06-design-language.md` B11: "more than 5 per second voids the clip"; `08-game-ai-n8n.md` G1: "more than 3 taps in any 1.0 s, or more than (2 × hazards + 4) taps in a clip"; `NAZAR-FIELD-KIT.md` §3 exclusion: "> 3 taps per second" | Uses the 08 rule (config value `spam_taps_per_s = 3`), which also matches the field kit's exclusion. 06 should be corrected |
 | 2 | Nazar scoring | 08 and PROJECT_BRIEF F-23: UK-style 5 bands per hazard window; field kit H-block: "full 10 marks if the tap falls in [onset, onset+2 s], linear decay to 0 at onset+5 s" | UI shows 5 bands (product). The field study's pre-registered scoring may differ; the research lead must make `HYPOTHESES.md` and `game-core` agree **before** any participant data, or label the study scoring separately |
 | 3 | Streak shape | 06 B11: "7 small road-dots; a missed day becomes a pothole"; 08 §4.6: weekly goal of 2–6 sessions, repair a missed **week** with goal + 2 | Uses 08 (weekly), with one dot per goal session and potholes for missed weeks (§7.3) |
-| 4 | Squads for minors | 08 §4.7 allows under-18 squads from a school/class code; D-13 says no squads for under-18 | Follows D-13: no u18 squads |
+| 4 | Squads for minors | 08 §4.7 allows under-18 squads from a school/class code; the original D-13 said no squads for under-18 | Follows D-13 revised: a minor's profile joins a squad with the parent's consent; class-code squads not built in P1–2 |
 | 5 | Badge count | F-26 says 9 badges; 08 §4.8 lists Night Ready / Ghat Ready in one row | Treated as 9 slots with slot 7 having two variants (§7.1). PRD should confirm |
 | 6 | "Verified" wording | 08 §4.8/§4.9 use "verified mocks", "verified sessions: n" on the share card; D-14/verification row 10 forbid "verified" for the Practice Record, and D-19 bans "verified licence" | UI uses "counted mocks / counted sessions" everywhere a learner sees it. API names (API-47 `/verify/...`) unchanged |
 | 7 | Field-kit copy | `NAZAR-FIELD-KIT.md` §1 recruitment text says "We built India's first practice version" (banned "first", D-19) and the share text says "Kerala would fail me 😬" | Not used in-product. Field kit copy should drop "first"; the card never uses "fail" (§7.5) |
@@ -2751,7 +2751,7 @@ Every primary action carries `data-testid="<screen>.<action>"` (e.g. `readiness.
 | Uphill-priority rule (MV Driving Regulations 2017), helmet section (MV Act s.129): `verified:false` until re-fetched (from 02/08) | §5.6, §5.9 | Rules lead | before stage, D-25 |
 | Kerala HPT status (no stay found as of 23 Oct 2026) | §5.1 | Research lead | demo morning (D-25) |
 | Golden Hour protocol wording (critical-error card) pending medical reviewer | §5.7 | Content lead + medical reviewer | before "draft" label is removed |
-| u18 use of the on-device camera in Helmet Fit (no data leaves the device) | §5.6 | Privacy lead | 24 Oct 2026 |
+| Resolved by D-13 revised: family-mode use of the on-device camera in Helmet Fit is covered by the parent's consent (no data leaves the device) | §5.6 | Privacy lead | closed 23 Oct 2026 |
 
 ### 15.3 Open design questions (with owners)
 1. Hinglish as a selectable notes language for AI text (§6.1): content lead to confirm with 3 users in the journey test (24 Oct 2026).

@@ -98,7 +98,7 @@ flowchart LR
 | Channel | Mechanic | Target (HUNCH) |
 |---|---|---|
 | **Instagram Reels / YouTube Shorts** (Gary Vee: document, don't create) | 3 formats, 3 posts a week: (1) "Spot the hazard" 15-s clip, answer at the end (no gore, no fear imagery, `05-psychology` §3); (2) "Agent ne ₹4,000 maange, sarkari fee ₹700 + ₹200 card hai" plan-card screen recording; (3) "Track test in 30 seconds" animated explainer (F-12). Every post links to the plan card, not to an app store | 6,000 plans created |
-| WhatsApp share loops | Plan card "Send to WhatsApp"; Nazar share card; squad invites (F-26, 18+ only) | 2,000 |
+| WhatsApp share loops | Plan card "Send to WhatsApp"; Nazar share card; squad invites (F-26; a minor's profile needs the parent's consent) | 2,000 |
 | Kerala Pro schools (40) | Cohort onboarding | 1,600 learners |
 | J&K pilot RTO | Counter QR "Plan your licence in 3 taps" (only with the RTO's written permission, non-affiliation line on the poster) | 1,000 |
 | Parents via family mode | "Papa's DL has no grace period" reminder (F-16, F-17) | 400 parents |
@@ -187,7 +187,7 @@ flowchart LR
 |---|---|---|---|
 | Acquisition | Plan cards created | `plan_created` | 60,000 |
 | Activation | Cases started (S2) | `case_created` | 15,000 |
-| Activation | Nazar sessions completed (18+) | `game_session_completed{game=nazar}` | 25,000 |
+| Activation | Nazar sessions completed | `game_session_completed{game=nazar}` | 25,000 |
 | Retention | Cases active at day 31 (S4→S5) | `stage_entered{stage=S5}` | 50% of LL-issued cases |
 | Referral | WhatsApp shares per active user | `plan_shared`, `sharecard_sent` | 0.6 |
 | Revenue | Paying school branches | `school_pro_activated` | 60 by Oct 2027 |

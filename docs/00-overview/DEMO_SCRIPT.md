@@ -59,7 +59,7 @@
 | Kabir · LL expiring | S5 | LL day 165, no test booked | Red-amber banner "LL expires in 15 days" + plan (EC-07) | optional |
 | Kabir · Failed test | S6F | DL test failed yesterday (reverse park) | Private debrief → drill → retest date (7-day gap) → remedial-training referral (EC-08) | optional / Q&A |
 | **Mohan-ji · DL holder** (P-03) | S9 | DL expiring in 11 months, age 52 | Renewal window, Form 1A note, "no grace period" | 3.3 (after voice) |
-| Rahul · 17 (P-07) | S1 | Age 17 | Rules-only: ≤ 50 cc gearless path with guardian consent; no AI, no streaks | Q&A (Sambyal) |
+| Rahul · 17 (P-07) | S1 | Age 17 | Family mode on a parent's phone: ≤ 50 cc gearless path with guardian consent; full product incl. AI (D-13 revised) | Q&A (Sambyal) |
 
 ---
 

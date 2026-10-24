@@ -1,7 +1,7 @@
 # Accessibility
 > Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Accessibility lead (Design lead in the hackathon) · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [Design system](DESIGN_SYSTEM.md) · [Localization](LOCALIZATION.md) · [Content style](CONTENT_STYLE.md) · [UI spec](UI_SPEC.md) · [Testing](../03-engineering/TESTING.md) · [Compliance](../06-security-compliance/COMPLIANCE.md) · [Game design](../09-learning-games/) · [Government adoption](../10-government/)
-> Features: F-52 (accessibility), F-50 (languages), F-51 (Lite/offline), F-23/F-24 (games), F-30 (voice), F-17 (Helper). Directives: D-21 (accessibility), D-19 (wording), D-13 (age gates).
+> Features: F-52 (accessibility), F-50 (languages), F-51 (Lite/offline), F-23/F-24 (games), F-30 (voice), F-17 (Helper). Directives: D-21 (accessibility), D-19 (wording), D-13 revised (AI for everyone; family mode for learners under 18).
 
 ---
 
@@ -223,7 +223,7 @@ Scoring fairness:
 | Pictures before words | Vehicle pictograms for class choice (F-02); document pictograms with "Example" |
 | One question per screen | QuestionPage (GOV.UK) with a large `h1` question |
 | Read aloud everywhere | A 🔊 "Listen" button on every content screen and question (browser `speechSynthesis` offline for EN/HI where voices exist; Bulbul `hi-IN` online). Not AI-generated text: it reads the screen's own reviewed copy |
-| Voice to navigate | VoiceGuide (adult only, D-13); prompt chips show what to say |
+| Voice to navigate | VoiceGuide (every user, D-13 revised); prompt chips show what to say |
 | Short sentences, common words | CONTENT_STYLE §3 targets; Hindi uses everyday words and common English loanwords (LOCALIZATION §9) |
 | Numbers as digits, money as ₹ | "₹700", "30 दिन", never words-for-numbers |
 | Confirm by reading back | "We'll use this name: Kabir Sharma. Is that right?" |
@@ -249,8 +249,8 @@ Scoring fairness:
 - One primary action per screen.
 - The plan card shows "max RTO visits", to remove uncertainty.
 
-### 5.9 Under-18 users (P-07, EC-05)
-These are accessibility features without AI: read-aloud uses the browser's on-device TTS (not Gemini), and the rules-only plan card and static lessons are fully accessible. No telemetry is collected (D-13).
+### 5.9 Learners under 18 in family mode (P-07, EC-05)
+A 16–17-year-old learner uses the parent's phone and account (family mode, D-13 revised) and gets every accessibility feature, including the voice guide and AI read-outs. The parent's consent covers the minor's case. Read-aloud still uses the browser's on-device TTS where voices exist. No behavioural tracking or targeted ads on a child's data (DPDP s.9(3)).
 
 ---
 
@@ -300,7 +300,7 @@ These are accessibility features without AI: read-aloud uses the browser's on-de
 ### 9.1 Automated (every PR, GitHub Actions)
 | Check | Tool | Gate |
 |---|---|---|
-| Token contrast | `python -I scripts/check_contrast.py` | Any unexpected FAIL / UNEXPECTED PASS |
+| Token contrast | `node scripts/check_contrast.mjs` | Any unexpected FAIL / UNEXPECTED PASS |
 | Component a11y | Storybook 8 + `@storybook/addon-a11y` (axe) on every story and state | 0 violations at serious/critical |
 | Route a11y | `@axe-core/playwright` on 25 key routes × locales `en`, `hi` × themes light, dark, high contrast | 0 serious/critical; WCAG tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa` |
 | Lint | `eslint-plugin-jsx-a11y` (recommended + strict on `packages/ui`) | 0 errors |
@@ -388,7 +388,7 @@ Tab order, visible focus, no traps, Esc closes overlays, Enter/Space activate, a
 
 ## 10. Accessibility statement (template, EN; Hindi version reviewed per LOCALIZATION §11)
 > **Accessibility of Margdarshak.** Margdarshak is an independent prototype by team Chanakya, not affiliated with MoRTH, NIC or any State Transport Department. We design and test it to WCAG 2.1 Level AA and the Guidelines for Indian Government Websites (GIGW 3.0).
-> **What you can do:** use it with TalkBack, VoiceOver or NVDA; zoom to 400%; turn on High contrast, Sunlight or Lite mode; play every game without sound; use the voice guide (18+) or type instead.
+> **What you can do:** use it with TalkBack, VoiceOver or NVDA; zoom to 400%; turn on High contrast, Sunlight or Lite mode; play every game without sound; use the voice guide or type instead.
 > **Known issues on {date}:** {list from KNOWN_ISSUES.md, e.g. "The Junction Scan game uses a canvas; screen-reader users get a step-by-step quiz instead."}
 > **Tell us:** {feedback link} · {grievance officer contact}. We reply within 5 working days.
 > **Last tested:** {date}, with {tools}. **Last updated:** {date}.

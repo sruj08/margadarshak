@@ -7,8 +7,8 @@
 | | Hackathon build (Phase 1–2) | Production for a state (Phase 3+) |
 |---|---|---|
 | Hosting | **Render**, region **Singapore** (Render has no India region: Oregon, Ohio, Virginia, Frankfurt, Singapore; https://render.com/docs/regions, war-room G4) | **MeghRaj / NIC cloud or a MeitY-empanelled CSP, Indian region** (07 §A6, D-17) |
-| Runtime | 3 Docker services + 1 Render Workflows service (Python) + Render Postgres + Render Key Value | Kubernetes + Helm (`infra/helm/`), or Docker Compose on a single VM for a small NIC install |
-| Durable jobs | **Render Workflows** (Python SDK `render>=1.0.1`) | **Temporal** (MIT, self-hosted) behind the same `JobRunner` port |
+| Runtime | 3 Docker services (Go API, Next.js web, Node score verifier) + 1 Render Workflows service (TypeScript) + Render Postgres + Render Key Value | Kubernetes + Helm (`infra/helm/`), or Docker Compose on a single VM for a small NIC install |
+| Durable jobs | **Render Workflows** (TypeScript SDK `@renderinc/sdk` 1.4.0; the Go API starts runs over Render's REST API) | **Temporal** (MIT, self-hosted; Temporal Go SDK `go.temporal.io/sdk` v1.50.0) behind the same `JobRunner` port |
 | Schedules + messaging edge | **n8n Cloud Pro** (sponsor perk) | self-hosted n8n in India **or** Kubernetes CronJobs + backend NotificationAdapter (no business logic is lost, D-16) |
 | Object storage | **Cloudflare R2** (blurred clips, ICS, exports) | the CSP's S3-compatible store in India, or MinIO |
 | AI | Gemini API, **paid tier** (D-13) | **Vertex AI in an Indian region** [unverified: model availability in asia-south1; owner AI lead; before the state MoU], Bhashini for speech where the state prefers it |
@@ -21,12 +21,12 @@ The same three images (`infra/docker/api.Dockerfile`, `web.Dockerfile`, `score-v
 | # | Component | Image / runtime | Render type, plan | Purpose | Talks to |
 |---|---|---|---|---|---|
 | C1 | `margdarshak-web` | Next.js 16 standalone, Node 22 | `web`, `0.5c-512mb` (legacy "starter") | citizen PWA, Lite mode, state console UI (F-41), clip curator page | C2 over the private network (server-side) and the public URL (browser) |
-| C2 | `margdarshak-api` | Python 3.12, FastAPI, gunicorn + uvicorn workers | `web`, `1c-2g` (legacy "standard") | the **one backend** (D-17): rules engine, cases, adapters, ADK agents, `/internal/*` for n8n and Workflows | Postgres, Key Value, C3, Render API (start tasks), Gemini, Sarvam, R2, n8n webhooks |
-| C3 | `margdarshak-score-verifier` | Node 22, `@margdarshak/game-core` | `pserv` (private, no public URL), `0.5c-512mb` | replays every game session from seed + events and **overwrites the client score** (anti-cheat, API-35) | called by C2 and Workflows only |
-| C4 | `margdarshak-workflows` | Python, `render` SDK | `workflow` (per-task compute, default `flex`) | durable jobs: **`clip_ingest`** (headline: transcode → blur faces/plates → propose windows → hand to raters), `clip_finalize` (agreement → publish), `case_clock_sweep`, `debrief_fanout`, `field_stats_nightly`, `rulepack_reevaluate` | Postgres, C2, C3, R2, Gemini, n8n webhooks (outbound only: runs **cannot receive inbound connections**, B-sponsors §1) |
-| C5 | `margdarshak-db` | Render Postgres 16 | `0.1c-256mb` (legacy "basic-256mb") | system of record for Margdarshak's own objects (E-01..E-31); **not** a copy of Sarathi | C2, C4 |
+| C2 | `margdarshak-api` | Go 1.27 static binary (chi v5, pgx v5 + sqlc, goose, ADK for Go v1.9 + genai v1.76), distroless image (ADR-0011) | `web`, `0.5c-512mb` (legacy "starter"; `GOMEMLIMIT=400MiB`; move to `1c-2g` if the k6 burst needs it) | the **one backend** (D-17): rules engine, cases, adapters, ADK agents, `/internal/*` for n8n, `/internal/job-steps/*` for Workflows tasks | Postgres, Key Value, C3, Render API (start/poll task runs), Gemini, Sarvam, R2, n8n webhooks |
+| C3 | `margdarshak-score-verifier` | Node 22, `@margdarshak/game-core` | `pserv` (private, no public URL), `0.5c-512mb` | replays every game session from seed + events and **overwrites the client score** (anti-cheat, API-35) | called by C2 only (Workflows replays go through C2 job steps) |
+| C4 | `margdarshak-workflows` | Node 22, TypeScript, `@renderinc/sdk` 1.4.0 (`services/workflows`) | `workflow` (per-task compute, default `flex`) | durable jobs: **`clip_ingest`** (headline: transcode → blur faces/plates → propose windows → hand to raters), `clip_finalize` (agreement → publish), `case_clock_sweep` (+ `clock_batch`), `session_debrief`, `debrief_backfill`, `nightly_stats`, `rulepack_reevaluate`, `user_export`, `user_delete`, `replay_pending_sessions`. Media steps run in the task; every business step is an HMAC call to C2 `/internal/job-steps/{step}` (the API owns the DB, Gemini and n8n) | C2 (private network), R2 (outbound only: runs **cannot receive inbound connections**, B-sponsors §1) |
+| C5 | `margdarshak-db` | Render Postgres 16 | `0.1c-256mb` (legacy "basic-256mb") | system of record for Margdarshak's own objects (E-01..E-31); **not** a copy of Sarathi | C2 only (Workflows tasks reach data through C2) |
 | C6 | `margdarshak-kv` | Render Key Value (Redis-compatible) | `256mb`, `volatile-lru`, private only | rate limits, anonymous sessions, idempotency keys, AI circuit breaker | C2 |
-| C7 | Cloudflare R2 | — | — | `margdarshak-clips-ingest` (raw uploads, 14-day lifecycle delete), `margdarshak-clips-public` (blurred, published clips + manifest), `margdarshak-exports` (user data exports, 7-day expiry) | C2, C4; browser via presigned URLs and the public clips domain |
+| C7 | Cloudflare R2 | — | — | `margdarshak-clips-ingest` (raw uploads, 14-day lifecycle delete), `margdarshak-clips-public` (blurred, published clips + manifest), `margdarshak-exports` (user data exports, 7-day expiry) | C2, C4 (media steps); browser via presigned URLs and the public clips domain |
 | C8 | n8n Cloud Pro | — | — | 15 workflows: schedules, WhatsApp/email out, approvals in (N8N_WORKFLOWS.md) | C2 `/internal/*` and API-55 over HTTPS + HMAC; WhatsApp Cloud API; Gmail; Telegram |
 | C9 | External | — | — | Gemini API (paid), Sarvam Saaras (Dogri ASR, M-08), Meta WhatsApp Cloud API (test number), Sentry, Grafana Cloud | — |
 
@@ -49,9 +49,9 @@ flowchart TB
   subgraph Render["Render workspace · region singapore"]
     direction TB
     WEB[margdarshak-web<br/>web · 0.5c-512mb<br/>Next.js 16 :3000]
-    API[margdarshak-api<br/>web · 1c-2g<br/>FastAPI :8000]
+    API[margdarshak-api<br/>web · 0.5c-512mb<br/>Go :8000]
     VER[margdarshak-score-verifier<br/>pserv · private :8081]
-    WF[margdarshak-workflows<br/>workflow · python<br/>per-task flex compute]
+    WF[margdarshak-workflows<br/>workflow · node / TS<br/>per-task flex compute]
     DB[(margdarshak-db<br/>Postgres 16)]
     KV[(margdarshak-kv<br/>Key Value 256mb)]
   end
@@ -61,9 +61,9 @@ flowchart TB
   WEB -->|"private network hostport"| API
   API -->|"private"| VER
   API --> DB & KV
-  API -->|"render_sdk start_task / run_task<br/>RENDER_API_KEY"| WF
-  WF -->|"private network"| API & VER & DB
-  WF -->|"outbound HTTPS"| GEM & R2 & N8N
+  API -->|"POST api.render.com/v1/task-runs<br/>RENDER_API_KEY (Go JobRunner)"| WF
+  WF -->|"private network, HMAC<br/>/internal/job-steps/{step}"| API
+  WF -->|"outbound HTTPS (media)"| R2
   API -->|"outbound HTTPS"| GEM & SAR & R2 & SEN
   N8N -->|"HMAC POST /internal/clock/sweep (API-65)<br/>/internal/webhooks/n8n (API-66), API-55"| API
   API -->|"signed envelope webhooks"| N8N
@@ -183,42 +183,46 @@ infra/terraform/
 Providers are chosen per CSP at the state MoU. No module depends on a proprietary managed service the other CSPs lack (07 §B4). The hackathon needs no Terraform: `infra/render.yaml` is the IaC.
 
 ### 4.5 The `JobRunner` port (the Render ⇄ government seam)
-```python
-# services/api/app/jobs/port.py (interface only; implementation in Phase 1)
-class JobRunner(Protocol):
-    async def start(self, task: str, args: list[JSON], *, idempotency_key: str) -> RunRef: ...
-    async def run(self, task: str, args: list[JSON], *, timeout_s: int) -> RunResult: ...
-    async def status(self, run: RunRef) -> RunStatus: ...
+```go
+// services/api/internal/ports/jobs.go (interface only; implementations in internal/jobs/*)
+type JobRunner interface {
+	// Start begins a run. The same idempotency key never starts a second run.
+	Start(ctx context.Context, task string, args []any, idempotencyKey string) (RunRef, error)
+	// Status reads the run state (polled into job_runs; Workflows has no completion webhook).
+	Status(ctx context.Context, run RunRef) (RunStatus, error)
+}
 ```
-| Implementation | Where | Maps to |
+| Implementation (Go package) | Where | Maps to |
 |---|---|---|
-| `RenderWorkflowsRunner` | hackathon | `render_sdk.RenderAsync().workflows.start_task(f"{WORKFLOW_SLUG}/{task}", args)` / `run_task(...)` (Python SDK reference, fetched 2026-10-23) |
-| `TemporalRunner` | production | Temporal workflows with the same task names; Temporal adds timers and signals, so human waits *could* move from n8n into code later |
-| `InlineRunner` | dev, CI | runs the task function in-process |
+| `internal/jobs/renderworkflows` | hackathon (`JOB_RUNNER=render_workflows`) | Render REST API, no SDK needed in Go: `POST https://api.render.com/v1/task-runs` with `{"task": "<WORKFLOW_SLUG>/<task>", "input": [...], "idempotencyKey": "..."}` → `202` TaskRun; `GET /v1/task-runs/{id}` for status (`pending`, `running`, `succeeded`/`completed`, `failed`, `canceled`, `paused`); `DELETE /v1/task-runs/{id}` cancels. Bearer `RENDER_API_KEY`. Local dev: `RENDER_USE_LOCAL_DEV=true` points the adapter at `http://localhost:8120` (or `RENDER_LOCAL_DEV_URL`), the same switch the TS SDK uses (`@renderinc/sdk` 1.4.0, read 2026-10-23) |
+| `internal/jobs/temporal` | production (`JOB_RUNNER=temporal`) | Temporal Go SDK `go.temporal.io/sdk` v1.50.0: workflows with the same task names; the worker is the same Go binary (`/app/api worker`) and runs the Go step handlers as activities; media activities run in a TS Temporal worker or a Go ffmpeg wrapper [design only]. Temporal adds timers and signals, so human waits *could* move from n8n into code later |
+| `internal/jobs/inline` | dev, CI (`JOB_RUNNER=inline`) | runs the Go step handlers in-process on a goroutine; media steps use pre-blurred fixture clips |
 
-Task definitions use the Python SDK as documented (fetched 2026-10-23, https://render.com/docs/workflows-sdk-python): `app = Workflows(default_retry=..., default_timeout=..., default_plan=...)`, `@app.task(name=..., retry=Retry(max_retries=3, wait_duration_ms=1000, backoff_scaling=2.0), timeout_seconds=..., plan="flex")`, every task takes `TaskContext` first, chain with `await ctx.run(task, *args)`, fan out with `asyncio.gather`, and call `app.start()` in `main.py`.
+Task definitions are TypeScript in `services/workflows` (`@renderinc/sdk` 1.4.0; https://render.com/docs/workflows-sdk-typescript): each task is `task({ name, retry: { maxRetries: 3, waitDurationMs: 1000, backoffScaling: 2 }, timeoutSeconds, plan }, async (ctx: TaskContext, ...args) => ...)`, subtasks run with `await ctx.run(subtask, ...args)`, fan-out is `Promise.all` over `ctx.run`, and the task server starts automatically when `RENDER_SDK_SOCKET_PATH` is set. Tasks hold no business logic: media steps (ffmpeg, blur with onnxruntime-node, flash check) run in the task; every other step is `POST http://$API_INTERNAL_HOSTPORT/internal/job-steps/{step}` with HMAC (`INTERNAL_HMAC_SECRET`), and the Go API decides, writes and notifies. Plan names: the TS SDK README lists `starter`/`standard`/`pro`, the changelog says `flex` replaced them [unverified; owner Backend lead, H0].
 
 | Task | Timeout | Retries | Plan | Fan-out |
 |---|---|---|---|---|
-| `clip_ingest(clip_id)` → `transcode` → `blur_faces_plates` → `propose_windows` → notify W08 | 30 min | 3, ×2 backoff (blur supports fault injection `FAULT_INJECTION_CLIP_BLUR=once` for the visible-retry demo, D-15) | `flex` (transcode may use `2c-4g`) | one run per clip; batch ingest = `asyncio.gather` over clips (chained runs avoid the Hobby limit of 50 root runs/min) |
+| `clip_ingest(clip_id)` → `transcode` → `blur_faces_plates` → `propose_windows` (API step, Gemini video) → notify W08 (API step) | 30 min | 3, ×2 backoff (blur supports fault injection `FAULT_INJECTION_CLIP_BLUR=once` for the visible-retry demo, D-15) | `flex` (transcode may use `2c-4g`) | one run per clip; batch ingest = `Promise.all` over `ctx.run` (chained runs avoid the Hobby limit of 50 root runs/min) |
 | `clip_finalize(clip_id)` → `compute_agreement` → `publish` | 10 min | 3 | `flex` | — |
-| `case_clock_sweep(run_date)` → per tenant → per 500-case shard | 30 min | 3 | `flex` | shards in parallel; writes idempotent `TimelineEvent` (E-12) + outbox rows (E-13) |
-| `debrief_fanout(session_ids)` | 5 min | 3 (Gemini 429) | `flex` | per session; template fallback on final failure (EC-29) |
-| `field_stats_nightly()` | 30 min | 2 | `flex` | — |
-| `rulepack_reevaluate(tenant, version)` | 60 min | 2 | `flex` | per 1,000 open cases (EC-27) |
+| `case_clock_sweep(tenant, as_of)` → `clock_batch` per 500-case page | 30 min | 3 | `flex` | pages in parallel (≤ 8); the API step writes idempotent `TimelineEvent` (E-12) + outbox rows (E-13) |
+| `session_debrief(sid)` / `debrief_backfill(cohort)` | 60 s / 30 min | 3 (Gemini 429) | `flex` | per session; template fallback on final failure (EC-29) |
+| `nightly_stats(date)` | 30 min | 2 | `flex` | — |
+| `rulepack_reevaluate(tenant, from, to)` | 60 min | 2 | `flex` | per 1,000 open cases (EC-27) |
+| `user_export(principal)` / `user_delete(principal)` | 10 min | 3 | `flex` | — |
+| `replay_pending_sessions()` | 10 min | 3 | `flex` | per session (verifier outage recovery) |
 
 ## 5. Scaling
 ### 5.1 Hackathon (judging day)
 - Expected load: 6 judges + team + field-study participants (n = 40–80, D-22) ⇒ peak about 50–100 concurrent users.
 - **Never the `free` plan:** free web services sleep after 15 min and take about 1 min to wake (B-sponsors §0). Paid instances don't sleep. A warm-up step runs after each deploy (`deploy.yml`) and again 30 min before judging (RUNBOOK §8).
-- One instance of each service handles this load. The headroom plan: bump the API to `2c-4g` and `numInstances: 2` in the dashboard (manual scaling works on any paid plan; autoscaling needs a Pro workspace, per the Blueprint spec).
+- One instance of each service handles this load. The headroom plan: bump the API from `0.5c-512mb` to `1c-2g` (or `2c-4g`) and `numInstances: 2` in the dashboard (manual scaling works on any paid plan; autoscaling needs a Pro workspace, per the Blueprint spec).
 - Load-test target before judging (k6, 5 min): API-01 plan p95 < 300 ms server-side at 50 RPS; zero 5xx (PERFORMANCE.md).
 
 ### 5.2 Production (per state)
 | Tier | Signal | Min → max | Notes |
 |---|---|---|---|
 | web | CPU 65 % | 2 → 20 | static assets via CDN/edge cache; Lite pages cached 5 min |
-| api | CPU 60 %, p95 latency | 3 → 40 | stateless; sessions in Valkey; DB pool 10 + 5 per pod, PgBouncer (transaction mode) past 20 pods |
+| api | CPU 60 %, p95 latency | 3 → 40 | stateless Go binary; sessions in Valkey; `pgxpool` max 15 connections per pod, PgBouncer (transaction mode) past 20 pods; `GOMEMLIMIT` ≈ 80 % of the pod memory limit |
 | score-verifier | CPU 70 % | 2 → 10 | CPU-bound replays, about 10–50 ms each [estimate; measure] |
 | jobrunner worker | queue depth 50 | 2 → 30 | case-clock sweep sharded per 500 cases |
 | Postgres | — | 1 primary + 2 replicas | reads for the state console (F-41) go to a replica; partition `game_events` (E-17) monthly |
@@ -229,7 +233,7 @@ Capacity anchor: the 9 am spike Kapoor asked about ("10,000 users at 9 am", war-
 ## 6. Backups
 | What | Hackathon | Production | Restore test |
 |---|---|---|---|
-| Postgres | Render-managed backups (availability depends on plan [unverified for `0.1c-256mb`; owner Ops lead, H0]) **plus** a nightly `pg_dump --format=custom` from a Workflows task to R2 (`margdarshak-backups`, 14 copies) | continuous WAL archiving + daily base backup, PITR 7 days, weekly full copy to a second Indian region; backup bucket versioned with 30-day object lock | hackathon: one restore into staging before judging; production: monthly restore drill, quarterly DR drill |
+| Postgres | Render-managed backups (availability depends on plan [unverified for `0.1c-256mb`; owner Ops lead, H0]) **plus** a nightly `pg_dump --format=custom` to R2 (`margdarshak-backups`, 14 copies) from a small Render cron job on the `postgres:16` image over the private network [to add at H0 if the plan has no backups; the Workflows tasks and the distroless API image have no database client tools] | continuous WAL archiving + daily base backup, PITR 7 days, weekly full copy to a second Indian region; backup bucket versioned with 30-day object lock | hackathon: one restore into staging before judging; production: monthly restore drill, quarterly DR drill |
 | Rule packs | Git (signed commits) + DB (`E-08` versions, append-only) | same | every CI run re-validates them |
 | Clips | R2 public bucket = published set; ingest bucket deleted after 14 days | object store with versioning | manifest checksum check nightly |
 | n8n workflows | JSON exports in `n8n/workflows/` (Git) + n8n's own version history | same, or replaced by CronJobs | import into a scratch workspace |

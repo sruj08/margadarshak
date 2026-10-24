@@ -1,0 +1,4 @@
+{
+  "$comment": "Exceptions to lint_wording / lint_fee_literals. Each entry needs a path (file, or folder ending in /), the rule id and a reason. Code-owner (PD) review required for every change (MD-004).",
+  "entries": []
+}

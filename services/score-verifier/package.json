@@ -1,0 +1,37 @@
+{
+  "name": "@margdarshak/score-verifier",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Private TypeScript compute service for the Go API: replays game sessions with @margdarshak/game-core (D-11: the server replay score wins) and runs the learning, gamification and clip-agreement maths (D1). node:http, HMAC-signed, no framework.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/server.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "dev": "node --conditions=margdarshak-source --experimental-strip-types src/server.ts",
+    "test": "node --conditions=margdarshak-source --test --experimental-strip-types \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "replay:golden": "node dist/cli/replay.js ../../packages/game-core/fixtures/golden.json",
+    "build:content": "node --conditions=margdarshak-source --experimental-strip-types scripts/build-content.ts",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "@margdarshak/clip-pipeline": "workspace:*",
+    "@margdarshak/game-core": "workspace:*",
+    "@margdarshak/gamification": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@margdarshak/content": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

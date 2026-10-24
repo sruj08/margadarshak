@@ -1,0 +1,176 @@
+{
+  "metaTitle": "Nazar study: hazard spotting practice",
+  "metaDescription": "A 6-minute practice hazard test on AI-generated scenes, in Kerala's announced format, part of a student research project. 18+, anonymous.",
+  "brand": "Nazar study",
+  "landing": {
+    "kicker": "Student research project · HackCache '26",
+    "h1": "Can you spot the hazard in time?",
+    "lead": "Watch short AI-generated practice scenes and tap when you see a hazard developing. It is a practice test in the format Kerala has announced, not Kerala's test, and it says nothing about how you drive.",
+    "facts": "What to expect",
+    "fact1": "About 6 minutes on your phone.",
+    "fact2": "18 or older, with a learner's licence or a driving licence.",
+    "fact3": "Anonymous: no name, phone number, licence number, face or location.",
+    "fact4": "The clips are AI-generated practice scenes: no real people, number plates or places.",
+    "start": "Start",
+    "privacy": "How we handle study data",
+    "sound": "No sound needed. Tap anywhere on the clip when you see a hazard developing; tapping too often scores nothing."
+  },
+  "counters": {
+    "h2": "Live counters",
+    "loading": "Loading the counters…",
+    "none": "Live counters appear when the study server is connected. This build has no live data.",
+    "joined": "People who started",
+    "analysed": "Sessions analysed",
+    "below": "Below 60/100",
+    "belowValue": "{pct}% (95% CI {lo}–{hi}%)",
+    "pending": "Not yet",
+    "collecting": "Still collecting: results are published after the pre-registered freeze.",
+    "note": "Convenience sample, pre-registered before any data. Our AI-generated practice scenes, not Kerala's clips. No crash outcomes are measured.",
+    "prereg": "Pre-registered at {hash}."
+  },
+  "states": {
+    "loading": "Loading…",
+    "errorTitle": "Something went wrong. Your answers so far are kept on this phone.",
+    "retry": "Try again",
+    "offlineTitle": "You're offline",
+    "offlineBody": "The study needs a connection for this step. Your answers so far are kept.",
+    "restart": "Start again"
+  },
+  "progress": "Step {n} of {total}",
+  "consent": {
+    "h1": "Before you start",
+    "intro": "Nazar is a practice tool and a student research project by team Chanakya for HackCache '26.",
+    "p1": "You must be 18 or older.",
+    "p2": "We store only: an anonymous ID, age band, licence type, years driving or riding, your quiz and clip scores, and your tap times.",
+    "p3": "We do not collect your name, phone number, licence number, face or location.",
+    "p4": "The clips are AI-generated practice scenes, made for this study: no real people, number plates or places appear in them.",
+    "p5": "Results are for practice only. They say nothing about how you drive, and this is not affiliated with any Motor Vehicles Department, MoRTH or NIC.",
+    "p6": "Your feedback is written from templates; no AI service receives your answers in this study.",
+    "p7": "You can delete your data at any time with your anonymous ID.",
+    "agree": "I am 18+ and agree",
+    "decline": "No thanks",
+    "under18": "I'm under 18",
+    "saving": "Saving your consent…",
+    "reviewNote": "Hindi text pending review by a native speaker."
+  },
+  "declined": {
+    "h1": "No problem",
+    "line": "Nothing was stored. You can still practise hazard spotting on your own, outside the study.",
+    "practise": "Practise Nazar",
+    "back": "Back to the start"
+  },
+  "under18": {
+    "h1": "This study is for adults",
+    "line": "The research study is 18+ only, and nothing was stored. You can still practise hazard spotting in the app, with a parent's account in family mode.",
+    "practise": "Practise Nazar"
+  },
+  "bands": {
+    "h1": "About you",
+    "lead": "Bands only. No name, phone number or email.",
+    "age": "Age band",
+    "ageOpt": {
+      "18_20": "18–20",
+      "21_24": "21–24",
+      "25_34": "25–34",
+      "35_plus": "35 or older"
+    },
+    "licence": "Licence you hold",
+    "licenceOpt": {
+      "ll": "Learner's licence",
+      "2w": "Driving licence: two-wheeler",
+      "4w": "Driving licence: four-wheeler",
+      "both": "Driving licence: both"
+    },
+    "years": "Years driving or riding",
+    "yearsOpt": {
+      "0_1": "Less than 1 year",
+      "1_3": "1 to 3 years",
+      "3_plus": "More than 3 years"
+    },
+    "missing": "Choose one option in each group.",
+    "continue": "Continue",
+    "enrolling": "Getting your anonymous ID…"
+  },
+  "enrolled": {
+    "h1": "Your anonymous ID is {code}",
+    "keep": "Keep it if you may want your data deleted later.",
+    "form": "Clip set {form}",
+    "mock": "Demo mode: this ID and clip set come from this phone, not the study server.",
+    "plan": "Next: 15 quick questions, then 10 clips, a short replay of 2 of them, and 5 new clips.",
+    "start": "Start the questions"
+  },
+  "phase": {
+    "ll": "Part 1 of 3 · 15 questions in the common learner's-licence format",
+    "test": "Part 2 of 3 · 10 clips in Kerala's announced format",
+    "fresh": "Part 3 of 3 · 5 new clips",
+    "llNote": "A fixed study question set, the same for everyone. Not your state's test.",
+    "loading": "Loading the questions…",
+    "saving": "Saving this part…"
+  },
+  "feedback": {
+    "h1": "Replay: clip {n} of {total}",
+    "lead": "The striped band is when the hazard was developing; the rings are your taps.",
+    "began": "Hazard began",
+    "tapped": "You tapped",
+    "late": "{s} s late ≈ {m} m at {kmh} km/h (estimated speed)",
+    "lateNoSpeed": "{s} s late (speed not logged)",
+    "onTime": "Inside the best part of the window.",
+    "missed": "No tap inside the window.",
+    "early": "You tapped just before it started developing: that scores nothing yet.",
+    "placeholder": "Placeholder clip (demo mode): the timeline is real, the picture is not.",
+    "next": "Next replay",
+    "continue": "Continue to the 5 new clips",
+    "none": "No replay is available for this session. You can continue.",
+    "loading": "Loading your replay…"
+  },
+  "score": {
+    "h1": "Your practice score",
+    "brand": "Nazar · practice",
+    "scoreLabel": "Practice score out of 100",
+    "format": "Kerala's announced format · 10 clips",
+    "tagline": "Rewards anticipation, not speed",
+    "challenge": "Can you beat it on the same clips?",
+    "cardFooter": "Not affiliated with any Motor Vehicles Department, MoRTH or NIC.",
+    "anon": "Anonymous rider",
+    "below": "Below Kerala's announced 60/100 pass mark, on practice clips.",
+    "atOrAbove": "At or above Kerala's announced 60/100 pass mark, on practice clips.",
+    "prepost": "Per clip, out of 10: {pre} before the replay, {post} on the new clips.",
+    "ll": "Question score: {raw} of {max}.",
+    "provisional": "Provisional: computed on this phone. The server's check decides the study score.",
+    "pending": "Your score appears once it's checked.",
+    "practiceOnly": "Practice only, on AI-generated scenes: this says nothing about how you drive.",
+    "share": "Share a challenge",
+    "shareText": "I scored {score}/100 on a practice hazard-spotting test in Kerala's announced format. Can you beat it on the same clips?",
+    "shareNote": "Shares a link to this study page only: no name, no ID, no score card on a server.",
+    "copied": "Link copied.",
+    "next": "Continue"
+  },
+  "nearMiss": {
+    "h1": "One last, optional question",
+    "label": "Has a near-miss ever happened to you? What happened?",
+    "hint": "One line, up to 140 characters. No names, phone numbers, vehicle numbers or exact places.",
+    "count": "{n} of {max}",
+    "check": "Check and send",
+    "skip": "Skip",
+    "removed": "We removed personal details before sending: {kinds}.",
+    "kind": {
+      "aadhaar": "an ID number",
+      "vid": "an ID number",
+      "otp": "a code",
+      "phone": "a phone number",
+      "email": "an email address",
+      "plate": "a vehicle number",
+      "licence": "a licence number"
+    },
+    "sent": "Thank you. Your line is stored only in the study table.",
+    "refused": "The server found personal details (a name, number or exact place). Please describe what happened without them.",
+    "empty": "Write a line, or skip."
+  },
+  "done": {
+    "h1": "Thank you",
+    "line": "Your anonymous ID is {code}. To delete your data, send this ID to the study lead.",
+    "debrief": "What this measured: how early you noticed hazards developing on our clips. It is practice, not a verdict on your driving.",
+    "practise": "Keep practising Nazar",
+    "home": "Margdarshak home"
+  }
+}

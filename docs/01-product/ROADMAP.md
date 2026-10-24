@@ -64,7 +64,7 @@ Dates for Phases 1–2 depend on the **disputed start time** (Fri 00:00 vs Fri 2
 | Rule packs `fees.json`, `rules/JK.json`, `rules/KL.json` with source/verified_on/confidence; API-01–03, API-13 | MS-1.4 | Plan card for 6 fixture personas incl. EC-01..EC-06 | A |
 | **Deep-A**: plan → blockers → 6-screen guided LL → photo fixer → check answers → copy-pack | MS-1.5 | e2e green; ≤ 6 screens; no Aadhaar/OTP fields | A, C |
 | **Deep-B**: Nazar mock + learn, server replay, AI debrief + validator + template, 4 deep games, LL simulator; evals ≥ 30 cases | MS-1.6 | `adk eval` 0 invented numbers; replay overwrites tampered scores | B, TL |
-| **Deep-C**: stage-aware home with persona switcher, case clock (journey sweeper Workflow + n8n Schedule), WhatsApp test number + email, age gate, consent, analytics schema, adapters + contract tests | MS-1.7 | Day-25 message delivered to a test phone from a scheduled run | TL, C |
+| **Deep-C**: stage-aware home with persona switcher, case clock (journey sweeper Workflow + n8n Schedule), WhatsApp test number + email, family mode, consent, analytics schema, adapters + contract tests | MS-1.7 | Day-25 message delivered to a test phone from a scheduled run | TL, C |
 | Nazar field study opens (Fri 19:00 link drop per field kit) | MS-1.8 | First 10 consented sessions | B |
 
 **Kill/shrink rules:** < 12 clips by Fri 12:00 → 6-clip mock, journey test carries the evidence. Voice guide never on the critical demo path; pre-recorded fallback.
@@ -77,7 +77,7 @@ Dates for Phases 1–2 depend on the **disputed start time** (Fri 00:00 vs Fri 2
 |---|---|---|---|
 | Thin breadth for S5–S9 and Eco (F-10–F-17, F-31–F-33, F-40–F-42, F-58) | MS-2.1 | Zero-dead-button crawl passes | C, A |
 | Journey test, 5–8 participants (Sat), counterbalanced | MS-2.2 | `journey_sessions.csv` complete | C |
-| Nazar study n ≥ 40; data freeze **Sat 24 Oct 18:00 IST**; `nazar_stats.py` run | MS-2.3 | H1–H4 results with CIs; API-71 live | B |
+| Nazar study n ≥ 40; data freeze **Sat 24 Oct 18:00 IST**; `nazar_stats.mjs` run | MS-2.3 | H1–H4 results with CIs; API-71 live | B |
 | Lite < 300 KB, axe 0 serious/critical, TalkBack pass on Deep-A | MS-2.4 | CI budget + manual log | C |
 | p95 numbers captured; instance pre-warmed; README "Render Singapore, synthetic data" | MS-2.5 | Perf table in the deck | TL |
 | Video ≤ 5 min (Nazar hook → plan card → journey → evidence → closing QR "take the 3-minute test"), deck, repo, live URL submitted | MS-2.6 | Submission receipt | PL |
@@ -92,12 +92,12 @@ Dates for Phases 1–2 depend on the **disputed start time** (Fri 00:00 vs Fri 2
 ### 3.1 30 / 60 / 90 days after the event
 | Window | Focus | Milestones |
 |---|---|---|
-| **Day 0–30 (Nov 2026)** | Legal and platform hardening; first real users | MS-3.1 Gemini **paid tier** for every real user (D-13); MS-3.2 DPIA + privacy notice "built to DPDP Rules"; grievance officer named; MS-3.3 India copy of logs (CERT-In 180 days); NTP to NIC/NPL; MS-3.4 WhatsApp Business templates submitted and approved; MS-3.5 IP India trademark search for "Margdarshak" (Q-09); MS-3.6 DigiLocker requester onboarding started through @Nestiq Private Limited (NeGD Partner SOP: org email domain, authorised representative, verification); MS-3.7 publish the adapter OpenAPI and contract tests (Apache-2.0) |
+| **Day 0–30 (Nov 2026)** | Legal and platform hardening; first real users | MS-3.1 Gemini **paid tier** for every real user (D-13 revised); MS-3.2 DPIA + privacy notice "built to DPDP Rules"; grievance officer named; MS-3.3 India copy of logs (CERT-In 180 days); NTP to NIC/NPL; MS-3.4 WhatsApp Business templates submitted and approved; MS-3.5 IP India trademark search for "Margdarshak" (Q-09); MS-3.6 DigiLocker requester onboarding started through @Nestiq Private Limited (NeGD Partner SOP: org email domain, authorised representative, verification); MS-3.7 publish the adapter OpenAPI and contract tests (Apache-2.0) |
 | **Day 31–60 (Dec 2026)** | **Kerala HPT goes live (announced 1 Dec)**; J&K forward deployment | MS-3.8 Kerala school beta: 5 schools on Pro trial, HPT logs exported (EC-28 flag ready); MS-3.9 3–5 days forward-deployed at ARTO Jammu ([07 §C2](../../../research/ps1-deep/07-govt-plug-and-play.md)): observed process map, top 10 failure modes with counts; MS-3.10 Live Intel with real reports, moderation SLA ≤ 24 h |
 | **Day 61–90 (Jan 2027)** | Evidence and government conversations | MS-3.11 Pilot cohort ≥ 500 adult learners in Jammu district; MS-3.12 first AFL counts; MS-3.13 console beta reviewed by the pilot ARTO; MS-3.14 written proposal to J&K Transport Department and Kerala MVD |
 
 ### 3.2 Months 4–5 (Feb–Mar 2027)
-- MS-3.15 Night & Glare and Hill Road (J&K) games shipped; Road Sign Snap (18+).
+- MS-3.15 Night & Glare and Hill Road (J&K) games shipped; Road Sign Snap.
 - MS-3.16 External VAPT scoped; OWASP ASVS L2 self-assessment complete; SBOM published.
 - MS-3.17 Pilot report: AFL, IM-1..IM-11, Nazar decay with/without refreshers, school Pro conversion.
 
@@ -120,7 +120,7 @@ See [PRD §14 R1](PRD.md#r1-pilot-phase-3-exit). Kill criteria: if by Mar 2027 p
 | Milestone | ID | Exit criterion |
 |---|---|---|
 | MoU with one State Transport Department (J&K or Kerala) covering data-processor terms under DPDP, Sarathi as system of record, rule-pack sign-off and hosting | MS-4.1 | Signed MoU |
-| DPDP fiduciary duties in force (about **13 May 2027**, [verification G7](../../../war-room/margdarshak-verification.md)): verifiable parental consent flow designed (or minors stay rules-only) | MS-4.2 | DPIA v2; consent flows reviewed |
+| DPDP fiduciary duties in force (about **13 May 2027**, [verification G7](../../../war-room/margdarshak-verification.md)): verifiable parental consent for family mode hardened (DigiLocker adult check, Rule 10) | MS-4.2 | DPIA v2; consent flows reviewed |
 | Hosting on NIC cloud or a MeitY-empanelled Indian cloud; `JobRunner` second implementation replacing Render Workflows where required | MS-4.3 | Production in India; RPO ≤ 15 min, RTO ≤ 4 h |
 | Security audit by NIC/STQC/CERT-In-empanelled auditor; safe-to-host certificate (GIGW 3.0 guideline 5.3.1, SECONDARY) | MS-4.4 | Certificate issued ("audit-ready" until then) |
 | First **real adapter** passing the contract suite in the state's environment: DigiLocker requester (DRVLC pull with consent) first; Sarathi read/status via NIC MoU second | MS-4.5 | `adapter_mode.digilocker = real` in production |
@@ -191,7 +191,7 @@ See [PRD §14 R1](PRD.md#r1-pilot-phase-3-exit). Kill criteria: if by Mar 2027 p
 | Risk | Phase | Mitigation |
 |---|---|---|
 | R-10 Kerala HPT stayed | 3 | `kl_hpt_status`; copy switches to "hazard practice"; school value stays (practice logs) |
-| R-13 Gemini terms (18+, "likely accessed by" minors) | 3 | Paid tier; server AI gate; legal review of Vertex AI enterprise terms for production |
+| R-13 Gemini/Vertex terms on services likely accessed by under-18s | 3 | Legal-lead item (see RISK_REGISTER R-13); paid tier |
 | R-09 Wrong rule or fee shown | 3–5 | Maker-checker, freshness checks, public changelog, "verify at your RTO" |
 | R-02 Seen as another Parivahan redesign | 1–3 | Lead with Nazar evidence and the school buyer; adapter spec as the government story |
 | Government access never opens | 4 | Mode A works without integration; DigiLocker is the one verified private-reachable path ([07 TL;DR](../../../research/ps1-deep/07-govt-plug-and-play.md)) |

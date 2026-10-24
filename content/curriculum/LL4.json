@@ -1,0 +1,240 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "LL4",
+  "track": "A_ll_syllabus",
+  "title": {
+    "en": "Documents, LL conditions & duties",
+    "hi": "दस्तावेज़, LL की शर्तें और कर्तव्य"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "All",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Deep",
+  "skill_id": "SK-LL4",
+  "game_ids": ["ll_sim"],
+  "drill_ids": ["DR-LL-TOPIC-LL4"],
+  "rule_ids": ["RR-ACC-001", "RR-DOC-001", "RR-GHR-001", "RR-GHR-002", "RR-LLC-001", "RR-U18-001"],
+  "rulepack_rows": [
+    "PRM-LL-VALIDITY-MONTHS",
+    "PRM-MIN-WAIT-DAYS",
+    "ELIG-MIN-AGE",
+    "ELIG-GUARDIAN-CONSENT"
+  ],
+  "learning_objectives": [
+    {
+      "id": "LO-LL4-1",
+      "text": {
+        "en": "State the LL conditions: \"L\" plates front and rear and a licensed driver with you (CMVR r.3), and that insurance cover can depend on following them.",
+        "hi": "LL की शर्तें बताएँ: आगे और पीछे \"L\" प्लेट और साथ में लाइसेंस वाला चालक (CMVR r.3), और यह कि बीमा कवर इन शर्तों को मानने पर निर्भर हो सकता है।"
+      }
+    },
+    {
+      "id": "LO-LL4-2",
+      "text": {
+        "en": "Know the documents to carry or produce (DL, RC, insurance, PUC) and how DigiLocker copies are presented.",
+        "hi": "जानें कि कौन-से दस्तावेज़ साथ रखने या दिखाने हैं (DL, RC, बीमा, PUC) और DigiLocker की कॉपी कैसे दिखाई जाती है।"
+      }
+    },
+    {
+      "id": "LO-LL4-3",
+      "text": {
+        "en": "Know the duty to help and report after a road accident (links M19).",
+        "hi": "सड़क हादसे के बाद मदद करने और सूचना देने का कर्तव्य जानें (M19 से जुड़ा)।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-LL4-1",
+      "title": {
+        "en": "LL conditions",
+        "hi": "LL की शर्तें"
+      }
+    },
+    {
+      "id": "LS-LL4-2",
+      "title": {
+        "en": "Documents",
+        "hi": "दस्तावेज़"
+      }
+    },
+    {
+      "id": "LS-LL4-3",
+      "title": {
+        "en": "Duties after a road accident",
+        "hi": "सड़क हादसे के बाद के कर्तव्य"
+      }
+    },
+    {
+      "id": "LS-LL4-4",
+      "title": {
+        "en": "Penalties as concepts (amounts only from the rule pack once verified)",
+        "hi": "जुर्माने की समझ (रकम सिर्फ़ रूल पैक से, पक्की होने के बाद)"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-LL4-1",
+      "kind": "format",
+      "text": {
+        "en": "A learner's licence is valid for 6 months.",
+        "hi": "लर्नर लाइसेंस 6 महीने तक वैध रहता है।"
+      },
+      "sources": [
+        {
+          "title": "rulepacks PRM-LL-VALIDITY-MONTHS: Delhi Transport, Learner's Licence page: LL validity 6 months",
+          "url": "https://transport.delhi.gov.in/hi/node/3079",
+          "grade": "P-state",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "high",
+      "verified": false,
+      "rulepack_row": "PRM-LL-VALIDITY-MONTHS"
+    },
+    {
+      "id": "KF-LL4-2",
+      "kind": "format",
+      "text": {
+        "en": "The driving test can be taken 30 days after the learner's licence is issued.",
+        "hi": "लर्नर लाइसेंस जारी होने के 30 दिन बाद ड्राइविंग टेस्ट दिया जा सकता है।"
+      },
+      "sources": [
+        {
+          "title": "rulepacks PRM-MIN-WAIT-DAYS: Kashmir Life Dec 2025 (J&K) and South First (Kerala): 30 days after LL; CMVR [MK]",
+          "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "grade": "S",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rulepack_row": "PRM-MIN-WAIT-DAYS"
+    },
+    {
+      "id": "KF-LL4-3",
+      "kind": "law",
+      "text": {
+        "en": "On a learner's licence: \"L\" plates front and rear and a licensed driver with you.",
+        "hi": "लर्नर लाइसेंस पर: आगे और पीछे \"L\" प्लेट और साथ में लाइसेंस वाला चालक।"
+      },
+      "sources": [
+        {
+          "title": "Central Motor Vehicles Rules 1989 r.3, learner's licence conditions (secondary sources only)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-LLC-001"
+    },
+    {
+      "id": "KF-LL4-4",
+      "kind": "law",
+      "text": {
+        "en": "Insurance cover can depend on following the LL conditions (a Karnataka High Court ruling as cited in research).",
+        "hi": "बीमा कवर LL की शर्तें मानने पर निर्भर हो सकता है (रिसर्च में उद्धृत कर्नाटक हाई कोर्ट का फ़ैसला)।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak research 01-abroad row 10 (Karnataka High Court ruling) (secondary; not re-fetched)",
+          "url": null,
+          "grade": "S",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "low",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-LL4-1",
+      "myth": {
+        "en": "A learner's licence lets you ride alone.",
+        "hi": "लर्नर लाइसेंस पर अकेले चला सकते हैं।"
+      },
+      "correction": {
+        "en": "It is for learning under supervision, with \"L\" plates.",
+        "hi": "यह निगरानी में, \"L\" प्लेट के साथ सीखने के लिए है।"
+      },
+      "rule_id": "RR-LLC-001"
+    },
+    {
+      "id": "MC-LL4-2",
+      "myth": {
+        "en": "A photo of your licence on your phone is as good as the original.",
+        "hi": "फ़ोन में लाइसेंस की फ़ोटो मूल जितनी ही मान्य है।"
+      },
+      "correction": {
+        "en": "Use the copy in DigiLocker or mParivahan; plain photos are not the same.",
+        "hi": "DigiLocker या mParivahan की कॉपी इस्तेमाल करें; साधारण फ़ोटो उसके बराबर नहीं है।"
+      },
+      "rule_id": "RR-DOC-001"
+    }
+  ],
+  "concepts": {
+    "target": 20,
+    "authored": [
+      "C-LL4-001",
+      "C-LL4-002",
+      "C-LL4-003",
+      "C-LL4-004",
+      "C-LL4-005",
+      "C-LL4-006",
+      "C-LL4-007",
+      "C-LL4-008",
+      "C-LL4-009",
+      "C-LL4-010",
+      "C-LL4-011",
+      "C-LL4-012"
+    ]
+  },
+  "assessment": {
+    "criterion": {
+      "en": "FSRS mastery M_LL4 ≥ 0.8.",
+      "hi": "FSRS महारत M_LL4 ≥ 0.8।"
+    },
+    "readiness": "test",
+    "item_refs": [
+      "C-LL4-001",
+      "C-LL4-002",
+      "C-LL4-003",
+      "C-LL4-004",
+      "C-LL4-005",
+      "C-LL4-006",
+      "C-LL4-007",
+      "C-LL4-008",
+      "C-LL4-009",
+      "C-LL4-010",
+      "C-LL4-011",
+      "C-LL4-012"
+    ]
+  },
+  "review": {
+    "needs": [
+      "Legal review (RR-LLC-001, RR-DOC-001, RR-ACC-001 verified=false until the primary text is fetched)",
+      "Check per-state acceptance of DigiLocker / mParivahan copies"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "cases": [
+    {
+      "id": "FEE-1-class-JK",
+      "description": "One class (LMV-NT), J&K: 15000 + 5000 + 30000 + 20000 = 70000, + 20000 card = 90000; J&K slot-booking amount shown as reported, not added",
+      "refs": ["F-02", "D-06"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2000-01-01", "vehicles": ["car"] },
+      "expect": {
+        "fees": {
+          "classes": ["LMV-NT"],
+          "lines": [
+            {
+              "fee_id": "FEE-LL-ISSUE",
+              "class_code": "LMV-NT",
+              "amount_paise": 15000,
+              "stage": "LL"
+            },
+            { "fee_id": "FEE-LL-TEST", "class_code": null, "amount_paise": 5000, "stage": "LL" },
+            {
+              "fee_id": "FEE-DL-TEST",
+              "class_code": "LMV-NT",
+              "amount_paise": 30000,
+              "stage": "LL"
+            },
+            { "fee_id": "FEE-DL-ISSUE", "class_code": null, "amount_paise": 20000, "stage": "DL" },
+            { "fee_id": "FEE-SMART-CARD", "class_code": null, "amount_paise": 20000, "stage": "DL" }
+          ],
+          "ll_stage_paise": 50000,
+          "subtotal_govt_fee_paise": 70000,
+          "smart_card_paise": 20000,
+          "total_paise": 90000,
+          "state_items": [
+            {
+              "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
+              "amount_paise": 105000,
+              "included_in_total": false,
+              "provenance": { "verified": false, "confidence": "low" }
+            },
+            {
+              "fee_id": "FEE-JK-POSTAGE-REPORTED",
+              "amount_paise": 5000,
+              "included_in_total": false
+            }
+          ],
+          "excludes": ["state_service_charge", "postage"],
+          "provenance": { "grade": "S", "checked_on": "2026-10-22", "verified": true }
+        },
+        "notices": { "$includes": [{ "rule_id": "NTC-STATE-CHARGES" }] }
+      }
+    },
+    {
+      "id": "FEE-2-classes-DL",
+      "description": "MCWG + LMV-NT on one LL: 70000 + 45000 = 115000; with card 135000; LL stage 95000 (Delhi Rs 950)",
+      "refs": ["F-03", "EC-21"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2000-01-01",
+        "vehicles": ["bike_gear", "car"]
+      },
+      "expect": {
+        "fees": {
+          "lines": { "$len": 7 },
+          "ll_stage_paise": 95000,
+          "subtotal_govt_fee_paise": 115000,
+          "total_paise": 135000,
+          "state_items": []
+        },
+        "saving": {
+          "classes_on_one_ll": 2,
+          "applications_saved": 1,
+          "wait_days_saved": 30,
+          "fee_saving_paise": 45000,
+          "verified": false,
+          "confidence": "low"
+        }
+      }
+    },
+    {
+      "id": "FEE-3-classes-DL",
+      "description": "MCWOG + MCWG + LMV-NT: 160000, with card 180000; LL stage 140000 (Delhi Rs 1,400)",
+      "refs": ["F-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2000-01-01",
+        "vehicles": ["scooter", "bike_gear", "car"]
+      },
+      "expect": {
+        "fees": {
+          "lines": { "$len": 9 },
+          "ll_stage_paise": 140000,
+          "subtotal_govt_fee_paise": 160000,
+          "total_paise": 180000
+        },
+        "saving": {
+          "classes_on_one_ll": 3,
+          "applications_saved": 2,
+          "wait_days_saved": 60,
+          "fee_saving_paise": 90000
+        }
+      }
+    },
+    {
+      "id": "FEE-1-class-ll-stage-MH",
+      "description": "LL-stage subtotal for one class is 50000 (Delhi Rs 500); no state items outside J&K",
+      "refs": ["D-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "MH",
+        "dob": "1999-09-09",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "fees": {
+          "ll_stage_paise": 50000,
+          "subtotal_govt_fee_paise": 70000,
+          "total_paise": 90000,
+          "state_items": []
+        },
+        "saving": null
+      }
+    },
+    {
+      "id": "FEE-retest-heads",
+      "description": "Retest heads listed with the quote: LL retest 5000 per attempt, DL retest 30000 per class attempt",
+      "refs": ["EC-08"],
+      "input": { "as_of": "2026-10-23", "state": "KL", "dob": "1999-09-09", "vehicles": ["car"] },
+      "expect": {
+        "fees": {
+          "retest": [
+            { "fee_id": "FEE-LL-RETEST", "amount_paise": 5000, "per": "attempt" },
+            { "fee_id": "FEE-DL-RETEST", "amount_paise": 30000, "per": "class_attempt" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "FEE-per-bundle-split",
+      "description": "Split plan: each bundle carries its own quote (MCWG now 90000; LMV-TR at 20 another 90000)",
+      "refs": ["EC-21", "F-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "TN",
+        "dob": "2008-01-10",
+        "vehicles": ["bike_gear", "taxi"]
+      },
+      "expect": {
+        "bundles": [
+          { "classes": ["MCWG"], "fees": { "total_paise": 90000 } },
+          { "classes": ["LMV-TR"], "fees": { "total_paise": 90000 }, "ll_from": "2028-01-10" }
+        ],
+        "fees": { "classes": ["MCWG"], "total_paise": 90000 },
+        "saving": null
+      }
+    },
+    {
+      "id": "FEE-JK-2-classes",
+      "description": "J&K two classes: 135000 total, reported slot-booking item still excluded",
+      "refs": ["F-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2006-05-05",
+        "vehicles": ["scooter", "car"]
+      },
+      "expect": { "fees": { "total_paise": 135000, "state_items": { "$len": 2 } } }
+    },
+    {
+      "id": "FEE-smart-card-line",
+      "description": "Smart card is its own DL-stage line so the UI can show 'Rs 700 + Rs 200 card'",
+      "refs": ["D-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "PB",
+        "dob": "1990-01-01",
+        "vehicles": ["scooter"]
+      },
+      "expect": {
+        "fees": {
+          "lines": {
+            "$includes": [
+              {
+                "fee_id": "FEE-SMART-CARD",
+                "label_key": "fee.smart_card",
+                "per": "application",
+                "stage": "DL",
+                "amount_paise": 20000
+              }
+            ]
+          },
+          "smart_card_paise": 20000
+        }
+      }
+    }
+  ]
+}

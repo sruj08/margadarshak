@@ -26,8 +26,8 @@ margdarshak/
 ├── packages/rules · rulepacks/  (empty) rule-pack schemas · state rule packs (data)
 ├── infra/                       render.yaml · docker/ (api, web, score-verifier, compose) · helm/README.md
 ├── n8n/                         README + 4 exported workflows (W01, W04, W08, W09)
-├── scripts/                     gh_import_backlog.py (307 tickets) · check_contrast.py · evals/gen_debrief_150.py
-├── field-kit/                   Superseded field kit + nazar_stats.py (current protocol: docs/08-project/FIELD_STUDY.md)
+├── scripts/                     gh_import_backlog.mjs (307 tickets) · check_contrast.mjs · evals/gen_debrief_150.mjs
+├── field-kit/                   Superseded field kit + nazar_stats.mjs (current protocol: docs/08-project/FIELD_STUDY.md)
 └── docs/
     ├── BIBLE-BRIEF.md           Instructions used to generate these docs
     ├── 00-overview/   PROJECT_BRIEF · VISION · PITCH · DEMO_SCRIPT

@@ -18,13 +18,13 @@ infra/helm/
 │       ├── _helpers.tpl
 │       ├── web-deployment.yaml       Next.js standalone, port 3000
 │       ├── web-service.yaml
-│       ├── api-deployment.yaml       FastAPI/gunicorn, port 8000
+│       ├── api-deployment.yaml       Go API (`/app/api serve`, distroless), port 8000
 │       ├── api-service.yaml
 │       ├── score-verifier-deployment.yaml   ClusterIP only, port 8081, never on Ingress
 │       ├── score-verifier-service.yaml
-│       ├── jobrunner-worker-deployment.yaml JobRunner=temporal worker (api image, `python -m app.jobs.worker`)
+│       ├── jobrunner-worker-deployment.yaml JobRunner=temporal worker (api image, `/app/api worker`; Temporal Go SDK, design only)
 │       ├── scheduler-cronjobs.yaml   replaces n8n Schedule triggers when n8n is not used (W01, W04, W13, W15)
-│       ├── migrate-job.yaml          helm.sh/hook: pre-install,pre-upgrade; `alembic upgrade head`
+│       ├── migrate-job.yaml          helm.sh/hook: pre-install,pre-upgrade; `/app/api migrate up` (goose, embedded migrations)
 │       ├── ingress.yaml              TLS (state CA or Let's Encrypt), WAF annotations, HSTS
 │       ├── hpa.yaml                  web, api, worker
 │       ├── pdb.yaml                  minAvailable 1 for web/api/verifier
@@ -46,7 +46,7 @@ infra/helm/
 | PostgreSQL 16 | CloudNativePG operator (`cloudnative-pg`), or the CSP's managed Postgres in an Indian region | HA primary + 2 replicas, PITR to object storage | WAL + base backups to an India-region bucket |
 | Valkey 8 (Redis-compatible) | Bitnami `valkey` or the CSP's managed Redis | rate limits, sessions, idempotency keys, circuit breaker | ephemeral |
 | Object storage | the CSP's S3-compatible store, or MinIO | clips (blurred), ICS files, exports, backups | yes |
-| Temporal (JobRunner) | `temporalio/helm-charts` (MIT) | durable jobs that Render Workflows does on Render: clip pipeline, case-clock sweep, debrief fan-out, nightly stats | yes |
+| Temporal (JobRunner) | `temporalio/helm-charts` (MIT); workers use the Temporal Go SDK `go.temporal.io/sdk` v1.50.0 | durable jobs that Render Workflows does on Render: clip pipeline, case-clock sweep, debrief fan-out, nightly stats | yes |
 | OpenTelemetry Collector | `open-telemetry/opentelemetry-collector` | traces, metrics, logs → state SIEM / Grafana stack | yes |
 | Grafana LGTM | `grafana/loki`, `grafana/tempo`, `prometheus-community/kube-prometheus-stack` | dashboards, alerts, 180-day log retention (CERT-In) | yes |
 | External Secrets | `external-secrets/external-secrets` | pull secrets from the state's Vault / CSP KMS | yes |
@@ -73,9 +73,9 @@ web:
 
 api:
   replicas: 3
-  resources: { requests: { cpu: 500m, memory: 768Mi }, limits: { memory: 1536Mi } }
+  resources: { requests: { cpu: 500m, memory: 256Mi }, limits: { memory: 768Mi } }   # one static Go binary
   hpa: { min: 3, max: 40, targetCPU: 60 }
-  webConcurrency: 2
+  goMemLimit: 600MiB            # GOMEMLIMIT, ~80 % of the memory limit
   adapters:                       # F-56; flip per tenant without a code change
     sarathi: deeplink             # mock | deeplink | real (NIC-granted API)
     digilocker: real              # needs the state's DigiLocker requester client id
@@ -86,7 +86,7 @@ api:
     slot: real
   ai:
     provider: vertex              # Vertex AI, Indian region [unverified: asia-south1 model availability; owner AI lead]
-    enabled: true                 # per-tenant kill switch; under-18 is always off (D-13)
+    enabled: true                 # per-tenant kill switch; on for every user, incl. a 16-17 learner in a parent's account (family mode, parental consent; D-13 revised)
 
 scoreVerifier:
   replicas: 2
@@ -107,7 +107,7 @@ scheduler:
 
 postgres:
   externalSecretRef: md-db        # DATABASE_URL
-  pool: { size: 10, maxOverflow: 5 }   # per api pod; PgBouncer in front if pods > 20
+  pool: { maxConns: 15, minConns: 2 }   # pgxpool per api pod; PgBouncer in front if pods > 20
 objectStore:
   endpoint: https://<india-region-s3-endpoint>
   buckets: { clips: md-<tenant>-clips, ingest: md-<tenant>-ingest, backups: md-<tenant>-backups }
@@ -145,7 +145,7 @@ security:
 ## 5. Rollout rules (summary; full steps in DEPLOYMENT.md §4)
 - `helm upgrade --install --atomic --wait --timeout 15m`: a failed rollout auto-rolls back.
 - The migration Job runs as a pre-upgrade hook. Migrations follow **expand → migrate → contract** across two releases, so the old pods keep working during a rolling update.
-- Deployments: `maxUnavailable: 0`, `maxSurge: 25%`, readiness probe `/v1/health?deep=false`, `preStop: sleep 10`, `terminationGracePeriodSeconds: 30`.
+- Deployments: `maxUnavailable: 0`, `maxSurge: 25%`, readiness probe `/v1/health?deep=false`, native `lifecycle.preStop.sleep: { seconds: 10 }` (Kubernetes ≥ 1.30; the distroless image has no shell), `terminationGracePeriodSeconds: 30`.
 - One namespace per tenant (`margdarshak-<tenant>`), or one cluster per state for states that require it (07 §B3).
 - Images are mirrored into the state registry and **cosign-verified** before deploy (deploy.yml).
 

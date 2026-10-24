@@ -13,10 +13,7 @@
       "name": "Clip ready for review (from Workflows)",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [
-        0,
-        300
-      ],
+      "position": [0, 300],
       "webhookId": "0f6b1c3a-8a7e-4d6f-9b2e-c8a000080001",
       "credentials": {
         "httpHeaderAuth": {
@@ -24,7 +21,7 @@
           "name": "MD inbound webhook token"
         }
       },
-      "notes": "Called by the Render Workflows task `clip_ingest` after transcode → blur faces/plates → proposeWindows (Gemini, offline, M-06). Signed envelope (no raw-body handling needed in n8n): body = { ts, payload: '<JSON string>', sig: 'sha256=<hex HMAC of ts.payload>' }. payload = { clip_id, proposed_windows_count, blur_audit_url }."
+      "notes": "Posted by the Go job step clip.open_review (called by the Render Workflows task clip_ingest after transcode → blur → flash_check → propose_windows). Signed envelope (no raw-body handling needed in n8n): body = { ts, payload: '<JSON string>', sig: 'sha256=<hex HMAC of ts.payload>' }. payload = { clip_id, version, proposed_windows_count, blur_audit_url }."
     },
     {
       "parameters": {
@@ -39,10 +36,7 @@
       "name": "Compute expected HMAC",
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 1,
-      "position": [
-        220,
-        300
-      ]
+      "position": [220, 300]
     },
     {
       "parameters": {
@@ -72,10 +66,7 @@
       "name": "Signature valid + fresh?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        440,
-        300
-      ]
+      "position": [440, 300]
     },
     {
       "parameters": {
@@ -89,10 +80,7 @@
       "name": "202 Accepted",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [
-        660,
-        220
-      ]
+      "position": [660, 220]
     },
     {
       "parameters": {
@@ -106,48 +94,168 @@
       "name": "401 Bad signature",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [
-        660,
-        420
-      ]
+      "position": [660, 420]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse the signed payload only after the signature check passed. Shape checks only (D-16).\nconst p = JSON.parse($('Clip ready for review (from Workflows)').item.json.body.payload);\nconst id = String(p.clip_id ?? '');\n// clip-pipeline ids (JMU-0012) or API ids (clip_...).\nif (!/^(clip_[a-z0-9]{8,40}|[A-Z]{2,4}-\\d{4,6})$/.test(id)) throw new Error('bad clip_id');\nconst version = p.version === undefined || p.version === null ? 1 : Number(p.version);\nif (!Number.isInteger(version) || version < 1 || version > 999) throw new Error('bad version');\nreturn { json: { clip_id: id, version, proposed_windows_count: Number(p.proposed_windows_count ?? p.proposals) || 0, blur_audit_url: typeof p.blur_audit_url === 'string' ? p.blur_audit_url : null } };"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000012",
+      "name": "Parse payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 220]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build + sign the rater-1 review task (POST /internal/clips/{id}/review-tasks). Reshape only.\nconst crypto = require('crypto');\n// Idempotency-Key: 16..64 chars (api/openapi.yaml); long parts collapse to a sha256 digest.\nconst key = (prefix, parts) => { const plain = [prefix, ...parts].join(':'); return plain.length <= 64 ? plain : `${prefix}:${crypto.createHash('sha256').update(parts.join('\\n')).digest('hex').slice(0, 63 - prefix.length)}`; };\n// Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(secret, t + '.' + body)>, fresh on every attempt (replay cache).\nconst sign = (body) => { const ts = Math.floor(Date.now() / 1000).toString(); return `t=${ts},v1=${crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex')}`; };\nconst c = $('Parse payload').first().json;\n// Body = api/openapi.yaml ClipReviewTaskCreate (strict: stage, resume_url, n8n_execution_id, due_in_hours; the API\n// works on the clip's current version, so the version stays in the idempotency key only).\nconst body = JSON.stringify({ stage: 'rater_1', resume_url: $execution.resumeUrl, n8n_execution_id: String($execution.id), due_in_hours: 48 });\nreturn [{ json: { clip_id: c.clip_id, body, signature: sign(body), idempotency_key: key('clip-review', [c.clip_id, `v${c.version}`, 'rater_1', String($execution.id)]) } }];"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000013",
+      "name": "Sign rater-1 task (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 220],
+      "notes": "Needs the built-in `crypto` module in Code nodes (allowed on n8n Cloud; self-hosted: NODE_FUNCTION_ALLOW_BUILTIN=crypto)."
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/review-tasks",
+        "url": "={{ $vars.MD_API_BASE }}/internal/clips/{{ encodeURIComponent($json.clip_id) }}/review-tasks",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
               "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ stage: 'rater_1', resume_url: $execution.resumeUrl, n8n_execution_id: $execution.id, due_in_hours: 48 }) }}",
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
         "options": {
-          "timeout": 20000
+          "timeout": 20000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
         }
       },
       "id": "c8a00008-0000-4000-8000-000000000006",
-      "name": "API-55 create rater-1 task (with resume URL)",
+      "name": "POST /internal/clips/{id}/review-tasks (rater 1, with resume URL)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        880,
-        220
-      ],
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
-      "notes": "Backend stores resume_url on the E-21 ClipRating task (never shown to the browser). The curator page /admin/clips/{id} lets rater 1 scrub frames, set hazard onset/offset windows and confirm the blur audit. On save, the BACKEND POSTs { stage, rater_id, decision, windows_hash } to resume_url with the resume header token."
+      "position": [1320, 220],
+      "onError": "continueRegularOutput",
+      "notes": "Internal bearer + Margdarshak-Signature (README security pattern). The backend stores resume_url (encrypted) on the review-task row (never shown to the browser). The curator page /admin/clips/{id} lets rater 1 scrub frames, set hazard windows and confirm the blur audit. On save, the BACKEND POSTs { stage, rater_id, decision, windows_hash } to resume_url with the X-MD-Resume-Token header. No built-in retry: a retry must be re-signed."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ok"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $runIndex < 2 && (!$json.statusCode || Number($json.statusCode) === 429 || Number($json.statusCode) >= 500) }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "retry"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "fail"
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000014",
+      "name": "Rater-1 task: result",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1540, 220],
+      "notes": "ok = 2xx. retry = network error, 429 or 5xx, at most 3 attempts: loops back through the signing node, because the API rejects a signature it has already seen. Anything else fails the run (→ W12)."
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000015",
+      "name": "Rater-1 task: wait 10 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1760, 400],
+      "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a000080015",
+      "notes": "Back-off, then re-sign in \"Sign rater-1 task (HMAC)\" (same Idempotency-Key, fresh timestamp and signature)."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=W08 Rater-1 task failed for clip {{ $('Parse payload').first().json.clip_id }}: HTTP {{ $json.statusCode || 'network error' }} {{ ($json.body && $json.body.title) || $json.error?.message || '' }}. Runbook: docs/05-ops/RUNBOOK.md"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000016",
+      "name": "Rater-1 task: failed → W12",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1760, 580]
     },
     {
       "parameters": {
         "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
-        "text": "=🎬 Clip {{ $('Parse payload').item.json.clip_id }} is ready for rater 1. {{ $('Parse payload').item.json.proposed_windows_count }} AI-proposed windows (proposals only). Open: {{ $vars.MD_CONSOLE_BASE }}/admin/clips/{{ $('Parse payload').item.json.clip_id }}",
+        "text": "=🎬 Clip {{ $('Parse payload').first().json.clip_id }} (v{{ $('Parse payload').first().json.version }}) is ready for rater 1. {{ $('Parse payload').first().json.proposed_windows_count }} AI-proposed windows (proposals only). Open: {{ $vars.MD_CONSOLE_BASE }}/admin/clips/{{ $('Parse payload').first().json.clip_id }}",
         "additionalFields": {
           "disable_notification": false
         }
@@ -156,10 +264,7 @@
       "name": "Notify curators (rater 1)",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        1100,
-        220
-      ],
+      "position": [1760, 120],
       "credentials": {
         "telegramApi": {
           "id": "REPLACE_ON_IMPORT",
@@ -184,10 +289,7 @@
       "name": "Wait for rater 1 (≤ 48 h)",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [
-        1320,
-        220
-      ],
+      "position": [1980, 120],
       "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a000080008",
       "credentials": {
         "httpHeaderAuth": {
@@ -255,59 +357,164 @@
       "name": "Rater 1 decision",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
-      "position": [
-        1540,
-        220
-      ],
-      "notes": "Timeout = the Wait node resumed by its time limit with no body."
+      "position": [2200, 120],
+      "notes": "Timeout = the Wait node resumed by its time limit with no body. Never 'approve on timeout'."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build + sign the rater-2 task: a different person, blind to rater 1 (independent ratings, D-22).\nconst crypto = require('crypto');\n// Idempotency-Key: 16..64 chars (api/openapi.yaml); long parts collapse to a sha256 digest.\nconst key = (prefix, parts) => { const plain = [prefix, ...parts].join(':'); return plain.length <= 64 ? plain : `${prefix}:${crypto.createHash('sha256').update(parts.join('\\n')).digest('hex').slice(0, 63 - prefix.length)}`; };\n// Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(secret, t + '.' + body)>, fresh on every attempt (replay cache).\nconst sign = (body) => { const ts = Math.floor(Date.now() / 1000).toString(); return `t=${ts},v1=${crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex')}`; };\nconst c = $('Parse payload').first().json;\nconst r1 = $('Wait for rater 1 (≤ 48 h)').first().json.body || {};\n// ClipReviewTaskCreate again: exclude_rater_id is sent only when rater 1's pseudonym is known (never null).\nconst body = JSON.stringify({ stage: 'rater_2', resume_url: $execution.resumeUrl, n8n_execution_id: String($execution.id), ...(r1.rater_id ? { exclude_rater_id: r1.rater_id } : {}), blind_to_rater_1: true, due_in_hours: 48 });\nreturn [{ json: { clip_id: c.clip_id, body, signature: sign(body), idempotency_key: key('clip-review', [c.clip_id, `v${c.version}`, 'rater_2', String($execution.id)]) } }];"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000017",
+      "name": "Sign rater-2 task (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2420, 20]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/review-tasks",
+        "url": "={{ $vars.MD_API_BASE }}/internal/clips/{{ encodeURIComponent($json.clip_id) }}/review-tasks",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
               "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ stage: 'rater_2', resume_url: $execution.resumeUrl, n8n_execution_id: $execution.id, exclude_rater_id: $json.body.rater_id, blind_to_rater_1: true, due_in_hours: 48 }) }}",
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
         "options": {
-          "timeout": 20000
+          "timeout": 20000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
         }
       },
       "id": "c8a00008-0000-4000-8000-00000000000a",
-      "name": "API-55 create rater-2 task (blind)",
+      "name": "POST /internal/clips/{id}/review-tasks (rater 2, blind)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        1760,
-        120
-      ],
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
+      "position": [2640, 20],
+      "onError": "continueRegularOutput",
       "notes": "Rater 2 must be a different person and does not see rater 1's windows (independent ratings → honest agreement score, D-22)."
     },
     {
       "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ok"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $runIndex < 2 && (!$json.statusCode || Number($json.statusCode) === 429 || Number($json.statusCode) >= 500) }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "retry"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "fail"
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000018",
+      "name": "Rater-2 task: result",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [2860, 20],
+      "notes": "ok = 2xx. retry = network error, 429 or 5xx, at most 3 attempts: loops back through the signing node, because the API rejects a signature it has already seen. Anything else fails the run (→ W12)."
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000019",
+      "name": "Rater-2 task: wait 10 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [3080, 200],
+      "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a000080019",
+      "notes": "Back-off, then re-sign in \"Sign rater-2 task (HMAC)\" (same Idempotency-Key, fresh timestamp and signature)."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=W08 Rater-2 task failed for clip {{ $('Parse payload').first().json.clip_id }}: HTTP {{ $json.statusCode || 'network error' }} {{ ($json.body && $json.body.title) || $json.error?.message || '' }}. Runbook: docs/05-ops/RUNBOOK.md"
+      },
+      "id": "c8a00008-0000-4000-8000-00000000001a",
+      "name": "Rater-2 task: failed → W12",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [3080, 380]
+    },
+    {
+      "parameters": {
         "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
-        "text": "=🎬 Clip {{ $('Parse payload').item.json.clip_id }} needs a second, independent rater. Open: {{ $vars.MD_CONSOLE_BASE }}/admin/clips/{{ $('Parse payload').item.json.clip_id }}?stage=rater_2",
+        "text": "=🎬 Clip {{ $('Parse payload').first().json.clip_id }} needs a second, independent rater. Open: {{ $vars.MD_CONSOLE_BASE }}/admin/clips/{{ $('Parse payload').first().json.clip_id }}?stage=rater_2",
         "additionalFields": {}
       },
       "id": "c8a00008-0000-4000-8000-00000000000b",
       "name": "Notify curators (rater 2)",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        1980,
-        120
-      ],
+      "position": [3080, -80],
       "credentials": {
         "telegramApi": {
           "id": "REPLACE_ON_IMPORT",
@@ -331,10 +538,7 @@
       "name": "Wait for rater 2 (≤ 48 h)",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [
-        2200,
-        120
-      ],
+      "position": [3300, -80],
       "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a00008000c",
       "credentials": {
         "httpHeaderAuth": {
@@ -354,11 +558,12 @@
           "conditions": [
             {
               "id": "c-r2",
-              "leftValue": "={{ $json.body?.decision }}",
-              "rightValue": "windows_set",
+              "leftValue": "={{ $json.body?.decision === 'windows_set' }}",
+              "rightValue": true,
               "operator": {
-                "type": "string",
-                "operation": "equals"
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
               }
             }
           ],
@@ -370,15 +575,22 @@
       "name": "Rater 2 set windows?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        2420,
-        120
-      ]
+      "position": [3520, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build + sign API-67 POST /internal/jobs/clip_finalize (IDs only, <= 4 KB). The API starts the\n// Render Workflows task clip_finalize: agreement in code → blur audit check → raw deletion →\n// publish manifest → CDN warm → difficulty. AI never auto-publishes.\nconst crypto = require('crypto');\n// Idempotency-Key: 16..64 chars (api/openapi.yaml); long parts collapse to a sha256 digest.\nconst key = (prefix, parts) => { const plain = [prefix, ...parts].join(':'); return plain.length <= 64 ? plain : `${prefix}:${crypto.createHash('sha256').update(parts.join('\\n')).digest('hex').slice(0, 63 - prefix.length)}`; };\n// Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(secret, t + '.' + body)>, fresh on every attempt (replay cache).\nconst sign = (body) => { const ts = Math.floor(Date.now() / 1000).toString(); return `t=${ts},v1=${crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex')}`; };\nconst c = $('Parse payload').first().json;\nconst body = JSON.stringify({ args: { clip_id: c.clip_id, version: c.version, n8n_execution_id: String($execution.id) } });\nreturn [{ json: { clip_id: c.clip_id, body, signature: sign(body), idempotency_key: key('clip-finalize', [c.clip_id, `v${c.version}`, String($execution.id)]) } }];"
+      },
+      "id": "c8a00008-0000-4000-8000-00000000001b",
+      "name": "Sign clip_finalize request (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3740, -180]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/finalize",
+        "url": "={{ $vars.MD_API_BASE }}/internal/jobs/clip_finalize",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -387,45 +599,139 @@
               "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
             },
             {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
               "name": "Idempotency-Key",
-              "value": "=clip-finalize:{{ $('Parse payload').item.json.clip_id }}"
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ n8n_execution_id: $execution.id }) }}",
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
         "options": {
-          "timeout": 20000
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
         }
       },
       "id": "c8a00008-0000-4000-8000-00000000000e",
-      "name": "API-55 finalize → Workflows clip_finalize",
+      "name": "API-67 start clip_finalize",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        2640,
-        40
-      ],
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
-      "notes": "Backend starts the Render Workflows task `clip_finalize`: computeAgreement (Cohen's κ / onset Δ in code) → if agreement ≥ threshold: publish to R2 public bucket + manifest + CDN warm; else back to adjudication. AI never auto-publishes."
+      "position": [3960, -180],
+      "onError": "continueRegularOutput",
+      "notes": "POST /internal/jobs/clip_finalize (API-67, allow-listed job). 202 → JobRun { job, run_id, runner, status, idempotent_replay }. The API prefixes the Idempotency-Key with the job name; one key per W08 execution, so a finalize after adjudication (a new W08 run) is a new run."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ok"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $runIndex < 2 && (!$json.statusCode || Number($json.statusCode) === 429 || Number($json.statusCode) >= 500) }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "retry"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "fail"
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-00000000001c",
+      "name": "clip_finalize: result",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [4180, -180],
+      "notes": "ok = 2xx. retry = network error, 429 or 5xx, at most 3 attempts: loops back through the signing node, because the API rejects a signature it has already seen. Anything else fails the run (→ W12)."
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "c8a00008-0000-4000-8000-00000000001d",
+      "name": "clip_finalize: wait 10 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [4400, 0],
+      "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a00008001d",
+      "notes": "Back-off, then re-sign in \"Sign clip_finalize request (HMAC)\" (same Idempotency-Key, fresh timestamp and signature)."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=W08 clip_finalize failed for clip {{ $('Parse payload').first().json.clip_id }}: HTTP {{ $json.statusCode || 'network error' }} {{ ($json.body && $json.body.title) || $json.error?.message || '' }}. Runbook: docs/05-ops/RUNBOOK.md"
+      },
+      "id": "c8a00008-0000-4000-8000-00000000001e",
+      "name": "clip_finalize: failed → W12",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [4400, 180]
     },
     {
       "parameters": {
         "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
-        "text": "=✅ Clip {{ $('Parse payload').item.json.clip_id }}: both raters done. Agreement + publish running as a Workflows run ({{ $json.task_run_id }}).",
+        "text": "=✅ Clip {{ $('Parse payload').first().json.clip_id }}: both raters done. Agreement + publish running as Workflows run {{ $json.body?.run_id ?? 'n/a' }}.",
         "additionalFields": {}
       },
       "id": "c8a00008-0000-4000-8000-00000000000f",
       "name": "Notify: finalizing",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        2860,
-        40
-      ],
+      "position": [4400, -280],
       "credentials": {
         "telegramApi": {
           "id": "REPLACE_ON_IMPORT",
@@ -436,51 +742,159 @@
     },
     {
       "parameters": {
+        "jsCode": "// Build + sign POST /internal/clips/{id}/status for a rejected or timed-out review. Reshape only:\n// the status vocabulary and what happens next are decided by the backend.\nconst crypto = require('crypto');\n// Idempotency-Key: 16..64 chars (api/openapi.yaml); long parts collapse to a sha256 digest.\nconst key = (prefix, parts) => { const plain = [prefix, ...parts].join(':'); return plain.length <= 64 ? plain : `${prefix}:${crypto.createHash('sha256').update(parts.join('\\n')).digest('hex').slice(0, 63 - prefix.length)}`; };\n// Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(secret, t + '.' + body)>, fresh on every attempt (replay cache).\nconst sign = (body) => { const ts = Math.floor(Date.now() / 1000).toString(); return `t=${ts},v1=${crypto.createHmac('sha256', $vars.MD_HMAC_SECRET).update(`${ts}.${body}`).digest('hex')}`; };\nconst c = $('Parse payload').first().json;\nlet r2 = false;\ntry { r2 = $('Wait for rater 2 (≤ 48 h)').isExecuted; } catch (e) { r2 = false; }\nconst src = (r2 ? $('Wait for rater 2 (≤ 48 h)') : $('Wait for rater 1 (≤ 48 h)')).first().json;\nconst stage = r2 ? 'rater_2' : 'rater_1';\nconst status = src.body?.decision === 'reject' ? 'rejected' : 'review_timeout';\n// Body = api/openapi.yaml ClipReviewOutcome (strict: status, stage, n8n_execution_id).\nconst body = JSON.stringify({ status, stage, n8n_execution_id: String($execution.id) });\nreturn [{ json: { clip_id: c.clip_id, stage, status, body, signature: sign(body), idempotency_key: key('clip-status', [c.clip_id, `v${c.version}`, status, String($execution.id)]) } }];"
+      },
+      "id": "c8a00008-0000-4000-8000-00000000001f",
+      "name": "Sign clip status (HMAC)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2640, 460]
+    },
+    {
+      "parameters": {
         "method": "POST",
-        "url": "={{ $vars.MD_API_BASE }}/v1/admin/clips/{{ $('Parse payload').item.json.clip_id }}/status",
+        "url": "={{ $vars.MD_API_BASE }}/internal/clips/{{ encodeURIComponent($json.clip_id) }}/status",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
               "value": "=Bearer {{ $vars.MD_N8N_READ_TOKEN }}"
+            },
+            {
+              "name": "Margdarshak-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ status: $json.body?.decision === 'reject' ? 'rejected' : 'review_timeout', stage: $json.body?.stage ?? 'unknown', n8n_execution_id: $execution.id }) }}",
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
         "options": {
-          "timeout": 20000
+          "timeout": 20000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
         }
       },
       "id": "c8a00008-0000-4000-8000-000000000010",
-      "name": "API-55 mark rejected / timed out",
+      "name": "POST /internal/clips/{id}/status (rejected / timed out)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        1980,
-        400
-      ],
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
+      "position": [2860, 460],
+      "onError": "continueRegularOutput",
       "notes": "Rejected clips are deleted from the ingest bucket by its lifecycle rule; timeouts go back to the queue and count toward R-06 (too few usable clips)."
     },
     {
       "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Number($json.statusCode) >= 200 && Number($json.statusCode) < 300 }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ok"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $runIndex < 2 && (!$json.statusCode || Number($json.statusCode) === 429 || Number($json.statusCode) >= 500) }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "retry"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "fail"
+        }
+      },
+      "id": "c8a00008-0000-4000-8000-000000000020",
+      "name": "Clip status: result",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [3080, 460],
+      "notes": "ok = 2xx. retry = network error, 429 or 5xx, at most 3 attempts: loops back through the signing node, because the API rejects a signature it has already seen. Anything else fails the run (→ W12)."
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000021",
+      "name": "Clip status: wait 10 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [3300, 640],
+      "webhookId": "9d3e5a10-1b2c-4d3e-8f40-c8a000080021",
+      "notes": "Back-off, then re-sign in \"Sign clip status (HMAC)\" (same Idempotency-Key, fresh timestamp and signature)."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=W08 Clip status failed for clip {{ $('Parse payload').first().json.clip_id }}: HTTP {{ $json.statusCode || 'network error' }} {{ ($json.body && $json.body.title) || $json.error?.message || '' }}. Runbook: docs/05-ops/RUNBOOK.md"
+      },
+      "id": "c8a00008-0000-4000-8000-000000000022",
+      "name": "Clip status: failed → W12",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [3300, 820]
+    },
+    {
+      "parameters": {
         "chatId": "={{ $vars.MD_CURATOR_TELEGRAM_CHAT }}",
-        "text": "=⚠️ Clip {{ $('Parse payload').item.json.clip_id }} stopped at {{ $json.stage ?? 'review' }} ({{ $json.status }}). If usable clips < 12 by Fri 12:00 the Ruko backup trigger applies (grand-council §5).",
+        "text": "=⚠️ Clip {{ $('Parse payload').first().json.clip_id }} stopped at {{ $('Sign clip status (HMAC)').first().json.stage }} ({{ $('Sign clip status (HMAC)').first().json.status }}). If usable clips < 12 by Fri 12:00 the Ruko backup trigger applies (grand-council §5).",
         "additionalFields": {}
       },
       "id": "c8a00008-0000-4000-8000-000000000011",
       "name": "Notify: stopped",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        2200,
-        400
-      ],
+      "position": [3300, 360],
       "credentials": {
         "telegramApi": {
           "id": "REPLACE_ON_IMPORT",
@@ -488,20 +902,6 @@
         }
       },
       "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "// Parse the signed payload only after the signature check passed.\nconst p = JSON.parse($('Clip ready for review (from Workflows)').item.json.body.payload);\nif (!/^clip_[a-z0-9]{8,40}$/.test(p.clip_id)) throw new Error('bad clip_id');\nreturn { json: { clip_id: p.clip_id, proposed_windows_count: Number(p.proposed_windows_count) || 0, blur_audit_url: p.blur_audit_url } };"
-      },
-      "id": "c8a00008-0000-4000-8000-000000000012",
-      "name": "Parse payload",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        660,
-        120
-      ]
     }
   ],
   "connections": {
@@ -556,11 +956,69 @@
         ]
       ]
     },
-    "API-55 create rater-1 task (with resume URL)": {
+    "Parse payload": {
+      "main": [
+        [
+          {
+            "node": "Sign rater-1 task (HMAC)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign rater-1 task (HMAC)": {
+      "main": [
+        [
+          {
+            "node": "POST /internal/clips/{id}/review-tasks (rater 1, with resume URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST /internal/clips/{id}/review-tasks (rater 1, with resume URL)": {
+      "main": [
+        [
+          {
+            "node": "Rater-1 task: result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rater-1 task: result": {
       "main": [
         [
           {
             "node": "Notify curators (rater 1)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rater-1 task: wait 10 s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rater-1 task: failed → W12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rater-1 task: wait 10 s": {
+      "main": [
+        [
+          {
+            "node": "Sign rater-1 task (HMAC)",
             "type": "main",
             "index": 0
           }
@@ -593,32 +1051,79 @@
       "main": [
         [
           {
-            "node": "API-55 create rater-2 task (blind)",
+            "node": "Sign rater-2 task (HMAC)",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "API-55 mark rejected / timed out",
+            "node": "Sign clip status (HMAC)",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "API-55 mark rejected / timed out",
+            "node": "Sign clip status (HMAC)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "API-55 create rater-2 task (blind)": {
+    "Sign rater-2 task (HMAC)": {
+      "main": [
+        [
+          {
+            "node": "POST /internal/clips/{id}/review-tasks (rater 2, blind)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST /internal/clips/{id}/review-tasks (rater 2, blind)": {
+      "main": [
+        [
+          {
+            "node": "Rater-2 task: result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rater-2 task: result": {
       "main": [
         [
           {
             "node": "Notify curators (rater 2)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rater-2 task: wait 10 s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rater-2 task: failed → W12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rater-2 task: wait 10 s": {
+      "main": [
+        [
+          {
+            "node": "Sign rater-2 task (HMAC)",
             "type": "main",
             "index": 0
           }
@@ -651,21 +1156,43 @@
       "main": [
         [
           {
-            "node": "API-55 finalize → Workflows clip_finalize",
+            "node": "Sign clip_finalize request (HMAC)",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "API-55 mark rejected / timed out",
+            "node": "Sign clip status (HMAC)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "API-55 finalize → Workflows clip_finalize": {
+    "Sign clip_finalize request (HMAC)": {
+      "main": [
+        [
+          {
+            "node": "API-67 start clip_finalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API-67 start clip_finalize": {
+      "main": [
+        [
+          {
+            "node": "clip_finalize: result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clip_finalize: result": {
       "main": [
         [
           {
@@ -673,10 +1200,57 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "clip_finalize: wait 10 s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "clip_finalize: failed → W12",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
-    "API-55 mark rejected / timed out": {
+    "clip_finalize: wait 10 s": {
+      "main": [
+        [
+          {
+            "node": "Sign clip_finalize request (HMAC)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign clip status (HMAC)": {
+      "main": [
+        [
+          {
+            "node": "POST /internal/clips/{id}/status (rejected / timed out)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST /internal/clips/{id}/status (rejected / timed out)": {
+      "main": [
+        [
+          {
+            "node": "Clip status: result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clip status: result": {
       "main": [
         [
           {
@@ -684,14 +1258,28 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Clip status: wait 10 s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clip status: failed → W12",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
-    "Parse payload": {
+    "Clip status: wait 10 s": {
       "main": [
         [
           {
-            "node": "API-55 create rater-1 task (with resume URL)",
+            "node": "Sign clip status (HMAC)",
             "type": "main",
             "index": 0
           }
@@ -729,8 +1317,14 @@
       "workflow_id": "W08",
       "owner": "Nazar content lead",
       "doc": "docs/05-ops/N8N_WORKFLOWS.md#w08",
-      "business_logic": "none (agreement maths + publish run in the Render Workflows task clip_finalize)",
+      "business_logic": "none (agreement maths, blur audit, publish and the status vocabulary live in Go and the Render Workflows task clip_finalize)",
       "executions_per_month": "1 per clip (≈ 40–120 during the build)",
+      "endpoints": [
+        "POST /internal/clips/{clipId}/review-tasks (rater_1, rater_2)",
+        "POST /internal/jobs/clip_finalize (API-67)",
+        "POST /internal/clips/{clipId}/status"
+      ],
+      "signature_scheme": "Authorization: Bearer MD_N8N_READ_TOKEN + Margdarshak-Signature: t=<unix>,v1=<hex hmac-sha256(MD_HMAC_SECRET, t + '.' + body)> + Idempotency-Key (api/openapi.yaml internalBearer + internalHmac)",
       "required_variables": [
         "MD_API_BASE",
         "MD_HMAC_SECRET",
@@ -741,5 +1335,5 @@
     }
   },
   "active": false,
-  "versionId": "00000000-0000-4000-8000-00000000a108"
+  "versionId": "00000000-0000-4000-8000-00000000b108"
 }

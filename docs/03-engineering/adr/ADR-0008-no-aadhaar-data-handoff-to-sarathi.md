@@ -19,7 +19,7 @@ Sarathi's contactless LL flow uses Aadhaar eKYC (and face authentication in some
 Chosen option: **1**, because it is lawful today, removes the highest-impact data from our systems, and matches the adoption model (the government already does eKYC inside Sarathi).
 
 ### Consequences
-- **Class CX (prohibited) data** — Aadhaar number/VID, OTP, biometrics, face templates, document images, Sarathi credentials — is rejected by: Pydantic validators (with Verhoeff check), the `answers` `propertyNames` deny-list in `api/openapi.yaml`, a Postgres `CHECK`, log redaction, and the AI PII gate before any model call.
+- **Class CX (prohibited) data** — Aadhaar number/VID, OTP, biometrics, face templates, document images, Sarathi credentials — is rejected by: Go request validation and a reflection test over generated and adapter DTOs (with Verhoeff check in `internal/privacy`), the `answers` `propertyNames` deny-list in `api/openapi.yaml`, a Postgres `CHECK`, log redaction, and the AI PII gate before any model call.
 - The voice agent's `set_field` enum excludes Aadhaar/OTP fields; spoken digits that look like Aadhaar are dropped with "type it only on Sarathi".
 - API-16 hand-off returns a **template** only; name, relation name and address fill on the device from the on-device vault.
 - API-18 exists as a **mock** that returns derived booleans only, so the flow can be demonstrated with a "simulated" chip; in government mode it calls the state's OVSE service.

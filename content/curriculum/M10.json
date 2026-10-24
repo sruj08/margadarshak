@@ -1,0 +1,150 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M10",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Phones and earphones",
+    "hi": "फ़ोन और ईयरफ़ोन"
+  },
+  "priority": "P1",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Lesson only",
+  "skill_id": "SK-M10",
+  "game_ids": [],
+  "drill_ids": [],
+  "rule_ids": ["RR-PHN-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M10-1",
+      "text": {
+        "en": "Know that hands-free still distracts.",
+        "hi": "जानें कि हैंड्स-फ़्री भी ध्यान भटकाता है।"
+      }
+    },
+    {
+      "id": "LO-M10-2",
+      "text": {
+        "en": "Set navigation before riding and mount the phone.",
+        "hi": "चलने से पहले नेविगेशन सेट करें और फ़ोन को होल्डर में लगाएँ।"
+      }
+    },
+    {
+      "id": "LO-M10-3",
+      "text": {
+        "en": "No earphones under the helmet.",
+        "hi": "हेलमेट के नीचे ईयरफ़ोन नहीं।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M10-1",
+      "title": {
+        "en": "Phones, earphones and the riding lock",
+        "hi": "फ़ोन, ईयरफ़ोन और राइडिंग लॉक"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M10-1",
+      "kind": "evidence",
+      "text": {
+        "en": "2,884 recorded deaths involved mobile phone use in 2023; this is under-counted because phone forensics are rare.",
+        "hi": "2023 में 2,884 दर्ज मौतों में मोबाइल फ़ोन का इस्तेमाल था; यह संख्या कम दर्ज होती है क्योंकि फ़ोन की जाँच कम होती है।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.1 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M10-2",
+      "kind": "evidence",
+      "text": {
+        "en": "Srinagar issued 5,462 phone challans in 2024.",
+        "hi": "श्रीनगर में 2024 में फ़ोन के 5,462 चालान हुए।"
+      },
+      "sources": [
+        {
+          "title": "Greater Kashmir (as cited in research 02; URL to pin)",
+          "url": null,
+          "grade": "S",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "low",
+      "verified": false
+    },
+    {
+      "id": "KF-M10-3",
+      "kind": "design",
+      "text": {
+        "en": "Margdarshak shows 'Pull over to use Margdarshak' above about 10 km/h (riding lock).",
+        "hi": "लगभग 10 किमी/घंटा से ऊपर Margdarshak 'Margdarshak इस्तेमाल करने के लिए किनारे रुकें' दिखाता है (राइडिंग लॉक)।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak design decision (verification row 11)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "high",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M10-1",
+      "myth": {
+        "en": "Hands-free calls don't distract you.",
+        "hi": "हैंड्स-फ़्री कॉल से ध्यान नहीं भटकता।"
+      },
+      "correction": {
+        "en": "The conversation itself takes your attention; pull over to talk.",
+        "hi": "बातचीत ख़ुद आपका ध्यान लेती है; बात करने के लिए किनारे रुकें।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 3,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Quiz ≥ 80%.",
+      "hi": "क्विज़ ≥ 80%।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Legal check of MV Act s.184 wording"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

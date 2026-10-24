@@ -1,0 +1,133 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M22",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Fatigue and long highway runs",
+    "hi": "थकान और लंबे हाईवे सफ़र"
+  },
+  "priority": "P2",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Not built",
+  "skill_id": "SK-M22",
+  "game_ids": [],
+  "drill_ids": [],
+  "rule_ids": ["RR-FTG-001"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M22-1",
+      "text": {
+        "en": "Take a break every 2 hours.",
+        "hi": "हर 2 घंटे पर आराम करें।"
+      }
+    },
+    {
+      "id": "LO-M22-2",
+      "text": {
+        "en": "Spot micro-sleep signs.",
+        "hi": "झपकी आने के संकेत पहचानें।"
+      }
+    },
+    {
+      "id": "LO-M22-3",
+      "text": {
+        "en": "Avoid riding between midnight and 6 am.",
+        "hi": "आधी रात से सुबह 6 बजे के बीच चलाने से बचें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M22-1",
+      "title": {
+        "en": "Tiredness and long runs",
+        "hi": "थकान और लंबे सफ़र"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M22-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Fatigue is not coded by MoRTH (unknown); national and state highways carry 59% of deaths on about 5% of the network.",
+        "hi": "MoRTH थकान का कोड नहीं रखता (पता नहीं); राष्ट्रीय और राज्य हाईवे, जो नेटवर्क का लगभग 5% हैं, 59% मौतें ढोते हैं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Tables 1.3, 2.1 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M22-2",
+      "kind": "practice",
+      "text": {
+        "en": "Break every 2 hours on long rides.",
+        "hi": "लंबे सफ़र में हर 2 घंटे पर आराम करें।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak CURRICULUM M22 (team practice statement; review pending)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rule_id": "RR-FTG-001"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M22-1",
+      "myth": {
+        "en": "Loud music or cold air keeps you awake.",
+        "hi": "तेज़ संगीत या ठंडी हवा से नींद नहीं आती।"
+      },
+      "correction": {
+        "en": "Only rest fixes tiredness; stop and take a break.",
+        "hi": "थकान सिर्फ़ आराम से जाती है; रुकें और आराम करें।"
+      },
+      "rule_id": "RR-FTG-001"
+    }
+  ],
+  "concepts": {
+    "target": 3,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Self-test completion (private, never scored for status).",
+      "hi": "ख़ुद की जाँच पूरी करना (निजी, कभी स्टेटस के लिए अंक नहीं)।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Medical wording review"],
+    "medical_review_required": true,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

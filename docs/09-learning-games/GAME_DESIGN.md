@@ -1,7 +1,7 @@
 # Game Design: the ten games
 > Project: Margdarshak · Owner: Learning & Games lead · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [GAME_SDK](GAME_SDK.md) · [CURRICULUM](CURRICULUM.md) · [NAZAR](NAZAR.md) · [DEBRIEF_SPEC](DEBRIEF_SPEC.md) · [GAMIFICATION_ENGINE](GAMIFICATION_ENGINE.md) · [game-core README](../../packages/game-core/README.md) · [UI spec](../02-design/UI_SPEC.md) · [Accessibility](../02-design/ACCESSIBILITY.md)
-> Features: F-22, F-23, F-24, F-25, F-26, F-52 · Entities: E-16, E-17, E-18, E-19, E-20, E-21 · APIs: API-34..API-37 · Directives: D-03, D-09, D-10, D-11, D-12, D-13, D-14, D-19, D-21 · Edge cases: EC-05, EC-13, EC-14, EC-15, EC-18, EC-19, EC-20, EC-28, EC-29
+> Features: F-22, F-23, F-24, F-25, F-26, F-52 · Entities: E-16, E-17, E-18, E-19, E-20, E-21 · APIs: API-34..API-37 · Directives: D-03, D-09, D-10, D-11, D-12, D-13 revised, D-14, D-19, D-21 · Edge cases: EC-05, EC-13, EC-14, EC-15, EC-18, EC-19, EC-20, EC-28, EC-29
 > Evidence: `research/ps1-deep/08-game-ai-n8n.md` §3 (game cards), `02-accident-curriculum.md` (data), `05-psychology.md` (motivation, cheat vectors), `01-abroad.md` (UK HPT, Singapore demerits), `war-room/margdarshak-verification.md` §1.1.
 
 **Tags.** **[D]** = our design parameter, stored in `game-config.json` with `source: "design"`, never presented as a government rule. **[K]** = known engineering fact not re-checked. **[unverified]** = needs a check, with owner and date in §13.
@@ -36,7 +36,7 @@ Every game's start screen, result screen and debrief carry: **"Practice and fami
 - **Staircase** (GAME_SDK §7): 2 consecutive item passes → level + 1; 1 fail → level − 1. "Item pass" is defined per game in §x.7.
 - **Error-friendly XP:** failing still earns XP (quality floor 0.3, GAMIFICATION_ENGINE §2), because error-management training works (`05` insight 10).
 - **Privacy:** games receive only `SessionContext` (no name, DOB, phone, location, camera frames or audio). Helmet Fit frames never leave the device.
-- **Under 18 (D-13):** games marked `u18: local_only` run fully on device with template debriefs; nothing is sent; no XP, streaks or squads. Nazar mock and commentary are adult-only.
+- **Family mode (D-13 revised):** a learner under 18 plays every game and mode, Nazar mock and commentary included, inside the parent's account, with server-verified scores, AI debriefs, XP and streaks. Squads, pair mode and share cards for the minor's profile need the parent's consent. A minor's data is never used for behavioural tracking, profiling or ads (DPDP s.9(3)).
 
 ### 1.3 Shared accessibility baseline (F-52, D-21, EC-13, EC-18)
 
@@ -81,7 +81,7 @@ Pedestrians 35,221 deaths (RAI23 T4.4); hit-from-side 20,623, hit-from-back 36,8
 ### 2.3 Mechanics
 - Full-screen `<video>` (whole MP4 preloaded before the clip starts, so buffering can't break timing: EC-18). Tap anywhere; a `--nazar` amber ring marks the tap (UK-style feedback). No countdown timer (anticipation, not speed: `06` B11).
 - After each clip (practice/learn), a replay shows the hazard window as a hatched amber band on the scrub bar with the user's taps as flags. In **mock**, feedback waits until the end, as in a real test.
-- **Modes:** **mock** (Kerala announced format), **practice** (single clips with immediate replay), **learn** (occlusion and prediction: freeze 0.5 s before onset [D], "what happens next?" with 4 picture options from the `hazard_type` enum, then "tap where"), **commentary** (*bolke chalao*: adult, online, record-then-score, D-12), **pair** (two friends play the same seed; results are shown privately to each, never as a winner).
+- **Modes:** **mock** (Kerala announced format), **practice** (single clips with immediate replay), **learn** (occlusion and prediction: freeze 0.5 s before onset [D], "what happens next?" with 4 picture options from the `hazard_type` enum, then "tap where"), **commentary** (*bolke chalao*: online, record-then-score, D-12), **pair** (two friends play the same seed; results are shown privately to each, never as a winner).
 - **Pre-mock calibration:** "How many of the 10 clips will you pass?" (0–10), compared after.
 
 ### 2.4 Level design
@@ -560,7 +560,7 @@ Format varies by state and sources conflict: J&K 10 questions / 6 to pass [S]; 1
 Practice: FSRS-due concepts first, variant chosen to avoid the last 2 surface forms seen. Mock: unseen-variant mix following the rule-pack format. Placement quiz for users who already hold an LL (EC-22).
 
 ### 11.5 Controls
-Large option buttons (≥ 48 px), confidence chips, next. Voice read-out (adult, optional). Keyboard 1–4.
+Large option buttons (≥ 48 px), confidence chips, next. Voice read-out (optional). Keyboard 1–4.
 
 ### 11.6 Telemetry events
 `answer{qref, optionId, latencyMs}`, `confidence{qref, p}`, `item_end{reason:"timeout"}`, `item_start/end`.
@@ -574,7 +574,7 @@ Large option buttons (≥ 48 px), confidence chips, next. Voice read-out (adult,
 Not used for variant difficulty in mock (format must stay true). In practice, FSRS decides what's due; the staircase raises distractor similarity (L1 distractors from other families → L5 same family, same shape).
 
 ### 11.9 Accessibility
-Fully DOM; TalkBack; voice read-out (adult only, "practice examiner", `04` §3.8); signs carry alt text that does **not** give away the answer (describes shape and symbol, not meaning).
+Fully DOM; TalkBack; voice read-out (every user, "practice examiner", `04` §3.8); signs carry alt text that does **not** give away the answer (describes shape and symbol, not meaning).
 
 ### 11.10 Anti-cheat
 Variants, unseen mix in mocks, timing, no answer keys anywhere (explanations instead).
@@ -592,7 +592,7 @@ Variants, unseen mix in mocks, timing, no answer keys anywhere (explanations ins
 
 | EC | Behaviour |
 |---|---|
-| EC-05 / P-07 (16–17) | `local_only` games, template debriefs on device, no telemetry/XP/streaks/squads; Nazar mock and commentary blocked |
+| EC-05 / P-07 (16–17) | Family mode (D-13 revised): every game and mode as for any user, AI debriefs included; squads, pair mode and share cards need the parent's consent |
 | EC-13 disability | §1.3 baseline; deaf users fully served; screen-reader alternatives; colour-vision safe |
 | EC-14 shared phone | Games never run under a Helper's session for the applicant; "Clear this device" wipes queues and caches |
 | EC-15 clock tampering | Game timing uses relative `performance.now()`/media time; server time for eligibility and FSRS due dates |

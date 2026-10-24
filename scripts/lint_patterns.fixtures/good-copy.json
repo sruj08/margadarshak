@@ -1,0 +1,12 @@
+{
+  "slots": {
+    "info": "Your learner's licence is valid until {date}. Source: your state's rule pack."
+  },
+  "consent": {
+    "decline": "Not now",
+    "declineHi": "अभी नहीं",
+    "ask": "Send me reminders on WhatsApp?"
+  },
+  "squad": { "goal": "Your squad finished this week's goal together." },
+  "nazar": { "late": "You tapped {late} late. Watch the gap at the bus's front edge." }
+}

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "locale": {
+      "type": "string",
+      "enum": ["en", "hi", "hinglish"]
+    },
+    "how_you_did": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "where_you_lacked": {
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "finding_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "rule_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": ["finding_id", "rule_id", "text"],
+        "additionalProperties": false
+      }
+    },
+    "what_you_could_have_done": {
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "finding_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "rule_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": ["finding_id", "rule_id", "text"],
+        "additionalProperties": false
+      }
+    },
+    "next_drill": {
+      "type": "object",
+      "properties": {
+        "drill_id": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "why": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      },
+      "required": ["drill_id", "why"],
+      "additionalProperties": false
+    },
+    "improved_since_last": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 64
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "unknown": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "locale",
+    "how_you_did",
+    "where_you_lacked",
+    "what_you_could_have_done",
+    "next_drill",
+    "unknown"
+  ],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/DebriefDraft.json",
+  "title": "DebriefDraft"
+}

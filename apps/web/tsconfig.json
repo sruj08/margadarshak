@@ -1,0 +1,38 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": false,
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": true,
+    "types": ["node", "vitest/globals"],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@rulepacks/*": ["../../rulepacks/*"],
+      "@content/*": ["../../content/*"],
+      "@margdarshak/game-core": ["../../packages/game-core/src/index.ts"],
+      "@margdarshak/game-core/*": ["../../packages/game-core/src/*/index.ts"],
+      "@margdarshak/gamification": ["../../packages/gamification/src/index.ts"],
+      "@margdarshak/gamification/learning": ["../../packages/gamification/src/learning.ts"],
+      "@margdarshak/gamification/gamification": ["../../packages/gamification/src/gamification.ts"],
+      "@margdarshak/content": ["../../packages/content/src/index.ts"]
+    },
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "global.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts",
+    "next.config.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": ["node_modules", ".next/dev", "src/app/sw.ts"]
+}

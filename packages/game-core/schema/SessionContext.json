@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "gameId": {
+      "type": "string",
+      "enum": [
+        "nazar",
+        "stopping_distance",
+        "blind_spot",
+        "junction_scan",
+        "track_twin",
+        "helmet_fit",
+        "golden_hour",
+        "night_glare",
+        "hill_road",
+        "ll_sim"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["learn", "practice", "mock", "pair"]
+    },
+    "userBand": {
+      "type": "string",
+      "enum": ["u18", "adult"]
+    },
+    "locale": {
+      "type": "string",
+      "enum": ["en", "hi"]
+    },
+    "a11y": {
+      "type": "object",
+      "properties": {
+        "modes": {
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "no_audio",
+              "colour_safe",
+              "one_hand",
+              "reduced_motion",
+              "tap_only",
+              "screen_reader_alt",
+              "large_text",
+              "safe_luminance"
+            ]
+          }
+        },
+        "textScale": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 2
+        },
+        "haptics": {
+          "type": "boolean"
+        }
+      },
+      "required": ["modes", "textScale", "haptics"],
+      "additionalProperties": false
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "seedOrigin": {
+      "type": "string",
+      "enum": ["server", "client_offline"]
+    },
+    "items": {
+      "maxItems": 40,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 64,
+            "pattern": "^[a-z]{1,8}:[A-Za-z0-9_][A-Za-z0-9_.@:-]{0,54}$"
+          },
+          "contentVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": ["ref", "contentVersion"],
+        "additionalProperties": false
+      }
+    },
+    "deviceClass": {
+      "type": "string",
+      "enum": ["low", "mid", "high"]
+    },
+    "offline": {
+      "type": "boolean"
+    },
+    "serverStartIso": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tenant": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 16,
+      "pattern": "^[A-Z][A-Z0-9_]{1,15}$"
+    },
+    "rulePackVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    }
+  },
+  "required": [
+    "sid",
+    "gameId",
+    "mode",
+    "userBand",
+    "locale",
+    "a11y",
+    "difficulty",
+    "seed",
+    "seedOrigin",
+    "items",
+    "deviceClass",
+    "offline",
+    "serverStartIso",
+    "tenant",
+    "rulePackVersion"
+  ],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/SessionContext.json",
+  "title": "SessionContext"
+}

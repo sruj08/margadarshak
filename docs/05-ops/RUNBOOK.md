@@ -25,7 +25,7 @@ Golden rules:
 ## 2. Severity levels
 | Sev | Definition | Examples | Response | Update cadence |
 |---|---|---|---|---|
-| **SEV-1** | Users harmed or exposed, or the product is down at a critical moment | data breach; a minor's data reached the AI (A-08); site down during judging; wrong fee/eligibility shown at scale | page now; all hands; incident commander = Ops lead | every 15 min |
+| **SEV-1** | Users harmed or exposed, or the product is down at a critical moment | data breach; a minor's case processed without parental consent or a minor's data used for tracking (A-08); site down during judging; wrong fee/eligibility shown at scale | page now; all hands; incident commander = Ops lead | every 15 min |
 | **SEV-2** | Major feature broken or a legal duty at risk | API 5xx > 2 %; case-clock reminders not sent; WhatsApp down on test eve; log shipping broken (CERT-In) | respond ≤ 15 min | every 30 min |
 | **SEV-3** | Degraded with a workaround | AI fallback active (template cards); one Workflows task failing with retries; Live Intel queue backed up | respond ≤ 1 h (hackathon: ≤ 15 min) | every 2 h |
 | **SEV-4** | Minor / cosmetic / budget warning | n8n execution budget at 85 %; stale rule warning | next working day | — |
@@ -45,7 +45,7 @@ Golden rules:
 | PB-10 | Score replay mismatch / cheating wave | A-14 |
 | PB-11 | Live Intel abuse, defamation or takedown notice (IT Rules 2021) | manual, W09 |
 | PB-12 | Sarathi outage or broken hand-off link (EC-11) | manual, user reports |
-| PB-13 | A minor reached an AI feature (D-13) | A-08 |
+| PB-13 | A minor's case without parental consent, or a child's data used for tracking (D-13 revised) | A-08 |
 
 ---
 
@@ -56,7 +56,7 @@ Golden rules:
 2. If provider or quota: confirm the breaker is open (`/v1/health` → `ai_breaker: open`). If not, set flag `ai_debrief=off` (and `ai_screen_decoder=off`, `ai_voice_guide=off` if those are affected). **Users now get the reviewed template cards: same facts, less fluent (08 §5.6, EC-29).** Nothing is broken for the user.
 3. If validator rejections spiked (model behaviour changed): leave the breaker doing its job; check `md.validator.reasons`; if `digit_outside_placeholder` dominates, the model is ignoring instructions. Pin `GEMINI_MODEL_DEBRIEF` back to the last known-good ID.
 **Diagnose and fix**
-- 429: raise the quota on the paid project or reduce `debrief_fanout` concurrency; spread nightly jobs.
+- 429: raise the quota on the paid project or reduce `session_debrief` / `debrief_backfill` fan-out concurrency; spread nightly jobs.
 - Model ID retired or renamed (04 notes the naming is in flux): set the env var to the fallback ID; run `evals.yml` (workflow_dispatch) before re-enabling.
 - Spend spike: check voice minutes vs the 10-min/user/month cap (04 §5); set `ai_voice_guide=off` if the cap logic failed.
 **Never:** switch to the **free tier** to "keep it running" (D-13, war-room G8: human review of prompts and 18+ terms). Never turn off the validator.
@@ -77,7 +77,7 @@ Golden rules:
 **First 5 minutes**
 1. Render dashboard → service → **Events / Logs**: is it deploying, crashed (OOM), or sleeping?
 2. **Sleeping** should be impossible on paid plans; if someone switched a service to `free` (it sleeps after 15 min idle, ~1 min wake-up, B-sponsors §0), switch it back to `0.5c-512mb` / `1c-2g`.
-3. **OOM / crash loop:** roll back to the previous deploy (Events → Rollback). For the API, bump to `2c-4g` temporarily.
+3. **OOM / crash loop:** roll back to the previous deploy (Events → Rollback). For the API (Go), check `GOMEMLIMIT` is set below the plan's RAM (400MiB on `0.5c-512mb`) and bump to `1c-2g` temporarily; a Go panic prints the goroutine stack to the Render log, so search the log for `panic:` / `goroutine` first.
 4. Run `scripts/ops/warmup.sh` (6 web routes, 4 API routes).
 **Judging-day rule:** if the live site doesn't answer within 60 s, switch to the **pre-recorded demo video** (§8) and keep talking; don't debug on stage.
 **Prevention:** warm-up after each deploy (deploy.yml) and at T-30 min; a 5-min uptime probe keeps instances hot and gives us the latency trace; README notes "the first load can take up to a minute" (organiser guide, B-sponsors §0).
@@ -120,7 +120,12 @@ Golden rules:
 **Never:** pay a ransom, contact the attacker, or announce on social media before the incident commander approves the wording. Never say "no data was affected" before scoping is done.
 
 ### PB-07 API errors, latency, DB or log-shipping trouble
-**First 5 minutes:** Sentry → top new error since the last deploy marker. If it started with a deploy → **roll back** (CICD §6). If DB: Render Postgres metrics (connections, CPU, storage). Connection exhaustion → lower `WEB_CONCURRENCY` or pool size, restart the API; slow query → `pg_stat_statements` top 5, add the missing index in an expand migration.
+**First 5 minutes:** Sentry → top new error since the last deploy marker. If it started with a deploy → **roll back** (CICD §6). If DB: Render Postgres metrics (connections, CPU, storage). Connection exhaustion → lower the pgxpool size (`DB_MAX_CONNS`), restart the API; slow query → `pg_stat_statements` top 5, add the missing index in an expand migration (goose).
+- **Go diagnostics** (the API image is distroless: there is no shell, so Render shell and `kubectl exec` do not work):
+  - Migrations: `DATABASE_URL=… go run ./cmd/api migrate status` from a laptop with the external URL temporarily allow-listed (Render), or a one-off Job running `/app/api migrate status` (Kubernetes). Roll back the newest migration only with `migrate down` and only if it is marked `-- reversible: true`.
+  - Profiles: set `DEBUG_PPROF=true` (env change, restart) to mount `net/http/pprof` under `/internal/ops/pprof/` behind the `ops` bearer token, then `go tool pprof https://<api>/internal/ops/pprof/heap` (or `/goroutine?debug=2` for a goroutine dump). Turn it off again after the incident.
+  - Goroutine dump without pprof: SIGQUIT makes the Go runtime print every goroutine's stack to stderr and exit; in Kubernetes use `kubectl debug` with an ephemeral container (shared process namespace) and `kill -QUIT 1`; the pod restarts.
+  - Memory: `GOMEMLIMIT` ≈ 80 % of the container limit; `GODEBUG=gctrace=1` for one restart if GC is suspected.
 - Storage full on `0.1c-256mb`: upgrade the plan (one click), then prune `game_events` older than the retention.
 - **Production log shipping gap (A-19)** is a compliance issue (CERT-In 180-day retention): treat it as SEV-2, buffer in the Collector (persistent queue), fix Loki, backfill from the Collector's file buffer.
 - **NTP drift (A-18):** restart chrony on the node, cordon the node if it persists.
@@ -129,8 +134,9 @@ Golden rules:
 **Symptoms:** A-10 (no completed sweep by 08:30 IST), A-11 (failures after retries, queued > 10 min).
 **First 5 minutes**
 1. Render dashboard → Workflows → Runs: failed task, attempt count, error. Remember: runs over the compute limits are **queued, not rejected**; Hobby allows 50 root runs/min (B-sponsors §1).
-2. Re-run safely: `POST /internal/clock/sweep` with the same `run_date` (idempotent: `TimelineEvent` keys and the outbox dedupe), or `render workflows tasks start case_clock_sweep --input='["2026-10-24"]'`.
-3. If Workflows itself is unavailable: set `JOB_RUNNER=inline` on the API (env change, restart) and trigger the sweep; it runs in-process in shards. Clip ingest waits (it's not user-facing).
+2. Re-run safely: `POST /internal/clock/sweep` with the same `run_date` (idempotent: `TimelineEvent` keys and the outbox dedupe), or `render workflows tasks start case_clock_sweep --input='["jk","2026-10-24"]'` (tenant, as_of).
+3. If Workflows itself is unavailable: set `JOB_RUNNER=inline` on the API (env change, restart) and trigger the sweep; the Go step handlers run in-process on goroutines, page by page. Clip ingest waits (its media steps live in the TS tasks; it's not user-facing).
+4. If runs start but every API step fails: check `INTERNAL_HMAC_SECRET` matches on the API and the workflow service, and that `API_INTERNAL_HOSTPORT` resolves (the tasks call `/internal/job-steps/{step}`).
 **Demo note:** the injected retry on `blur_faces_plates` (`FAULT_INJECTION_CLIP_BLUR=once`) is expected; it should show attempt 2 succeeding. Reset to `off` after the demo.
 
 ### PB-09 n8n down or execution budget exhausted
@@ -157,13 +163,13 @@ Golden rules:
 - Broken deep link / changed form: switch the hand-off to the copy-pack only (no prefilled URL) for that state; open a rule-pack row change for the new URL with source and date.
 - **Never** scrape Sarathi or automate its forms (D-08, IT Act s.43).
 
-### PB-13 A minor reached an AI feature (D-13)
-**This must be impossible; treat any occurrence as SEV-1.**
-1. Set `ai_debrief=off`, `ai_voice_guide=off`, `ai_screen_decoder=off` globally until fixed (template cards for everyone).
-2. Find the path: which endpoint, which age band, why the server-side gate didn't stop it (the gate reads verified DOB ≥ 18 on the server, never a client flag).
-3. Delete the related AI traces and stored outputs for that user; record the deletion in the audit log.
-4. Add a regression test to `tests/ai/age_gate`; `evals.yml` offline job must fail without the fix.
-5. Assess notification duties with Nestiq legal (children's data under DPDP s.9; Gemini API terms are 18+, war-room G8).
+### PB-13 A minor's case without parental consent, or a child's data used for tracking (D-13 revised)
+**Context:** every feature, AI included, is available to every user. A learner aged 16–17 uses the parent's (adult) account in family mode, and the account holder gives verifiable parental consent for the minor's case (DPDP s.9). What must be impossible: a minor's case processed without that consent artefact, or a child's data used for behavioural tracking, profiling or targeted ads. **Treat any occurrence as SEV-1.**
+1. Stop the leak path: if consent checks are failing, set `family_mode=off` for new minor cases (existing consented cases keep working); if analytics are the path, stop ingestion on API-63 for the affected tenant.
+2. Find the path: which endpoint, which `age_band` (`16_17` or `under_16`), and why the server-side check didn't stop it (the server must return 403 `PARENT_CONSENT_REQUIRED`, WS close 4403 on API-40, when the consent artefact is missing; it reads the case's verified band and the stored consent, never a client flag).
+3. Delete the analytics events, AI traces and stored outputs that were created without consent; record the deletion in the audit log.
+4. Add a regression test (an `EC-05` family-mode / parental-consent test in `internal/privacy`, `go test ./...`); CI must fail without the fix.
+5. Assess notification duties with Nestiq legal (children's data under DPDP s.9; the Gemini API user is the adult account holder on the paid tier, war-room G8).
 
 ## 4. Communication templates
 - **Status line (users, in-app banner):** "Some features are slow right now. Your saved progress is safe. Reminders may arrive late." (No blame, no jargon, no promise of a time.)
@@ -173,8 +179,8 @@ Golden rules:
 ## 5. Backup and restore procedures
 | Task | Hackathon command / steps | Production |
 |---|---|---|
-| Take an ad-hoc backup | `pg_dump --format=custom --no-owner "$DATABASE_URL" > md-$(date -u +%Y%m%dT%H%MZ).dump` (from the Render shell or a laptop with the external URL temporarily allow-listed) → upload to R2 `margdarshak-backups` | CloudNativePG `Backup` CR or CSP snapshot |
-| Restore into staging | create an empty Postgres → `pg_restore --clean --if-exists --no-owner -d "$STAGING_DATABASE_URL" md-….dump` → `alembic upgrade head` → smoke tests | PITR to a timestamp into a new cluster, then switch the app secret |
+| Take an ad-hoc backup | `pg_dump --format=custom --no-owner "$DATABASE_URL" > md-$(date -u +%Y%m%dT%H%MZ).dump` (from a laptop with the external URL temporarily allow-listed, or the backup cron job; the distroless API image has no shell or `pg_dump`) → upload to R2 `margdarshak-backups` | CloudNativePG `Backup` CR or CSP snapshot |
+| Restore into staging | create an empty Postgres → `pg_restore --clean --if-exists --no-owner -d "$STAGING_DATABASE_URL" md-….dump` → `DATABASE_URL="$STAGING_DATABASE_URL" go run ./cmd/api migrate up` (from `services/api`) → smoke tests | PITR to a timestamp into a new cluster, then switch the app secret |
 | Verify | row counts per table vs the source; `GET /v1/health?deep=true`; open 3 seeded cases; replay 3 golden sessions | the same + checksum report |
 | Drill cadence | once before judging | monthly restore, quarterly DR |
 
@@ -214,6 +220,6 @@ Targets and scenarios are in INFRASTRUCTURE.md §7. Summary: hackathon RPO ≤ 2
 | Laptop dies | second laptop with the deck (PDF) and the video locally; the live URL on any phone |
 
 ### 8.3 Offline kit (on two laptops and one USB stick)
-- Deck PDF; the ≤ 5-min video (MP4, 1080p); a 60-s cut of the Nazar beat; screenshots of the Render Runs page with a retry, the n8n canvas, the `adk eval` output and the validator rejecting "₹0 fee" (08 §5.9).
+- Deck PDF; the ≤ 5-min video (MP4, 1080p); a 60-s cut of the Nazar beat; screenshots of the Render Runs page with a retry, the n8n canvas, the AI eval report from `evals.yml` and the validator rejecting "₹0 fee" (08 §5.9).
 - The QR code image and the live URL in large type.
 - This runbook as PDF.

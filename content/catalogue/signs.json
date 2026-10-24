@@ -1,0 +1,3087 @@
+{
+  "$schema": "../schema/signs.schema.json",
+  "file_kind": "signs",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "notes": "Sign catalogue for the LL bank, lessons and SignSnap (closed IDs). Meanings follow the IRC:67 families (mandatory: circles, red border = prohibition, blue = compulsory; stop octagon; give-way inverted triangle; cautionary: red-bordered triangles; informatory: rectangles), markings follow IRC:35, signals the MV (Driving) Regulations; none of these texts has been fetched and checked yet, so every sign is verified=false and needs the two-person check against the standard (CURRICULUM §2.1 review needs). check_note lists drawing details to confirm. Assets are vectors we still have to draw. SIGN-MAN-016 is intentionally unused (a height-limit sign was dropped until its IRC:67 drawing is confirmed).",
+  "signs": [
+    {
+      "sign_id": "SIGN-MAN-001",
+      "family": "MANDATORY",
+      "subfamily": "stop",
+      "shape": "octagon",
+      "colour_scheme": "red_octagon_white_text",
+      "colours": ["red", "white"],
+      "symbol_class": "stop_text",
+      "alt": {
+        "en": "Red octagon with the word STOP in white letters",
+        "hi": "लाल अष्टकोण, जिस पर सफ़ेद अक्षरों में STOP लिखा है"
+      },
+      "name": {
+        "en": "Stop",
+        "hi": "रुकें (STOP)"
+      },
+      "meaning": {
+        "en": "Stop completely at the stop line and go only when the way is clear.",
+        "hi": "स्टॉप लाइन पर पूरी तरह रुकें और रास्ता साफ़ होने पर ही आगे बढ़ें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-001.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-002",
+      "family": "MANDATORY",
+      "subfamily": "give_way",
+      "shape": "inverted_triangle",
+      "colour_scheme": "white_inverted_triangle_red_border",
+      "colours": ["red", "white"],
+      "symbol_class": "plain",
+      "alt": {
+        "en": "Downward-pointing triangle with a red border and a white centre",
+        "hi": "नीचे की ओर नोक वाला त्रिकोण, लाल किनारा और बीच में सफ़ेद"
+      },
+      "name": {
+        "en": "Give way",
+        "hi": "रास्ता दें"
+      },
+      "meaning": {
+        "en": "Slow down and let traffic on the road you are joining go first; stop if needed.",
+        "hi": "धीमे हों और जिस सड़क में जा रहे हैं उसके ट्रैफ़िक को पहले जाने दें; ज़रूरत हो तो रुकें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm whether the IRC:67 give-way sign carries text inside the triangle.",
+      "asset": {
+        "path": "signs/SIGN-MAN-002.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-003",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "red_disc_white_bar",
+      "colours": ["red", "white"],
+      "symbol_class": "bar",
+      "alt": {
+        "en": "Red circle with a white horizontal bar across the middle",
+        "hi": "लाल गोला, जिसके बीच में सफ़ेद आड़ी पट्टी है"
+      },
+      "name": {
+        "en": "No entry",
+        "hi": "प्रवेश निषेध"
+      },
+      "meaning": {
+        "en": "Vehicles must not enter the road from this side.",
+        "hi": "इस ओर से वाहन सड़क में प्रवेश नहीं कर सकते।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-003.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-004",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "plain",
+      "alt": {
+        "en": "White circle with a red border and nothing inside",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर कुछ नहीं"
+      },
+      "name": {
+        "en": "Vehicles prohibited in both directions",
+        "hi": "दोनों दिशाओं में वाहन निषेध"
+      },
+      "meaning": {
+        "en": "No vehicle may use this road from either direction.",
+        "hi": "इस सड़क पर किसी भी दिशा से वाहन नहीं जा सकते।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-004.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-005",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "vehicle",
+      "alt": {
+        "en": "White circle with a red border and a black truck inside",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर काला ट्रक"
+      },
+      "name": {
+        "en": "Truck prohibited",
+        "hi": "ट्रक निषेध"
+      },
+      "meaning": {
+        "en": "Trucks must not enter this road.",
+        "hi": "इस सड़क पर ट्रक नहीं जा सकते।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-005.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-006",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "vehicle",
+      "alt": {
+        "en": "White circle with a red border and a black bicycle inside",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर काली साइकिल"
+      },
+      "name": {
+        "en": "Cycle prohibited",
+        "hi": "साइकिल निषेध"
+      },
+      "meaning": {
+        "en": "Cycles must not enter this road.",
+        "hi": "इस सड़क पर साइकिल नहीं जा सकती।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-006.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-007",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "person",
+      "alt": {
+        "en": "White circle with a red border and a black walking person inside",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर चलता हुआ काला व्यक्ति"
+      },
+      "name": {
+        "en": "Pedestrians prohibited",
+        "hi": "पैदल यात्री निषेध"
+      },
+      "meaning": {
+        "en": "People must not walk along this road.",
+        "hi": "इस सड़क पर पैदल चलना मना है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-007.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-008",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "turn_arrow",
+      "alt": {
+        "en": "White circle with a red border and a black arrow bending to the right, crossed by a red diagonal line",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर दाईं ओर मुड़ता काला तीर, जिस पर लाल तिरछी लाइन है"
+      },
+      "name": {
+        "en": "Right turn prohibited",
+        "hi": "दाएँ मुड़ना निषेध"
+      },
+      "meaning": {
+        "en": "Do not turn right here.",
+        "hi": "यहाँ दाएँ न मुड़ें।"
+      },
+      "mirror_of": "SIGN-MAN-009",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-008.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-009",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "turn_arrow",
+      "alt": {
+        "en": "White circle with a red border and a black arrow bending to the left, crossed by a red diagonal line",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर बाईं ओर मुड़ता काला तीर, जिस पर लाल तिरछी लाइन है"
+      },
+      "name": {
+        "en": "Left turn prohibited",
+        "hi": "बाएँ मुड़ना निषेध"
+      },
+      "meaning": {
+        "en": "Do not turn left here.",
+        "hi": "यहाँ बाएँ न मुड़ें।"
+      },
+      "mirror_of": "SIGN-MAN-008",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-009.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-010",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "turn_arrow",
+      "alt": {
+        "en": "White circle with a red border and a black U-shaped arrow, crossed by a red diagonal line",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर U आकार का काला तीर, जिस पर लाल तिरछी लाइन है"
+      },
+      "name": {
+        "en": "U-turn prohibited",
+        "hi": "U-टर्न निषेध"
+      },
+      "meaning": {
+        "en": "Do not make a U-turn here.",
+        "hi": "यहाँ U-टर्न न लें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-010.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-011",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "vehicles_pair",
+      "alt": {
+        "en": "White circle with a red border and two cars side by side",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर अगल-बगल दो कारें"
+      },
+      "name": {
+        "en": "Overtaking prohibited",
+        "hi": "ओवरटेक निषेध"
+      },
+      "meaning": {
+        "en": "Do not overtake other vehicles on this stretch.",
+        "hi": "इस हिस्से में दूसरे वाहनों को ओवरटेक न करें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Check the car colours and orientation in the IRC:67 drawing.",
+      "asset": {
+        "path": "signs/SIGN-MAN-011.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-012",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "horn",
+      "alt": {
+        "en": "White circle with a red border and a black horn, crossed by a red diagonal line",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर काला हॉर्न, जिस पर लाल तिरछी लाइन है"
+      },
+      "name": {
+        "en": "Horn prohibited",
+        "hi": "हॉर्न बजाना मना"
+      },
+      "meaning": {
+        "en": "Do not sound the horn here; such signs are common near hospitals and schools.",
+        "hi": "यहाँ हॉर्न न बजाएँ; ऐसे संकेत अक्सर अस्पताल और स्कूल के पास होते हैं।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-012.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-013",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "parking",
+      "alt": {
+        "en": "Circle with a red border and a black letter P, crossed by a red diagonal line",
+        "hi": "लाल किनारे वाला गोला, अंदर काला अक्षर P, जिस पर लाल तिरछी लाइन है"
+      },
+      "name": {
+        "en": "No parking",
+        "hi": "पार्किंग निषेध"
+      },
+      "meaning": {
+        "en": "Do not park your vehicle here.",
+        "hi": "यहाँ गाड़ी पार्क न करें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the background colour of the IRC:67 no-parking sign (white or blue) before drawing.",
+      "asset": {
+        "path": "signs/SIGN-MAN-013.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-014",
+      "family": "MANDATORY",
+      "subfamily": "prohibitory",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "parking",
+      "alt": {
+        "en": "Circle with a red border and a red cross (X) inside",
+        "hi": "लाल किनारे वाला गोला, अंदर लाल क्रॉस (X)"
+      },
+      "name": {
+        "en": "No stopping or standing",
+        "hi": "रुकना या खड़ा होना मना"
+      },
+      "meaning": {
+        "en": "Do not stop or stand your vehicle here, even briefly.",
+        "hi": "यहाँ गाड़ी थोड़ी देर के लिए भी न रोकें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 drawing (background colour, cross or bar) before drawing.",
+      "asset": {
+        "path": "signs/SIGN-MAN-014.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-015",
+      "family": "MANDATORY",
+      "subfamily": "limit",
+      "shape": "circle",
+      "colour_scheme": "white_disc_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "number",
+      "alt": {
+        "en": "White circle with a red border and the number 50 in black",
+        "hi": "लाल किनारे वाला सफ़ेद गोला, अंदर काले रंग में 50"
+      },
+      "name": {
+        "en": "Speed limit 50 km/h",
+        "hi": "गति-सीमा 50 किमी/घंटा"
+      },
+      "meaning": {
+        "en": "Do not ride or drive faster than 50 km/h here.",
+        "hi": "यहाँ 50 किमी/घंटा से तेज़ न चलें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-015.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-017",
+      "family": "MANDATORY",
+      "subfamily": "compulsory",
+      "shape": "circle",
+      "colour_scheme": "blue_disc_white_symbol",
+      "colours": ["blue", "white"],
+      "symbol_class": "direction_arrow",
+      "alt": {
+        "en": "Blue circle with a white arrow bending to the left",
+        "hi": "नीला गोला, अंदर बाईं ओर मुड़ता सफ़ेद तीर"
+      },
+      "name": {
+        "en": "Compulsory turn left",
+        "hi": "बाएँ मुड़ना अनिवार्य"
+      },
+      "meaning": {
+        "en": "You must turn left here.",
+        "hi": "यहाँ बाएँ मुड़ना ज़रूरी है।"
+      },
+      "mirror_of": "SIGN-MAN-018",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-017.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-018",
+      "family": "MANDATORY",
+      "subfamily": "compulsory",
+      "shape": "circle",
+      "colour_scheme": "blue_disc_white_symbol",
+      "colours": ["blue", "white"],
+      "symbol_class": "direction_arrow",
+      "alt": {
+        "en": "Blue circle with a white arrow bending to the right",
+        "hi": "नीला गोला, अंदर दाईं ओर मुड़ता सफ़ेद तीर"
+      },
+      "name": {
+        "en": "Compulsory turn right",
+        "hi": "दाएँ मुड़ना अनिवार्य"
+      },
+      "meaning": {
+        "en": "You must turn right here.",
+        "hi": "यहाँ दाएँ मुड़ना ज़रूरी है।"
+      },
+      "mirror_of": "SIGN-MAN-017",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-018.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-019",
+      "family": "MANDATORY",
+      "subfamily": "compulsory",
+      "shape": "circle",
+      "colour_scheme": "blue_disc_white_symbol",
+      "colours": ["blue", "white"],
+      "symbol_class": "direction_arrow",
+      "alt": {
+        "en": "Blue circle with a white arrow pointing straight up",
+        "hi": "नीला गोला, अंदर सीधा ऊपर की ओर सफ़ेद तीर"
+      },
+      "name": {
+        "en": "Compulsory ahead only",
+        "hi": "केवल सीधे जाना अनिवार्य"
+      },
+      "meaning": {
+        "en": "You must go straight ahead; no turns.",
+        "hi": "आपको सीधे ही जाना है; मुड़ना नहीं है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-019.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-020",
+      "family": "MANDATORY",
+      "subfamily": "compulsory",
+      "shape": "circle",
+      "colour_scheme": "blue_disc_white_symbol",
+      "colours": ["blue", "white"],
+      "symbol_class": "direction_arrow",
+      "alt": {
+        "en": "Blue circle with a white arrow pointing down and to the left",
+        "hi": "नीला गोला, अंदर नीचे-बाईं ओर इशारा करता सफ़ेद तीर"
+      },
+      "name": {
+        "en": "Compulsory keep left",
+        "hi": "बाईं ओर रहना अनिवार्य"
+      },
+      "meaning": {
+        "en": "Keep to the left of the island or obstruction ahead.",
+        "hi": "आगे के डिवाइडर या रुकावट के बाईं ओर से निकलें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-020.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-021",
+      "family": "MANDATORY",
+      "subfamily": "compulsory",
+      "shape": "circle",
+      "colour_scheme": "blue_disc_white_symbol",
+      "colours": ["blue", "white"],
+      "symbol_class": "horn",
+      "alt": {
+        "en": "Blue circle with a white horn",
+        "hi": "नीला गोला, अंदर सफ़ेद हॉर्न"
+      },
+      "name": {
+        "en": "Compulsory sound horn",
+        "hi": "हॉर्न बजाना अनिवार्य"
+      },
+      "meaning": {
+        "en": "Sound the horn here, for example before a blind bend.",
+        "hi": "यहाँ हॉर्न बजाएँ, जैसे अंधे मोड़ से पहले।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-021.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MAN-022",
+      "family": "MANDATORY",
+      "subfamily": "compulsory",
+      "shape": "circle",
+      "colour_scheme": "blue_disc_white_symbol",
+      "colours": ["blue", "white"],
+      "symbol_class": "vehicle",
+      "alt": {
+        "en": "Blue circle with a white bicycle",
+        "hi": "नीला गोला, अंदर सफ़ेद साइकिल"
+      },
+      "name": {
+        "en": "Compulsory cycle track",
+        "hi": "साइकिल ट्रैक अनिवार्य"
+      },
+      "meaning": {
+        "en": "Cyclists must use this track.",
+        "hi": "साइकिल सवारों को इसी ट्रैक पर चलना है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MAN-022.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-001",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "bend",
+      "alt": {
+        "en": "Triangle with a red border and a black line curving to the right",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर दाईं ओर मुड़ती काली लाइन"
+      },
+      "name": {
+        "en": "Right hand curve",
+        "hi": "दाईं ओर मोड़"
+      },
+      "meaning": {
+        "en": "The road ahead curves to the right; slow down.",
+        "hi": "आगे सड़क दाईं ओर मुड़ती है; धीमे हों।"
+      },
+      "mirror_of": "SIGN-CAU-002",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-001.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-002",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "bend",
+      "alt": {
+        "en": "Triangle with a red border and a black line curving to the left",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर बाईं ओर मुड़ती काली लाइन"
+      },
+      "name": {
+        "en": "Left hand curve",
+        "hi": "बाईं ओर मोड़"
+      },
+      "meaning": {
+        "en": "The road ahead curves to the left; slow down.",
+        "hi": "आगे सड़क बाईं ओर मुड़ती है; धीमे हों।"
+      },
+      "mirror_of": "SIGN-CAU-001",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-002.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-003",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "bend",
+      "alt": {
+        "en": "Triangle with a red border and a black line that turns sharply back on itself to the right",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली लाइन जो दाईं ओर तेज़ी से वापस मुड़ती है"
+      },
+      "name": {
+        "en": "Right hairpin bend",
+        "hi": "दाईं ओर हेयरपिन मोड़"
+      },
+      "meaning": {
+        "en": "A very sharp U-shaped bend to the right is ahead; slow right down.",
+        "hi": "आगे दाईं ओर बहुत तीखा, U जैसा मोड़ है; बहुत धीमे हो जाएँ।"
+      },
+      "mirror_of": "SIGN-CAU-004",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-003.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-004",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "bend",
+      "alt": {
+        "en": "Triangle with a red border and a black line that turns sharply back on itself to the left",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली लाइन जो बाईं ओर तेज़ी से वापस मुड़ती है"
+      },
+      "name": {
+        "en": "Left hairpin bend",
+        "hi": "बाईं ओर हेयरपिन मोड़"
+      },
+      "meaning": {
+        "en": "A very sharp U-shaped bend to the left is ahead; slow right down.",
+        "hi": "आगे बाईं ओर बहुत तीखा, U जैसा मोड़ है; बहुत धीमे हो जाएँ।"
+      },
+      "mirror_of": "SIGN-CAU-003",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-004.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-005",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "bend",
+      "alt": {
+        "en": "Triangle with a red border and a black line bending right, then left",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली लाइन जो पहले दाएँ, फिर बाएँ मुड़ती है"
+      },
+      "name": {
+        "en": "Right reverse bend",
+        "hi": "दाएँ से उल्टा मोड़"
+      },
+      "meaning": {
+        "en": "The road bends right and then left; slow down.",
+        "hi": "सड़क पहले दाएँ और फिर बाएँ मुड़ती है; धीमे हों।"
+      },
+      "mirror_of": "SIGN-CAU-006",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-005.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-006",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "bend",
+      "alt": {
+        "en": "Triangle with a red border and a black line bending left, then right",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली लाइन जो पहले बाएँ, फिर दाएँ मुड़ती है"
+      },
+      "name": {
+        "en": "Left reverse bend",
+        "hi": "बाएँ से उल्टा मोड़"
+      },
+      "meaning": {
+        "en": "The road bends left and then right; slow down.",
+        "hi": "सड़क पहले बाएँ और फिर दाएँ मुड़ती है; धीमे हों।"
+      },
+      "mirror_of": "SIGN-CAU-005",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-006.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-007",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "gradient",
+      "alt": {
+        "en": "Triangle with a red border and a black slope rising from left to right",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर बाएँ से दाएँ ऊपर उठती काली ढलान"
+      },
+      "name": {
+        "en": "Steep ascent",
+        "hi": "खड़ी चढ़ाई"
+      },
+      "meaning": {
+        "en": "A steep climb is ahead; choose a suitable gear early.",
+        "hi": "आगे खड़ी चढ़ाई है; पहले से सही गियर चुनें।"
+      },
+      "mirror_of": "SIGN-CAU-008",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 symbol (slope with or without a vehicle, gradient figure).",
+      "asset": {
+        "path": "signs/SIGN-CAU-007.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-008",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "gradient",
+      "alt": {
+        "en": "Triangle with a red border and a black slope falling from left to right",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर बाएँ से दाएँ नीचे जाती काली ढलान"
+      },
+      "name": {
+        "en": "Steep descent",
+        "hi": "खड़ी ढलान"
+      },
+      "meaning": {
+        "en": "A steep downhill is ahead; use a low gear and don't coast.",
+        "hi": "आगे खड़ी ढलान है; नीचे के गियर में उतरें और न्यूट्रल में न लुढ़कें।"
+      },
+      "mirror_of": "SIGN-CAU-007",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 symbol (slope with or without a vehicle, gradient figure).",
+      "asset": {
+        "path": "signs/SIGN-CAU-008.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-009",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "road_width",
+      "alt": {
+        "en": "Triangle with a red border and two black lines that come closer together at the top",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर दो काली लाइनें जो ऊपर जाकर पास आती हैं"
+      },
+      "name": {
+        "en": "Narrow road ahead",
+        "hi": "आगे सड़क संकरी है"
+      },
+      "meaning": {
+        "en": "The road ahead becomes narrower; slow down and keep left.",
+        "hi": "आगे सड़क संकरी होती है; धीमे हों और बाईं ओर रहें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-009.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-010",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "road_width",
+      "alt": {
+        "en": "Triangle with a red border and two black lines that spread apart at the top",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर दो काली लाइनें जो ऊपर जाकर दूर होती हैं"
+      },
+      "name": {
+        "en": "Road widens ahead",
+        "hi": "आगे सड़क चौड़ी है"
+      },
+      "meaning": {
+        "en": "The road ahead becomes wider.",
+        "hi": "आगे सड़क चौड़ी हो जाती है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-010.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-011",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "road_width",
+      "alt": {
+        "en": "Triangle with a red border and two black lines that bend inward in the middle, with short ticks on the outside",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर दो काली लाइनें जो बीच में अंदर की ओर मुड़ती हैं, बाहर छोटे निशानों के साथ"
+      },
+      "name": {
+        "en": "Narrow bridge",
+        "hi": "संकरा पुल"
+      },
+      "meaning": {
+        "en": "A narrow bridge is ahead; slow down, as there may be room for only one vehicle at a time.",
+        "hi": "आगे संकरा पुल है; धीमे हों, उस पर एक बार में एक ही वाहन की जगह हो सकती है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 narrow-bridge drawing.",
+      "asset": {
+        "path": "signs/SIGN-CAU-011.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-012",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "surface",
+      "alt": {
+        "en": "Triangle with a red border and a black car with wavy lines behind it",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली कार और उसके पीछे लहरदार लाइनें"
+      },
+      "name": {
+        "en": "Slippery road",
+        "hi": "फिसलन भरी सड़क"
+      },
+      "meaning": {
+        "en": "The road may be slippery; slow down and avoid sudden braking.",
+        "hi": "सड़क फिसलन भरी हो सकती है; धीमे हों और अचानक ब्रेक न लगाएँ।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 slippery-road drawing.",
+      "asset": {
+        "path": "signs/SIGN-CAU-012.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-013",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "surface",
+      "alt": {
+        "en": "Triangle with a red border and a black car with small stones flying from its wheel",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली कार जिसके पहिये से छोटे पत्थर उछल रहे हैं"
+      },
+      "name": {
+        "en": "Loose gravel",
+        "hi": "ढीली बजरी"
+      },
+      "meaning": {
+        "en": "Loose gravel is ahead; slow down, keep a gap and steer gently.",
+        "hi": "आगे ढीली बजरी है; धीमे हों, फ़ासला रखें और धीरे से मोड़ें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 loose-gravel drawing.",
+      "asset": {
+        "path": "signs/SIGN-CAU-013.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-014",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "vehicle",
+      "alt": {
+        "en": "Triangle with a red border and a black bicycle",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली साइकिल"
+      },
+      "name": {
+        "en": "Cycle crossing",
+        "hi": "साइकिल क्रॉसिंग"
+      },
+      "meaning": {
+        "en": "Cyclists may cross ahead; watch for them.",
+        "hi": "आगे साइकिल सवार सड़क पार कर सकते हैं; ध्यान रखें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-014.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-015",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "person",
+      "alt": {
+        "en": "Triangle with a red border and a black person walking on striped lines",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर धारियों पर चलता काला व्यक्ति"
+      },
+      "name": {
+        "en": "Pedestrian crossing",
+        "hi": "पैदल यात्री क्रॉसिंग"
+      },
+      "meaning": {
+        "en": "A pedestrian crossing is ahead; slow down and be ready to stop.",
+        "hi": "आगे पैदल यात्री क्रॉसिंग है; धीमे हों और रुकने को तैयार रहें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-015.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-016",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "person",
+      "alt": {
+        "en": "Triangle with a red border and two black children walking, one carrying a bag",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर चलते हुए दो काले बच्चे, एक के हाथ में बस्ता"
+      },
+      "name": {
+        "en": "School ahead",
+        "hi": "आगे स्कूल"
+      },
+      "meaning": {
+        "en": "A school is ahead; slow down and watch for children.",
+        "hi": "आगे स्कूल है; धीमे हों और बच्चों का ध्यान रखें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the figures in the IRC:67 school sign.",
+      "asset": {
+        "path": "signs/SIGN-CAU-016.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-017",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "person",
+      "alt": {
+        "en": "Triangle with a red border and a black person digging with a shovel",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर फावड़े से खोदता काला व्यक्ति"
+      },
+      "name": {
+        "en": "Men at work",
+        "hi": "आगे काम चल रहा है"
+      },
+      "meaning": {
+        "en": "Road work is ahead; slow down and watch for workers and machines.",
+        "hi": "आगे सड़क का काम चल रहा है; धीमे हों और मज़दूरों व मशीनों का ध्यान रखें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-017.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-018",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "animal",
+      "alt": {
+        "en": "Triangle with a red border and a black cow",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काली गाय"
+      },
+      "name": {
+        "en": "Cattle",
+        "hi": "मवेशी"
+      },
+      "meaning": {
+        "en": "Cattle may be on or crossing the road; slow down.",
+        "hi": "सड़क पर या सड़क पार करते मवेशी हो सकते हैं; धीमे हों।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-018.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-019",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "rocks",
+      "alt": {
+        "en": "Triangle with a red border and black stones falling down a slope on one side",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर एक ओर ढलान से गिरते काले पत्थर"
+      },
+      "name": {
+        "en": "Falling rocks",
+        "hi": "गिरते पत्थर"
+      },
+      "meaning": {
+        "en": "Rocks may fall onto the road; don't stop here and watch for stones on the road.",
+        "hi": "सड़क पर पत्थर गिर सकते हैं; यहाँ न रुकें और सड़क पर पड़े पत्थरों का ध्यान रखें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-019.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-020",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "railway",
+      "alt": {
+        "en": "Triangle with a red border and a black steam engine",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काला भाप का इंजन"
+      },
+      "name": {
+        "en": "Unguarded level crossing",
+        "hi": "बिना फाटक वाली रेलवे क्रॉसिंग"
+      },
+      "meaning": {
+        "en": "A railway crossing with no gate is ahead; stop, look both ways and listen before crossing.",
+        "hi": "आगे बिना फाटक वाली रेलवे क्रॉसिंग है; पार करने से पहले रुकें, दोनों ओर देखें और सुनें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-020.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-021",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "railway",
+      "alt": {
+        "en": "Triangle with a red border and a black fence-like gate",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काला बाड़ जैसा फाटक"
+      },
+      "name": {
+        "en": "Guarded level crossing",
+        "hi": "फाटक वाली रेलवे क्रॉसिंग"
+      },
+      "meaning": {
+        "en": "A railway crossing with a gate is ahead; slow down and stop if the gate is closing.",
+        "hi": "आगे फाटक वाली रेलवे क्रॉसिंग है; धीमे हों और फाटक बंद हो रहा हो तो रुकें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-021.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-022",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "junction",
+      "alt": {
+        "en": "Triangle with a red border and a black upright cross (+)",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काला सीधा क्रॉस (+)"
+      },
+      "name": {
+        "en": "Cross road",
+        "hi": "चौराहा"
+      },
+      "meaning": {
+        "en": "A crossroads is ahead; slow down and watch for traffic from both sides.",
+        "hi": "आगे चौराहा है; धीमे हों और दोनों ओर से आते ट्रैफ़िक का ध्यान रखें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-022.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-023",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "junction",
+      "alt": {
+        "en": "Triangle with a red border, a black upright line and a shorter line joining it from the right",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर सीधी काली लाइन और दाईं ओर से जुड़ती छोटी लाइन"
+      },
+      "name": {
+        "en": "Side road right",
+        "hi": "दाईं ओर से सड़क मिलती है"
+      },
+      "meaning": {
+        "en": "A side road joins from the right ahead; watch for vehicles coming out.",
+        "hi": "आगे दाईं ओर से सड़क मिलती है; निकलते वाहनों का ध्यान रखें।"
+      },
+      "mirror_of": "SIGN-CAU-024",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-023.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-024",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "junction",
+      "alt": {
+        "en": "Triangle with a red border, a black upright line and a shorter line joining it from the left",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर सीधी काली लाइन और बाईं ओर से जुड़ती छोटी लाइन"
+      },
+      "name": {
+        "en": "Side road left",
+        "hi": "बाईं ओर से सड़क मिलती है"
+      },
+      "meaning": {
+        "en": "A side road joins from the left ahead; watch for vehicles coming out.",
+        "hi": "आगे बाईं ओर से सड़क मिलती है; निकलते वाहनों का ध्यान रखें।"
+      },
+      "mirror_of": "SIGN-CAU-023",
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-024.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-025",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "junction",
+      "alt": {
+        "en": "Triangle with a red border and a black T shape",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काला T आकार"
+      },
+      "name": {
+        "en": "T-intersection",
+        "hi": "T-चौराहा"
+      },
+      "meaning": {
+        "en": "The road ahead ends at a T-junction; you will have to turn left or right.",
+        "hi": "आगे सड़क T-चौराहे पर ख़त्म होती है; आपको बाएँ या दाएँ मुड़ना होगा।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-025.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-026",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "junction",
+      "alt": {
+        "en": "Triangle with a red border and a black Y shape",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर काला Y आकार"
+      },
+      "name": {
+        "en": "Y-intersection",
+        "hi": "Y-चौराहा"
+      },
+      "meaning": {
+        "en": "The road ahead splits in two; choose your branch early.",
+        "hi": "आगे सड़क दो हिस्सों में बँटती है; अपना रास्ता पहले से चुनें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-026.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-027",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "junction",
+      "alt": {
+        "en": "Triangle with a red border and three black arrows following each other round a circle",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर गोल घेरे में एक-दूसरे के पीछे चलते तीन काले तीर"
+      },
+      "name": {
+        "en": "Roundabout",
+        "hi": "गोल चक्कर"
+      },
+      "meaning": {
+        "en": "A roundabout is ahead; slow down and give way to traffic already on it.",
+        "hi": "आगे गोल चक्कर है; धीमे हों और उस पर पहले से मौजूद ट्रैफ़िक को रास्ता दें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Arrows must run clockwise (left-hand traffic); confirm the IRC:67 drawing.",
+      "asset": {
+        "path": "signs/SIGN-CAU-027.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-CAU-028",
+      "family": "CAUTIONARY",
+      "subfamily": "warning",
+      "shape": "triangle",
+      "colour_scheme": "white_triangle_red_border",
+      "colours": ["red", "white", "black"],
+      "symbol_class": "surface",
+      "alt": {
+        "en": "Triangle with a red border and a black line with one or two bumps",
+        "hi": "लाल किनारे वाला त्रिकोण, अंदर एक-दो उभार वाली काली लाइन"
+      },
+      "name": {
+        "en": "Hump or rough road",
+        "hi": "उभार या ऊबड़-खाबड़ सड़क"
+      },
+      "meaning": {
+        "en": "A speed hump or rough patch is ahead; slow down.",
+        "hi": "आगे स्पीड ब्रेकर या ऊबड़-खाबड़ हिस्सा है; धीमे हों।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-CAU-028.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-INF-001",
+      "family": "INFORMATORY",
+      "subfamily": "facility",
+      "shape": "rectangle",
+      "colour_scheme": "blue_rectangle_white_panel",
+      "colours": ["blue", "white", "black"],
+      "symbol_class": "facility",
+      "alt": {
+        "en": "Blue rectangle with a white panel showing a black fuel pump",
+        "hi": "नीला आयत, सफ़ेद हिस्से में काला फ़्यूल पंप"
+      },
+      "name": {
+        "en": "Petrol pump",
+        "hi": "पेट्रोल पंप"
+      },
+      "meaning": {
+        "en": "A fuel station is ahead.",
+        "hi": "आगे पेट्रोल पंप है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-INF-001.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-INF-002",
+      "family": "INFORMATORY",
+      "subfamily": "facility",
+      "shape": "rectangle",
+      "colour_scheme": "blue_rectangle_white_panel",
+      "colours": ["blue", "white", "red"],
+      "symbol_class": "facility",
+      "alt": {
+        "en": "Blue rectangle with a white panel showing a red plus sign",
+        "hi": "नीला आयत, सफ़ेद हिस्से में लाल प्लस का निशान"
+      },
+      "name": {
+        "en": "Hospital",
+        "hi": "अस्पताल"
+      },
+      "meaning": {
+        "en": "A hospital is ahead or nearby.",
+        "hi": "आगे या पास में अस्पताल है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 hospital symbol (red cross, letter H or bed) before drawing.",
+      "asset": {
+        "path": "signs/SIGN-INF-002.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-INF-003",
+      "family": "INFORMATORY",
+      "subfamily": "route",
+      "shape": "rectangle",
+      "colour_scheme": "blue_rectangle_white_panel",
+      "colours": ["blue", "white", "red"],
+      "symbol_class": "route",
+      "alt": {
+        "en": "Blue rectangle with a white upright bar topped by a red crossbar",
+        "hi": "नीला आयत, अंदर सफ़ेद सीधी पट्टी जिसके ऊपर लाल आड़ी पट्टी है"
+      },
+      "name": {
+        "en": "No through road",
+        "hi": "आगे रास्ता बंद"
+      },
+      "meaning": {
+        "en": "This road does not lead through; it ends ahead.",
+        "hi": "यह सड़क आगे नहीं जाती; आगे बंद है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm the IRC:67 no-through-road drawing.",
+      "asset": {
+        "path": "signs/SIGN-INF-003.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-INF-004",
+      "family": "INFORMATORY",
+      "subfamily": "facility",
+      "shape": "rectangle",
+      "colour_scheme": "blue_rectangle_white_panel",
+      "colours": ["blue", "white", "black"],
+      "symbol_class": "facility",
+      "alt": {
+        "en": "Blue rectangle with a white panel showing a black fork and knife",
+        "hi": "नीला आयत, सफ़ेद हिस्से में काला काँटा और छुरी"
+      },
+      "name": {
+        "en": "Eating place",
+        "hi": "भोजनालय"
+      },
+      "meaning": {
+        "en": "A place to eat is ahead.",
+        "hi": "आगे खाने की जगह है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-INF-004.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-INF-005",
+      "family": "INFORMATORY",
+      "subfamily": "facility",
+      "shape": "rectangle",
+      "colour_scheme": "blue_rectangle_white_panel",
+      "colours": ["blue", "white", "black"],
+      "symbol_class": "facility",
+      "alt": {
+        "en": "Blue rectangle with a white panel showing a black cup and saucer",
+        "hi": "नीला आयत, सफ़ेद हिस्से में काला कप और प्लेट"
+      },
+      "name": {
+        "en": "Light refreshment",
+        "hi": "जलपान"
+      },
+      "meaning": {
+        "en": "Tea or light snacks are available ahead.",
+        "hi": "आगे चाय-नाश्ता मिलता है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-INF-005.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-INF-006",
+      "family": "INFORMATORY",
+      "subfamily": "facility",
+      "shape": "rectangle",
+      "colour_scheme": "blue_rectangle_white_panel",
+      "colours": ["blue", "white", "black"],
+      "symbol_class": "facility",
+      "alt": {
+        "en": "Blue rectangle with a white panel showing a black telephone handset",
+        "hi": "नीला आयत, सफ़ेद हिस्से में काला टेलीफ़ोन रिसीवर"
+      },
+      "name": {
+        "en": "Public telephone",
+        "hi": "सार्वजनिक टेलीफ़ोन"
+      },
+      "meaning": {
+        "en": "A public telephone is available ahead.",
+        "hi": "आगे सार्वजनिक टेलीफ़ोन है।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-INF-006.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-INF-007",
+      "family": "INFORMATORY",
+      "subfamily": "facility",
+      "shape": "rectangle",
+      "colour_scheme": "blue_rectangle_white_panel",
+      "colours": ["blue", "white"],
+      "symbol_class": "parking",
+      "alt": {
+        "en": "Blue rectangle with a large white letter P",
+        "hi": "नीला आयत, अंदर बड़ा सफ़ेद अक्षर P"
+      },
+      "name": {
+        "en": "Parking",
+        "hi": "पार्किंग"
+      },
+      "meaning": {
+        "en": "You may park here.",
+        "hi": "यहाँ पार्क कर सकते हैं।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:67",
+      "sources": [
+        {
+          "title": "IRC:67 Code of Practice for Road Signs, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null,
+          "note": "Meanings authored from the standard's sign families; not checked against a fetched copy. We draw our own vectors and cite the standard; we do not reproduce its pages."
+        },
+        {
+          "title": "Motor Vehicles Act 1988, Schedule of traffic signs (to pin)",
+          "url": "https://www.indiacode.nic.in",
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "IRC:67 'park this side' carries an arrow; confirm which board we draw.",
+      "asset": {
+        "path": "signs/SIGN-INF-007.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MRK-001",
+      "family": "MARKINGS",
+      "subfamily": "marking",
+      "shape": "road_marking",
+      "colour_scheme": "white_road_marking",
+      "colours": ["white"],
+      "symbol_class": "crossing",
+      "alt": {
+        "en": "Wide white stripes painted across the road, side by side",
+        "hi": "सड़क पर अगल-बगल बनी चौड़ी सफ़ेद धारियाँ"
+      },
+      "name": {
+        "en": "Zebra crossing",
+        "hi": "ज़ेबरा क्रॉसिंग"
+      },
+      "meaning": {
+        "en": "Pedestrians cross here; slow down and give way to anyone on it.",
+        "hi": "यहाँ पैदल यात्री सड़क पार करते हैं; धीमे हों और उस पर मौजूद लोगों को रास्ता दें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:35",
+      "sources": [
+        {
+          "title": "IRC:35 Code of Practice for Road Markings, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MRK-001.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MRK-002",
+      "family": "MARKINGS",
+      "subfamily": "marking",
+      "shape": "road_marking",
+      "colour_scheme": "white_road_marking",
+      "colours": ["white"],
+      "symbol_class": "transverse_line",
+      "alt": {
+        "en": "A single solid white line painted across your lane",
+        "hi": "आपकी लेन के आर-पार बनी एक लगातार सफ़ेद लाइन"
+      },
+      "name": {
+        "en": "Stop line",
+        "hi": "स्टॉप लाइन"
+      },
+      "meaning": {
+        "en": "Where you stop at a signal or stop sign; don't cross it while you must stop.",
+        "hi": "सिग्नल या स्टॉप संकेत पर यहीं रुकें; रुकना हो तो इसे पार न करें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:35",
+      "sources": [
+        {
+          "title": "IRC:35 Code of Practice for Road Markings, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MRK-002.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MRK-003",
+      "family": "MARKINGS",
+      "subfamily": "marking",
+      "shape": "road_marking",
+      "colour_scheme": "white_road_marking",
+      "colours": ["white"],
+      "symbol_class": "centre_line",
+      "alt": {
+        "en": "A broken white line along the middle of the road",
+        "hi": "सड़क के बीच में टूटी-टूटी सफ़ेद लाइन"
+      },
+      "name": {
+        "en": "Broken centre line",
+        "hi": "बीच की टूटी लाइन"
+      },
+      "meaning": {
+        "en": "You may cross it to overtake when the road ahead is clear.",
+        "hi": "आगे सड़क साफ़ हो तो ओवरटेक के लिए इसे पार कर सकते हैं।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:35",
+      "sources": [
+        {
+          "title": "IRC:35 Code of Practice for Road Markings, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MRK-003.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MRK-004",
+      "family": "MARKINGS",
+      "subfamily": "marking",
+      "shape": "road_marking",
+      "colour_scheme": "white_road_marking",
+      "colours": ["white", "yellow"],
+      "symbol_class": "centre_line",
+      "alt": {
+        "en": "A single unbroken line along the middle of the road, white or yellow",
+        "hi": "सड़क के बीच में एक लगातार लाइन, सफ़ेद या पीली"
+      },
+      "name": {
+        "en": "Continuous centre line",
+        "hi": "बीच की लगातार लाइन"
+      },
+      "meaning": {
+        "en": "Do not cross or straddle it; no overtaking across it.",
+        "hi": "इसे पार न करें और इस पर न चलें; इसके पार ओवरटेक नहीं।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:35",
+      "sources": [
+        {
+          "title": "IRC:35 Code of Practice for Road Markings, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "check_note": "Confirm white vs yellow usage for no-overtaking lines in IRC:35.",
+      "asset": {
+        "path": "signs/SIGN-MRK-004.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-MRK-005",
+      "family": "MARKINGS",
+      "subfamily": "marking",
+      "shape": "road_marking",
+      "colour_scheme": "white_road_marking",
+      "colours": ["white", "yellow"],
+      "symbol_class": "centre_line",
+      "alt": {
+        "en": "Two parallel unbroken lines along the middle of the road",
+        "hi": "सड़क के बीच में दो समानांतर लगातार लाइनें"
+      },
+      "name": {
+        "en": "Double continuous centre line",
+        "hi": "बीच की दोहरी लगातार लाइन"
+      },
+      "meaning": {
+        "en": "Never cross it from either side.",
+        "hi": "किसी भी ओर से इसे पार न करें।"
+      },
+      "mirror_of": null,
+      "standard": "IRC:35",
+      "sources": [
+        {
+          "title": "IRC:35 Code of Practice for Road Markings, Indian Roads Congress (edition and clause to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-MRK-005.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-SIG-001",
+      "family": "SIGNALS",
+      "subfamily": "signal",
+      "shape": "signal_head",
+      "colour_scheme": "signal_lamp",
+      "colours": ["red"],
+      "symbol_class": "steady",
+      "alt": {
+        "en": "Traffic light with the top lamp lit red",
+        "hi": "ट्रैफ़िक लाइट, सबसे ऊपर की बत्ती लाल जली हुई"
+      },
+      "name": {
+        "en": "Steady red light",
+        "hi": "लगातार लाल बत्ती"
+      },
+      "meaning": {
+        "en": "Stop behind the stop line and wait.",
+        "hi": "स्टॉप लाइन के पीछे रुकें और इंतज़ार करें।"
+      },
+      "mirror_of": null,
+      "standard": "signals",
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, traffic signals (gazette text not fetched; regulation to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-SIG-001.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-SIG-002",
+      "family": "SIGNALS",
+      "subfamily": "signal",
+      "shape": "signal_head",
+      "colour_scheme": "signal_lamp",
+      "colours": ["amber"],
+      "symbol_class": "steady",
+      "alt": {
+        "en": "Traffic light with the middle lamp lit amber",
+        "hi": "ट्रैफ़िक लाइट, बीच की बत्ती पीली जली हुई"
+      },
+      "name": {
+        "en": "Steady amber light",
+        "hi": "लगातार पीली बत्ती"
+      },
+      "meaning": {
+        "en": "Stop at the stop line unless you are too close to stop in time; red comes next.",
+        "hi": "स्टॉप लाइन पर रुकें, जब तक कि आप इतने पास न हों कि समय पर रुक न सकें; इसके बाद लाल बत्ती होगी।"
+      },
+      "mirror_of": null,
+      "standard": "signals",
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, traffic signals (gazette text not fetched; regulation to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-SIG-002.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-SIG-003",
+      "family": "SIGNALS",
+      "subfamily": "signal",
+      "shape": "signal_head",
+      "colour_scheme": "signal_lamp",
+      "colours": ["green"],
+      "symbol_class": "steady",
+      "alt": {
+        "en": "Traffic light with the bottom lamp lit green",
+        "hi": "ट्रैफ़िक लाइट, सबसे नीचे की बत्ती हरी जली हुई"
+      },
+      "name": {
+        "en": "Steady green light",
+        "hi": "लगातार हरी बत्ती"
+      },
+      "meaning": {
+        "en": "Go if the way is clear, giving way to anyone still crossing.",
+        "hi": "रास्ता साफ़ हो तो जाएँ, पर जो अब भी पार कर रहे हैं उन्हें रास्ता दें।"
+      },
+      "mirror_of": null,
+      "standard": "signals",
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, traffic signals (gazette text not fetched; regulation to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-SIG-003.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-SIG-004",
+      "family": "SIGNALS",
+      "subfamily": "signal",
+      "shape": "signal_head",
+      "colour_scheme": "signal_lamp",
+      "colours": ["amber"],
+      "symbol_class": "flashing",
+      "alt": {
+        "en": "Traffic light with the middle lamp blinking amber on and off",
+        "hi": "ट्रैफ़िक लाइट, बीच की पीली बत्ती जलती-बुझती हुई"
+      },
+      "name": {
+        "en": "Flashing amber light",
+        "hi": "चमकती पीली बत्ती"
+      },
+      "meaning": {
+        "en": "Slow down and go on with care, giving way as needed.",
+        "hi": "धीमे हों और सावधानी से आगे बढ़ें, ज़रूरत हो तो रास्ता दें।"
+      },
+      "mirror_of": null,
+      "standard": "signals",
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, traffic signals (gazette text not fetched; regulation to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-SIG-004.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-SIG-005",
+      "family": "SIGNALS",
+      "subfamily": "signal",
+      "shape": "signal_head",
+      "colour_scheme": "signal_lamp",
+      "colours": ["red"],
+      "symbol_class": "flashing",
+      "alt": {
+        "en": "Traffic light with the top lamp blinking red on and off",
+        "hi": "ट्रैफ़िक लाइट, ऊपर की लाल बत्ती जलती-बुझती हुई"
+      },
+      "name": {
+        "en": "Flashing red light",
+        "hi": "चमकती लाल बत्ती"
+      },
+      "meaning": {
+        "en": "Stop completely, then go when the way is clear, as at a stop sign.",
+        "hi": "पूरी तरह रुकें, फिर रास्ता साफ़ होने पर जाएँ, जैसे स्टॉप संकेत पर।"
+      },
+      "mirror_of": null,
+      "standard": "signals",
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, traffic signals (gazette text not fetched; regulation to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-SIG-005.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    },
+    {
+      "sign_id": "SIGN-SIG-006",
+      "family": "SIGNALS",
+      "subfamily": "signal",
+      "shape": "signal_head",
+      "colour_scheme": "signal_lamp",
+      "colours": ["red", "green"],
+      "symbol_class": "arrow",
+      "alt": {
+        "en": "Traffic light with the red lamp lit and a green arrow pointing left lit beside it",
+        "hi": "ट्रैफ़िक लाइट, लाल बत्ती जली हुई और उसके पास बाईं ओर इशारा करता हरा तीर जला हुआ"
+      },
+      "name": {
+        "en": "Green filter arrow",
+        "hi": "हरा तीर (फ़िल्टर)"
+      },
+      "meaning": {
+        "en": "You may go only in the arrow's direction, giving way to pedestrians and other traffic.",
+        "hi": "सिर्फ़ तीर की दिशा में जा सकते हैं, पैदल यात्रियों और दूसरे ट्रैफ़िक को रास्ता देते हुए।"
+      },
+      "mirror_of": null,
+      "standard": "signals",
+      "sources": [
+        {
+          "title": "Motor Vehicles (Driving) Regulations 2017, traffic signals (gazette text not fetched; regulation to pin)",
+          "url": null,
+          "grade": "MK",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "verified": false,
+      "asset": {
+        "path": "signs/SIGN-SIG-006.svg",
+        "status": "to_draw"
+      },
+      "review_status": "draft",
+      "hi_review_status": "pending_native_review"
+    }
+  ]
+}

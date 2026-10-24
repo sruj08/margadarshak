@@ -40,7 +40,7 @@ The other 11 workflows (W02, W03, W05–W07, W10–W15) are specified in N8N_WOR
 5. **Test with pinned data**, then activate. Executions with success are not saved (`saveDataSuccessExecution: none`) on the messaging workflows to keep phone numbers out of execution logs; W08 and W09 keep them for audit (no phone numbers flow through W08; W09 holds only the moderator's number from Variables).
 
 ## Security pattern (all workflows)
-- **Outbound (n8n → backend):** `X-MD-Timestamp` + `X-MD-Signature: sha256=HMAC(secret, "${ts}.${body}")` + `Idempotency-Key`. The backend rejects a skew over 300 s and replays.
+- **Outbound (n8n → backend):** `Authorization: Bearer <MD_N8N_READ_TOKEN>` + `Margdarshak-Signature: t=<unix>,v1=<hex HMAC-SHA256(MD_HMAC_SECRET, t + "." + body)>` (a GET signs the empty body: `t + "."`) + `Idempotency-Key` on writes. The backend rejects a skew over 300 s and replays; its replay cache is keyed on method + path + signature, so sign every attempt again with a fresh `t`.
 - **Inbound (backend/Workflows → n8n):** Header Auth credential **plus** a signed envelope `{ ts, payload: "<JSON string>", sig }`, verified in-workflow with the Crypto node before any work. The envelope avoids raw-body handling in n8n.
 - **Resume (our page → n8n Wait node):** the browser never sees `$execution.resumeUrl`. The backend stores it on the task row and POSTs to it with the `X-MD-Resume-Token` header after the human acts in our UI.
 - **PII:** n8n receives a phone number and first name only for users who opted in to that channel (E-14, E-15). No Aadhaar data, no DOB, no case facts, no free text. SMS is not wired until TRAI DLT registration (D-16).

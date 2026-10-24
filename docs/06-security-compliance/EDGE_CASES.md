@@ -69,10 +69,10 @@
 |---|---|
 | **Trigger** | DOB gives 16 or 17 years |
 | **Detection** | Age band `16_17` from F-02 |
-| **User-facing behaviour** | Simple mode ([PRIVACY §5.6](PRIVACY.md)): only MC50CC (≤ 50 cc gearless) with guardian consent; plain warning "Most scooters are bigger than 50 cc, so they need a licence you can only get at 18." No account, no AI, no telemetry, no streaks, no squads; local-only practice |
-| **Rule row / screen state** | `rule.age.mc50cc_min_16_guardian` (source MV Act s.4 [P via 02]; confidence high); `S0.home#minor-mode`; AI routes return 403 `age_gate` |
-| **Data handling** | Nothing stored server-side beyond the anonymous device session; no analytics events (s.9(3)) |
-| **Tests** | T-EC-05a (U) eligibility; T-EC-05b (S): AI endpoints refuse a 16_17 session; T-EC-05c (E): no analytics beacon fired in minor mode; T-EC-05d (S): DOB change 16→18 requires declaration and is rate-limited |
+| **User-facing behaviour** | Family mode ([PRIVACY §5.6](PRIVACY.md)): the learner uses the full product, including every AI feature, inside a parent's account with the parent's consent (D-13 revised). Plan shows only MC50CC (≤ 50 cc gearless) with guardian consent; plain warning "Most scooters are bigger than 50 cc, so they need a licence you can only get at 18." Streaks work as for everyone; squads and share cards need the parent's consent |
+| **Rule row / screen state** | `rule.age.mc50cc_min_16_guardian` (source MV Act s.4 [P via 02]; confidence high); `S0.home#family-mode` |
+| **Data handling** | Case stored in the parent's account with a `flags.minor` profile; consent artefacts `acting_for` = parent; no behavioural tracking, profiling or targeted ads on the child's data (s.9(3)); analytics only as allowlisted k ≥ 5 aggregates |
+| **Tests** | T-EC-05a (U) eligibility; T-EC-05b (S): AI endpoints serve a 16_17 family-mode profile when the parent's `PUR-AI-FEATURES` consent exists, and ask the parent for consent when it doesn't; T-EC-05c (E): a minor profile's events never reach profiling or ad paths, and squad join/share card require the parent's consent; T-EC-05d (S): DOB change 16→18 requires declaration and is rate-limited |
 
 ### EC-06 Transport classes under 20
 | Field | Detail |
@@ -145,7 +145,7 @@
 | **Detection** | Phase 1–2: manual status flag set by OPS + user "Sarathi isn't loading" button aggregate; Phase 3+: adapter health checks |
 | **User-facing behaviour** | Status banner "Sarathi seems down. Your draft is saved here; we'll remind you." Hand-off button disabled with explanation; nothing lost |
 | **Rule row / screen state** | `S2.apply#upstream-down`; tenant flag `sarathi_status` |
-| **Data handling** | Drafts persisted (server for 18+ accounts; IndexedDB otherwise) |
+| **Data handling** | Drafts persisted (server for signed-in accounts, including family-mode cases; IndexedDB otherwise) |
 | **Tests** | T-EC-11a (C) adapter returns 503 → banner; T-EC-11b (E) draft survives reload offline |
 
 ### EC-22 LL already held before using Margdarshak (mid-journey onboarding)

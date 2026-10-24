@@ -540,9 +540,9 @@ journey
 ### Future state
 ```mermaid
 flowchart LR
-  a[Plan without account:<br/>age 17 → ≤50 cc only F-02] --> b['Your Activa is above 50 cc'<br/>plain words EC-05]
+  a[Plan in parent's account, family mode:<br/>age 17 → ≤50 cc only F-02] --> b['Your Activa is above 50 cc'<br/>plain words EC-05]
   b --> c[18th-birthday plan date]
-  c --> d[Static lessons offline,<br/>no telemetry F-20 F-51]
+  c --> d[Lessons, Nazar and AI debrief<br/>F-20 F-23 F-25 F-51]
   d --> e[Parent card: s.199A facts,<br/>no shaming F-17 EC-17]
 ```
 ```mermaid
@@ -558,7 +558,7 @@ journey
 ### Moments of truth
 | MoT | Design | Failure signal |
 |---|---|---|
-| MoT-R1 The "not yet" answer | Show what he *can* do and when | Rahul lies about DOB to reach adult features (honour + server checks; production DigiLocker verification) |
+| MoT-R1 The "not yet" answer | Show what he *can* do and when | Rahul lies about DOB to see a class he cannot get (honour + server checks; production DigiLocker verification) |
 | MoT-R2 Parent conversation | Factual s.199A card | Parent shares the card (opt-in share) |
 
 ### Edge cases on this journey

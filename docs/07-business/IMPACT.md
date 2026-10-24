@@ -87,7 +87,7 @@ flowchart TB
 | Level | Metric | Definition | Data source | Target (HUNCH unless pre-registered) |
 |---|---|---|---|---|
 | **Output** | Plans created | `plan_created` events | API-01 analytics (no PII) | 60,000 in Year 1 |
-| Output | Nazar sessions (18+) | Completed, server-verified sessions | E-16 GameSession | 25,000 in Year 1 |
+| Output | Nazar sessions | Completed, server-verified sessions | E-16 GameSession | 25,000 in Year 1 |
 | Output | Practice Records exported | F-28 exports | API-46 | 2,000 in Year 1 |
 | **Outcome: access** | Time to start an LL application correctly | Journey test median time_s, Margdarshak vs lab replica | `journey_sessions.csv` | J1: ≥ 40% lower (pre-registered) |
 | Outcome: access | Full success (class + path + all planted blockers found before submit) | Field kit §11.5 definition | same | J2: B ≥ 6/8, A ≤ 3/8 (pre-registered) |
@@ -136,7 +136,7 @@ flowchart TB
 | **Nazar study** | 40–80 licence holders, 18+ | 15-question LL mock → 10 clips (Kerala format, /100) → feedback on 2 clips → 5 fresh clips | H1–H4 | Wilson 95% CI for % < 60; Fisher-z CI for r; one-sided Wilcoxon for pre/post; inter-rater median \|Δonset\| | "Convenience sample of N, 18+, Jammu/Punjab colleges; our clips and windows; not Kerala's clips; no crash outcomes measured" |
 | **Before/after product metrics** | — | Counts and Lighthouse runs | Listed in §3.2 | Descriptive | Method on the slide |
 
-Stats code: `analysis/nazar_stats.py` (field kit §7), unchanged after data collection except logged bug fixes. **Data freeze: Sat 24 Oct 18:00 IST.** If A beats B on anything, it goes on the slide too (field kit §11.8).
+Stats code: `analysis/nazar_stats.mjs` (field kit §7), unchanged after data collection except logged bug fixes. **Data freeze: Sat 24 Oct 18:00 IST.** If A beats B on anything, it goes on the slide too (field kit §11.8).
 
 ### 5.2 Phase 3: J&K RTO/ARTO pilot (6 weeks)
 - **Design:** interrupted time series at one RTO/ARTO: 2 weeks baseline (counter tallies, LL expiries, rejection counts, pass rates) → 6 weeks with Margdarshak QR at the counter and a CSC helper channel → 4 weeks follow-up. Comparison: a similar ARTO with no intervention, if the department agrees (HUNCH).

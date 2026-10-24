@@ -325,7 +325,7 @@ Rules:
 5. **Code-mixing.** Dogri–Hindi–English mixing is expected ("mera DL renew karna ai"). Saaras supports code-mixing (vendor claim, `04` l.170). Intent matching uses the synonym table (§9.2), which includes Dogri forms collected from team recordings.
 6. **Evaluation.** The ADK evalset includes 10 Dogri utterances (`04` l.267). The success metric is a correct `navigate` destination. A Dogri native speaker on the team labels the recordings.
 7. **Privacy.** "Mic on · not stored" chip. Audio is not retained by us. Sarvam is a disclosed processor in the privacy notice (`verification.md` §3.3).
-8. **Under 18.** No voice guide (D-13).
+8. **Family mode.** A learner under 18 in a parent's account gets the Dogri voice guide like everyone else; the parent's consent covers the mic purpose (D-13 revised).
 9. **Failure (EC-29).** If Saaras is unavailable: "Dogri voice is resting. You can speak Hindi or type."
 
 ---
@@ -468,7 +468,7 @@ Rules:
 | EC | Localisation response |
 |---|---|
 | EC-01 Aadhaar shows year only | Date fields accept day/month separately; copy explains in both languages |
-| EC-05/P-07 Under 18 | Same languages; no voice guide; read-aloud via on-device TTS |
+| EC-05/P-07 Under 18 (family mode) | Same languages and the same voice guide (D-13 revised); read-aloud via on-device TTS where voices exist |
 | EC-10 No online LL test (e.g. Kerala) | Rule-pack-driven step label "RTO में टेस्ट" from the state pack |
 | EC-12 Moving state | The new state's rule pack supplies labels; if a label is missing in `hi`, fall back with a chip |
 | EC-20 PII typed into AI | Redaction after digit normalisation (§9.2) |

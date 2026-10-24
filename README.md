@@ -13,7 +13,7 @@ Built by **Team Chanakya** (@Nestiq Private Limited) for **HackCache '26** (Cach
 - **The forms went online, but the journey didn't.**
   - parivahan.gov.in shows about 120 links, and roughly 1 in 10 is relevant to a first licence.
   - A learner's licence (LL) takes about 16 screens, 6 captchas and 4+ OTPs, and nothing is saved.
-- **Nobody owns the timeline.** LL expiry, the 30-day wait, slot scarcity, retests and approval limbo pile up, so agents charge ₹2k–20k against an official ₹700 + ₹200 card for one class.
+- **Nobody owns the timeline.** LL expiry, the 30-day wait, slot scarcity, retests and approval limbo pile up, so agents charge ₹2k–20k against a government fee of ₹700 + ₹200 card for one class.
 - **India tests knowledge and vehicle control, but never hazard anticipation.** A licensed driver was at the wheel in 70.9% of India's 2023 road accidents.
 
 Full evidence: [RESEARCH.md](RESEARCH.md). The whole idea in one read: [IDEA.md](IDEA.md).
@@ -42,10 +42,10 @@ Full evidence: [RESEARCH.md](RESEARCH.md). The whole idea in one read: [IDEA.md]
 ## Architecture (short)
 Hexagonal core.
 - **Web:** Next.js 16 PWA with HeroUI v3, Tailwind 4 and Phaser 4 games.
-- **API:** FastAPI on Python 3.12, with PostgreSQL 16.
+- **API:** Go 1.27 (chi v5, contract-first from `api/openapi.yaml` with oapi-codegen, pgx v5 + sqlc, goose migrations), with PostgreSQL 16.
 - **Score verifier:** Node, replays every game session on the server.
-- **AI:** ADK agents on Gemini.
-- **Jobs and automation:** Render Workflows and n8n.
+- **AI:** ADK for Go agents on Gemini (`google.golang.org/adk`, `RunLive` for the voice guide; `google.golang.org/genai` Live API). Every AI feature is available to every user; a learner aged 16–17 uses it in a parent's account (family mode) with parental consent.
+- **Jobs and automation:** Render Workflows (TypeScript tasks, `@renderinc/sdk`) and n8n.
 - **Government adapters (mock + real):** Sarathi, DigiLocker, Aadhaar-offline (mock only), Bhashini, payment redirect, slots and notifications.
 - **Multi-state:** one tenant per state, with a UX4G skin.
 
@@ -55,12 +55,15 @@ Details: [docs/03-engineering/ARCHITECTURE.md](docs/03-engineering/ARCHITECTURE.
 ```bash
 git clone <repo-url> margdarshak && cd margdarshak
 cp .env.example .env              # fill in values; see docs/03-engineering/ENVIRONMENT_SETUP.md
-pnpm install && (cd services/api && uv sync)
-docker compose -f infra/docker/compose.yaml up -d   # Postgres, Redis, n8n, MinIO
-pnpm db:migrate && pnpm db:seed
-pnpm dev                          # web + api + score-verifier
-pnpm test                         # unit, golden rules, adapter contracts, game determinism
+pnpm install && (cd services/api && go mod download)   # Node 22 + pnpm, Go 1.27
+# Optional: docker compose -f infra/docker/compose.yaml up -d   (Postgres, Redis, MinIO; Docker is not required)
+pnpm dev                          # web + api (go run ./cmd/api) + score-verifier
+(cd services/api && go vet ./... && go test ./...)   # Go unit, golden rules, adapter contracts (embedded Postgres 16)
+pnpm test                         # TS unit, rules mirror, game determinism
 ```
+
+## Build status
+P0 (foundations), P1 (journey core) and P2 (learning and games) are built and verified: Go tests, all TypeScript suites, the production build, bundle budgets, mock e2e and full-stack e2e pass. Evidence: [P0_P1_VERIFICATION](docs/08-project/P0_P1_VERIFICATION.md), [P2_VERIFICATION](docs/08-project/P2_VERIFICATION.md). Open items (human tasks, credentials): [whats_left.md](whats_left.md). Nazar clip generation: [video_generation_guide.md](video_generation_guide.md).
 
 ## Repository map
 Start at [MAP.md](MAP.md).

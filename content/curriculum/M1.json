@@ -1,0 +1,192 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "M1",
+  "track": "B_road_safety",
+  "title": {
+    "en": "Speed is physics: stopping distance",
+    "hi": "रफ़्तार और भौतिकी: रुकने की दूरी"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "Both",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Deep",
+  "skill_id": "SK-M1",
+  "game_ids": ["stopping_distance"],
+  "drill_ids": [
+    "DR-SD-PREDICT",
+    "DR-SD-PREDICT-WET",
+    "DR-SD-STREET",
+    "DR-SD-SIGHT-DRY",
+    "DR-SD-SIGHT-WET"
+  ],
+  "rule_ids": ["RR-SPD-001", "RR-SPD-002"],
+  "rulepack_rows": [],
+  "learning_objectives": [
+    {
+      "id": "LO-M1-1",
+      "text": {
+        "en": "State total stopping distance at 40, 60 and 80 km/h, dry and wet, to within ±20%.",
+        "hi": "40, 60 और 80 किमी/घंटा पर, सूखी और गीली सड़क पर, कुल रुकने की दूरी ±20% के भीतर बताएँ।"
+      }
+    },
+    {
+      "id": "LO-M1-2",
+      "text": {
+        "en": "Explain that braking distance grows with the square of speed: double the speed, about four times the braking distance.",
+        "hi": "समझाएँ कि ब्रेक की दूरी रफ़्तार के वर्ग के हिसाब से बढ़ती है: दोगुनी रफ़्तार, लगभग चार गुना ब्रेक की दूरी।"
+      }
+    },
+    {
+      "id": "LO-M1-3",
+      "text": {
+        "en": "Choose a speed at which you can stop within the distance you can see to be clear.",
+        "hi": "ऐसी रफ़्तार चुनें जिस पर आप साफ़ दिख रही दूरी के भीतर रुक सकें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-M1-1",
+      "title": {
+        "en": "Two distances: thinking + braking",
+        "hi": "दो दूरियाँ: सोचने की + ब्रेक की"
+      }
+    },
+    {
+      "id": "LS-M1-2",
+      "title": {
+        "en": "Dry vs wet",
+        "hi": "सूखी बनाम गीली सड़क"
+      }
+    },
+    {
+      "id": "LS-M1-3",
+      "title": {
+        "en": "Speed for what you can see",
+        "hi": "जितना दिखे, उतनी रफ़्तार"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-M1-1",
+      "kind": "physics",
+      "text": {
+        "en": "Total stopping distance is thinking distance plus braking distance. With teaching values: 40 km/h dry ≈ 25.7 m; 60 km/h dry ≈ 45.2 m; 60 km/h wet ≈ 60.4 m; 80 km/h dry ≈ 69.3 m.",
+        "hi": "कुल रुकने की दूरी = सोचने की दूरी + ब्रेक की दूरी। शिक्षण मानों से: 40 किमी/घंटा सूखी ≈ 25.7 मी; 60 किमी/घंटा सूखी ≈ 45.2 मी; 60 किमी/घंटा गीली ≈ 60.4 मी; 80 किमी/घंटा सूखी ≈ 69.3 मी।"
+      },
+      "sources": [
+        {
+          "title": "Computed from d = v·t_r + v²/(2μg) with teaching values t_r = 1.5 s, μ = 0.7 dry / 0.4 wet (CURRICULUM M1); real roads vary",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "high",
+      "verified": false,
+      "rule_id": "RR-SPD-001"
+    },
+    {
+      "id": "KF-M1-2",
+      "kind": "evidence",
+      "text": {
+        "en": "Over-speeding is the violation recorded in 1,17,682 deaths (68.1%) in 2023 and 1,24,522 (70.3%) in 2024. These are police attributions and partly work as a default label.",
+        "hi": "2023 में 1,17,682 मौतों (68.1%) और 2024 में 1,24,522 (70.3%) में तेज़ रफ़्तार दर्ज कारण था। ये पुलिस के दर्ज कारण हैं और कुछ हद तक डिफ़ॉल्ट लेबल की तरह काम करते हैं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.1 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        },
+        {
+          "title": "MoRTH, Road Accidents in India 2024 (RAI24), CSV24-V (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    },
+    {
+      "id": "KF-M1-3",
+      "kind": "evidence",
+      "text": {
+        "en": "66% of road deaths in 2023 (1,14,447) happened on straight roads.",
+        "hi": "2023 में 66% सड़क मौतें (1,14,447) सीधी सड़कों पर हुईं।"
+      },
+      "sources": [
+        {
+          "title": "MoRTH, Road Accidents in India 2023 (RAI23), Table 3.5 (via research 02-accident-curriculum; not re-fetched)",
+          "url": null,
+          "grade": "P",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "medium",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-M1-1",
+      "myth": {
+        "en": "Double the speed means double the braking distance.",
+        "hi": "दोगुनी रफ़्तार यानी दोगुनी ब्रेक की दूरी।"
+      },
+      "correction": {
+        "en": "Braking distance roughly quadruples, so total stopping distance more than doubles.",
+        "hi": "ब्रेक की दूरी लगभग चार गुना हो जाती है, इसलिए कुल रुकने की दूरी दोगुने से ज़्यादा हो जाती है।"
+      },
+      "rule_id": "RR-SPD-001"
+    },
+    {
+      "id": "MC-M1-2",
+      "myth": {
+        "en": "Good brakes let you ride fast without risk.",
+        "hi": "अच्छे ब्रेक हों तो तेज़ चलाने में कोई जोखिम नहीं।"
+      },
+      "correction": {
+        "en": "Brakes can't beat physics: at higher speed you need far more road to stop.",
+        "hi": "ब्रेक भौतिकी को नहीं हरा सकते: ज़्यादा रफ़्तार पर रुकने के लिए कहीं ज़्यादा सड़क चाहिए।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 8,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G2 ≥ 80 in 2 sessions at least 1 day apart, and FSRS mastery ≥ 0.8.",
+      "hi": "कम से कम 1 दिन के अंतर पर 2 सेशन में G2 ≥ 80, और FSRS महारत ≥ 0.8।"
+    },
+    "readiness": "road",
+    "item_refs": []
+  },
+  "review": {
+    "needs": [
+      "Physics review by an engineering faculty member or team member; μ and t_r labelled 'teaching values, real roads vary'"
+    ],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

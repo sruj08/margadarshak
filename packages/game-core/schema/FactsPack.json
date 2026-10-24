@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "locale": {
+      "type": "string",
+      "enum": ["en", "hi", "hinglish"]
+    },
+    "gameId": {
+      "type": "string",
+      "enum": [
+        "nazar",
+        "stopping_distance",
+        "blind_spot",
+        "junction_scan",
+        "track_twin",
+        "helmet_fit",
+        "golden_hour",
+        "night_glare",
+        "hill_road",
+        "ll_sim"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["learn", "practice", "mock", "pair"]
+    },
+    "debriefMode": {
+      "type": "string",
+      "enum": ["ai_or_template", "template_only"]
+    },
+    "score": {
+      "type": "object",
+      "properties": {
+        "pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "passed": {
+          "type": ["boolean", "null"]
+        },
+        "pass_mark": {
+          "type": "number"
+        },
+        "band": {
+          "type": "string",
+          "enum": ["strong", "medium", "weak"]
+        }
+      },
+      "required": ["pct", "passed", "band"],
+      "additionalProperties": false
+    },
+    "findings": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "findingId": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "severity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "ruleIds": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 32
+            }
+          },
+          "skillId": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "drillIds": {
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 48
+            }
+          },
+          "facts": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,23}$"
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "itemRef": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "findingId",
+          "severity",
+          "critical",
+          "ruleIds",
+          "skillId",
+          "drillIds",
+          "facts"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "positives": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "findingId": {
+            "type": "string",
+            "maxLength": 40,
+            "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+          },
+          "facts": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,23}$"
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          }
+        },
+        "required": ["findingId", "facts"],
+        "additionalProperties": false
+      }
+    },
+    "allowedRuleIds": {
+      "maxItems": 24,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 32,
+        "pattern": "^RR-[A-Z][A-Z0-9]{1,3}-\\d{3}$"
+      }
+    },
+    "drillCandidates": {
+      "minItems": 1,
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "drillId": {
+            "type": "string",
+            "maxLength": 48,
+            "pattern": "^DR-[A-Z]{2,3}-[A-Z0-9_-]+$"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": ["drillId", "level"],
+        "additionalProperties": false
+      }
+    },
+    "prevFindings": {
+      "maxItems": 36,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 40,
+        "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+      }
+    },
+    "resolvedSinceLast": {
+      "maxItems": 36,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 40,
+        "pattern": "^[A-Z]{2,3}_[A-Z0-9_]+$"
+      }
+    },
+    "labels": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,23}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "additionalProperties": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    }
+  },
+  "required": [
+    "locale",
+    "gameId",
+    "mode",
+    "debriefMode",
+    "score",
+    "findings",
+    "positives",
+    "allowedRuleIds",
+    "drillCandidates",
+    "prevFindings",
+    "resolvedSinceLast",
+    "labels"
+  ],
+  "additionalProperties": false,
+  "$id": "https://margdarshak.example/schemas/game-core/FactsPack.json",
+  "title": "FactsPack"
+}

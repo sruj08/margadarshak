@@ -13,22 +13,22 @@
 - "Unknown" is always a valid model answer.
 
 **Where the models sit.**
-- Five models are runtime Gemini calls behind Google ADK 2.12 (Python): M-01..M-05 and M-07.
+- Five models are runtime Gemini calls behind ADK for Go (`google.golang.org/adk` v1.9.0, with the Go Gemini SDK `google.golang.org/genai` v1.76.0) inside the Go API: M-01..M-05 and M-07.
 - One is an offline authoring model: M-06.
 - One is a third-party Indian speech model: M-08.
 - One group runs on the device and never sends data out: M-09.
 
-| ID | Agent | Model (env var → default) | Where it runs | Phase-1/2 status | Under-18? |
+| ID | Agent | Model (env var → default) | Where it runs | Phase-1/2 status | Minor in family mode? |
 |---|---|---|---|---|---|
-| M-01 | VoiceGuideAgent | `MD_MODEL_VOICE_LIVE` → `gemini-3.8-live`; fallback `MD_MODEL_VOICE_LIVE_FALLBACK` → `gemini-2.5-flash-native-audio-preview-12-2025` | Cloud (Gemini Live via ADK `run_live`) | **Build (thin, bounded):** Hindi + English, 8 destinations, 10 fields (04 §3.1) | **No** |
-| M-02 | DebriefAgent | `MD_MODEL_DEBRIEF` → `gemini-3.1-flash-lite` | Cloud (one LLM node in the ADK graph) | **Build:** deep slice B | **No** (template card instead) |
-| M-03 | CoachAgent | `MD_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly batch through n8n W6 → API | Build (thin) | **No** (template plan) |
-| M-04 | TutorAgent | `MD_MODEL_TUTOR` → `gemini-3.1-flash-lite` | Cloud | Build (thin; explanations reviewed offline, see §M-04) | **No** (static reviewed explanation) |
-| M-05 | ScreenDecoderAgent | `MD_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Build: status-screenshot path. Paper slip is **thin/stretch** (04 §3.6) | **No** (manual stage dropdown) |
-| M-06 | ClipWindowProposer | `MD_MODEL_VIDEO` → `gemini-3.8-flash` | Cloud, **offline**, inside the Render Workflows clip pipeline | **Build first** (04 §4 order 2; D-15 headline Workflow) | n/a (never user-facing) |
-| M-07 | SignSnap | `MD_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Could (F-27) | **No** (sign catalogue browse) |
-| M-08 | Sarvam Saaras v3 (STT) + Bulbul v3 `hi-IN` (TTS) | `SARVAM_STT_MODEL`, `SARVAM_TTS_MODEL` (exact strings **[unverified]**, owner AI lead, check at H0) | Cloud (Sarvam API) | Stretch: Dogri cascade (+4 h, 04 §3.1) | **No** |
-| M-09 | On-device: MediaPipe Face Landmarker (Helmet Fit); YuNet face detector + plate detector (clip blur) | n/a (bundled model files, hash-pinned) | Device (browser) for Helmet Fit; pipeline worker for blur | Build: Helmet Fit framing; blur in clip pipeline | Helmet Fit yes (no data leaves the device, no telemetry for u18); blur n/a |
+| M-01 | VoiceGuideAgent | `GEMINI_MODEL_LIVE` → `gemini-3.8-live`; fallback `GEMINI_MODEL_LIVE_FALLBACK` → `gemini-2.5-flash-native-audio-preview-12-2025` | Cloud (Gemini Live via ADK for Go `Runner.RunLive`) | **Build (thin, bounded):** Hindi + English, 8 destinations, 10 fields (04 §3.1) | **Yes** (parent's consent) |
+| M-02 | DebriefAgent | `GEMINI_MODEL_DEBRIEF` → `gemini-3.1-flash-lite` | Cloud (one `Runner.Run` call inside the Go debrief pipeline) | **Build:** deep slice B | **Yes** (parent's consent) |
+| M-03 | CoachAgent | `GEMINI_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly batch through n8n W6 → API | Build (thin) | **Yes** (parent's consent) |
+| M-04 | TutorAgent | `GEMINI_MODEL_TUTOR` → `gemini-3.1-flash-lite` | Cloud | Build (thin; explanations reviewed offline, see §M-04) | **Yes** (parent's consent) |
+| M-05 | ScreenDecoderAgent | `GEMINI_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Build: status-screenshot path. Paper slip is **thin/stretch** (04 §3.6) | **Yes** (parent's consent) |
+| M-06 | ClipWindowProposer | `GEMINI_MODEL_VIDEO` → `gemini-3.8-flash` | Cloud, **offline**: the TypeScript Render Workflows clip task calls a Go API job step that runs the agent | **Build first** (04 §4 order 2; D-15 headline Workflow) | n/a (never user-facing) |
+| M-07 | SignSnap | `GEMINI_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Could (F-27) | **Yes** (parent's consent) |
+| M-08 | Sarvam Saaras v3 (STT) + Bulbul v3 `hi-IN` (TTS) | `SARVAM_STT_MODEL`, `SARVAM_TTS_MODEL` (exact strings **[unverified]**, owner AI lead, check at H0) | Cloud (Sarvam API) | Stretch: Dogri cascade (+4 h, 04 §3.1) | **Yes** (parent's consent) |
+| M-09 | On-device: MediaPipe Face Landmarker (Helmet Fit); YuNet face detector + plate detector (clip blur) | n/a (bundled model files, hash-pinned) | Device (browser) for Helmet Fit; pipeline worker for blur | Build: Helmet Fit framing; blur in clip pipeline | Helmet Fit yes (no data leaves the device); blur n/a |
 
 **Why env vars and not hard-coded IDs.**
 - Gemini model naming is moving fast. On 2026-10-22 the models page already marks `gemini-3.1-flash-live-preview` as legacy and recommends `gemini-3.8-live`.
@@ -43,13 +43,13 @@
 
 | Variable | Default (H0 pin) | Used by | Note |
 |---|---|---|---|
-| `MD_MODEL_VOICE_LIVE` | `gemini-3.8-live` | M-01 | ADK 2.12 support is **unknown** (04 §6 Q1). The H0 smoke test decides; on failure, flip to the fallback |
-| `MD_MODEL_VOICE_LIVE_FALLBACK` | `gemini-2.5-flash-native-audio-preview-12-2025` | M-01 | The ADK-documented default (04 §0.4) |
-| `MD_MODEL_TEXT_LITE` | `gemini-3.1-flash-lite` | M-02/03/04, router, scam explainer, commentary classifier | The cheapest current non-legacy model (04 §1.7) |
-| `MD_MODEL_DEBRIEF` / `MD_MODEL_COACH` / `MD_MODEL_TUTOR` | `${MD_MODEL_TEXT_LITE}` | per agent | Per-agent override for A/B tests via ADK agent routing (experimental, 04 §1.2) |
-| `MD_MODEL_VISION` | `gemini-3.6-flash` | M-05, M-07 | Multimodal |
-| `MD_MODEL_VIDEO` | `gemini-3.8-flash` | M-06 | Offline authoring |
-| `MD_GEMINI_TIER` | `paid` | all | The start-up check **refuses to boot** with `APP_ENV in {staging, prod, field}` unless the value is `paid` (D-13, 04 §0.2) |
+| `GEMINI_MODEL_LIVE` | `gemini-3.8-live` | M-01 | ADK for Go v1.9 support is **unknown** (04 §6 Q1). The H0 smoke test decides; on failure, flip to the fallback |
+| `GEMINI_MODEL_LIVE_FALLBACK` | `gemini-2.5-flash-native-audio-preview-12-2025` | M-01 | The ADK-documented default (04 §0.4) |
+| `GEMINI_MODEL_TEXT_LITE` | `gemini-3.1-flash-lite` | M-02/03/04, router, scam explainer, commentary classifier | The cheapest current non-legacy model (04 §1.7) |
+| `GEMINI_MODEL_DEBRIEF` / `GEMINI_MODEL_COACH` / `GEMINI_MODEL_TUTOR` | `${GEMINI_MODEL_TEXT_LITE}` | per agent | Per-agent override for A/B tests via ADK agent routing (experimental, 04 §1.2) |
+| `GEMINI_MODEL_VISION` | `gemini-3.6-flash` | M-05, M-07 | Multimodal |
+| `GEMINI_MODEL_VIDEO` | `gemini-3.8-flash` | M-06 | Offline authoring |
+| `MD_GEMINI_TIER` | `paid` | all | The start-up check **refuses to boot** with `APP_ENV in {staging, prod, field}` unless the value is `paid` (D-13 revised, 04 §0.2) |
 | `MD_GEMINI_SAFETY_THRESHOLD` | `BLOCK_MEDIUM_AND_ABOVE` | all | Set explicitly, because the default is OFF on Gemini 2.5+ (04 §1.8) |
 | `MD_VOICE_MONTHLY_CAP_MIN` | `10` | M-01 | Free-plan cap per user (04 §5) |
 | `MD_DEBRIEF_TIMEOUT_MS` | `6000` | M-02 | After this the template card stays (08 §5.6) |
@@ -61,10 +61,10 @@
 
 | Setting | M-02/03/04 | M-05/07 | M-06 | M-01 |
 |---|---|---|---|---|
-| Structured output | Yes (`response_schema` from Pydantic) | Yes | Yes | No (Live outputs audio only; tools carry the structure, 04 §1.5) |
+| Structured output | Yes (`OutputSchema` / `ResponseSchema` as a `*genai.Schema` generated from the Go draft structs) | Yes | Yes | No (Live outputs audio only; tools carry the structure, 04 §1.5) |
 | Temperature | 0.3 (glue text only) | 0.0 | 0.2 | provider default |
 | Safety | `BLOCK_MEDIUM_AND_ABOVE` on harassment, hate_speech, sexually_explicit, dangerous_content, jailbreak (04 §1.8) | same | same | same |
-| Tools | **None** for M-02/M-03 (facts are injected through state; this avoids the reported `output_schema` + tools conflict, 08 §5.2). M-04: none | None | None | `navigate`, `set_field`, `read_back`, `confirm`, `get_rule`, `read_debrief`, `open_drill`, `lookup_screen` |
+| Tools | **None** for M-02/M-03 (facts are injected through state; this avoids the reported `OutputSchema` + tools conflict, 08 §5.2). M-04: none | None | None | `navigate`, `set_field`, `read_back`, `confirm`, `get_rule`, `read_debrief`, `open_drill`, `lookup_screen` |
 | Grounding with Google Search | **Off, everywhere.** It would bring back the same YouTube and blog misinformation users complain about (04 §0.5) | Off | Off | Off |
 
 **Structured output caveats (04 §1.3).**
@@ -91,13 +91,14 @@ All prices are Standard tier, per 1M tokens, from the [pricing page, updated 202
    - On the free tier, "human reviewers may read, annotate, and process your API input and output". Paid Services don't use prompts for product improvement ([Gemini API terms](https://ai.google.dev/gemini-api/terms), 04 §0.2).
    - The free tier is used only in `APP_ENV=dev`, and only with synthetic data.
    - Billing is switched on before the journey test (n = 5–8) and the Nazar study (n = 40–80).
-2. **18+ only.** The terms say "You must be 18 years of age or older to use the APIs", and they bar clients "likely to be accessed by" under-18s (04 §0.1).
-   - Every model call passes the server-side `AgeGate` (see [AGENTS §7](AGENTS.md#7-under-18-gating)).
-   - The open legal question ("is the whole app *likely accessed* by minors?") is logged as R-13. Owner: Product lead + counsel, before public launch.
+2. **AI for everyone, adult account holders (D-13 revised).** Every model is available to every user. The account holder is always an adult; a learner under 18 uses Margdarshak inside a parent's account (family mode).
+   - Every model call passes the server-side consent gate (see [AGENTS §7](AGENTS.md#7-family-mode-and-consent-gate-d-13-revised)): the holder's consent, or the parent's for a family member's case.
+   - A minor profile's inputs and outputs are never used for profiling or ads (DPDP s.9(3)).
+   - Provider terms on services likely accessed by under-18s: residual risk R-13 (RISK_REGISTER), owned by the legal lead.
 3. **No PII to any model, by construction.**
    - **Never sent, on any path:** Aadhaar number, OTP, captcha, passwords, face images (for any purpose), phone, email, LL/DL/application numbers, location.
-   - **Never sent on the M-02/03/04/05/07 paths:** name, DOB, address, RTO code. Inputs there are typed Pydantic models with `extra="forbid"`, so a PII field cannot be added by accident (08 §5.10).
-   - **The one exception is voice field-fill (M-01/M-08).** When an adult *chooses* to dictate their own name or address into Margdarshak's form, that speech reaches Gemini Live (or Saaras) on the paid tier, for that request only. Conditions:
+   - **Never sent on the M-02/03/04/05/07 paths:** name, DOB, address, RTO code. Inputs there are typed Go structs decoded with `json.Decoder.DisallowUnknownFields()` and built only by code from allowlisted fields, so a PII field cannot be added by accident (08 §5.10).
+   - **The one exception is voice field-fill (M-01/M-08).** When the account holder *chooses* to dictate their own name or address (or, in family mode, their child's) into Margdarshak's form, that speech reaches Gemini Live (or Saaras) on the paid tier, for that request only. Conditions:
      - a separate "voice fill" consent;
      - the value is never written to logs or traces (redacted at the span exporter);
      - the user confirms it on screen.
@@ -151,9 +152,9 @@ Each card covers task, model, why chosen, alternatives, inputs/outputs, latency 
 | Cost | ≈ $0.023/min ≈ **₹2/min**. Capped at 10 min/user/month on the free plan, so ≤ ₹20/user/month (04 §5) |
 | Context and session limits | 128k tokens for native audio models. Sessions: **15 min audio-only**, 2 min audio+video, ~10 min connection lifetime. Context-window compression and session resumption extend them (04 §1.5) |
 | Fallback chain | `gemini-3.8-live` → `gemini-2.5-flash-native-audio-preview-12-2025` → text mode (the same tools over `gemini-3.1-flash-lite`) → plain search box (EC-29) |
-| Device vs cloud | Cloud. The browser connects to **our** FastAPI WebSocket, never to Google directly, so no API key or ephemeral token reaches the client. If a client-direct mode is ever added, it must use ephemeral tokens (04 §1.5) |
+| Device vs cloud | Cloud. The browser connects to **our** Go API WebSocket (API-40), never to Google directly, so no API key or ephemeral token reaches the client. If a client-direct mode is ever added, it must use ephemeral tokens (04 §1.5) |
 | Indic performance | Hindi/English: no vendor benchmark. We measure **intent accuracy** on `voice_nav_30` (+ the 60-utterance recorded set) and **Hindi fluency ≥ 4/5** with a native rater ([AI_EVALS](AI_EVALS.md)). Dogri: not supported by Live; via M-08 |
-| Intended use | Adults (18+) navigating Margdarshak's own screens, filling non-sensitive fields, hearing rule cards with their source |
+| Intended use | Every user (a learner under 18 through a parent's account, family mode) navigating Margdarshak's own screens, filling non-sensitive fields, hearing rule cards with their source |
 | Out of scope / limitations | Not a chatbot for legal advice. It can't book, pay or submit anywhere. It won't fill Aadhaar, OTP, mobile-OTP, captcha or password fields (they are absent from the enum). Live 3.1 has no proactivity or affective dialogue, and its function calling is synchronous (04 §1.5). Barge-in discards pending function calls, so tools are idempotent |
 
 ### M-02 DebriefAgent (F-25, API-36)
@@ -163,14 +164,14 @@ Each card covers task, model, why chosen, alternatives, inputs/outputs, latency 
 | Task | After a scored game session, write the four-part Debrief Card (how you did · where you lacked · what you could have done · next drill) from **deterministic** findings. It orders findings, picks `rule_id` and `drill_id` from per-request allowlists, and writes short glue text with **no digits** (08 §5) |
 | Model | `gemini-3.1-flash-lite` |
 | Why | Templates can state findings, but they read robotic when 2–3 findings combine across games and languages. The model adds prioritised, connected, warm Hinglish. It adds **no facts**. This is a deliberately THIN AI feature (08 §5.1) |
-| Alternatives | (a) Templates only: this is the fallback and the under-18 path ("Auto notes"). (b) `gemini-3.6-flash`: 3× the price for no measurable gain on 2.4k-token glue text; re-evaluate only if Hindi fluency is < 4/5 on Flash-Lite |
-| Inputs | `DebriefFacts` (Pydantic, `extra="forbid"`): the top-3 findings with `facts`, `allowed_rule_ids`, `drill_candidates`, `locale`, and `prev_finding_ids` (last 3). **Never** raw video, camera frames, audio, name, DOB, phone, RTO or case-file data (08 §5.1) |
+| Alternatives | (a) Templates only: this is the fallback (no consent, Golden Hour, budget breaker) ("Auto notes"). (b) `gemini-3.6-flash`: 3× the price for no measurable gain on 2.4k-token glue text; re-evaluate only if Hindi fluency is < 4/5 on Flash-Lite |
+| Inputs | `DebriefFacts` (Go struct, unknown fields rejected): the top-3 findings with `facts`, `allowed_rule_ids`, `drill_candidates`, `locale`, and `prev_finding_ids` (last 3). **Never** raw video, camera frames, audio, name, DOB, phone, RTO or case-file data (08 §5.1) |
 | Outputs | `DebriefDraft` JSON ([PROMPTS §3.1](PROMPTS.md#31-debriefdraft-m-02)). Rendered by code: `{{fact:key}}` placeholders are filled per locale ("≈ 16 m" / "लगभग 16 मीटर"), and the rule text plus source link come from `rules.json` |
 | Tokens and cost | ≈ 2.4k in + 350 out ≈ $0.0011; with 5% retries ≈ **$0.0012 ≈ ₹0.10 per debrief**. About 30 sessions/user/month ≈ **₹3/user/month** (08 §5.8). Unaffected by the Flash price change as far as 04 says |
 | Latency target | Server-side **p50 < 2.0 s, p90 < 4.0 s** [D] (08 §5.8). Hard timeout 6 s → the template stays. The UI shows the template card instantly and swaps in the coach card, so the user never waits |
 | Fallback | One retry with the validator error list → template card. The circuit breaker opens at a fallback rate > 20% over 5 min (EC-29) |
 | Indic performance | Locales `en`, `hi`, `hinglish`. Gates: Hindi fluency ≥ 4.0/5 (native rater), Devanagari ≥ 70% of letters for `hi` [D] |
-| Intended use | Narrating code-computed results to adults who consented to "AI coach" |
+| Intended use | Narrating code-computed results to users who consented to "AI coach" (for a family member's case, the parent consented) |
 | Limitations | Can't compute, can't cite `verified:false` rules, can't mention numbers except through placeholders. The Golden Hour game (G9) is **template-only** (safety-critical first-aid content, D-14 row 12): DebriefAgent is never called for `golden_hour` sessions |
 
 ### M-03 CoachAgent (F-26, n8n W6)
@@ -264,13 +265,13 @@ Each card covers task, model, why chosen, alternatives, inputs/outputs, latency 
 
 | Component | Task | Where | Privacy | Eval |
 |---|---|---|---|---|
-| **MediaPipe Face Landmarker** (`@mediapipe/tasks-vision`, version pinned at H0) | Helmet Fit (G8): check that the face is centred and the chin and jaw are visible, so the user frames the strap area. Strap fastening is a **guided self-check**; no stock model detects "strap fastened" (08 G8) | Browser, on device | **No frame ever leaves the device**; no face image ever goes to Gemini. Telemetry carries booleans only; under-18 users get no telemetry | 30 consented team captures × lighting conditions: framing-detection agreement with a human ≥ 90% [D] |
+| **MediaPipe Face Landmarker** (`@mediapipe/tasks-vision`, version pinned at H0) | Helmet Fit (G8): check that the face is centred and the chin and jaw are visible, so the user frames the strap area. Strap fastening is a **guided self-check**; no stock model detects "strap fastened" (08 G8) | Browser, on device | **No frame ever leaves the device**; no face image ever goes to Gemini. Telemetry carries booleans only; a minor profile's booleans are never used for profiling | 30 consented team captures × lighting conditions: framing-detection agreement with a human ≥ 90% [D] |
 | Optional helmet classifier (MediaPipe Model Maker, ~500 consented team photos) | "Helmet on / strap visible" | Device | Same | Accuracy **unknown** until trained, so advisory only (stretch) |
 | **YuNet** face detector + a licence-plate detector (model and licence chosen at H0; **[unverified]** which plate model, owner: pipeline lead) | Blur faces and plates in Nazar clips before any upload to M-06 or publication | Render Workflows worker (`blur` step) | Raw clips are deleted after the blur audit (see DATA_PIPELINE) | **100% human blur audit before publish** (PROJECT_BRIEF M-09); miss rate on the audited frames reported per clip |
 
 ---
 
-## 3. Cost roll-up per active adult user per month
+## 3. Cost roll-up per active user per month
 
 Paid tier, today's prices, ₹88/$ assumed. Detail is in [COST](../05-ops/COST.md).
 
@@ -297,18 +298,18 @@ Paid tier, today's prices, ₹88/$ assumed. Detail is in [COST](../05-ops/COST.m
 | Provider | Gemini Developer API, **paid tier** before any real user | Vertex AI, Indian region (`HUNCH:` asia-south1 **[unverified]**), enterprise terms after legal review (D §3.1 G8) |
 | Voice | Hindi + English on Live; Dogri cascade is a stretch | Bhashini as the government-preferred speech path where coverage is proven; Saaras as a processor under contract |
 | Model pinning | Env vars, H0 smoke test | The model change process: shadow traffic → eval gate → canary 5% → full ([AI_EVALS §6](AI_EVALS.md#6-ci-gating-and-regression)) |
-| Hosting of the ADK runtime | In-process in the FastAPI service on Render Singapore | Container on a MeitY-empanelled cloud / NIC; Cloud Run asia-south1 as the GCP option |
+| Hosting of the ADK runtime | In-process in the Go API service on Render Singapore | Container on a MeitY-empanelled cloud / NIC; Cloud Run asia-south1 as the GCP option |
 | Monitoring | Sentry + OTel spans with model ID, latency, token counts, validator verdict | Plus a quarterly fairness audit, drift dashboards and an AI incident log feeding the CERT-In runbook |
 
 ## 5. Open items (owner, due)
 
 | # | Item | Owner | Due |
 |---|---|---|---|
-| 1 | Does ADK 2.12 `run_live` accept `gemini-3.8-live`? | AI lead | H0 + 2 h |
+| 1 | Does ADK for Go v1.9 `Runner.RunLive` accept `gemini-3.8-live`? | AI lead | H0 + 2 h |
 | 2 | Live round-trip p50/p90 on Jio/Airtel 4G, mid-range Android Chrome | AI lead + QA | H0 + 6 h |
 | 3 | Gemini OCR on 10 Sarathi screenshots, incl. Devanagari | AI lead | H0 + 6 h |
 | 4 | Saaras `doi-IN` on 10 team Dogri recordings; exact model strings; price | AI lead + Dogri reviewer | H0 + 6 h |
-| 5 | Legal reading of "likely to be accessed by" under-18s | Product lead + counsel | Before public launch |
+| 5 | Provider terms on services "likely to be accessed by" under-18s (R-13): confirm with Google or add a provider that permits minors | Legal lead | Before public launch |
 | 6 | Flash-Lite pricing on 2027-01-01 | AI lead | 2027-01-02 |
 | 7 | Plate-detector model choice and licence | Pipeline lead | H0 + 4 h |
 | 8 | Token count of video at `fps: 2` (measure on one clip) | Pipeline lead | H0 + 4 h |

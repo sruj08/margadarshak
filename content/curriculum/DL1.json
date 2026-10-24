@@ -1,0 +1,137 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "DL1",
+  "track": "DL_familiarisation",
+  "title": {
+    "en": "Driving-test familiarisation",
+    "hi": "ड्राइविंग टेस्ट से परिचय"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "per_class",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Thin (2W figure-8)",
+  "skill_id": "SK-DL1",
+  "game_ids": ["track_twin"],
+  "drill_ids": [
+    "DR-TT-FIG8-SLOW",
+    "DR-TT-FIG8-WIDE",
+    "DR-TT-TIMED",
+    "DR-TT-GRADIENT",
+    "DR-TT-REVPARK"
+  ],
+  "rule_ids": [],
+  "rulepack_rows": ["PRM-DL-TEST"],
+  "learning_objectives": [
+    {
+      "id": "LO-DL1-1",
+      "text": {
+        "en": "Know the shape and fault types of the track for your class: 2W figure-8; car H-track, reverse park, gradient.",
+        "hi": "अपनी श्रेणी के ट्रैक का आकार और ग़लतियों के प्रकार जानें: दोपहिया के लिए आठ के आकार का ट्रैक; कार के लिए H-ट्रैक, रिवर्स पार्किंग, चढ़ाई।"
+      }
+    },
+    {
+      "id": "LO-DL1-2",
+      "text": {
+        "en": "Rehearse the layout slowly.",
+        "hi": "ट्रैक का धीमे-धीमे अभ्यास करें।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-DL1-1",
+      "title": {
+        "en": "What the track looks like for your class",
+        "hi": "आपकी श्रेणी का ट्रैक कैसा दिखता है"
+      }
+    },
+    {
+      "id": "LS-DL1-2",
+      "title": {
+        "en": "What's checked on the practice layout",
+        "hi": "अभ्यास ट्रैक पर क्या जाँचा जाता है"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-DL1-1",
+      "kind": "evidence",
+      "text": {
+        "en": "Delhi's automated tracks are reported to fail about half of applicants; Gujarat's are reported to fail 94% of car applicants on four AI tracks.",
+        "hi": "बताया जाता है कि दिल्ली के ऑटोमेटेड ट्रैक पर लगभग आधे आवेदक पास नहीं होते; गुजरात के चार AI ट्रैक पर 94% कार आवेदक पास नहीं होते।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak research PROJECT_BRIEF §2 (secondary; not re-fetched)",
+          "url": null,
+          "grade": "S",
+          "pin_status": "to_pin",
+          "checked_on": null
+        }
+      ],
+      "confidence": "low",
+      "verified": false
+    },
+    {
+      "id": "KF-DL1-2",
+      "kind": "design",
+      "text": {
+        "en": "The game is labelled 'Practice layout, not your RTO's track' until a published spec exists, and never claims to train balance or clutch control.",
+        "hi": "जब तक प्रकाशित स्पेक न हो, गेम पर 'अभ्यास ट्रैक, आपके RTO का ट्रैक नहीं' लिखा रहता है, और यह कभी संतुलन या क्लच कंट्रोल सिखाने का दावा नहीं करता।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak design decision (GAME_DESIGN §1.1, §6)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "high",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-DL1-1",
+      "myth": {
+        "en": "Practising on the app's layout means you know your RTO's track.",
+        "hi": "ऐप के ट्रैक पर अभ्यास से आपके RTO का ट्रैक आ जाता है।"
+      },
+      "correction": {
+        "en": "It is a practice layout; RTO tracks differ and their criteria are not published.",
+        "hi": "यह अभ्यास ट्रैक है; RTO के ट्रैक अलग होते हैं और उनके मानदंड प्रकाशित नहीं हैं।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 10,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "G5 demerits ≤ threshold with no immediate-fail fault, twice.",
+      "hi": "दो बार, बिना तुरंत रुकने वाली ग़लती के, G5 के डिमेरिट सीमा के भीतर।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Per-RTO track spec maker-checker (F-42)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

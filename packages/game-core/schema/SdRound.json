@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "number",
+          "const": 1
+        },
+        "speedKmh": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 120
+        },
+        "surface": {
+          "type": "string",
+          "enum": ["dry", "wet"]
+        }
+      },
+      "required": ["round", "speedKmh", "surface"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "number",
+          "const": 2
+        },
+        "surface": {
+          "type": "string",
+          "enum": ["dry", "wet"]
+        },
+        "childDistanceM": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 120
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 120
+            }
+          },
+          "required": ["min", "max"]
+        },
+        "speedOptionsKmh": {
+          "minItems": 2,
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 120,
+            "multipleOf": 5
+          }
+        }
+      },
+      "required": ["round", "surface", "childDistanceM", "speedOptionsKmh"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "number",
+          "const": 3
+        },
+        "surface": {
+          "type": "string",
+          "enum": ["dry", "wet"]
+        },
+        "sightM": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 200
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 200
+            }
+          },
+          "required": ["min", "max"]
+        }
+      },
+      "required": ["round", "surface", "sightM"]
+    }
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/SdRound.json",
+  "title": "SdRound"
+}

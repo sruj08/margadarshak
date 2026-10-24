@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "string",
+  "enum": [
+    "nazar",
+    "stopping_distance",
+    "blind_spot",
+    "junction_scan",
+    "track_twin",
+    "helmet_fit",
+    "golden_hour",
+    "night_glare",
+    "hill_road",
+    "ll_sim"
+  ],
+  "$id": "https://margdarshak.example/schemas/game-core/GameId.json",
+  "title": "GameId"
+}

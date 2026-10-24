@@ -1,0 +1,192 @@
+{
+  "$schema": "../schema/module.schema.json",
+  "file_kind": "module",
+  "version": "2026.10.0",
+  "status": "draft",
+  "licence": "CC-BY-4.0",
+  "attribution": "Margdarshak content pack, team Chanakya (Nestiq Private Limited), 2026",
+  "module_id": "LL0",
+  "track": "A_ll_syllabus",
+  "title": {
+    "en": "Test format & device check",
+    "hi": "टेस्ट फ़ॉर्मैट और डिवाइस जाँच"
+  },
+  "priority": "P0",
+  "priority_tenants": null,
+  "vehicle_scope": "All",
+  "deep_content_classes": ["MCWOG", "MCWG", "LMV-NT"],
+  "available_to": "all",
+  "phase_1_2_depth": "Deep (G10 guided first run)",
+  "skill_id": "SK-LL0",
+  "game_ids": ["ll_sim"],
+  "drill_ids": ["DR-LL-MOCK"],
+  "rule_ids": [],
+  "rulepack_rows": [
+    "PRM-LL-FORMAT",
+    "JK-PRM-LL-FORMAT",
+    "PRM-LL-TEST-MODE",
+    "PRM-TUTORIAL-DAYS",
+    "PRM-RETEST-GAP-DAYS"
+  ],
+  "learning_objectives": [
+    {
+      "id": "LO-LL0-1",
+      "text": {
+        "en": "Know your state's LL test format (questions, pass mark, timer) from the rule pack, with its source and date.",
+        "hi": "रूल पैक से अपने राज्य के LL टेस्ट का फ़ॉर्मैट (सवाल, पास मार्क, टाइमर) उसके स्रोत और तारीख़ के साथ जानें।"
+      }
+    },
+    {
+      "id": "LO-LL0-2",
+      "text": {
+        "en": "Complete the device check the night before: camera, network, battery.",
+        "hi": "टेस्ट से पहले की रात डिवाइस जाँच पूरी करें: कैमरा, नेटवर्क, बैटरी।"
+      }
+    },
+    {
+      "id": "LO-LL0-3",
+      "text": {
+        "en": "Know what happens if you don't pass: the retest steps, with any charge shown from the rule pack's fee table.",
+        "hi": "पास न होने पर क्या होता है, यह जानें: दोबारा टेस्ट के कदम, और कोई भी शुल्क रूल पैक की तालिका से दिखाया जाता है।"
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "LS-LL0-1",
+      "title": {
+        "en": "What the test looks like in your state",
+        "hi": "आपके राज्य में टेस्ट कैसा होता है"
+      }
+    },
+    {
+      "id": "LS-LL0-2",
+      "title": {
+        "en": "Night-before device check",
+        "hi": "टेस्ट से पहले की रात डिवाइस जाँच"
+      }
+    },
+    {
+      "id": "LS-LL0-3",
+      "title": {
+        "en": "If you don't pass: retest steps",
+        "hi": "पास न हों तो: दोबारा टेस्ट के कदम"
+      }
+    }
+  ],
+  "key_facts": [
+    {
+      "id": "KF-LL0-1",
+      "kind": "format",
+      "text": {
+        "en": "In J&K the LL test is reported as 10 questions, with 6 correct needed to pass.",
+        "hi": "J&K में LL टेस्ट 10 सवालों का बताया गया है, जिसमें पास होने के लिए 6 सही जवाब चाहिए।"
+      },
+      "sources": [
+        {
+          "title": "Kashmir Life, Dec 2025, quoting the Srinagar ARTO (rulepacks JK-PRM-LL-FORMAT, verified=false)",
+          "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/",
+          "grade": "S",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rulepack_row": "JK-PRM-LL-FORMAT"
+    },
+    {
+      "id": "KF-LL0-2",
+      "kind": "format",
+      "text": {
+        "en": "Where a state's format isn't confirmed, practice uses 15 questions and a 60% pass mark, labelled as a practice assumption; the commonly claimed 15/9 split is not verified.",
+        "hi": "जहाँ राज्य का फ़ॉर्मैट पक्का नहीं है, वहाँ अभ्यास 15 सवाल और 60% पास मार्क से होता है, जिसे अभ्यास की मान्यता बताया जाता है; अक्सर बताया जाने वाला 15/9 का बँटवारा पक्का नहीं है।"
+      },
+      "sources": [
+        {
+          "title": "rulepacks PRM-LL-FORMAT: Delhi Transport LL page (60% pass mark); 15/9 Sarathi default [MK, unverified]",
+          "url": "https://transport.delhi.gov.in/hi/node/3079",
+          "grade": "P-state",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "low",
+      "verified": false,
+      "rulepack_row": "PRM-LL-FORMAT"
+    },
+    {
+      "id": "KF-LL0-3",
+      "kind": "format",
+      "text": {
+        "en": "Before the LL test you must watch the road-safety tutorial video in full within the window set by the 2022 amendment to CMVR r.11; the number of days comes from the rule pack.",
+        "hi": "LL टेस्ट से पहले सड़क सुरक्षा का ट्यूटोरियल वीडियो पूरा देखना होता है, CMVR r.11 के 2022 संशोधन में तय समय के भीतर; दिनों की संख्या रूल पैक से आती है।"
+      },
+      "sources": [
+        {
+          "title": "rulepacks PRM-TUTORIAL-DAYS: CMVR (Sixteenth Amendment) Rules 2022, r.11 online tutorial",
+          "url": "https://teamleaseregtech.com/updates/article/19226/central-motor-vehicles-sixteenth-amendment-rules-2022",
+          "grade": "S",
+          "pin_status": "pinned",
+          "checked_on": "2026-10-22"
+        }
+      ],
+      "confidence": "medium",
+      "verified": false,
+      "rulepack_row": "PRM-TUTORIAL-DAYS"
+    },
+    {
+      "id": "KF-LL0-4",
+      "kind": "design",
+      "text": {
+        "en": "The guided first run explains each screen of the real flow; there is no face-match step in Margdarshak, identity steps happen on Sarathi.",
+        "hi": "पहली गाइडेड प्रैक्टिस असली प्रक्रिया की हर स्क्रीन समझाती है; Margdarshak में चेहरा मिलाने का कोई कदम नहीं है, पहचान के कदम Sarathi पर होते हैं।"
+      },
+      "sources": [
+        {
+          "title": "Margdarshak design decision (D-07; GAME_DESIGN §11.3)",
+          "url": null,
+          "grade": "unknown",
+          "pin_status": "not_applicable",
+          "checked_on": null
+        }
+      ],
+      "confidence": "high",
+      "verified": false
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MC-LL0-1",
+      "myth": {
+        "en": "Every state's LL test has 15 questions with 9 to pass.",
+        "hi": "हर राज्य के LL टेस्ट में 15 सवाल होते हैं और 9 पर पास।"
+      },
+      "correction": {
+        "en": "Formats differ by state and the 15/9 split is not verified; the app shows your state's format with its source, or says it isn't confirmed.",
+        "hi": "फ़ॉर्मैट राज्य के हिसाब से बदलता है और 15/9 पक्का नहीं है; ऐप आपके राज्य का फ़ॉर्मैट स्रोत के साथ दिखाता है, या बताता है कि वह पक्का नहीं है।"
+      }
+    }
+  ],
+  "concepts": {
+    "target": 8,
+    "authored": []
+  },
+  "assessment": {
+    "criterion": {
+      "en": "Completion only; not part of Test Readiness.",
+      "hi": "सिर्फ़ पूरा करना; टेस्ट रेडीनेस में नहीं गिना जाता।"
+    },
+    "readiness": "none",
+    "item_refs": []
+  },
+  "review": {
+    "needs": ["Rule-pack maker-checker per state (F-42)"],
+    "medical_review_required": false,
+    "draft_label_until_reviewed": false,
+    "reviewed_by": [],
+    "reviewed_on": null,
+    "status": "draft",
+    "hi_review_status": "pending_native_review"
+  }
+}

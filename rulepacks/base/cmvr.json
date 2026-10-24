@@ -1,0 +1,1481 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "IN-base",
+  "name": "Central base pack: MV Act 1988 (as amended 2019) + CMVR 1989",
+  "version": "2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": false,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Seeded from research/ps1-current-state/02-rules-process.md (2026-10-22) and research/ps1-deep/03-lifecycle.md (2026-10-23). Rows graded MK or S-low carry verified=false and show a 'verify at your RTO' chip. Awaiting PD + BE maker-checker sign-off (MD-030).",
+  "rules": [
+    {
+      "id": "PRM-LL-TEST-MODE",
+      "kind": "param",
+      "textKey": "rule.ll.test_mode",
+      "condition": true,
+      "output": { "value": { "onlineAvailable": true, "where": ["home_online", "rto"] } },
+      "text": {
+        "en": "The learner's licence test can be taken online at home with Aadhaar e-KYC, or at the RTO."
+      },
+      "source": {
+        "title": "MoRTH contactless services (18 services incl. LL with online test) in effect from 3 Mar 2021",
+        "url": "https://www.motorbeam.com/?p=275090"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-LL-FORMAT",
+      "kind": "param",
+      "textKey": "rule.ll.format_default",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": false,
+          "questions": 15,
+          "passCorrect": 9,
+          "passPct": 60,
+          "timerSeconds": null
+        }
+      },
+      "text": {
+        "en": "Default LL test format: 60% to pass. The 15 questions / 9 correct split is the commonly reported Sarathi default and is not checked; states configure it."
+      },
+      "source": {
+        "title": "Delhi Transport LL page (60% pass mark); 15/9 Sarathi default [MK, unverified]",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-TUTORIAL-DAYS",
+      "kind": "param",
+      "textKey": "rule.ll.tutorial_within_days",
+      "condition": true,
+      "output": { "value": 7 },
+      "text": {
+        "en": "Watch the road-safety tutorial video within {value} days of applying (CMVR r.11, 2022 amendment)."
+      },
+      "source": {
+        "title": "CMVR (Sixteenth Amendment) Rules 2022, r.11 online tutorial",
+        "url": "https://teamleaseregtech.com/updates/article/19226/central-motor-vehicles-sixteenth-amendment-rules-2022"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-MIN-WAIT-DAYS",
+      "kind": "param",
+      "textKey": "rule.ll.min_wait_days",
+      "condition": true,
+      "output": { "value": 30 },
+      "text": {
+        "en": "You can take the driving test {value} days after your learner's licence is issued."
+      },
+      "source": {
+        "title": "Kashmir Life Dec 2025 (J&K) and South First (Kerala): 30 days after LL; CMVR [MK]",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-LL-VALIDITY-MONTHS",
+      "kind": "param",
+      "textKey": "rule.ll.validity_months",
+      "condition": true,
+      "output": { "value": 6 },
+      "text": { "en": "A learner's licence is valid for {value} months." },
+      "source": {
+        "title": "Delhi Transport, Learner's Licence page: LL validity 6 months",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-RETEST-GAP-DAYS",
+      "kind": "param",
+      "textKey": "rule.dl.retest_gap_days",
+      "condition": true,
+      "output": { "value": 7 },
+      "text": {
+        "en": "After a failed driving test, the retest is usually allowed {value} days later. Verify at your RTO."
+      },
+      "source": {
+        "title": "Sarathi appointment notices (secondary, low reliability); CMVR r.15 [MK] - check on Sarathi",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-REMEDIAL-AFTER-FAIL",
+      "kind": "param",
+      "textKey": "rule.dl.remedial_after_fail",
+      "condition": true,
+      "output": { "value": true },
+      "text": {
+        "en": "After failing the driving test, a remedial driver-training course from a school may be required before you reappear (MV Act s.9 proviso, 2019)."
+      },
+      "source": {
+        "title": "MV (Amendment) Bill 2019 cl.5(iv), s.9 proviso (PRS text)",
+        "url": "https://prsindia.org/files/bills_acts/bills_parliament/2019/Motor%20Vehicles%20(Amendment)%20Bill,%202019.pdf"
+      },
+      "grade": "P",
+      "checkedOn": "2026-10-23",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-FORM1A-AGE",
+      "kind": "param",
+      "textKey": "rule.medical.form1a_age",
+      "condition": true,
+      "output": { "value": 40 },
+      "text": {
+        "en": "From age {value}, a medical certificate (Form 1A) from a registered doctor is needed."
+      },
+      "source": {
+        "title": "Delhi Transport LL page and TN STA contactless LL flow (2022): Form 1A for applicants over 40",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-DL-TEST",
+      "kind": "param",
+      "textKey": "rule.dl.test_type_default",
+      "condition": true,
+      "output": { "value": { "known": false, "automated": null, "tracks": [] } },
+      "text": {
+        "en": "Driving-test format differs by state and office. We don't know it for your RTO yet."
+      },
+      "source": {
+        "title": "CMVR r.15 driving test; test conduct is set by each state [MK]",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "unknown",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PRM-HPT",
+      "kind": "param",
+      "textKey": "rule.hpt.none",
+      "condition": true,
+      "output": { "value": { "status": "none", "effectiveFrom": null } },
+      "text": { "en": "There is no hazard-perception test in the central rules." },
+      "source": {
+        "title": "CMVR 1989 r.11 and r.15 contain no hazard-perception test [MK]",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "PLN-ONE-LL-MANY-CLASSES",
+      "kind": "planner",
+      "textKey": "rule.planner.one_ll_many_classes",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Several classes can go on one learner's licence; fees are still charged per class."
+      },
+      "source": {
+        "title": "Delhi Transport LL page: LL-stage totals Rs 500 / 950 / 1,400 for 1 / 2 / 3 classes",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PLN-SPLIT-BY-AGE",
+      "kind": "planner",
+      "textKey": "rule.planner.split_by_age",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Each class is checked on its own minimum age. Classes you can't get yet move to a later plan dated from the day you become eligible."
+      },
+      "source": {
+        "title": "MV Act 1988 s.4 minimum ages per class [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PLN-SAVING-IF-SEQUENTIAL",
+      "kind": "planner",
+      "textKey": "rule.planner.saving_if_sequential",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Only if you would otherwise do them one after the other: one LL for several classes saves a second application, a second 30-day wait and the per-application fees. Fees per class stay the same."
+      },
+      "source": {
+        "title": "CMVR 1989 r.32 per-application fee heads (LL test, DL issue, card); fee for adding a class later is [MK]",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "PLN-NON-AADHAAR-AT-RTO",
+      "kind": "planner",
+      "textKey": "rule.path.non_aadhaar_requires_visit",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Without Aadhaar e-KYC you upload other proofs and take the LL test at the RTO, so the plan has one more RTO visit."
+      },
+      "source": {
+        "title": "TN STA contactless LL flow (2022); udayavani on non-Aadhaar route",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "ELIG-MIN-AGE",
+      "kind": "eligibility",
+      "textKey": "rule.elig.min_age",
+      "condition": {
+        "lt": [
+          { "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } },
+          { "fact": "class.minAge" }
+        ]
+      },
+      "output": {
+        "deny": true,
+        "reasonKey": "elig.under_min_age",
+        "eligibleFromAge": { "fact": "class.minAge" }
+      },
+      "text": { "en": "You can apply for this class from age {minAge}." },
+      "refs": ["EC-05", "EC-06", "EC-21"],
+      "source": {
+        "title": "MV Act 1988 s.4 [MK]; Delhi Transport class table (16 / 18 / 20)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "ELIG-GUARDIAN-CONSENT",
+      "kind": "eligibility",
+      "textKey": "rule.elig.guardian_consent",
+      "appliesTo": ["MC50CC"],
+      "condition": { "lt": [{ "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } }, 18] },
+      "output": { "requires": ["GUARDIAN_CONSENT"] },
+      "text": { "en": "At 16-17 the 50 cc licence needs your parent's or guardian's consent." },
+      "refs": ["EC-05"],
+      "source": {
+        "title": "MV Act 1988 s.4(2) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "ELIG-U18-ALTERNATIVE-MC50",
+      "kind": "eligibility",
+      "textKey": "rule.elig.u18_alternative_mc50",
+      "appliesTo": ["MCWOG", "MCWG"],
+      "condition": {
+        "between": [{ "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } }, 16, 17]
+      },
+      "output": { "alternatives": ["MC50CC"] },
+      "text": {
+        "en": "Until 18 you can only get the gearless up-to-50 cc licence, with guardian consent."
+      },
+      "refs": ["EC-05"],
+      "source": {
+        "title": "MV Act 1988 s.4(2) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "ELIG-FORM1A-ALWAYS",
+      "kind": "eligibility",
+      "textKey": "rule.elig.form1a_always",
+      "condition": { "eq": [{ "fact": "class.form1a" }, "always"] },
+      "output": { "requires": ["FORM_1A"] },
+      "text": { "en": "This class always needs a medical certificate (Form 1A)." },
+      "refs": ["EC-04", "EC-06"],
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow: Form 1A for all transport-vehicle applicants (and e-rickshaw in Delhi)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "ELIG-TRANSPORT-LMV-PREREQ",
+      "kind": "eligibility",
+      "textKey": "rule.elig.transport_lmv_prereq",
+      "condition": {
+        "all": [
+          { "eq": [{ "fact": "class.transport" }, true] },
+          {
+            "not": {
+              "all": [
+                { "ne": [{ "fact": "lmvDlHeldSince" }, null] },
+                { "lte": [{ "addMonths": [{ "fact": "lmvDlHeldSince" }, 12] }, { "fact": "asOf" }] }
+              ]
+            }
+          }
+        ]
+      },
+      "output": { "flags": ["lmv_prerequisite_unverified"], "verifyAtRto": true },
+      "text": {
+        "en": "Some RTOs ask that you have held an LMV licence for a year before a transport licence. Whether the 2019 changes removed this is not checked: verify at your RTO."
+      },
+      "refs": ["EC-06"],
+      "source": {
+        "title": "MV Act s.7 as quoted by the Supreme Court in Bajaj Allianz v. Rambha Devi; 2019 change unverified",
+        "url": "https://www.scobserver.in/cases/validity-of-light-motor-vehicle-licence-to-drive-transport-vehicle-bajaj-allianz-general-insurance-v-rambha-devi/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "ELIG-ORAL-LL-TEST",
+      "kind": "eligibility",
+      "textKey": "rule.elig.oral_ll_test",
+      "appliesTo": ["E-RICKSHAW", "E-CART"],
+      "condition": true,
+      "output": { "flags": ["oral_ll_test"] },
+      "text": {
+        "en": "For e-rickshaw and e-cart the LL test is oral, on the same questions, instead of the computer test."
+      },
+      "refs": ["F-03"],
+      "source": {
+        "title": "Delhi Transport LL page: e-rickshaw / e-cart oral preliminary test",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "ELIG-ADAPTED-VERIFY",
+      "kind": "eligibility",
+      "textKey": "rule.elig.adapted_vehicle",
+      "appliesTo": ["ADAPTED"],
+      "condition": true,
+      "output": { "flags": ["rights_card"], "verifyAtRto": true },
+      "text": {
+        "en": "Adapted vehicles have their own class. Rules and test arrangements vary: verify at your RTO."
+      },
+      "refs": ["EC-13"],
+      "source": {
+        "title": "MV Act 1988 s.10(2) invalid carriage [MK]; Sarathi Divyang category (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "RT-NO-ONLINE-LL",
+      "kind": "route",
+      "textKey": "rule.route.no_online_ll",
+      "condition": {
+        "eq": [{ "param": { "id": "PRM-LL-TEST-MODE", "path": "onlineAvailable" } }, false]
+      },
+      "output": { "llTestAtRto": true },
+      "text": {
+        "en": "Your state does not offer the online LL test, so the LL test is at the RTO."
+      },
+      "source": {
+        "title": "State LL test mode from the state pack (PRM-LL-TEST-MODE)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "RT-AGE-40",
+      "kind": "route",
+      "textKey": "rule.route.age_40_rto_approval",
+      "condition": {
+        "gte": [
+          { "ageOn": { "on": { "fact": "llDate" }, "bound": "max" } },
+          { "param": { "id": "PRM-FORM1A-AGE" } }
+        ]
+      },
+      "output": { "llTestAtRto": true },
+      "text": {
+        "en": "From 40, the RTO approves Form 1A before the LL test password is sent; the LL test is then at the RTO."
+      },
+      "source": {
+        "title": "TN STA contactless LL flow (2022); Delhi Transport LL page",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "RT-DISABILITY-NON-FACELESS",
+      "kind": "route",
+      "textKey": "rule.route.disability_non_faceless",
+      "condition": { "fact": "hasDisability" },
+      "output": { "llTestAtRto": true },
+      "text": {
+        "en": "Applying in the Divyang category uses the non-faceless path with an RTO visit."
+      },
+      "source": {
+        "title": "Sarathi LL form: Divyang category (observed 2026-10-22); product-lock blocker list",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "RT-FOREIGN-LICENCE",
+      "kind": "route",
+      "textKey": "rule.route.foreign_licence",
+      "condition": { "fact": "foreignLicence" },
+      "output": { "llTestAtRto": true },
+      "text": {
+        "en": "With a foreign licence you follow the LL to DL path with an RTO visit; some RTOs may exempt tests."
+      },
+      "source": {
+        "title": "Foreign DL conversion rules not verified (research/ps1-deep/03-lifecycle.md section B)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "unknown",
+      "checkedOn": "2026-10-23",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "DOC-FORM-2",
+      "kind": "document",
+      "textKey": "doc.form_2",
+      "condition": true,
+      "output": { "docId": "form_2_ll_application", "required": true, "stage": "LL" },
+      "text": { "en": "Form 2: learner's licence application (made on Sarathi)." },
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow: Form 2 generated online",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-FORM-1",
+      "kind": "document",
+      "textKey": "doc.form_1",
+      "condition": { "fact": "anyNonTransport" },
+      "output": { "docId": "form_1_self_declaration", "required": true, "stage": "LL" },
+      "text": { "en": "Form 1: self-declaration of physical fitness (a check-box on Sarathi)." },
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-FORM-1A",
+      "kind": "document",
+      "textKey": "doc.form_1a",
+      "condition": {
+        "any": [
+          {
+            "gte": [
+              { "ageOn": { "on": { "fact": "llDate" }, "bound": "max" } },
+              { "param": { "id": "PRM-FORM1A-AGE" } }
+            ]
+          },
+          { "fact": "anyForm1aAlways" }
+        ]
+      },
+      "output": { "docId": "form_1a_medical", "required": true, "stage": "LL" },
+      "text": { "en": "Form 1A: medical certificate from a registered medical practitioner." },
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow: over 40 and all transport",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-FORM-1A-MAYBE",
+      "kind": "document",
+      "textKey": "doc.form_1a_maybe",
+      "condition": {
+        "all": [
+          {
+            "lt": [
+              { "ageOn": { "on": { "fact": "llDate" }, "bound": "max" } },
+              { "param": { "id": "PRM-FORM1A-AGE" } }
+            ]
+          },
+          {
+            "gte": [
+              { "ageOn": { "on": { "fact": "llExpiresOn" }, "bound": "max" } },
+              { "param": { "id": "PRM-FORM1A-AGE" } }
+            ]
+          },
+          { "not": { "fact": "anyForm1aAlways" } }
+        ]
+      },
+      "output": { "docId": "form_1a_medical", "required": false, "stage": "DL" },
+      "text": {
+        "en": "Form 1A may be needed at the driving-test stage because you turn 40 before your LL expires."
+      },
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow (Form 1A over 40); EC-04",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-AGE-ADDRESS-PROOF",
+      "kind": "document",
+      "textKey": "doc.age_address_proof",
+      "condition": true,
+      "output": { "docId": "proof_of_age_and_address", "required": true, "stage": "LL" },
+      "text": {
+        "en": "Proof of age and address (Aadhaar e-KYC fills these in), self-attested if uploaded."
+      },
+      "source": {
+        "title": "CMVR r.4 [MK]; TN STA flow: Aadhaar e-KYC fills name, DOB, address, photo",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-DOB-PROOF",
+      "kind": "document",
+      "textKey": "doc.dob_proof",
+      "condition": { "eq": [{ "fact": "dobPrecision" }, "year"] },
+      "output": { "docId": "full_dob_proof", "required": true, "stage": "LL" },
+      "text": {
+        "en": "A document with your full date of birth (birth certificate, Class 10 certificate or passport)."
+      },
+      "source": {
+        "title": "Council verification list: Aadhaar with year of birth only (stored as 1 Jan) [MK]",
+        "url": "https://uidai.gov.in/"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-23",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-RESIDENCE-PROOF",
+      "kind": "document",
+      "textKey": "doc.residence_address_proof",
+      "condition": { "eq": [{ "fact": "aadhaarAddressMatches" }, false] },
+      "output": { "docId": "residence_address_proof", "required": true, "stage": "LL" },
+      "text": {
+        "en": "Proof of where you live now (rent agreement, utility bill or another proof your state accepts)."
+      },
+      "source": {
+        "title": "TN STA contactless LL flow: non-Aadhaar route needs separate address proof",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-RELATION-NAME-PROOF",
+      "kind": "document",
+      "textKey": "doc.relation_name_proof",
+      "condition": { "eq": [{ "fact": "aadhaarRelationLine" }, false] },
+      "output": { "docId": "relation_name_proof", "required": false, "stage": "LL" },
+      "text": {
+        "en": "A document that shows your father's, mother's or guardian's name, for the non-Aadhaar path."
+      },
+      "source": {
+        "title": "India Herald, 19 Feb 2026: relation-name field blank from Aadhaar (news report, not a rule)",
+        "url": "https://www.indiaherald.com/Politics/Read/994879460/-Aadhaar-Update-Stalled-Technical-Glitch-on-the-Sarathi-Portal-Stalls-Thousands-of-Driving-Licence-Applications"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-PHOTO-SIGNATURE",
+      "kind": "document",
+      "textKey": "doc.photo_signature",
+      "condition": true,
+      "output": { "docId": "photo_and_signature", "required": true, "stage": "LL" },
+      "text": { "en": "Photo and signature (on the Aadhaar path only the signature is uploaded)." },
+      "source": {
+        "title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-GUARDIAN-CONSENT",
+      "kind": "document",
+      "textKey": "doc.guardian_consent",
+      "condition": {
+        "all": [
+          { "lt": [{ "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } }, 18] },
+          { "has": [{ "fact": "requestedClasses" }, "MC50CC"] }
+        ]
+      },
+      "output": { "docId": "guardian_consent", "required": true, "stage": "LL" },
+      "text": { "en": "Written consent of a parent or guardian." },
+      "source": {
+        "title": "MV Act 1988 s.4(2) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-EDU-TRANSPORT",
+      "kind": "document",
+      "textKey": "doc.education_transport",
+      "condition": { "fact": "anyTransport" },
+      "output": { "docId": "education_proof_transport", "required": false, "stage": "LL" },
+      "text": {
+        "en": "Some states still list an 8th-pass certificate for transport classes; MoRTH reportedly dropped it in 2019. Verify at your RTO."
+      },
+      "source": {
+        "title": "Delhi Transport class table lists 8th pass; 2019 removal [MK]",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-VALID-LL",
+      "kind": "document",
+      "textKey": "doc.valid_ll",
+      "condition": true,
+      "output": { "docId": "valid_learners_licence", "required": true, "stage": "DL" },
+      "text": { "en": "Your valid learner's licence (Form 3, PDF is fine)." },
+      "source": {
+        "title": "CMVR r.14 DL application within LL validity [MK]; J&K guides",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "DOC-TEST-VEHICLE-PAPERS",
+      "kind": "document",
+      "textKey": "doc.test_vehicle_papers",
+      "condition": true,
+      "output": {
+        "docId": "test_vehicle_rc_insurance_puc_lplate",
+        "required": true,
+        "stage": "DL"
+      },
+      "text": { "en": "For the test vehicle: RC, insurance, PUC, and L plates." },
+      "source": {
+        "title": "J&K guides; CMVR r.3 L plate [MK]",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "BLK-UNDER-16",
+      "kind": "blocker",
+      "textKey": "blocker.under_16",
+      "fixKey": "fix.wait_until_16",
+      "condition": { "lt": [{ "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } }, 16] },
+      "output": { "dueOn": { "birthday": { "age": 16, "bound": "min" } } },
+      "text": {
+        "en": "No licence class is open before 16. The earliest is the 50 cc gearless licence at 16, with guardian consent."
+      },
+      "refs": ["EC-05", "EC-17"],
+      "source": {
+        "title": "MV Act 1988 s.4 [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "BLK-DOB-YEAR-ONLY",
+      "kind": "blocker",
+      "textKey": "blocker.dob_year_only",
+      "fixKey": "fix.bring_dob_document",
+      "condition": { "eq": [{ "fact": "dobPrecision" }, "year"] },
+      "output": {},
+      "text": {
+        "en": "Your Aadhaar shows only the year. Systems may read your birthday as 1 January. Bring another date-of-birth document. Your dates here use 31 December so you are never shown as older than you are."
+      },
+      "refs": ["EC-01"],
+      "source": {
+        "title": "Council verification list: Aadhaar with year of birth only (stored as 1 Jan) [MK]",
+        "url": "https://uidai.gov.in/"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-23",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "BLK-ADDRESS-MISMATCH",
+      "kind": "warning",
+      "textKey": "blocker.address_mismatch",
+      "fixKey": "fix.address_two_paths",
+      "condition": { "eq": [{ "fact": "aadhaarAddressMatches" }, false] },
+      "output": { "recommendPath": "non_aadhaar" },
+      "text": {
+        "en": "Your Aadhaar address is not where you live. Either apply with another address proof (non-Aadhaar path, one more RTO visit) or update your Aadhaar address and then use the contactless path."
+      },
+      "refs": ["EC-02"],
+      "source": {
+        "title": "TN STA contactless LL flow: RTO auto-assigned from the Aadhaar PIN code",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "BLK-RELATION-LINE-BLANK",
+      "kind": "warning",
+      "textKey": "blocker.relation_line_blank",
+      "fixKey": "fix.update_aadhaar_or_non_aadhaar",
+      "condition": { "eq": [{ "fact": "aadhaarRelationLine" }, false] },
+      "output": { "recommendPath": "non_aadhaar" },
+      "text": {
+        "en": "The relation-name field may come back blank and locked from Aadhaar. Options: update Aadhaar, or use the non-Aadhaar path with an RTO visit. Ask your RTO which they accept."
+      },
+      "refs": ["EC-03"],
+      "source": {
+        "title": "India Herald, 19 Feb 2026 (news report, not a rule)",
+        "url": "https://www.indiaherald.com/Politics/Read/994879460/-Aadhaar-Update-Stalled-Technical-Glitch-on-the-Sarathi-Portal-Stalls-Thousands-of-Driving-Licence-Applications"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "BLK-FORM1A-AGE40",
+      "kind": "blocker",
+      "textKey": "blocker.form1a_age40",
+      "fixKey": "fix.get_form1a_before_applying",
+      "condition": {
+        "gte": [
+          { "ageOn": { "on": { "fact": "llDate" }, "bound": "max" } },
+          { "param": { "id": "PRM-FORM1A-AGE" } }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "You are 40 or older, so you need a medical certificate (Form 1A) before applying."
+      },
+      "refs": ["EC-04"],
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow: Form 1A over 40",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-TURNING-40",
+      "kind": "warning",
+      "textKey": "warning.turning_40_mid_journey",
+      "fixKey": "fix.plan_form1a",
+      "condition": {
+        "all": [
+          {
+            "lt": [
+              { "ageOn": { "on": { "fact": "llDate" }, "bound": "max" } },
+              { "param": { "id": "PRM-FORM1A-AGE" } }
+            ]
+          },
+          {
+            "gte": [
+              { "ageOn": { "on": { "fact": "llExpiresOn" }, "bound": "max" } },
+              { "param": { "id": "PRM-FORM1A-AGE" } }
+            ]
+          }
+        ]
+      },
+      "output": {
+        "dueOn": { "birthday": { "age": { "param": { "id": "PRM-FORM1A-AGE" } }, "bound": "max" } }
+      },
+      "text": {
+        "en": "You turn 40 before your learner's licence expires. If your driving test is on or after that day, Form 1A may be needed."
+      },
+      "refs": ["EC-04"],
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow: Form 1A over 40",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-U18-MC50-ONLY",
+      "kind": "warning",
+      "textKey": "warning.u18_mc50_only",
+      "fixKey": "fix.mc50_or_wait_18",
+      "condition": {
+        "between": [{ "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } }, 16, 17]
+      },
+      "output": { "dueOn": { "birthday": { "age": 18, "bound": "min" } } },
+      "text": {
+        "en": "At 16-17 you can only get a licence for a gearless vehicle up to 50 cc, with your guardian's consent. Most scooters are above 50 cc."
+      },
+      "refs": ["EC-05", "EC-17"],
+      "source": {
+        "title": "MV Act 1988 s.4(2) [MK]; Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-FAMILY-MODE",
+      "kind": "notice",
+      "textKey": "notice.family_mode",
+      "condition": { "lt": [{ "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } }, 18] },
+      "output": { "familyMode": true },
+      "text": {
+        "en": "Use Margdarshak inside a parent's or guardian's account (family mode); the adult account holder gives consent."
+      },
+      "refs": ["EC-05", "D-13"],
+      "source": {
+        "title": "DPDP Act 2023: verifiable parental consent for under-18s [MK]",
+        "url": "https://www.meity.gov.in/"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-23",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-CLASS-VS-VEHICLE",
+      "kind": "notice",
+      "textKey": "notice.class_vs_vehicle",
+      "condition": { "has": [{ "fact": "requestedClasses" }, "MC50CC"] },
+      "output": {},
+      "text": {
+        "en": "The 50 cc class covers only vehicles up to 50 cc. Check the cc on your vehicle's RC: most scooters need the 'scooter without gears' (MCWOG) class."
+      },
+      "refs": ["EC-05"],
+      "source": {
+        "title": "Delhi Transport class table (MCWOG up to 50 cc at 16)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "BLK-TRANSPORT-UNDER-20",
+      "kind": "blocker",
+      "textKey": "blocker.transport_under_20",
+      "fixKey": "fix.wait_until_20",
+      "condition": {
+        "all": [
+          { "fact": "anyTransport" },
+          { "lt": [{ "ageOn": { "on": { "fact": "asOf" }, "bound": "min" } }, 20] }
+        ]
+      },
+      "output": { "dueOn": { "birthday": { "age": 20, "bound": "min" } } },
+      "text": { "en": "Not yet: transport licences start at 20." },
+      "refs": ["EC-06", "EC-21"],
+      "source": {
+        "title": "MV Act 1988 s.4 [MK]; Delhi Transport class table (20 for transport)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-TRANSPORT-LMV-PREREQ",
+      "kind": "warning",
+      "textKey": "warning.transport_lmv_prereq",
+      "fixKey": "fix.verify_at_rto",
+      "condition": {
+        "all": [
+          { "fact": "anyTransport" },
+          {
+            "not": {
+              "all": [
+                { "ne": [{ "fact": "lmvDlHeldSince" }, null] },
+                { "lte": [{ "addMonths": [{ "fact": "lmvDlHeldSince" }, 12] }, { "fact": "asOf" }] }
+              ]
+            }
+          }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "Other conditions (for example, holding an LMV licence for a year) vary: verify at your RTO. An accredited driver-training centre certificate is another path."
+      },
+      "refs": ["EC-06"],
+      "source": {
+        "title": "MV Act s.7 as quoted in Bajaj Allianz v. Rambha Devi (SC); 2019 change unverified",
+        "url": "https://www.scobserver.in/cases/validity-of-light-motor-vehicle-licence-to-drive-transport-vehicle-bajaj-allianz-general-insurance-v-rambha-devi/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-SC-LMV-7500KG",
+      "kind": "notice",
+      "textKey": "notice.sc_lmv_7500kg",
+      "condition": {
+        "any": [
+          { "has": [{ "fact": "requestedClasses" }, "LMV-TR"] },
+          { "all": [{ "fact": "holdsDl" }, { "fact": "anyTransport" }] }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "LMV licence holders may drive transport vehicles up to 7,500 kg (Supreme Court, 6 Nov 2024). Verify for commercial use."
+      },
+      "refs": ["EC-06"],
+      "source": {
+        "title": "SC Observer: Bajaj Allianz v. Rambha Devi, judgment of 6 Nov 2024",
+        "url": "https://www.scobserver.in/cases/validity-of-light-motor-vehicle-licence-to-drive-transport-vehicle-bajaj-allianz-general-insurance-v-rambha-devi/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-LL-AT-RTO",
+      "kind": "notice",
+      "textKey": "notice.ll_test_at_rto",
+      "condition": {
+        "eq": [{ "param": { "id": "PRM-LL-TEST-MODE", "path": "onlineAvailable" } }, false]
+      },
+      "output": {},
+      "text": {
+        "en": "Your state does not offer the online LL test. Book an LL test slot at the RTO and bring your documents."
+      },
+      "refs": ["EC-10"],
+      "source": {
+        "title": "State LL test mode from the state pack (PRM-LL-TEST-MODE)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-MOBILE-NOT-LINKED",
+      "kind": "warning",
+      "textKey": "warning.aadhaar_mobile_not_linked",
+      "fixKey": "fix.link_mobile_or_non_aadhaar",
+      "condition": { "eq": [{ "fact": "aadhaarMobileLinked" }, false] },
+      "output": { "recommendPath": "non_aadhaar" },
+      "text": {
+        "en": "The Aadhaar path sends an OTP to the mobile number linked to your Aadhaar. Link your mobile at an Aadhaar centre, or use the non-Aadhaar path."
+      },
+      "refs": ["F-04"],
+      "source": {
+        "title": "Sarathi Aadhaar OTP screen: 'Aadhaar holder should have registered mobile number' (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-HOME-TEST-DEVICE",
+      "kind": "warning",
+      "textKey": "warning.home_test_device",
+      "fixKey": "fix.laptop_webcam_or_rto",
+      "condition": {
+        "all": [
+          { "eq": [{ "fact": "homeTestDevice" }, false] },
+          { "eq": [{ "param": { "id": "PRM-LL-TEST-MODE", "path": "onlineAvailable" } }, true] }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "The home LL test needs a laptop or desktop with a webcam, Chrome or Edge, and pop-ups allowed. Without one, take the test at the RTO."
+      },
+      "refs": ["F-04"],
+      "source": {
+        "title": "Sarathi LL test sign-in and face-authentication screens (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/authenticationaction.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-DISABILITY-RIGHTS",
+      "kind": "notice",
+      "textKey": "notice.disability_rights_card",
+      "condition": { "fact": "hasDisability" },
+      "output": {},
+      "text": {
+        "en": "Your rights: an adapted-vehicle class exists, accessible formats can be asked for, and the Divyang path includes an RTO visit."
+      },
+      "refs": ["EC-13"],
+      "source": {
+        "title": "Sarathi Divyang category (observed); MoRTH advisories via Puducherry Transport circular, Nov 2023",
+        "url": "https://transport.py.gov.in/sites/default/files/All-PDF/Cir-Hearing.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-DEAF-ADVISORY",
+      "kind": "notice",
+      "textKey": "notice.deaf_applicants_advisory",
+      "condition": { "has": [{ "fact": "disability" }, "deaf"] },
+      "output": {},
+      "text": {
+        "en": "MoRTH advisories say driving is primarily a visual function; loss of hearing does not by itself stop you from getting a licence."
+      },
+      "refs": ["EC-13"],
+      "source": {
+        "title": "MoRTH advisories 14-06-2016, 28-10-2016, letter of 06-11-2023, quoted in Puducherry Transport circular",
+        "url": "https://transport.py.gov.in/sites/default/files/All-PDF/Cir-Hearing.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-COLOUR-VISION",
+      "kind": "notice",
+      "textKey": "notice.colour_vision",
+      "condition": { "has": [{ "fact": "disability" }, "colour_vision"] },
+      "output": {},
+      "text": {
+        "en": "Colour-vision questions may come up in the medical self-declaration and sign questions. Ask for a text alternative; rules vary, verify at your RTO."
+      },
+      "refs": ["EC-13"],
+      "source": {
+        "title": "Form 1 / Form 1A fitness declarations [MK]",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-FOREIGN-LICENCE",
+      "kind": "warning",
+      "textKey": "warning.foreign_licence",
+      "fixKey": "fix.ask_rto_conversion",
+      "condition": { "fact": "foreignLicence" },
+      "output": {},
+      "text": {
+        "en": "No direct conversion found; you follow the LL to DL path. Some RTOs may exempt tests."
+      },
+      "refs": ["EC-12"],
+      "source": {
+        "title": "Foreign DL conversion not verified (research/ps1-deep/03-lifecycle.md section B)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "unknown",
+      "checkedOn": "2026-10-23",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-NRI",
+      "kind": "notice",
+      "textKey": "notice.nri",
+      "condition": { "fact": "nri" },
+      "output": {},
+      "text": {
+        "en": "NRI applicants use the same LL to DL path with an Indian address proof; document rules vary, verify at your RTO."
+      },
+      "refs": ["EC-12"],
+      "source": {
+        "title": "NRI rules not verified (research/ps1-deep/03-lifecycle.md gaps)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "unknown",
+      "checkedOn": "2026-10-23",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-MOVING-STATE",
+      "kind": "warning",
+      "textKey": "warning.moving_state",
+      "fixKey": "fix.reevaluate_new_state",
+      "condition": { "fact": "movingState" },
+      "output": {},
+      "text": {
+        "en": "A learner's licence is issued by a state. If you move, the plan is re-checked against the new state's rules; transfer or re-applying depends on the state."
+      },
+      "refs": ["EC-12"],
+      "source": {
+        "title": "MV (Amendment) Act 2019: apply to any licensing authority in the State [MK]",
+        "url": "https://prsindia.org/files/bills_acts/bills_parliament/2019/Motor%20Vehicles%20(Amendment)%20Bill,%202019.pdf"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-23",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-IDP-DL-ONLY",
+      "kind": "notice",
+      "textKey": "notice.idp_dl_holders_only",
+      "condition": { "all": [{ "fact": "wantsIdp" }, { "not": { "fact": "holdsDl" } }] },
+      "output": {},
+      "text": {
+        "en": "An International Driving Permit is only for people who already hold an Indian driving licence."
+      },
+      "refs": ["EC-12"],
+      "source": {
+        "title": "Sarathi IDP service needs a valid DL, passport and visa [MK]",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-23",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-IDP-AVAILABLE",
+      "kind": "notice",
+      "textKey": "notice.idp_available",
+      "condition": { "all": [{ "fact": "wantsIdp" }, { "fact": "holdsDl" }] },
+      "output": {},
+      "text": {
+        "en": "You can apply for an International Driving Permit on Sarathi with your DL, passport and visa."
+      },
+      "refs": ["EC-12"],
+      "source": {
+        "title": "Sarathi IDP service, valid 1 year [MK]",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-23",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-TEST-VEHICLE",
+      "kind": "warning",
+      "textKey": "warning.no_test_vehicle",
+      "fixKey": "fix.arrange_test_vehicle",
+      "condition": { "eq": [{ "fact": "hasTestVehicle" }, false] },
+      "output": {},
+      "text": {
+        "en": "You need a vehicle of the class for the driving test, with RC, insurance, PUC and L plates. A driving school can provide one."
+      },
+      "refs": ["F-04"],
+      "source": {
+        "title": "J&K guides; CMVR r.3 L plate [MK]",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-PHOTO-FINAL",
+      "kind": "notice",
+      "textKey": "notice.photo_cannot_change_later",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Check your photo and signature before you pay: they can't be replaced later in the application."
+      },
+      "refs": ["F-06"],
+      "source": {
+        "title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "BLK-LL-EXPIRED",
+      "kind": "blocker",
+      "textKey": "blocker.ll_expired",
+      "fixKey": "fix.reapply_ll",
+      "condition": {
+        "all": [
+          { "ne": [{ "fact": "llIssuedOn" }, null] },
+          { "gt": [{ "fact": "asOf" }, { "fact": "llExpiresOn" }] }
+        ]
+      },
+      "output": { "dueOn": { "fact": "llExpiresOn" } },
+      "text": {
+        "en": "Your learner's licence has expired. Apply for a fresh LL; a new application number means an old slot will not carry over."
+      },
+      "refs": ["EC-07", "EC-22"],
+      "source": {
+        "title": "Delhi Transport LL page: LL validity 6 months",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "WRN-LL-EXPIRING",
+      "kind": "warning",
+      "textKey": "warning.ll_expiring",
+      "fixKey": "fix.book_test_before_expiry",
+      "condition": {
+        "all": [
+          { "ne": [{ "fact": "llIssuedOn" }, null] },
+          { "lte": [{ "fact": "asOf" }, { "fact": "llExpiresOn" }] },
+          { "lte": [{ "daysBetween": [{ "fact": "asOf" }, { "fact": "llExpiresOn" }] }, 30] }
+        ]
+      },
+      "output": { "dueOn": { "fact": "llExpiresOn" } },
+      "text": {
+        "en": "Your learner's licence expires within 30 days. Book a driving-test date before it expires."
+      },
+      "refs": ["EC-07", "EC-22"],
+      "source": {
+        "title": "Delhi Transport LL page: LL validity 6 months",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-ADTC-OPTION",
+      "kind": "notice",
+      "textKey": "notice.adtc_option",
+      "condition": {
+        "any": [{ "has": [{ "fact": "requestedClasses" }, "LMV-NT"] }, { "fact": "anyTransport" }]
+      },
+      "output": {},
+      "text": {
+        "en": "An accredited driver-training centre (ADTC) course can replace the RTO driving test. The LL stage still applies; how many centres operate near you is unknown."
+      },
+      "refs": ["F-02"],
+      "source": {
+        "title": "MoRTH ADTC rules effective 1 Jul 2021 (Tribune/PTI)",
+        "url": "https://www.tribuneindia.com/news/road-ministry-notifies-rules-for-accredited-driver-training-centres-266863"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-STATE-CHARGES",
+      "kind": "notice",
+      "textKey": "notice.state_charges_may_apply",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Your state may add a service charge or postage on top of these government fees."
+      },
+      "refs": ["F-02", "D-06"],
+      "source": {
+        "title": "CMVR 1989 r.32 covers central fee heads only; state charges vary",
+        "url": "https://himachal.gov.in/WriteReadData/l892s/3_l892s/rule32_cmvr-40224160.pdf"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "NTC-PARTIAL-PACK",
+      "kind": "notice",
+      "textKey": "notice.partial_pack",
+      "condition": { "fact": "packPartial" },
+      "output": {},
+      "text": { "en": "Partial: we have only some rules for your state. Verify at your RTO." },
+      "refs": ["MD-031", "D-05"],
+      "source": {
+        "title": "Margdarshak rule-pack coverage (partial state pack)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-23",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ]
+}

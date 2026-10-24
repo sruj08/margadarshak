@@ -1,0 +1,829 @@
+{
+  "cases": [
+    {
+      "id": "EC-01-dob-year-only-17",
+      "description": "T-EC-01a: Aadhaar year 2008 only, J&K bike: shown as 'eligible from 31 Dec', not 'eligible now'",
+      "refs": ["EC-01", "F-04"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2008",
+        "dob_precision": "year",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "age": { "years_min": 17, "years_max": 18, "band": "16_17", "dob_precision": "year" },
+        "family_mode_required": true,
+        "classes": [{ "eligible": false, "eligible_from": "2026-12-31" }],
+        "blockers": [
+          {
+            "rule_id": "JK-B10",
+            "severity": "blocker",
+            "verify_at_rto": true,
+            "provenance": { "grade": "MK" }
+          }
+        ],
+        "earliest_dates": { "ll_issue": "2026-12-31", "dl_test_unlock": "2027-01-30" }
+      }
+    },
+    {
+      "id": "EC-01-dob-year-only-adult",
+      "description": "Year-only DOB for an adult: eligible, but the DOB-document blocker and document row still apply",
+      "refs": ["EC-01"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2000",
+        "dob_precision": "year",
+        "vehicles": ["car"]
+      },
+      "expect": {
+        "age": { "years_min": 25, "years_max": 26 },
+        "classes": [{ "eligible": true }],
+        "blockers": [{ "rule_id": "BLK-DOB-YEAR-ONLY", "fix_key": "fix.bring_dob_document" }],
+        "documents": {
+          "$includes": [
+            { "doc_id": "full_dob_proof", "rule_id": "DOC-DOB-PROOF", "verified": false }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EC-01-dob-year-only-40",
+      "description": "T-EC-01 (40): year 1986 only -> max age 40 on as_of, so Form 1A applies (upper limits use 1 Jan); age band uses the minimum (39)",
+      "refs": ["EC-01", "EC-04"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "1986",
+        "dob_precision": "year",
+        "vehicles": ["car"]
+      },
+      "expect": {
+        "age": { "years_min": 39, "years_max": 40, "band": "20_39" },
+        "blockers": { "$includes": [{ "rule_id": "JK-B10" }, { "rule_id": "JK-B04" }] },
+        "documents": {
+          "$includes": [{ "doc_id": "form_1a_medical", "required": true, "rule_id": "DOC-FORM-1A" }]
+        },
+        "max_rto_visits": 2,
+        "ll_test": { "mode": "rto" }
+      }
+    },
+    {
+      "id": "EC-01-full-date-with-year-precision",
+      "description": "A full date sent with dob_precision=year is reduced to its year",
+      "refs": ["EC-01"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2008-06-15",
+        "dob_precision": "year",
+        "vehicles": ["car"]
+      },
+      "expect": {
+        "age": { "years_min": 17, "years_max": 18 },
+        "classes": [{ "eligible_from": "2026-12-31" }]
+      }
+    },
+    {
+      "id": "EC-02-migrant-jammu-kathua",
+      "description": "T-EC-02a (P-02): Aadhaar address != residence -> non-Aadhaar path recommended, 2 visits vs 1, residence proof",
+      "refs": ["EC-02", "P-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2007-02-02",
+        "vehicles": ["scooter"],
+        "aadhaar_address_matches_residence": false
+      },
+      "expect": {
+        "warnings": [
+          {
+            "rule_id": "JK-B02",
+            "fix_key": "fix.jk.address_ask_at_counter",
+            "verify_at_rto": true,
+            "provenance": { "confidence": "low" }
+          }
+        ],
+        "recommended_path": "non_aadhaar",
+        "paths": [
+          {
+            "path_id": "aadhaar_contactless",
+            "recommended": false,
+            "ll_test_at_rto": false,
+            "max_rto_visits": 1
+          },
+          {
+            "path_id": "non_aadhaar",
+            "recommended": true,
+            "ll_test_at_rto": true,
+            "max_rto_visits": 2,
+            "rule_ids": ["PLN-NON-AADHAAR-AT-RTO"]
+          }
+        ],
+        "max_rto_visits": 2,
+        "ll_test": { "mode": "rto" },
+        "documents": { "$includes": [{ "doc_id": "residence_address_proof", "required": true }] },
+        "steps": {
+          "$includes": [
+            { "key": "ll.test.at_rto", "at_rto": true, "visit": 1 },
+            { "key": "dl.test", "visit": 2 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EC-02-address-mismatch-base-row",
+      "description": "Outside J&K the base row BLK-ADDRESS-MISMATCH applies",
+      "refs": ["EC-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "TN",
+        "dob": "2001-01-01",
+        "vehicles": ["bike_gear"],
+        "aadhaar_address_matches_residence": false
+      },
+      "expect": {
+        "warnings": [{ "rule_id": "BLK-ADDRESS-MISMATCH", "verify_at_rto": false }],
+        "max_rto_visits": 2
+      }
+    },
+    {
+      "id": "EC-02-address-not-sure",
+      "description": "'Not sure' (null) raises no address warning; contactless path stays recommended",
+      "refs": ["EC-02"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2001-01-01",
+        "vehicles": ["bike_gear"],
+        "aadhaar_address_matches_residence": null
+      },
+      "expect": { "warnings": [], "recommended_path": "aadhaar_contactless", "max_rto_visits": 1 }
+    },
+    {
+      "id": "EC-03-parent-name-missing",
+      "description": "T-EC-03a: relation line blank on Aadhaar -> J&K row with verify banner, non-Aadhaar path, optional relation-name document",
+      "refs": ["EC-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2005-05-05",
+        "vehicles": ["scooter"],
+        "aadhaar_has_relation_line": false
+      },
+      "expect": {
+        "warnings": [
+          {
+            "rule_id": "JK-B03",
+            "verify_at_rto": true,
+            "provenance": { "grade": "S", "verified": false }
+          }
+        ],
+        "recommended_path": "non_aadhaar",
+        "documents": { "$includes": [{ "doc_id": "relation_name_proof", "required": false }] }
+      }
+    },
+    {
+      "id": "EC-03-parent-name-missing-kerala",
+      "description": "Kerala uses the base relation-line row",
+      "refs": ["EC-03"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "KL",
+        "dob": "2005-05-05",
+        "vehicles": ["scooter"],
+        "aadhaar_has_relation_line": false
+      },
+      "expect": {
+        "warnings": { "$includes": [{ "rule_id": "BLK-RELATION-LINE-BLANK" }] },
+        "recommended_path": "non_aadhaar",
+        "max_rto_visits": 2
+      }
+    },
+    {
+      "id": "EC-04-age-52-form1a",
+      "description": "T-EC-04b (P-03 Mohan-ji): 52 -> Form 1A blocker, LL test at the RTO after approval, 2 visits",
+      "refs": ["EC-04", "P-03"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "1974-06-01", "vehicles": ["car"] },
+      "expect": {
+        "age": { "years_min": 52, "band": "40_plus" },
+        "blockers": [{ "rule_id": "JK-B04", "fix_key": "fix.get_form1a_before_applying" }],
+        "documents": {
+          "$includes": [{ "doc_id": "form_1a_medical", "required": true, "stage": "LL" }]
+        },
+        "paths": [
+          {
+            "path_id": "aadhaar_contactless",
+            "ll_test_at_rto": true,
+            "max_rto_visits": 2,
+            "rule_ids": ["RT-AGE-40"]
+          },
+          { "path_id": "non_aadhaar" }
+        ],
+        "max_rto_visits": 2,
+        "warnings": []
+      }
+    },
+    {
+      "id": "EC-04-forty-before-dl",
+      "description": "T-EC-04a: turns 40 on 2026-12-01, before the LL expires -> warning, milestone FORM_1A_AT_40, optional Form 1A at DL stage",
+      "refs": ["EC-04"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "1986-12-01", "vehicles": ["car"] },
+      "expect": {
+        "age": { "years_min": 39 },
+        "blockers": [],
+        "warnings": [
+          { "rule_id": "WRN-TURNING-40", "due_on": "2026-12-01", "verify_at_rto": true }
+        ],
+        "milestones": [
+          { "id": "LL_DAY_30_UNLOCK", "due_on": "2026-11-22" },
+          { "id": "FORM_1A_AT_40", "due_on": "2026-12-01", "rule_id": "WRN-TURNING-40" },
+          { "id": "LL_EXPIRY", "due_on": "2027-04-23" }
+        ],
+        "documents": {
+          "$includes": [
+            {
+              "doc_id": "form_1a_medical",
+              "required": false,
+              "stage": "DL",
+              "rule_id": "DOC-FORM-1A-MAYBE"
+            }
+          ]
+        },
+        "max_rto_visits": 1
+      }
+    },
+    {
+      "id": "EC-04-forty-after-ll-expiry",
+      "description": "Turns 40 after the LL would expire: no warning, no Form 1A",
+      "refs": ["EC-04"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "1987-06-01", "vehicles": ["car"] },
+      "expect": {
+        "warnings": [],
+        "blockers": [],
+        "documents": { "$excludes": [{ "doc_id": "form_1a_medical" }] },
+        "milestones": { "$len": 2 }
+      }
+    },
+    {
+      "id": "EC-04-exactly-40-today",
+      "description": "40th birthday today: Form 1A blocker (40 or older)",
+      "refs": ["EC-04"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "1986-10-23",
+        "vehicles": ["scooter"]
+      },
+      "expect": {
+        "blockers": [{ "rule_id": "BLK-FORM1A-AGE40" }],
+        "warnings": [],
+        "max_rto_visits": 2
+      }
+    },
+    {
+      "id": "EC-04-tamil-nadu-over-40",
+      "description": "Tamil Nadu over-40 RTO approval row overrides the base route row",
+      "refs": ["EC-04"],
+      "input": { "as_of": "2026-10-23", "state": "TN", "dob": "1980-01-01", "vehicles": ["car"] },
+      "expect": {
+        "paths": [
+          {
+            "path_id": "aadhaar_contactless",
+            "ll_test_at_rto": true,
+            "rule_ids": ["TN-RT-AGE-40"]
+          },
+          { "path_id": "non_aadhaar", "rule_ids": ["PLN-NON-AADHAAR-AT-RTO", "TN-RT-AGE-40"] }
+        ]
+      }
+    },
+    {
+      "id": "EC-05-age-16-mc50",
+      "description": "T-EC-05a: 16 -> only MC50CC with guardian consent; family mode; most-scooters notice",
+      "refs": ["EC-05", "P-07"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2010-03-01",
+        "vehicles": ["scooter_50cc"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "MC50CC", "eligible": true, "requires": ["GUARDIAN_CONSENT"] }],
+        "family_mode_required": true,
+        "warnings": [{ "rule_id": "WRN-U18-MC50-ONLY", "due_on": "2028-03-01" }],
+        "notices": { "$includes": [{ "rule_id": "JK-B01" }, { "rule_id": "NTC-FAMILY-MODE" }] }
+      }
+    },
+    {
+      "id": "EC-05-age-17-wants-scooter",
+      "description": "17 taps 'scooter': MCWOG not until 18, 50 cc alternative, 18th-birthday plan",
+      "refs": ["EC-05", "EC-17"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2009-04-15",
+        "vehicles": ["scooter"]
+      },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "MCWOG",
+            "eligible": false,
+            "eligible_from": "2027-04-15",
+            "alternatives": ["MC50CC"],
+            "rule_ids": ["CLS-MCWOG", "ELIG-MIN-AGE", "ELIG-U18-ALTERNATIVE-MC50"]
+          }
+        ],
+        "bundles": [{ "bundle_no": 1, "ll_from": "2027-04-15", "classes": ["MCWOG"] }],
+        "warnings": [{ "rule_id": "WRN-U18-MC50-ONLY", "due_on": "2027-04-15" }]
+      }
+    },
+    {
+      "id": "EC-05-age-17-wants-mcwg",
+      "description": "17 wants a geared bike: ineligible with eligibility date",
+      "refs": ["EC-05"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2009-04-15",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "MCWG", "eligible": false, "eligible_from": "2027-04-15" }],
+        "blockers": []
+      }
+    },
+    {
+      "id": "EC-05-age-15",
+      "description": "15: nothing open yet; earliest is MC50CC at 16",
+      "refs": ["EC-05", "EC-17"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2011-08-20",
+        "vehicles": ["scooter_50cc"]
+      },
+      "expect": {
+        "blockers": [{ "rule_id": "BLK-UNDER-16", "due_on": "2027-08-20" }],
+        "age": { "band": "under_16" },
+        "bundles": [{ "ll_from": "2027-08-20" }]
+      }
+    },
+    {
+      "id": "EC-06-age-19-lmv-tr",
+      "description": "T-EC-06a/b: 19 picks taxi -> not eligible until 20, verify chip on the prerequisite",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2007-01-20", "vehicles": ["taxi"] },
+      "expect": {
+        "classes": [
+          {
+            "class_code": "LMV-TR",
+            "eligible": false,
+            "eligible_from": "2027-01-20",
+            "verify_at_rto": true
+          }
+        ],
+        "blockers": [
+          { "rule_id": "BLK-TRANSPORT-UNDER-20", "due_on": "2027-01-20", "verify_at_rto": false }
+        ],
+        "warnings": [
+          {
+            "rule_id": "WRN-TRANSPORT-LMV-PREREQ",
+            "verify_at_rto": true,
+            "provenance": { "verified": false }
+          }
+        ]
+      }
+    },
+    {
+      "id": "EC-06-age-19-truck",
+      "description": "19 picks truck",
+      "refs": ["EC-06"],
+      "input": { "as_of": "2026-10-23", "state": "DL", "dob": "2007-01-20", "vehicles": ["truck"] },
+      "expect": {
+        "classes": [{ "class_code": "HGMV", "eligible": false, "eligible_from": "2027-01-20" }],
+        "notices": { "$excludes": [{ "rule_id": "NTC-SC-LMV-7500KG" }] }
+      }
+    },
+    {
+      "id": "EC-06-lmv-holder-bus",
+      "description": "25-year-old LMV holder (since 2019) applying for a bus licence: eligible, no prerequisite warning, SC 7,500 kg note",
+      "refs": ["EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2001-03-03",
+        "vehicles": ["bus"],
+        "holds_dl": true,
+        "lmv_dl_held_since": "2019-06-01"
+      },
+      "expect": {
+        "classes": [{ "class_code": "HPMV", "eligible": true, "flags": [] }],
+        "warnings": [],
+        "notices": { "$includes": [{ "rule_id": "NTC-SC-LMV-7500KG" }] }
+      }
+    },
+    {
+      "id": "EC-06-lmv-held-under-1yr",
+      "description": "LMV held only 6 months: prerequisite warning stays",
+      "refs": ["EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2001-03-03",
+        "vehicles": ["taxi"],
+        "holds_dl": true,
+        "lmv_dl_held_since": "2026-04-23"
+      },
+      "expect": {
+        "warnings": [{ "rule_id": "WRN-TRANSPORT-LMV-PREREQ" }],
+        "classes": [{ "flags": ["lmv_prerequisite_unverified"] }]
+      }
+    },
+    {
+      "id": "EC-07-ll-expiring",
+      "description": "T-EC-07a: LL issued 2026-05-01, expires 2026-11-01 (9 days left) -> warning; LL steps done; 1 visit",
+      "refs": ["EC-07", "EC-22"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2000-01-01",
+        "vehicles": ["bike_gear"],
+        "ll_issued_on": "2026-05-01"
+      },
+      "expect": {
+        "warnings": [{ "rule_id": "WRN-LL-EXPIRING", "due_on": "2026-11-01" }],
+        "earliest_dates": {
+          "ll_issue": "2026-05-01",
+          "dl_test_unlock": "2026-05-31",
+          "ll_expires_on": "2026-11-01"
+        },
+        "max_rto_visits": 1,
+        "steps": {
+          "$includes": [
+            { "key": "ll.apply", "done": true },
+            { "key": "ll.test.online", "done": true, "due_on": null },
+            { "key": "dl.test", "done": false, "visit": 1 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EC-07-ll-expired",
+      "description": "LL issued 2026-04-01 expired on 2026-10-01 -> blocker: re-apply",
+      "refs": ["EC-07", "EC-22"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2000-01-01",
+        "vehicles": ["car"],
+        "ll_issued_on": "2026-04-01"
+      },
+      "expect": {
+        "blockers": [
+          { "rule_id": "BLK-LL-EXPIRED", "fix_key": "fix.reapply_ll", "due_on": "2026-10-01" }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "id": "EC-10-kerala-no-online-ll",
+      "description": "T-EC-10a/b: Kerala has no online LL test -> LL test at the RTO, 2 visits, partial banner",
+      "refs": ["EC-10", "MD-031"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "KL",
+        "dob": "2000-01-01",
+        "vehicles": ["bike_gear"]
+      },
+      "expect": {
+        "rule_pack": { "pack_id": "KL", "partial": true },
+        "ll_test": {
+          "online_available": false,
+          "where": ["rto"],
+          "mode": "rto",
+          "rule_ids": ["KL-PRM-LL-TEST-MODE", "PRM-LL-FORMAT"]
+        },
+        "paths": [
+          { "ll_test_at_rto": true, "max_rto_visits": 2, "rule_ids": ["RT-NO-ONLINE-LL"] },
+          { "max_rto_visits": 2 }
+        ],
+        "max_rto_visits": 2,
+        "steps": [
+          { "key": "ll.apply" },
+          { "key": "ll.tutorial" },
+          { "key": "ll.test.at_rto", "visit": 1 },
+          { "key": "practice" },
+          { "key": "dl.book" },
+          { "key": "dl.test", "visit": 2 },
+          { "key": "dl.issue" }
+        ],
+        "notices": {
+          "$includes": [{ "rule_id": "NTC-LL-AT-RTO" }, { "rule_id": "NTC-PARTIAL-PACK" }]
+        }
+      }
+    },
+    {
+      "id": "EC-10-kerala-no-device-warning",
+      "description": "No laptop warning is pointless when the test is at the RTO anyway",
+      "refs": ["EC-10"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "KL",
+        "dob": "2000-01-01",
+        "vehicles": ["car"],
+        "home_test_device": false
+      },
+      "expect": { "warnings": { "$excludes": [{ "rule_id": "WRN-HOME-TEST-DEVICE" }] } }
+    },
+    {
+      "id": "EC-12-foreign-licence",
+      "description": "T-EC-12b: foreign licence -> low-confidence conversion warning and an RTO visit",
+      "refs": ["EC-12"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "1995-01-01",
+        "vehicles": ["car"],
+        "foreign_licence": true
+      },
+      "expect": {
+        "warnings": [{ "rule_id": "WRN-FOREIGN-LICENCE", "verify_at_rto": true }],
+        "max_rto_visits": 2,
+        "paths": [{ "rule_ids": ["RT-FOREIGN-LICENCE"] }, { "path_id": "non_aadhaar" }]
+      }
+    },
+    {
+      "id": "EC-12-idp-dl-holder-only",
+      "description": "T-EC-12a: IDP wanted without a DL -> 'only for DL holders'",
+      "refs": ["EC-12"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2003-01-01",
+        "vehicles": ["car"],
+        "wants_idp": true
+      },
+      "expect": {
+        "notices": {
+          "$includes": [{ "rule_id": "NTC-IDP-DL-ONLY" }],
+          "$excludes": [{ "rule_id": "NTC-IDP-AVAILABLE" }]
+        }
+      }
+    },
+    {
+      "id": "EC-12-idp-for-dl-holder",
+      "description": "IDP wanted with a DL -> IDP service notice",
+      "refs": ["EC-12"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2003-01-01",
+        "vehicles": ["car"],
+        "wants_idp": true,
+        "holds_dl": true
+      },
+      "expect": {
+        "notices": {
+          "$includes": [{ "rule_id": "NTC-IDP-AVAILABLE" }],
+          "$excludes": [{ "rule_id": "NTC-IDP-DL-ONLY" }]
+        }
+      }
+    },
+    {
+      "id": "EC-12-moving-state-nri",
+      "description": "Moving state and NRI: both low-confidence rows shown",
+      "refs": ["EC-12"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "MH",
+        "dob": "1998-01-01",
+        "vehicles": ["scooter"],
+        "moving_state": true,
+        "nri": true
+      },
+      "expect": {
+        "warnings": [{ "rule_id": "WRN-MOVING-STATE" }],
+        "notices": { "$includes": [{ "rule_id": "NTC-NRI", "verify_at_rto": true }] }
+      }
+    },
+    {
+      "id": "EC-13-deaf-applicant",
+      "description": "Deaf applicant: MoRTH advisory, J&K rights card, Divyang path with an RTO visit",
+      "refs": ["EC-13"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2000-01-01",
+        "vehicles": ["car"],
+        "disability": ["deaf"]
+      },
+      "expect": {
+        "notices": {
+          "$includes": [
+            { "rule_id": "JK-B07" },
+            { "rule_id": "NTC-DEAF-ADVISORY", "provenance": { "grade": "P-state" } }
+          ]
+        },
+        "max_rto_visits": 2,
+        "paths": [{ "rule_ids": ["RT-DISABILITY-NON-FACELESS"] }, { "path_id": "non_aadhaar" }]
+      }
+    },
+    {
+      "id": "EC-13-colour-vision",
+      "description": "Colour vision: low-confidence notice, rights card",
+      "refs": ["EC-13"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2000-01-01",
+        "vehicles": ["bike_gear"],
+        "disability": ["colour_vision", "colour_vision"]
+      },
+      "expect": {
+        "notices": {
+          "$includes": [
+            { "rule_id": "NTC-DISABILITY-RIGHTS" },
+            { "rule_id": "NTC-COLOUR-VISION", "verify_at_rto": true }
+          ],
+          "$excludes": [{ "rule_id": "NTC-DEAF-ADVISORY" }]
+        }
+      }
+    },
+    {
+      "id": "EC-13-adapted-vehicle",
+      "description": "Adapted vehicle class with a locomotor disability",
+      "refs": ["EC-13"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "TN",
+        "dob": "1990-01-01",
+        "vehicles": ["adapted_vehicle"],
+        "disability": ["locomotor"]
+      },
+      "expect": {
+        "classes": [{ "class_code": "ADAPTED", "flags": ["rights_card"], "verify_at_rto": true }],
+        "notices": { "$includes": [{ "rule_id": "NTC-DISABILITY-RIGHTS" }] }
+      }
+    },
+    {
+      "id": "EC-21-age-18-mcwg-plus-lmv-tr",
+      "description": "T-EC-21b: 18 wants MCWG + LMV-TR -> MCWG now, LMV-TR at 20 with date; no saving claimed",
+      "refs": ["EC-21", "EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2008-05-05",
+        "vehicles": ["bike_gear", "taxi"]
+      },
+      "expect": {
+        "bundles": [
+          { "bundle_no": 1, "classes": ["MCWG"], "ll_from": "2026-10-23", "rule_ids": [] },
+          {
+            "bundle_no": 2,
+            "classes": ["LMV-TR"],
+            "ll_from": "2028-05-05",
+            "dl_test_unlock": "2028-06-04",
+            "rule_ids": ["PLN-SPLIT-BY-AGE"]
+          }
+        ],
+        "saving": null,
+        "classes": [
+          { "class_code": "MCWG", "eligible": true },
+          { "class_code": "LMV-TR", "eligible": false, "eligible_from": "2028-05-05" }
+        ]
+      }
+    },
+    {
+      "id": "EC-21-age-17-mcwg-plus-lmv",
+      "description": "17 wants bike + car: both together from the 18th birthday, saving shown (if sequential)",
+      "refs": ["EC-21"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2009-01-02",
+        "vehicles": ["bike_gear", "car"]
+      },
+      "expect": {
+        "bundles": [
+          {
+            "classes": ["MCWG", "LMV-NT"],
+            "ll_from": "2027-01-02",
+            "rule_ids": ["PLN-ONE-LL-MANY-CLASSES"],
+            "fees": { "subtotal_govt_fee_paise": 115000, "total_paise": 135000 }
+          }
+        ],
+        "saving": { "classes_on_one_ll": 2, "note_key": "plan.bundle.saves_if_sequential" }
+      }
+    },
+    {
+      "id": "EC-21-age-17-mc50-now-mcwg-later",
+      "description": "17 wants a 50 cc moped and a geared bike: MC50CC now, MCWG at 18",
+      "refs": ["EC-21", "EC-05"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "DL",
+        "dob": "2009-06-10",
+        "vehicles": ["moped_50cc", "bike_gear"]
+      },
+      "expect": {
+        "bundles": [
+          { "classes": ["MC50CC"], "ll_from": "2026-10-23" },
+          { "classes": ["MCWG"], "ll_from": "2027-06-10" }
+        ]
+      }
+    },
+    {
+      "id": "EC-21-age-19-lmv-plus-lmv-tr",
+      "description": "19 wants car + auto-rickshaw: car now, transport at 20",
+      "refs": ["EC-21", "EC-06"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "MH",
+        "dob": "2007-08-08",
+        "vehicles": ["car", "auto_rickshaw"]
+      },
+      "expect": {
+        "bundles": [{ "classes": ["LMV-NT"] }, { "classes": ["LMV-TR"], "ll_from": "2027-08-08" }],
+        "blockers": [{ "rule_id": "BLK-TRANSPORT-UNDER-20" }]
+      }
+    },
+    {
+      "id": "EC-22-mid-journey",
+      "description": "LL already held (issued 2026-10-01): clock from that date, LL steps done, DL test unlock 2026-10-31",
+      "refs": ["EC-22"],
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2004-04-04",
+        "vehicles": ["bike_gear"],
+        "ll_issued_on": "2026-10-01"
+      },
+      "expect": {
+        "earliest_dates": {
+          "ll_issue": "2026-10-01",
+          "dl_test_unlock": "2026-10-31",
+          "ll_expires_on": "2027-04-01"
+        },
+        "warnings": [],
+        "paths": [{ "max_rto_visits": 1 }, { "max_rto_visits": 1 }],
+        "notices": { "$excludes": [{ "rule_id": "PB-NTC-LL-EXTENSION" }] }
+      }
+    },
+    {
+      "id": "EC-28-kl-hpt-upcoming",
+      "description": "Kerala, as of 2026-10-23: test unlock 2026-11-22 is before the HPT start (2026-12-01) but the LL runs past it -> 'may apply' notice",
+      "refs": ["EC-28"],
+      "input": { "as_of": "2026-10-23", "state": "KL", "dob": "2000-01-01", "vehicles": ["car"] },
+      "expect": {
+        "hpt": {
+          "status": "announced",
+          "effective_from": "2026-12-01",
+          "applies": false,
+          "rule_id": "KL-PRM-HPT"
+        },
+        "notices": {
+          "$includes": [{ "rule_id": "KL-NTC-HPT-UPCOMING" }],
+          "$excludes": [{ "rule_id": "KL-NTC-HPT" }, { "rule_id": "KL-NTC-HPT-STAYED" }]
+        },
+        "steps": { "$excludes": [{ "key": "dl.hpt" }] }
+      }
+    },
+    {
+      "id": "EC-28-kl-hpt-applies",
+      "description": "Kerala, as of 2026-11-15: test unlock 2026-12-15 falls after the HPT start -> HPT step on the test visit",
+      "refs": ["EC-28"],
+      "input": { "as_of": "2026-11-15", "state": "KL", "dob": "2000-01-01", "vehicles": ["car"] },
+      "expect": {
+        "hpt": { "applies": true },
+        "notices": {
+          "$includes": [{ "rule_id": "KL-NTC-HPT" }],
+          "$excludes": [{ "rule_id": "KL-NTC-HPT-UPCOMING" }]
+        },
+        "steps": {
+          "$len": 8,
+          "$includes": [
+            { "key": "dl.hpt", "at_rto": true, "visit": 2, "due_on": "2026-12-15" },
+            { "key": "dl.test", "visit": 2 }
+          ]
+        },
+        "max_rto_visits": 2
+      }
+    },
+    {
+      "id": "EC-15-as-of-drives-dates",
+      "description": "Dates derive only from as_of (server IST date), never from the client clock",
+      "refs": ["EC-15"],
+      "input": { "as_of": "2027-01-31", "state": "DL", "dob": "2000-01-01", "vehicles": ["car"] },
+      "expect": {
+        "as_of": "2027-01-31",
+        "earliest_dates": {
+          "ll_issue": "2027-01-31",
+          "dl_test_unlock": "2027-03-02",
+          "ll_expires_on": "2027-07-31"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,535 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "JK",
+  "name": "Jammu & Kashmir overlay v1",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": false,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "J&K v1 (MD-030). Blockers JK-B01..JK-B10 override the base rows they name. LL test 10 questions / 6 to pass (Kashmir Life, Dec 2025, quoting the Srinagar ARTO; confidence medium, verified=false). Rs 1,050 at slot booking is in fees.json stateItems as verified=false and never added to totals. PSGA timelines unknown. Needs PD + BE sign-off and ARTO Jammu counter-visit rows (field kit 11.8).",
+  "rules": [
+    {
+      "id": "JK-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.jk.ll.test_mode",
+      "condition": true,
+      "output": { "value": { "onlineAvailable": true, "where": ["home_online", "csc", "rto"] } },
+      "text": {
+        "en": "In J&K the LL test is online at home or at a Common Service Centre (CSC); the LL is issued the same day."
+      },
+      "source": {
+        "title": "Kashmir Life, 03 Dec 2025 (online at home or CSC, instant LL); Sarathi J&K eKYC LL service (observed 2026-10-22)",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-PRM-LL-FORMAT",
+      "kind": "param",
+      "overrides": "PRM-LL-FORMAT",
+      "textKey": "rule.jk.ll.format",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "questions": 10,
+          "passCorrect": 6,
+          "passPct": 60,
+          "timerSeconds": null
+        }
+      },
+      "text": { "en": "J&K LL test: {questions} questions, {passCorrect} correct to pass." },
+      "source": {
+        "title": "Kashmir Life, Dec 2025, quoting the Srinagar ARTO: 10 questions, 6 to pass",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-PRM-MIN-WAIT-DAYS",
+      "kind": "param",
+      "overrides": "PRM-MIN-WAIT-DAYS",
+      "textKey": "rule.jk.ll.min_wait_days",
+      "condition": true,
+      "output": { "value": 30 },
+      "text": { "en": "In J&K you can take the driving test {value} days after the LL is issued." },
+      "source": {
+        "title": "Kashmir Life, Dec 2025: DL test after 30 days",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-PRM-LL-VALIDITY-MONTHS",
+      "kind": "param",
+      "overrides": "PRM-LL-VALIDITY-MONTHS",
+      "textKey": "rule.jk.ll.validity_months",
+      "condition": true,
+      "output": { "value": 6 },
+      "text": {
+        "en": "A J&K learner's licence is valid for {value} months (central rule; no J&K extension found)."
+      },
+      "source": {
+        "title": "Delhi Transport LL page: LL validity 6 months (central CMVR rule); no J&K variation found",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-PRM-RETEST-GAP-DAYS",
+      "kind": "param",
+      "overrides": "PRM-RETEST-GAP-DAYS",
+      "textKey": "rule.jk.dl.retest_gap_days",
+      "condition": true,
+      "output": { "value": 7 },
+      "text": {
+        "en": "After a failed driving test the retest is usually {value} days later. Not confirmed for J&K: ask at the counter."
+      },
+      "source": {
+        "title": "Sarathi appointment notices (secondary, low reliability); CMVR r.15 [MK]; no J&K source",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.jk.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": true,
+          "tracks": ["S-track (LMV, Kashmir)", "8-track (two-wheeler, Kashmir)"]
+        }
+      },
+      "text": {
+        "en": "In Kashmir the car test is on an S-track and the two-wheeler test on an 8-track, with automatic results. The Jammu track type is unknown."
+      },
+      "source": {
+        "title": "Kashmir Life, 03 Dec 2025: RTO Kashmir rolls out S-track",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-PRM-PSGA-TIMELINE",
+      "kind": "param",
+      "textKey": "rule.jk.psga_timeline_unknown",
+      "condition": true,
+      "output": { "value": { "known": false, "llDays": null, "dlDays": null } },
+      "text": {
+        "en": "Transport services are notified under the J&K Public Services Guarantee Act 2011; the day limits for LL and DL are not known yet."
+      },
+      "source": {
+        "title": "Greater Kashmir: J&K Public Services Guarantee Act (schedule not retrieved)",
+        "url": "https://m.greaterkashmir.com/article/greater-kashmirs-understanding-the-law-initiative-empowering-citizens-jk-public-services-guarantee-act/293926"
+      },
+      "grade": "unknown",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "JK-B01",
+      "kind": "notice",
+      "overrides": "NTC-CLASS-VS-VEHICLE",
+      "textKey": "blocker.jk.class_vs_vehicle",
+      "condition": {
+        "any": [
+          { "has": [{ "fact": "requestedClasses" }, "MC50CC"] },
+          { "has": [{ "fact": "requestedClasses" }, "MCWOG"] }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "Pick the class that matches your vehicle: a scooter above 50 cc is 'scooter without gears' (MCWOG); the 50 cc class covers only up to 50 cc. A wrong class means a new LL and another 30 days."
+      },
+      "refs": ["EC-05", "F-04"],
+      "source": {
+        "title": "Sarathi class picker (observed 2026-10-22); Delhi Transport class table",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B02",
+      "kind": "warning",
+      "overrides": "BLK-ADDRESS-MISMATCH",
+      "textKey": "blocker.jk.address_mismatch",
+      "fixKey": "fix.jk.address_ask_at_counter",
+      "condition": { "eq": [{ "fact": "aadhaarAddressMatches" }, false] },
+      "output": { "recommendPath": "non_aadhaar" },
+      "text": {
+        "en": "Your Aadhaar address is not where you live. Apply with another address proof (non-Aadhaar path, one more RTO visit) or update Aadhaar and then use the contactless path. How J&K offices handle this is not known: ask at the counter and tell us what you were told."
+      },
+      "refs": ["EC-02"],
+      "source": {
+        "title": "TN STA contactless LL flow (PIN-based RTO assignment); J&K behaviour unknown",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B03",
+      "kind": "warning",
+      "overrides": "BLK-RELATION-LINE-BLANK",
+      "textKey": "blocker.jk.relation_line_blank",
+      "fixKey": "fix.update_aadhaar_or_non_aadhaar",
+      "condition": { "eq": [{ "fact": "aadhaarRelationLine" }, false] },
+      "output": { "recommendPath": "non_aadhaar" },
+      "text": {
+        "en": "The father's/guardian's name field may come back blank and locked from Aadhaar. Options: update Aadhaar, or use the non-Aadhaar path with a document that shows the name."
+      },
+      "refs": ["EC-03"],
+      "source": {
+        "title": "India Herald, 19 Feb 2026 (news report, not a rule)",
+        "url": "https://www.indiaherald.com/Politics/Read/994879460/-Aadhaar-Update-Stalled-Technical-Glitch-on-the-Sarathi-Portal-Stalls-Thousands-of-Driving-Licence-Applications"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B04",
+      "kind": "blocker",
+      "overrides": "BLK-FORM1A-AGE40",
+      "textKey": "blocker.jk.form1a_age40",
+      "fixKey": "fix.get_form1a_before_applying",
+      "condition": {
+        "gte": [
+          { "ageOn": { "on": { "fact": "llDate" }, "bound": "max" } },
+          { "param": { "id": "PRM-FORM1A-AGE" } }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "You are 40 or older, so you need a medical certificate (Form 1A) before applying; the RTO approves it before the LL test."
+      },
+      "refs": ["EC-04"],
+      "source": {
+        "title": "Delhi Transport LL page; TN STA flow: Form 1A over 40, RTO approval",
+        "url": "https://tnsta.gov.in/video/flow_LLNew2022_english.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B05",
+      "kind": "warning",
+      "overrides": "WRN-MOBILE-NOT-LINKED",
+      "textKey": "blocker.jk.aadhaar_mobile_not_linked",
+      "fixKey": "fix.link_mobile_or_non_aadhaar",
+      "condition": { "eq": [{ "fact": "aadhaarMobileLinked" }, false] },
+      "output": { "recommendPath": "non_aadhaar" },
+      "text": {
+        "en": "The Aadhaar OTP goes to the mobile number linked to your Aadhaar. Link it at an Aadhaar centre, or use the non-Aadhaar path."
+      },
+      "refs": ["F-04"],
+      "source": {
+        "title": "Sarathi Aadhaar OTP screen (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B06",
+      "kind": "warning",
+      "overrides": "WRN-HOME-TEST-DEVICE",
+      "textKey": "blocker.jk.home_test_device",
+      "fixKey": "fix.jk.use_csc",
+      "condition": {
+        "all": [
+          { "eq": [{ "fact": "homeTestDevice" }, false] },
+          { "eq": [{ "param": { "id": "PRM-LL-TEST-MODE", "path": "onlineAvailable" } }, true] }
+        ]
+      },
+      "output": {},
+      "text": {
+        "en": "The home LL test needs a laptop or desktop with a webcam, Chrome or Edge, and pop-ups allowed. In J&K you can take it at a Common Service Centre instead."
+      },
+      "refs": ["F-04"],
+      "source": {
+        "title": "Sarathi LL test sign-in and face authentication (observed 2026-10-22); Kashmir Life (CSC)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/authenticationaction.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B07",
+      "kind": "notice",
+      "overrides": "NTC-DISABILITY-RIGHTS",
+      "textKey": "blocker.jk.disability_rights_card",
+      "condition": { "fact": "hasDisability" },
+      "output": {},
+      "text": {
+        "en": "Divyang applicants use the non-faceless path with an RTO visit. Your rights card has the MoRTH advisory, the adapted-vehicle class and accessible formats."
+      },
+      "refs": ["EC-13"],
+      "source": {
+        "title": "Sarathi Divyang category (observed); MoRTH advisories via Puducherry Transport circular, Nov 2023",
+        "url": "https://transport.py.gov.in/sites/default/files/All-PDF/Cir-Hearing.pdf"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B08",
+      "kind": "notice",
+      "overrides": "NTC-PHOTO-FINAL",
+      "textKey": "blocker.jk.photo_cannot_change_later",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Check your photo and signature before you pay: they can't be replaced later in the application."
+      },
+      "refs": ["F-06"],
+      "source": {
+        "title": "Sarathi upload photo and signature screen (observed 2026-10-22)",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B09",
+      "kind": "warning",
+      "overrides": "WRN-TEST-VEHICLE",
+      "textKey": "blocker.jk.no_test_vehicle",
+      "fixKey": "fix.arrange_test_vehicle",
+      "condition": { "eq": [{ "fact": "hasTestVehicle" }, false] },
+      "output": {},
+      "text": {
+        "en": "Bring a vehicle of your class to the test with RC, insurance, PUC and L plates. A driving school near the RTO can provide one."
+      },
+      "refs": ["F-04"],
+      "source": {
+        "title": "J&K guides (Kashmir Life); CMVR r.3 L plate [MK]",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-B10",
+      "kind": "blocker",
+      "overrides": "BLK-DOB-YEAR-ONLY",
+      "textKey": "blocker.jk.dob_year_only",
+      "fixKey": "fix.bring_dob_document",
+      "condition": { "eq": [{ "fact": "dobPrecision" }, "year"] },
+      "output": {},
+      "text": {
+        "en": "Your Aadhaar shows only the year. Systems may read your birthday as 1 January. Bring another date-of-birth document (birth certificate, Class 10 certificate, passport)."
+      },
+      "refs": ["EC-01"],
+      "source": {
+        "title": "Council verification list: Aadhaar with year of birth only (stored as 1 Jan) [MK]",
+        "url": "https://uidai.gov.in/"
+      },
+      "grade": "MK",
+      "checkedOn": "2026-10-23",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "JK-NTC-DIGILOCKER",
+      "kind": "notice",
+      "textKey": "notice.jk.digilocker_equal",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Once approved, your DL in DigiLocker or mParivahan counts the same as the card (CMVR r.139)."
+      },
+      "refs": ["F-14"],
+      "source": {
+        "title": "Kashmir Life: DigiLocker 'equal to physical'; CMVR r.139 (2018) [MK]",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-NTC-APPROVAL-SMS",
+      "kind": "notice",
+      "textKey": "notice.jk.three_sms_24h",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "In J&K, after the test you usually get 3 SMS (documents, result, approval) within 24 hours."
+      },
+      "refs": ["EC-23"],
+      "source": {
+        "title": "Kashmir Life, Dec 2025",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+
+    {
+      "id": "JK-OFC-RTO-JAMMU",
+      "kind": "office",
+      "textKey": "office.jk.rto_jammu",
+      "condition": true,
+      "output": {
+        "officeId": "jk-rto-jammu",
+        "name": "RTO Jammu",
+        "district": "Jammu",
+        "tests": ["ll_rto", "dl_test"],
+        "trackType": null
+      },
+      "text": {
+        "en": "RTO Jammu (stub: address, hours and track type to be filled from the ARTO Jammu counter visit)."
+      },
+      "source": {
+        "title": "Sarathi J&K state office list (observed 2026-10-22); details pending field visit",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-OFC-RTO-KASHMIR",
+      "kind": "office",
+      "textKey": "office.jk.rto_kashmir",
+      "condition": true,
+      "output": {
+        "officeId": "jk-rto-kashmir",
+        "name": "RTO Kashmir",
+        "district": "Srinagar",
+        "tests": ["ll_rto", "dl_test"],
+        "trackType": "S-track (LMV), 8-track (2W)"
+      },
+      "text": { "en": "RTO Kashmir, Srinagar (stub)." },
+      "source": {
+        "title": "Kashmir Life, 03 Dec 2025: RTO Kashmir S-track",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-OFC-ARTO-KATHUA",
+      "kind": "office",
+      "textKey": "office.jk.arto_kathua",
+      "condition": true,
+      "output": {
+        "officeId": "jk-arto-kathua",
+        "name": "ARTO Kathua",
+        "district": "Kathua",
+        "tests": ["ll_rto", "dl_test"],
+        "trackType": null
+      },
+      "text": { "en": "ARTO Kathua (stub)." },
+      "source": {
+        "title": "Sarathi J&K state office list (observed 2026-10-22); details unknown",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do"
+      },
+      "grade": "OBS",
+      "checkedOn": "2026-10-22",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "JK-OFC-CSC",
+      "kind": "office",
+      "textKey": "office.jk.csc",
+      "condition": true,
+      "output": {
+        "officeId": "jk-csc",
+        "name": "Common Service Centres (LL test)",
+        "district": "All districts",
+        "tests": ["ll_online"],
+        "trackType": null
+      },
+      "text": { "en": "Common Service Centres run the online LL test in J&K." },
+      "source": {
+        "title": "Kashmir Life, Dec 2025: LL test at home or at a CSC",
+        "url": "https://kashmirlife.net/rto-kashmir-rolls-out-new-s-track-driving-test-for-licences-415456/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-22",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-23"]
+    }
+  ]
+}
