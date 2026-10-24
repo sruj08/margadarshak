@@ -52,7 +52,7 @@ All Go steps run in `services/api` with `actions/setup-go@v7` reading `go-versio
 
 | # | Stage (job) | Tool, pinned | What it proves | Gate (fails the PR) | Typical time |
 |---|---|---|---|---|---|
-| 1 | `lint-ts` | Biome 2.6 (`pnpm biome check .`), ESLint (Next.js apps only), `tsc --noEmit` (strict, every workspace incl. `services/workflows`), `scripts/ci/check-wording.mjs` | Code style; **13 CCPA dark patterns banned by lint** (F-26); no hard-coded ₹ string in UI, prompts, n8n templates (D-06); no banned words "official", "first", "DPDP-compliant", "integrated with Sarathi", "lives saved", "Saarthi", "STQC-certified", "verified licence", "safe" as a scam verdict (D-19) | any error or warning (`--max-warnings=0`) | 2–3 min |
+| 1 | `lint-ts` | Biome 2.6 (`pnpm biome check .`), ESLint (Next.js apps only), `tsc --noEmit` (strict, every workspace incl. `services/workflows`), `scripts/ci/check-wording.mjs` | Code style; **13 CCPA dark patterns banned by lint** (F-26); no hard-coded ₹ string in UI, prompts, notifier and n8n templates (D-06); no banned words "official", "first", "DPDP-compliant", "integrated with Sarathi", "lives saved", "Saarthi", "STQC-certified", "verified licence", "safe" as a scam verdict (D-19) | any error or warning (`--max-warnings=0`) | 2–3 min |
 | 2 | `lint-go` | `go mod tidy` diff, `gofmt -l`, `go vet`, `go generate` drift (oapi-codegen v2.8.0 + sqlc v1.31.1), golangci-lint v2.15.0 (`services/api/.golangci.yml`), govulncheck v1.9.0 | Go formatting, vet, lint (incl. `depguard` import boundaries: pure packages never import `net/http`, pgx, chi, ADK or genai); the committed generated code (`services/api/api/` from `api/openapi.yaml`, `internal/store/sqlcgen`) matches its sources; no reachable known vulnerability | any finding; any diff after `go generate` or `go mod tidy` | 2–3 min |
 | 3 | `unit-ts` | Vitest 5 + `@vitest/coverage-v8` | `@margdarshak/game-core` scoring, `@margdarshak/rules` evaluation, UI components, Workflows tasks with `@renderinc/sdk` mocked | coverage: game-core ≥ 90 % lines, rules ≥ 95 %, ui ≥ 70 % | 2–4 min |
 | 4 | `unit-go` | `go test -short -race -count=1 -coverprofile` (testify v1.12.1) | domain, rules engine, journey state machine, case clock, PII redactor, handlers on fakes, ADK agents with a stubbed model, JobRunner port with the inline runner; `-short` skips the embedded-Postgres tests | any failure or race; coverage: `internal/domain`, `internal/journey`, `internal/clock` ≥ 90 %, `internal/rules` ≥ 95 % | 2–3 min |
@@ -136,7 +136,7 @@ Rules:
 | Bad migration | Migrations are expand/contract, so the previous code still runs on the expanded schema. Roll back the code first, then `/app/api migrate down` (goose, one step) only if the migration's `-- +goose Down` is marked reversible and no contract step ran | 5–10 min |
 | Bad rule pack (wrong fee or rule) | Rule packs are **data**: switch the tenant's `rulepack_version` to the previous signed version in the rule-pack studio (F-42), no deploy needed; RUNBOOK PB-04 | < 5 min |
 | Bad prompt / model ID | env var `GEMINI_MODEL_*` back to the previous value, or flag `ai_debrief=off` ⇒ template cards (EC-29) | < 2 min |
-| Bad n8n workflow | n8n keeps workflow versions; deactivate and restore the previous version; the backend outbox keeps undelivered messages | < 5 min |
+| Bad n8n workflow | n8n keeps workflow versions; deactivate and restore the previous version; only staff tasks are affected (citizen messages go through the backend notifier, ADR-0006) | < 5 min |
 | State tenant (Helm) | `--atomic` already rolls back a failed upgrade; otherwise `helm rollback margdarshak <rev> -n margdarshak-<tenant>` | 2–5 min |
 
 ## 7. Release process (summary; full in DEPLOYMENT.md §7)
@@ -155,7 +155,7 @@ Rules:
 ## 9. Scripts and tests referenced by the workflows (built in Phase 1, see BACKLOG)
 | Script / test | Purpose |
 |---|---|
-| `scripts/ci/check-wording.mjs` | banned words (D-19) and rupee literals (D-06) in UI strings, prompts, n8n JSON and rule-pack copy. Context-aware: "first" is banned only as a claim ("first-ever", "India's first"); an allow-list covers "first name", "first load", "first-launch disclaimer"; "safe" is banned only in scam-verdict strings; "official" is allowed only inside quoted source titles in rule rows. Rupee amounts may appear only in `fees.json` / rule packs |
+| `scripts/ci/check-wording.mjs` | banned words (D-19) and rupee literals (D-06) in UI strings, prompts, notifier templates (`services/api`), n8n JSON and rule-pack copy. Context-aware: "first" is banned only as a claim ("first-ever", "India's first"); an allow-list covers "first name", "first load", "first-launch disclaimer"; "safe" is banned only in scam-verdict strings; "official" is allowed only inside quoted source titles in rule rows. Rupee amounts may appear only in `fees.json` / rule packs |
 | `scripts/ci/check-bundle-budget.mjs` | Lite < 300 KB, game chunk ≤ 350 KB (gzip) |
 | `scripts/ci/diff-golden.mjs` | Go vs TS golden output parity (`tests/golden/rules/.out/go` vs `.out/ts`) |
 | `scripts/ci/axe-gate.mjs` | aggregate axe JSON; fail on serious/critical |
@@ -296,7 +296,7 @@ jobs:
       - name: TypeScript (tsc --noEmit, strict; includes services/workflows once it exists)
         run: pnpm -r --if-present typecheck
       - name: Wording bans (D-19) + rupee literals (D-06) in UI strings, messages and prompts
-        run: node scripts/ci/check-wording.mjs --paths apps packages ai/prompts n8n/workflows rulepacks --fail-on-match
+        run: node scripts/ci/check-wording.mjs --paths apps packages ai/prompts n8n/workflows services/api rulepacks --fail-on-match
 
   # ---------------------------------------------------------------------------
   # 2. Lint + vet + codegen drift + vulnerabilities (Go: services/api)
@@ -1662,6 +1662,8 @@ services:
         sync: false                     # shared with n8n Variables `MD_HMAC_SECRET`
       - key: N8N_RESUME_AUTH_TOKEN
         sync: false                     # header token our pages send when resuming n8n Wait nodes
+      - key: WHATSAPP_APP_SECRET
+        sync: false                     # verifies Meta webhook X-Hub-Signature-256 on API-66 (receipts, STOP)
       - key: R2_ACCOUNT_ID
         sync: false
       - key: R2_ACCESS_KEY_ID
@@ -1685,11 +1687,49 @@ services:
       - key: ADAPTER_BHASHINI
         value: mock
       - key: ADAPTER_NOTIFICATION
-        value: n8n                      # n8n edge; SMS stays off until TRAI DLT (D-16)
+        value: whatsapp_cloud           # backend notifier (ADR-0006); SMS stays off until TRAI DLT (D-16)
       - key: ADAPTER_SLOT
         value: mock
       - key: CORS_ALLOWED_ORIGINS
         sync: false
+
+  # -------------------------------------------------------------------------
+  # 2b. Notifier worker - same image as the API; sends every citizen message from
+  #     the outbox (WhatsApp Cloud API, email, web push). n8n is not on this path
+  #     (ADR-0006). Scale with numInstances; rows are claimed with SKIP LOCKED.
+  # -------------------------------------------------------------------------
+  - type: worker
+    name: margdarshak-notifier
+    runtime: docker
+    region: singapore
+    plan: 0.5c-512mb
+    dockerfilePath: ./infra/docker/api.Dockerfile
+    dockerContext: .
+    dockerCommand: python -m app.notify.worker   # [unverified] module path until services/api exists (owner Backend lead)
+    numInstances: 1
+    autoDeployTrigger: off
+    buildFilter:
+      paths:
+        - services/api/**
+        - infra/docker/api.Dockerfile
+    envVars:
+      - fromGroup: margdarshak-shared
+      - key: OTEL_SERVICE_NAME
+        value: margdarshak-notifier
+      - key: DATABASE_URL
+        fromDatabase:
+          name: margdarshak-db
+          property: connectionString
+      - key: ADAPTER_NOTIFICATION
+        value: whatsapp_cloud
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false                     # Meta test number (allow-listed recipients, R-08)
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: SMTP_URL
+        sync: false                     # transactional email provider (choice open, INTEGRATIONS #9)
+      - key: CONTACT_ENCRYPTION_KEY
+        sync: false                     # same key as the API: decrypts E-14 contacts at send time
 
   # -------------------------------------------------------------------------
   # 3. Score verifier (Node 22, runs @margdarshak/game-core replays) - private only

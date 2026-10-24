@@ -29,12 +29,12 @@
 | F-06 | Photo and signature fixer (on device) | S2 | P-02, P-03, P-04 | Must | D (Deep-A) | P1 | P1 | MediaPipe face detector, API-20 | — | C | US-033, US-034 |
 | F-07 | Sarathi hand-off: Mode A copy-pack; Mode B adapter | S2, S5 | P-01, P-02, P-04, P-06 | Must | D (Mode A) / R (Mode B live) | P1 | P4 (Mode B) | F-56, API-16 | `ff_sarathi_mode_b` (off) | A | US-035, US-036, US-041, US-276 |
 | F-08 | Stage-aware home + parcel-style tracker (journey state machine) | All | P-01, P-02, P-03 | Must | D (Deep-C) | P1 | P1 | API-11, API-14, API-15 | `ff_persona_switcher` (demo) | TL | US-007–US-009, US-042, US-149, US-166, US-172 |
-| F-09 | Case clock (Render Workflows timers, n8n trigger + messaging) | S2–S7 | P-01, P-02, P-03 | Must | D (Deep-C) | P1 | P2 | F-53, Render Workflows, n8n, API-65 | `ff_case_clock` | TL | US-070, US-140, US-143, US-161, US-224–US-226 |
+| F-09 | Case clock (Render Workflows timers, n8n daily trigger, backend notifier delivers) | S2–S7 | P-01, P-02, P-03 | Must | D (Deep-C) | P1 | P2 | F-53, Render Workflows, n8n W01, API-65 | `ff_case_clock` | TL | US-070, US-140, US-143, US-161, US-224–US-226 |
 | F-10 | Slot finder (map + calendar, honest watcher; mock SlotAdapter) | S5 | P-01, P-02, P-03 | Must | T | P2 | P4 (real SlotAdapter) | F-11, F-56, API-25–27 | `ff_slot_watch` | A | US-141, US-142, US-144 |
 | F-11 | RTO Live Intel (structured, k ≥ 5, moderated, no names) | S5–S6 | P-01, P-02, P-06 | Should | T (seeded, labelled) | P2 | P3 | n8n W9, API-28–29 | `ff_live_intel` | A | US-145–US-148 |
 | F-12 | Driving-test readiness (track explainer, test-eve, co-pilot, vehicle checklist + listing) | S6 | P-01, P-02, P-03 | Must | T | P2 | P3 | F-09, F-24 (Track Twin), Rive | — | C | US-081, US-160–US-164 |
 | F-13 | Fail and recover (private debrief, retest plan, remedial referral, LL-expiry check, RTI template) | S6F | P-01, P-03 | Must | T (content) / D (state) | P2 | P3 | F-08, F-09, F-40, API-45 | — | A | US-167–US-172, US-237 |
-| F-14 | Approval tracker + escalation letter (user approves and sends) | S7 | P-01, P-02 | Should | T | P2 | P3 | n8n W11, API-45 | `ff_escalation_letter` | A | US-180–US-184 |
+| F-14 | Approval tracker + escalation letter (user approves and sends) | S7 | P-01, P-02 | Should | T | P2 | P3 | backend letter flow + notifier, API-45, API-72 | `ff_escalation_letter` | A | US-180–US-184 |
 | F-15 | New-rider year (pledge, refresher, missions, first-vehicle checklist, scam shield, golden-hour card, riding lock) | S8 | P-01, P-03 | Should | T | P2 | P3 | F-23, F-33 | `ff_riding_lock`, `ff_golden_hour_reviewed` (off) | B | US-083, US-190–US-197 |
 | F-16 | Renew / fix (renewal reminders, add class, address, duplicate, IDP) | S9 | P-03, P-02 | Should (surface) | T | P2 | P3 | F-42, F-07 | — | A | US-024, US-200–US-204 |
 | F-17 | Family and Helper mode (family mode for a learner under 18, consented helper, clear device, s.199A card) | Cross | P-03, P-04, P-01, P-07 | Should (surface) | T | P2 | P3 | F-54 (consent), E-29 | `ff_helper_mode`, `ff_shared_device` | C | US-025, US-040, US-205–US-209 |
@@ -51,13 +51,13 @@
 | F-31 | Personal tutor (explains your wrong answers from reviewed content) | S3–S4 | P-01 | Should | T | P2 | P3 | M-04, API-41 | `ff_tutor` | TL | US-058, US-106 |
 | F-32 | Sarathi screen/status decoder | S2–S7 | P-01, P-02 | Should | T | P2 | P3 | M-05, error catalogue, API-42 | `ff_decoder` | TL | US-109, US-110 |
 | F-33 | Scam checker (rules decide, AI explains) | S8 | P-03 | Should | T | P2 | P3 | allowlists, API-43 | `ff_scam_checker` | A | US-111, US-194 |
-| F-40 | Driving-school portal (listing; Pro: progress, HPT logs, sign-off, parent updates, vehicle listing, referrals) | Eco | P-05 | Should | T | P2 | P3 | F-23, F-28, n8n W5/W7, API-50–52 | `ff_school_portal`, `ff_school_pro` | PL | US-230–US-240 |
+| F-40 | Driving-school portal (listing; Pro: progress, HPT logs, sign-off, parent updates, vehicle listing, referrals) | Eco | P-05 | Should | T | P2 | P3 | F-23, F-28, F-53 (parent card via notifier), n8n W07, API-50–52 | `ff_school_portal`, `ff_school_pro` | PL | US-230–US-240 |
 | F-41 | State / RTO console (stall points, fail reasons, demand, utilisation, deflection; k ≥ 5) | Eco | P-06 | Should | T (sample aggregates) | P2 | P4 | F-55, F-56, API-53 | `ff_console` | TL | US-250–US-257 |
 | F-42 | Rule-pack studio (versioned, maker-checker, source/date/confidence) | Eco | P-06 | Must | T (studio UI) over D rule packs | P1 (packs) | P4 (state-operated) | API-54, n8n W15 | `ff_rule_studio` | A | US-225, US-260–US-267 |
 | F-50 | Languages (EN + HI full; Dogri voice-in; tenant translations) | Cross | All | Must | D (Deep-C) | P1 | P4 (state languages) | next-intl, M-08 | `ff_lang_<code>` per tenant | C | US-001, US-061, US-107, US-290, US-291 |
 | F-51 | Lite mode / offline PWA (< 300 KB, offline mocks, cached clips) | Cross | P-07, P-02, P-03 | Must | D (Deep-C) | P1 | P1 | Serwist | `ff_lite_auto` | C | US-060, US-292, US-293 |
 | F-52 | Accessibility (WCAG 2.1 AA / GIGW 3.0 / UX4G) | Cross | All | Must | D (Deep-C) | P1 | P4 (audit) | axe, design tokens | — | C | US-023, US-076, US-077, US-294–US-297 |
-| F-53 | Notifications (WhatsApp templates, email, web push; SMS after DLT) | Cross | P-01, P-02, P-03 | Must | D (Deep-C) | P1 | P3 (approved templates), P4 (SMS) | n8n, Meta Cloud API, email provider | `ff_whatsapp_channel`, `ff_email_channel`, `ff_webpush_channel`, `ff_sms_channel` (off) | TL | US-014, US-220–US-223, US-227, US-228 |
+| F-53 | Notifications (WhatsApp templates, email, web push; SMS after DLT) | Cross | P-01, P-02, P-03 | Must | D (Deep-C) | P1 | P3 (approved templates), P4 (SMS) | backend notifier (`NotificationPort`), Meta WhatsApp Cloud API, email provider | `ff_whatsapp_channel`, `ff_email_channel`, `ff_webpush_channel`, `ff_sms_channel` (off) | TL | US-014, US-220–US-223, US-227, US-228 |
 | F-54 | Privacy centre (consent artefacts, export, delete, grievance; family mode) | Cross | All | Must | D (Deep-C) | P1 | P3 (DPIA) | E-15, API-60–62 | `ff_age_verify_digilocker` (off in R0) | PL | US-108, US-113, US-270–US-276, US-278 |
 | F-55 | Privacy-preserving analytics (no PII, aggregated) | Cross | All | Must | D (Deep-C) | P1 | P1 | API-63 | — | TL | US-255, US-277 |
 | F-56 | Government adapter layer (7 adapters, mock + real, same contract tests) | Platform | P-06 | Must | D (mocks + OpenAPI + contract tests) | P1 | P4 (first real adapter) | — | `adapter_mode.<adapter>` per tenant | TL | US-036, US-041, US-300, US-301, US-304–US-306 |
@@ -154,7 +154,7 @@ flowchart LR
 ### 2.1 Build order (critical path for R0)
 1. **H0–H6:** F-42 rule packs (`fees.json`, `rules/JK.json`, `rules/KL.json`) → F-02/F-03/F-04 (API-01–03, API-13); clip filming and the F-23 pipeline skeleton (clip pipeline and field study first, D-03).
 2. **H6–H18:** F-23 mock + learn modes, server replay (API-35); F-05/F-06/F-07 guided flow; F-08 state machine; F-54 family mode + parental consent; F-55 analytics schema.
-3. **H18–H30:** F-25 debrief + validator + evals; F-24 four deep games; F-21/F-22; F-09 sweeper Workflow + n8n W1/W4; F-53 WhatsApp test number.
+3. **H18–H30:** F-25 debrief + validator + evals; F-24 four deep games; F-21/F-22; F-09 sweeper Workflow + n8n W01 trigger; F-53 notifier (WhatsApp test number, test-eve TimelineEvent).
 4. **H30–H40:** thin breadth (F-10–F-17, F-40–F-42 UIs, F-31–F-33); F-57 study live; F-51 budget; F-52 axe pass.
 5. **H40–end:** zero-dead-button crawl, evals in CI, rehearsal, video. Exact hours are managed in HACKATHON_PLAN.
 

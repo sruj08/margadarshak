@@ -132,9 +132,9 @@ Every action is a use-case function in `services/api/src/margdarshak/app/actions
 | `RecordDocumentCheck` | DocumentCheck | metadata only | anon, user, helper | `document_checked` | API-20 |
 | `WatchSlots` | SlotWatch | ≤ 5 offices; latest ≤ LL expiry | anon, user | `slot_watch_created` | API-27 |
 | `SubmitRtoReport` | RtoReport | structured enums only; 3 reports/user/day; account age ≥ 1 day | user (account holder) | `report_submitted` | API-28 |
-| `PrecheckReport` / `ModerateReport` | RtoReport, OfficeIntel | precheck in code; decision reason code | internal (n8n W9) / admin:moderation | `report_prechecked` / `report_moderated` | API-68, API-56 |
-| `FireSlotWatch` | SlotWatch, Notification | moderated `slots_opened` report | internal (n8n W3) | `slot_watch_fired` | API-69 |
-| `DispatchLetter` | Letter | user approval recorded | internal (n8n W11) | `letter_dispatched` | API-72 |
+| `PrecheckReport` / `ModerateReport` | RtoReport, OfficeIntel | precheck in code; decision reason code | internal (precheck inline on API-28; decision from n8n W09 for flagged reports only) / admin:moderation | `report_prechecked` / `report_moderated` | API-68, API-56 |
+| `FireSlotWatch` | SlotWatch, Notification | moderated `slots_opened` report | internal (backend: API-68 decision handler; rows go to the outbox) | `slot_watch_fired` | API-69 |
+| `DispatchLetter` | Letter | user approval recorded | internal (backend letter flow; email via the notifier) | `letter_dispatched` | API-72 |
 | `RouteLead` | Booking | consent, area, class, prior declines | internal (n8n W7) | `lead_routed` | API-73 |
 | `StartJob` | JobRun | job allowlist, input-derived key | internal (n8n) | `job_started` | API-67 |
 | `SubmitAnswers` | TopicMastery, FSRS cards | dedupe client_answer_id | anon, user | `answers_recorded` | API-32 |
@@ -678,7 +678,7 @@ Retention: bookings RT-CASE; practice logs RT-ACCOUNT; letters RT-CASE.
 | .template_id / template_vars | text / jsonb | vars contain no C3 except first name when opted in | C2 | |
 | .status | text | `CHECK IN ('queued','sent','delivered','read','failed','suppressed_quiet_hours','suppressed_opt_out','suppressed_daily_cap')` | C1 | ≤ 1 nudge/day |
 | .provider_message_id | text | | C1 | |
-| .idempotency_key | text | UNIQUE | C1 | `{timelineEventKey}:{channel}` (BACKEND.md §7.2); n8n receives it and drops duplicates |
+| .idempotency_key | text | UNIQUE | C1 | `{timelineEventKey}:{channel}` (BACKEND.md §7.2); the notifier claims each row once and passes the key to the channel send |
 | privacy.contacts.contact_id | uuid | PK | C3 | E-14 |
 | .kind | text | `CHECK IN ('phone','email')` | C1 | |
 | .value_enc | bytea | NOT NULL | C3 | |
@@ -712,7 +712,7 @@ The four P2 `study` tables (migration 00009) have FORCE RLS. `mg_app` may select
 
 ## 5. Event sourcing for the timeline
 
-**Why:** the case clock (F-09) must be explainable ("why did I get this reminder?"), idempotent (n8n and Workflows both retry), and robust to rule-pack changes (EC-27) and clock tampering (EC-15). An append-only event log with derived projections gives all three.
+**Why:** the case clock (F-09) must be explainable ("why did I get this reminder?"), idempotent (n8n, Workflows and the notifier all retry), and robust to rule-pack changes (EC-27) and clock tampering (EC-15). An append-only event log with derived projections gives all three.
 
 ```mermaid
 flowchart LR

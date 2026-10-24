@@ -224,7 +224,7 @@ flowchart TD
 - Four tabs only: **Home · My Licence · Learn · Help** (icon + text label always).
 - `next/link` with `prefetch={false}` on Lite and when `navigator.connection.saveData` is true or `effectiveType` is `2g`/`slow-2g`.
 - Back always works: wizard steps are real URLs, so the browser back button and TalkBack's back gesture behave.
-- Deep links from WhatsApp messages (n8n) carry only `caseId` + a short-lived signed token (no PII in URLs).
+- Deep links from WhatsApp messages (sent by the backend notifier) carry only `caseId` + a short-lived signed token (no PII in URLs).
 
 ### 3.4 `apps/console` structure and routes
 

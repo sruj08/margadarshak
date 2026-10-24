@@ -330,7 +330,7 @@
 | Field | Detail |
 |---|---|
 | **Trigger** | User replies STOP (or रोकें / बंद) to a WhatsApp message, or turns reminders off |
-| **Detection** | n8n inbound → API-66 (HMAC) |
+| **Detection** | Meta WhatsApp channel webhook → API-66 (signature verified); n8n is not on this path |
 | **User-facing behaviour** | One confirmation message ("You won't get WhatsApp reminders. Your plan is still in the app."); in-app toggle off |
 | **Rule row / screen state** | Consent PUR-REMIND-WA withdrawn; `S*#reminders-off` |
 | **Data handling** | Phone kept only if another purpose needs it; else crypto-shredded |

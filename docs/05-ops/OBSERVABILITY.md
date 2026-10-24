@@ -93,7 +93,7 @@ SLIs are measured server-side at the load balancer / Render edge and from synthe
 | **D2 Journey funnel** (F-55, aggregated) | plan → apply hand-off → LL issued → bridge → DL booked → passed; drop-off by stage; EC banners shown (EC-09, EC-11); hand-off success | Product lead; later the state console (F-41) |
 | **D3 AI quality and cost** | calls/min per agent (M-01..M-08), tokens in/out, **₹ per hour and ₹ per debrief**, validator rejections by reason (digit, unknown ID, unverified rule, coverage, tone, language), retry rate, **fallback rate**, circuit-breaker state, invented-number count (must be 0), latency p50/p90 per agent, voice minutes per user vs the 10-min cap | AI lead |
 | **D4 Render Workflows** | runs per task, success/failed/retrying, attempts histogram, duration per stage (transcode, blur, propose), queue waits, last failure reason, link to Render Runs page | Ops lead; shown in the demo (D-15) |
-| **D5 n8n edge** | executions/day per workflow vs the ~10k/month Pro budget (burn-down), WhatsApp sent/failed by Meta error code, pending approvals (W08/W09/W11) and their age, HMAC failures | Ops lead |
+| **D5 n8n staff ops + notifier** | n8n: executions/day per workflow vs the ~10k/month Pro budget (burn-down), pending approvals (W08/W09/W17) and their age, HMAC failures. Backend notifier: outbox backlog age, WhatsApp/email/web push sent/failed by channel and Meta error code, STOP latency | Ops lead |
 | **D6 Games and anti-cheat** | sessions per game, replay hash mismatches, client–server score deltas, spam-tap penalties, `timing_mode=fallback` share (08 §1.3) | Game lead |
 | **D7 Field study (F-57)** | consented participants (n), sessions completed, live % below 60/100, r(LL quiz, Nazar) with 95 % CI from `field_stats_nightly` | Research lead; judges' slide (D-22) |
 | **D8 Security** | 401/403 rates, HMAC failures, rate-limit hits, admin actions, data exports, consent revocations, failed logins, WAF blocks (production) | Security owner |
@@ -136,7 +136,7 @@ Every model call goes through one Go wrapper (`internal/adapters/ai`, around the
 | A-06 | AI provider errors | Gemini 5xx/429 > 10 % for 5 min | SEV-3 | Telegram | PB-01 |
 | A-07 | Invented number | `md.provenance.replaced_numbers > 0` in production on any agent other than through the validator path, or validator digit rejections > 5 % / hour | SEV-2 | Telegram + AI lead | PB-01 |
 | A-08 | Minor's case without parental consent | any AI call, case write or analytics event for a case with `age_band` in (`under_16`, `16_17`) and no valid parental-consent artefact, or any analytics event from a minor's case (must be impossible; D-13 revised) | **SEV-1** | phone | PB-13 |
-| A-09 | WhatsApp failures | send failures > 10 % in a W01/W04 run, or Meta error 131047/131026 bursts | SEV-3 | Telegram | PB-02 |
+| A-09 | WhatsApp failures | WhatsApp send failures > 10 % over 1 h (or for one sweep's outbox rows), or Meta error 131047/131026 bursts | SEV-3 | Telegram | PB-02 |
 | A-10 | Case-clock missed | no completed `case_clock_sweep` by 08:30 IST | SEV-2 | Telegram | PB-08 |
 | A-11 | Workflows failures | task failure after all retries > 3 in 15 min, or a run queued > 10 min | SEV-3 | Telegram | PB-08 |
 | A-12 | n8n budget | projected monthly executions > 85 % of ~10k | SEV-4 | email | PB-09 |

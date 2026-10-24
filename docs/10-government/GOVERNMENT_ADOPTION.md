@@ -97,7 +97,7 @@ flowchart LR
 | **AadhaarOfflineAdapter** | `verify_secure_qr(image) → OfflineVerification{valid, age_band, state}` · `verify_xml(zip, share_code) → OfflineVerification` | UIDAI sample data | Real signature check against UIDAI's public certificate; store only the result and a salted hash, never the number (`07` §A3). **Disabled by default.** Enabled only in government-hosted mode, or after Nestiq completes the OVSE / Reg. 13A requirements **[unverified]**, SECONDARY ([Vinod Kothari, Dec 2025](https://vinodkothari.com/2025/12/a-new-way-to-verify-aadhaar-offline-introduction-of-face-matching/)) | Fails closed on bad signature; output schema has no field that can hold an Aadhaar number |
 | **BhashiniAdapter** | `asr(audio, lang) → Transcript` · `translate(text, src, tgt) → Text` · `tts(text, lang) → Audio` | Local stand-in | ULCA pipeline-config → inference (endpoints from community code, **[unverified]**, `07` §A4). Hackathon voice uses Gemini Live and Sarvam Saaras (Dogri); Bhashini is the government-preferred path for states (G4) | Language codes validated; PII redaction before send (EC-20) |
 | **PaymentAdapter** | `start_payment(fee_quote) → Redirect` · `reconcile(receipt_no) → PaymentStatus` | Fake payment page + signed callback | Redirect to Sarathi's payment page or the state treasury gateway (PayGov India / SBI ePay / GRAS-IFMS; current per-state gateway **unknown**, `07` §A5). **Margdarshak never collects government fees** | Amount always comes from `FeeQuote` (E-07); EC-09 payment-pending path |
-| **NotificationAdapter** | `send(template_id, contact_ref, vars) → Notification` · `handle_reply(payload)` · `opt_out(contact_ref)` | Console + email | Hackathon: n8n → WhatsApp Cloud (templates) and email. State: NIC SMS / mGov with **TRAI DLT** registered templates (D-16; DLT specifics **[unverified]**) | STOP honoured within one message (EC-30); ≤ 1 nudge a day; no marketing to under-18s |
+| **NotificationAdapter** | `send(template_id, contact_ref, vars) → Notification` · `handle_reply(payload)` · `opt_out(contact_ref)` | Console + email | Hackathon: backend notifier → WhatsApp Cloud API (templates) and email; n8n sends no citizen messages. State: NIC SMS / mGov with **TRAI DLT** registered templates (D-16; DLT specifics **[unverified]**) | STOP honoured within one message (EC-30); ≤ 1 nudge a day; no marketing to under-18s |
 | **SlotAdapter** | `list_offices(state) → [Office]` · `list_slots(office, range) → [Slot]` · `watch(office, criteria) → SlotWatch` | Seeded calendar labelled "sample data" | State-provided slot feed only. No scraping | Watch triggers reminder only; never books |
 | **JobRunner** (platform port) | `start(task, args) → RunRef` · `status(run) → RunStatus` | In-process | Hackathon: **Render Workflows (Python SDK)**. Government cloud: Celery or Temporal-style implementation (G4, D-17) | Same task definitions run on both; retries and fan-out preserved |
 | **LLMPort** (platform port) | `narrate(findings, allowlist) → Narration` · `decode(screenshot) → Decoded` · `live(session)` | Templates | Hackathon: Gemini API, paid tier (D-13 revised). Production: Vertex AI in an Indian region (`HUNCH:` asia-south1, not verified) or Bhashini/local models per state | Provenance guard: no number in output that did not come from a tool (D-10); ≥ 30 eval cases per agent |
@@ -197,7 +197,7 @@ adapters:
   aadhaar_offline: disabled
   bhashini: mock
   payment: sarathi_redirect
-  notification: n8n_whatsapp_email # government: nic_sms_dlt
+  notification: whatsapp_cloud # government: nic_sms_dlt
   slot: mock
 job_runner: render_workflows       # government cloud: celery | temporal
 llm: gemini_api_paid               # government: vertex_india | bhashini_local
@@ -412,7 +412,7 @@ Summary here; detail and ontology in [PALANTIR_METHOD](PALANTIR_METHOD.md).
 | DigiLocker | Mock consent screen with the real consent pattern | Requester onboarding through NeGD |
 | Aadhaar | Mock screen labelled "simulated: in production this step runs on Sarathi" | Sarathi's eKYC; offline adapter only if allowed |
 | Jobs | Render Workflows (clip pipeline headline, field stats, debrief fan-out, journey sweeper via n8n Schedule) | JobRunner with Celery/Temporal-style implementation on the government cloud |
-| Messaging | n8n → WhatsApp test number + email | NIC SMS with DLT templates; WhatsApp only with approved templates |
+| Messaging | backend notifier → WhatsApp test number + email (n8n for staff notifications only) | NIC SMS with DLT templates; WhatsApp only with approved templates |
 | Audit | Self-assessed checklists, CI scans | Empanelled auditor; safe-to-host certificate |
 | Claims | "Adapter spec and mock adapters; a department can host it" | Pilot results with CIs |
 

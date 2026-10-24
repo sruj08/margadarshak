@@ -2,7 +2,7 @@
 > Project: Margdarshak · Owner: Tech lead (architecture) · Status: Draft v0.1 · Last updated: 2026-10-23
 > Related: [PROJECT_BRIEF](../00-overview/PROJECT_BRIEF.md) · [Tech stack](TECH_STACK.md) · [Data model](DATA_MODEL.md) · [API spec](API_SPEC.md) · [OpenAPI](../../api/openapi.yaml) · [Integrations](INTEGRATIONS.md) · ADRs: [0001](adr/ADR-0001-hexagonal-core-and-adapters.md) · [0002 (superseded)](adr/ADR-0002-python-fastapi-adk-backend.md) · [0011](adr/ADR-0011-go-backend.md) · [0003](adr/ADR-0003-nextjs-heroui-frontend.md) · [0004](adr/ADR-0004-phaser4-game-core-server-replay.md) · [0005](adr/ADR-0005-render-workflows-durable-jobs.md) · [0006](adr/ADR-0006-n8n-edge-only.md) · [0007](adr/ADR-0007-rule-packs-as-data-maker-checker.md) · [0008](adr/ADR-0008-no-aadhaar-data-handoff-to-sarathi.md) · [0009](adr/ADR-0009-multi-tenant-per-state.md) · [0010](adr/ADR-0010-apache2-and-cc-by.md)
 
-**One paragraph.** Margdarshak is a reference citizen front end plus an open adapter specification that MoRTH, NIC or a State Transport Department can host over Sarathi, DigiLocker and Bhashini (D-02). It is **not affiliated** with any of them and the hackathon build runs on **mock adapters with simulated government data**. The shape is a **hexagonal core** (pure domain: case state machine, rules engine, fees, timeline, scoring facade, consent ledger) surrounded by **ports**. Every government system sits behind a port in the **Government Adapter Layer**, each with a `mock` and a `real` implementation that pass the **same contract tests**, selected per state tenant by configuration. One **Go backend** (Go 1.27: chi, oapi-codegen handlers generated from `api/openapi.yaml`, pgx + sqlc, Google ADK for Go) owns all logic (ADR-0011); a small Node **score verifier** replays game sessions with the same TypeScript `game-core` the browser runs; **Render Workflows** runs durable jobs as TypeScript tasks that call back into the Go API for every business step (the clip pipeline is the headline); **n8n** is only the messaging and scheduling edge. There is no Python anywhere in the repository. Everything is containerised and cloud-agnostic, so it runs on Render (Singapore) for the hackathon and on MeghRaj / a MeitY-empanelled Indian cloud on Kubernetes for adoption (D-17).
+**One paragraph.** Margdarshak is a reference citizen front end plus an open adapter specification that MoRTH, NIC or a State Transport Department can host over Sarathi, DigiLocker and Bhashini (D-02). It is **not affiliated** with any of them and the hackathon build runs on **mock adapters with simulated government data**. The shape is a **hexagonal core** (pure domain: case state machine, rules engine, fees, timeline, scoring facade, consent ledger) surrounded by **ports**. Every government system sits behind a port in the **Government Adapter Layer**, each with a `mock` and a `real` implementation that pass the **same contract tests**, selected per state tenant by configuration. One **Go backend** (Go 1.27: chi, oapi-codegen handlers generated from `api/openapi.yaml`, pgx + sqlc, Google ADK for Go) owns all logic (ADR-0011); a small Node **score verifier** replays game sessions with the same TypeScript `game-core` the browser runs; **Render Workflows** runs durable jobs as TypeScript tasks that call back into the Go API for every business step (the clip pipeline is the headline); the backend **notifier** sends every citizen message; **n8n** is only the internal operations layer (schedules, human approvals, staff notifications). There is no Python anywhere in the repository. Everything is containerised and cloud-agnostic, so it runs on Render (Singapore) for the hackathon and on MeghRaj / a MeitY-empanelled Indian cloud on Kubernetes for adoption (D-17).
 
 ---
 
@@ -13,7 +13,7 @@
 | P2 | **Never touch Aadhaar data** | No Aadhaar number, OTP, biometrics or face matching anywhere; eKYC happens on Sarathi (hand-off). AadhaarOffline is mock-only; government mode uses the state's service | D-07, ADR-0008, brief F-56 |
 | P3 | **Code computes, AI narrates** | Eligibility, fees, timelines, scores, scam verdicts, golden hour are deterministic code. Gemini picks IDs from allowlists and writes glue text without digits | D-09, D-10 |
 | P4 | **Rules are data** | State rule packs (classes, fees, formats, timelines, blockers) are versioned, signed JSON with source/date/confidence and maker-checker approval | D-05, D-06, F-42, ADR-0007 |
-| P5 | **One brain, thin edges** | One Go backend + one Postgres. n8n moves messages and waits for humans; Workflows tasks orchestrate and process media; neither decides anything | D-16, D-17, ADR-0006, ADR-0011 |
+| P5 | **One brain, thin edges** | One Go backend + one Postgres. The backend sends citizen messages; n8n fires schedules, waits for staff and notifies staff; Workflows tasks orchestrate and process media; neither decides anything | D-16, D-17, ADR-0006, ADR-0011 |
 | P6 | **Server is the source of truth for time and scores** | Server clock for deadlines (EC-15); server replay overwrites client scores | D-11, F-09, ADR-0004 |
 | P7 | **AI for everyone, children protected by consent** | Every feature, AI included, is available to every user. A learner aged 16–17 uses a parent's account in family mode; the adult account holder gives verifiable parental consent. No behavioural tracking, analytics events or targeted ads on a child's data; squads and share cards only with the parent's consent | D-13 revised, brief §15 |
 | P8 | **Works on a ₹10k phone on 2G** | Lite mode < 300 KB first load, offline mock tests, cached clips, no Phaser in Lite | F-51, EC-19 |
@@ -90,7 +90,7 @@ flowchart LR
     KV[("mg-kv<br/>Render Key Value<br/>rate limits, token denylist, caches")]
   end
   R2B[("Cloudflare R2<br/>raw clips (private), blurred clips,<br/>replay blobs, exports")]
-  N8N["n8n Cloud<br/>15 workflows: schedules,<br/>WhatsApp/email, approvals"]
+  N8N["n8n Cloud<br/>internal ops: schedules,<br/>staff approvals + staff alerts"]
   GEM["Gemini API<br/>(Flash-Lite, Flash, Live)"]
   SAR["Sarvam Saaras"]
   WA["WhatsApp Cloud API"]
@@ -108,9 +108,9 @@ flowchart LR
   WF --> GEM
   API --> GEM
   API --> SAR
-  API -->|"outbox → signed webhooks"| N8N
-  N8N -->|"internal scope: API-65..69, 72, 73 (bearer + HMAC)"| API
-  N8N --> WA
+  API -->|"notifier: outbox → citizen messages"| WA
+  API -->|"signed webhooks: staff tasks"| N8N
+  N8N -->|"internal scope: API-65..68, 73 (bearer + HMAC)"| API
   API --> R2B
 ```
 
@@ -123,7 +123,7 @@ flowchart LR
 | `mg-db` | PostgreSQL 16 | System of record (Margdarshak's own data; Sarathi stays the government system of record) | vertical + read replica | Backend lead |
 | `mg-kv` | Render Key Value (Redis-protocol) | rate limits, idempotency hot cache, token denylist, plan cache | vertical | Backend lead |
 | Object storage | Cloudflare R2 (S3 API) | clips, replays, exports | managed | Platform lead |
-| n8n | n8n Cloud Pro | schedules, WhatsApp/email delivery, human approvals | managed (10k executions/month on Pro) | Automation owner |
+| n8n | n8n Cloud Pro | schedules, staff approvals, staff notifications (no citizen messages) | managed (10k executions/month on Pro); load grows with staff, not citizens | Automation owner |
 
 ---
 
@@ -204,7 +204,7 @@ margdarshak/
 │   │       ├── journey/          14-state machine (pure) + case service
 │   │       ├── clock/            milestone schedule (pure) + sweep
 │   │       ├── privacy/          PII redactor (Verhoeff), consent purposes, family mode, retention, export/delete
-│   │       ├── notify/           notification service + n8n / web push / console channels
+│   │       ├── notify/           notification service + channels (n8n webhook in P1; WhatsApp Cloud / email / web push notifiers per ADR-0006 rev.)
 │   │       ├── store/            pgx pool, UnitOfWork, repositories, sqlc output (sqlcgen/), embedded-postgres test helper
 │   │       ├── audit/            append-only audit writer
 │   │       ├── jobs/             JobRunner (inline | render_workflows | temporal) + Go step handlers + job_runs
@@ -218,7 +218,7 @@ margdarshak/
 │   └── ui/                       HeroUI v3 theme + UX4G skin
 ├── rulepacks/                    schema/, IN-base/2026.10.0/, JK/, DL/, KL/ (JSON + golden tests)
 ├── content/                      modules, questions+variants, explanations, error catalogue (CC-BY)
-├── n8n/workflows/                exported workflow JSON (W1–W15), credentials by reference only
+├── n8n/workflows/                exported staff/internal workflow JSON (W01, W07–W09, W12–W18), credentials by reference only
 ├── tests/golden/                 shared golden cases (JSON) run by the Go engine and the TS mirror
 ├── api/openapi.yaml              this contract (+ api/adapters/*.yaml government-side adapter specs)
 └── infra/                        render.yaml, docker/ (api.Dockerfile: Go multi-stage → distroless; compose.yaml), helm/, terraform/ (adoption)
@@ -286,7 +286,7 @@ flowchart LR
 | **AadhaarOfflinePort** | Derive age band / address-state match from a Secure QR or Paperless XML | `AadhaarOfflineMockAdapter` only (synthetic UIDAI-format samples) | `AadhaarOfflineStateServiceAdapter`: calls the **state's** OVSE service in government mode (OVSE duties sit with the state, brief F-56) | `.aadhaar_offline` (`disabled`/`mock`/`state_service`) | eKYC, OTP, store number/photo/name/address |
 | **BhashiniPort** | ASR, NMT, TTS for state languages | `BhashiniMockAdapter` (fixtures) and `LocalIndicTrans2Adapter` (self-hosted, optional) | `BhashiniDhruvaAdapter`: ULCA pipeline-config → Dhruva inference (endpoints from community code, **[unverified]**) | `.bhashini` | send PII or Aadhaar-like digits |
 | **PaymentPort** | Get a redirect for government fees; reconcile status | `PaymentMockAdapter`: fake gateway page + HMAC callback (API-24) | `PaymentRedirectAdapter` (deep link to Sarathi's fee page) · `PaymentStateGatewayAdapter` (PayGov / state treasury, reconciled by receipt number) | `.payment` | **collect government fees**, store card/UPI data |
-| **NotificationPort** | Send templated messages, track receipts, honour opt-outs and quiet hours | `ConsoleNotifier` (logs + in-app inbox) | `N8nWebhookNotifier` (WhatsApp Cloud API + email via n8n) · `WebPushNotifier` (webpush-go, VAPID) · `MgovSmsNotifier` (**roadmap until TRAI DLT**) | `.notification` | free-text marketing, > 1 nudge/day, messages in quiet hours |
+| **NotificationPort** | Send templated messages, track receipts, honour opt-outs and quiet hours | `ConsoleNotifier` (logs + in-app inbox) | `WhatsAppCloudNotifier` (Meta WhatsApp Cloud API, called directly) · `EmailNotifier` (SMTP to the transactional provider) · `WebPushNotifier` (webpush-go, VAPID) · `MgovSmsNotifier` (**roadmap until TRAI DLT**). The P1 build still delivers through the n8n webhook channel; moving it to these notifiers is open (ADR-0006 rev.) | `.notification` | free-text marketing, > 1 nudge/day, messages in quiet hours |
 | **SlotPort** | Slot availability, slot-watch triggers | `SlotMockAdapter` (seeded, `sample_data`) | `SlotCrowdIntelAdapter` (only moderated Live Intel "slots opened" reports) · `SlotRealAdapter` (NIC read API after adoption) | `.slot` | book, hold or scrape slots |
 
 ### 5.2 Port contracts (Go interfaces in `internal/ports`, abridged)
@@ -394,7 +394,7 @@ Render Workflows (public beta since 7 Apr 2026) runs each task run on its own in
 |---|---|---|---|---|
 | **`clip_ingest`** (headline) | API-55 register | `transcode` (ffmpeg → 360p/480p H.264, faststart) → `blur` (YuNet faces + plate detector via `onnxruntime-node`) → `flash_check` (≤ 3 flashes/s, WCAG 2.3.1) → `propose_windows` (Gemini video; retries on 429/5xx — the demo injects one failure to show the retry on the Runs page) → `open_review` (status `awaiting_ratings`, webhook to n8n W08) | 3 retries, 1.5× backoff; transcode/blur 30 min; propose 10 min | long, failure-prone, parallel per clip |
 | **`clip_finalize`** | **n8n W08** holds the two-rater wait (send-and-wait to both raters, ratings saved via API-55), then calls API-67 `/internal/jobs/clip_finalize` | `agreement` (onset Δ ≤ 0.5 s, matched hazards; else third rater) → `blur_audit_check` (100%) → `publish_manifest` (R2) → `cdn_warm` → `recompute_difficulty` | 3 retries; 5–10 min | Workflows has no sleep API and a 24 h run cap, so the human wait lives in n8n between two runs |
-| **`case_clock_sweep`** | n8n W1 Schedule 06:30 IST → API-65 | → API `clock.plan_pages` (keyset pages of 500) → fan-out `clock_batch` (≤ 8 concurrent; each batch → API `clock.fire_batch`, which locks rows `FOR UPDATE SKIP LOCKED`, marks them firing, inserts notifications with idempotency keys and posts a signed batch to n8n `notify-batch`) | 3 retries per batch; 20 min | fan-out, retries, idempotent keys make re-runs safe |
+| **`case_clock_sweep`** | n8n W1 Schedule 06:30 IST → API-65 | → API `clock.plan_pages` (keyset pages of 500) → fan-out `clock_batch` (≤ 8 concurrent; each batch → API `clock.fire_batch`, which locks rows `FOR UPDATE SKIP LOCKED`, marks them firing and inserts notifications with idempotency keys and `send_after`; the notifier delivers them) | 3 retries per batch; 20 min | fan-out, retries, idempotent keys make re-runs safe |
 | **`session_debrief`** | API-35 when the inline 6 s debrief budget is exceeded, or batch (`debrief_backfill`) | `load_and_gate` → per-finding `prepare_facts` in parallel → `narrate` (DebriefAgent, retry on 429) → `validate` → `persist` → optional `notify_card` | 3 retries; 2 min; template already shown | retries on Gemini 429 without blocking the user |
 | **`nightly_stats`** | n8n Schedule 02:00 IST → API-65-style internal trigger | recompute Nazar n, % below 60, r(LL quiz, Nazar) + 95% CI (Fisher z), journey-test medians → API-71 cache | 3 retries; 15 min | batch analytics with retry |
 | `rulepack_reevaluate` | API-54 approve | find cases on old version → fan-out re-evaluate blockers/timeline → append `rule_pack_rebased` → notify (EC-27) | 3; 30 min | fan-out over many cases |
@@ -417,28 +417,28 @@ Hackathon facts to respect: API-triggered root runs are limited to 50/min on the
 
 ---
 
-## 9. n8n: the human-facing edge only (ADR-0006)
-n8n Cloud (Pro perk) owns schedules, WhatsApp/email delivery, inbound replies and human approvals. It authenticates to the internal scope with a service bearer token plus an HMAC body signature and **never queries Postgres directly**. The 15 workflows W1–W15 are specified in `research/ps1-deep/08-game-ai-n8n.md` §6; this table shows how each touches the core.
+## 9. n8n: internal and staff operations only (ADR-0006, rev. 2026-10-24)
+n8n Cloud (Pro perk) fires schedules, holds human approvals and notifies **staff** (team, school staff, RTO/state staff). **No citizen message goes through n8n**: the case clock, the case reducer and the intel decision handler write outbox rows, and the backend notifier (`NotificationPort`, §5) delivers them. n8n authenticates to the internal scope with a service bearer token plus an HMAC body signature and **never queries Postgres directly**. Full spec: [N8N_WORKFLOWS](../05-ops/N8N_WORKFLOWS.md).
 
-| n8n workflow | Calls into core | Core calls n8n | Business logic location |
-|---|---|---|---|
-| W1 daily case-clock tick | API-65 (starts `case_clock_sweep`; the API sets `asOf` from server time) | `notify-batch` webhook with `{notification_id, channel, template_id, vars}` | timeline planner + rule pack |
-| W2 milestone notifier | API-66 receipts | `milestone` webhook | case reducer |
-| W3 slot-watch alerts | API-69 fire watcher → messages | `slot-intel` after a moderated "slots opened" | intel moderation code |
-| W4 test-eve checklist + ICS | API-66 | via sweep batches | rule pack documents list |
-| W5 weekly parent card | API-66 | card image rendered by `mg-web` OG route | backend renderer |
-| W6 weekly coach plan | API-66 replies (intentions) | `coach` webhook | FSRS + CoachAgent |
-| W7 school lead routing | API-73 next school; API-66 `school_lead_decision` | `school-lead` | routing in code (consent, area, class, declines) |
-| W08 clip review queue (two-rater wait) | ratings via API-55 (curator UI); API-67 starts `clip_finalize` | `clip-review` | agreement + publish in `clip_finalize` |
-| W9 Live Intel moderation | API-68 precheck, then API-68 decision | `intel-moderation` | precheck + k-threshold code |
-| W10 fail follow-up | API-66 | `fail-followup` (retest date from rules) | rules engine |
-| W11 escalation letter approval | API-66 `letter_approval`, then API-72 dispatch | `letter-approval` | letter templates |
-| W12 incident/guardrail alerts | none | `alert` | thresholds in config |
-| W13 analytics digest | API-71 public stats + API-53 aggregates (n8n never queries Postgres directly); API-67 `nightly_stats` | none | aggregation code |
-| W14 field-test capture | API-66 `field_form_submitted` | `field-session` | study tables |
-| W15 rule source freshness | `/v1/admin/rulepacks` (read) | none | maker-checker |
+**Scalability:** n8n's executions grow with staff, offices and review tasks, never with citizens. The citizen path (≤ 660k notifications/day at the §13 peak, plus receipts) runs in the API and notifier, which scale horizontally.
 
-If n8n is down, **no fact changes**: notifications stay `queued` in the outbox and in-app inbox, web push still works through `WebPushNotifier`, and the outbox retries for 24 h. Execution budget is kept under Pro's ~10k/month by batching (one run per schedule, fan-out inside the run).
+| n8n workflow | Audience | Calls into core | Core calls n8n | Business logic location |
+|---|---|---|---|---|
+| W01 daily case-clock trigger + watchdog | on-call | API-65 (starts `case_clock_sweep`; the API sets `asOf` from server time), sweep status | none | timeline planner + rule pack |
+| W07 school lead routing | school staff | API-73 next school; API-66 `school_lead_decision` | `school-lead` | routing in code (consent, area, class, declines) |
+| W08 clip review queue (two-rater wait) | curators | ratings via API-55 (curator UI); API-67 starts `clip_finalize` | `clip-review` | agreement + publish in `clip_finalize` |
+| W09 Live Intel moderation | moderators | API-68 decision | `intel-moderation`, only for reports the inline precheck flags | precheck + k-threshold code |
+| W12 incident/guardrail alerts | on-call | `/internal/ops/metrics` | `alert` | thresholds in config |
+| W13 analytics digest | team | API-67 `analytics-digest`, `nightly_stats` | none | aggregation code |
+| W14 field-test capture | research team | API-70; API-66 `field_form_submitted` | `field-session` | study tables |
+| W15 rule source freshness | rules owner | `/v1/admin/rulepacks` (read, verify) | none | maker-checker |
+| W16 RTO morning brief | RTO/ARTO staff (govt mode) | API-67 `rto-brief` | none | console aggregates (k ≥ 5) |
+| W17 stall and SLA alerts | RTO + state staff (govt mode) | console alert ack | `console-alert` | thresholds in code |
+| W18 staff task reminders | all staff | API-67 `staff-tasks` | none | task queues in code |
+
+Retired from n8n (now backend): W02 milestones, W03 slot-watch alerts, W04 test-eve, W05 family card, W06 coach plan, W10 fail follow-up, W11 escalation letter.
+
+If n8n is down, **no citizen message is delayed and no fact changes**; staff tasks wait in their queues and the backend review pages still work. If the notifier or a channel is down, notifications stay `queued` in the outbox and in-app inbox, web push still works through `WebPushNotifier`, and the outbox retries for 24 h.
 
 ---
 
@@ -512,7 +512,7 @@ sequenceDiagram
   participant WF as Render Workflows case_clock_sweep (TS)
   participant JS as mg-api /internal/job-steps
   participant DB as Postgres
-  participant N8W as n8n notify-batch
+  participant NT as Notifier (mg-api)
   participant WA as WhatsApp Cloud API
   N8->>API: POST sweep_id (bearer + HMAC, Idempotency-Key)
   API->>API: as_of := server today IST (never trust caller time)
@@ -524,12 +524,12 @@ sequenceDiagram
   par clock_batch x K (max 8 concurrent, Promise.all)
     WF->>JS: clock.fire_batch(page) (HMAC)
     JS->>DB: lock rows FOR UPDATE SKIP LOCKED, mark firing
-    JS->>DB: insert notifications with idempotency_key, apply quiet hours, daily cap, opt-outs
+    JS->>DB: insert notifications with idempotency_key and send_after, apply quiet hours, daily cap, opt-outs
   end
-  JS->>N8W: signed batch of template_id and vars (first name only if opted in)
-  N8W->>WA: approved template messages
-  WA-->>N8W: delivery receipts
-  N8W->>API: POST /internal/webhooks/n8n delivery_receipt
+  API-->>N8: sweep status completed (counts only)
+  NT->>DB: claim due outbox rows (send_after reached)
+  NT->>WA: approved template messages (keyed by idempotency_key)
+  WA-->>API: delivery receipts (channel webhook, API-66)
   API->>DB: notification delivered, timeline_event sent
   Note over WF,DB: A retried batch re-selects only rows still scheduled, and idempotency keys stop double sends. The TS task never touches Postgres.
 ```
@@ -661,7 +661,7 @@ sequenceDiagram
   participant API as mg-api
   participant MOD as Intel precheck (code)
   participant DB as Postgres
-  participant N8 as n8n W9
+  participant N8 as n8n W09
   actor MO as Moderator
   U->>API: POST /v1/offices/off_jk02/reports (enums only)
   API->>MOD: schema (no free text), rate 3 per day, account age, duplicate check
@@ -670,19 +670,18 @@ sequenceDiagram
     API-->>U: 202 plus ACB and CPGRAMS links (we do not host allegations)
   else visit or slots_opened
     MOD->>DB: rto_reports pending_moderation
-    API->>N8: intel-moderation webhook
-    N8->>API: POST /internal/intel/rpt/precheck (API-68)
-    API-->>N8: risk, corroborating_24h, auto_publish_allowed (computed in code)
+    MOD->>MOD: precheck inline: risk, corroborating_24h, auto_publish_allowed (code)
     alt auto_publish_allowed
-      N8->>API: POST /internal/intel/rpt/decision publish by auto_rule
-    else
+      MOD->>DB: decision publish by auto_rule (no n8n)
+    else needs a human
+      API->>N8: intel-moderation webhook (risk, reasons, summary)
       N8->>MO: send and wait (approve, reject, escalate)
       MO-->>N8: decision
       N8->>API: POST /internal/intel/rpt/decision (API-68)
     end
     API->>DB: publish, refresh office_intel_agg
     opt slots_opened published
-      API->>N8: slot-intel webhook, W3 calls API-69 per watcher
+      API->>DB: fire watchers (API-69 logic), outbox rows for the notifier
     end
   end
   U->>API: GET /v1/offices/off_jk02/intel
@@ -708,7 +707,8 @@ sequenceDiagram
 | F3 | Model writes a digit, an unknown rule, or unsafe tone | validator | nothing different (template or retried card) | retry once with error list; then template; logged for eval set | D-10 |
 | F4 | Score verifier down | health + timeout 2 s | score shown as "provisional" | session stored `pending_verification`; `replay_pending_sessions` re-checks; share card waits | R-05 |
 | F5 | Render Workflows run fails or is queued | run status poll, `ops.job_runs` | clip admin shows retrying | automatic retries (3); manual re-run from admin; `JOB_RUNNER=inline` fallback for the sweep in a demo emergency | R-11 |
-| F6 | n8n down / WhatsApp template rejected | outbox age > 30 min | in-app inbox + web push still work | outbox retries 24 h; email fallback; SMS only after DLT | R-08, EC-30 |
+| F6 | Notifier/channel down or WhatsApp template rejected | outbox age > 30 min | in-app inbox + web push still work | outbox retries 24 h; email fallback; SMS only after DLT | R-08, EC-30 |
+| F6b | n8n down | W12 heartbeat missing; no W01 sweep by 07:00 | none for citizens | on-call starts the sweep with `/internal/clock/sweep` (idempotent); staff use the review pages directly | ADR-0006 |
 | F7 | Postgres unavailable | health, error rate | 503 problem with `offline_draft` fallback | PWA queues writes; read-only cached plan works offline | R-11 |
 | F8 | Cold start during judging | synthetic check | slow first load | paid instances (no sleep); n8n pings `/v1/health` every 10 min during judging; README notes ~1 min cold start on free services | R-11 |
 | F9 | Wrong rule or fee | golden tests, W15 source check, user report | "verify at your RTO" on low-confidence rows | maker-checker hotfix pack; EC-27 rebase + notice | R-09 |
@@ -750,7 +750,7 @@ Derived load: peak-hour average ≈ 80k × 40 / 3,600 ≈ **890 req/s**, peak-se
 | Jobs | Workflows/Temporal fan-out by tenant × shard; sweeps idempotent | sweep < 15 min nationally with 64 shards |
 | Voice | the costliest path (≈ ₹2/min Live audio); capped 10 min/user/month; separate WS pool | concurrency budgeted per tenant |
 | AI text | Flash-Lite ≈ ₹0.10 per debrief; template-first so AI is never on the critical path | rate-limited per tenant; Vertex quota in `asia-south1` |
-| Notifications | batch per run; per-tenant WhatsApp numbers; mGov SMS in government mode | ≤ 1 nudge/day caps volume |
+| Notifications | backend notifier workers scale with the API; per-tenant WhatsApp numbers; mGov SMS in government mode; n8n not on this path | ≤ 1 nudge/day caps volume |
 
 Hackathon targets (measured with k6 before quoting; owner Platform lead): API-01 p95 < 300 ms server-side at 50 req/s; API-35 p95 < 800 ms including replay; Lite first load < 300 KB; Kapoor's "10,000 users at 9 am" = ~1k req/s → requires the production profile, which we state honestly.
 
@@ -791,8 +791,8 @@ flowchart TB
   WF --> V
   A --> R2[("Cloudflare R2 bucket mg-media<br/>+ public bucket for blurred clips")]
   WF --> R2
-  A <--> N8["n8n Cloud Pro"]
-  N8 --> WA["WhatsApp Cloud API test number<br/>(allow-listed recipients)"]
+  A --> WA["WhatsApp Cloud API test number<br/>(allow-listed recipients)"]
+  A <--> N8["n8n Cloud Pro<br/>(staff ops only)"]
   A --> GM["Gemini API (paid tier before any real user)"]
 ```
 Blueprint sketch (the real file is `infra/render.yaml`, which is authoritative; Workflows in Blueprints supported since 16 Sep 2026 per the Render changelog — field names to be confirmed at H0 against the Render docs, owner Platform lead):
@@ -855,7 +855,8 @@ flowchart TB
       VERP["verifier Deployment (HPA)"]
       WRK["Temporal workers (Go SDK, same image as the API; JobRunner)"]
       TMP["Temporal server"]
-      NOT["notifier (replaces n8n edge) or self-hosted n8n"]
+      NOT["notifier workers (citizen messages)"]
+      N8S["self-hosted n8n (staff ops) or CronJobs + review pages"]
       OTEL["OpenTelemetry collector"]
     end
     PGC[("Postgres 16 HA (CloudNativePG or CSP managed)<br/>sync replica, PITR to India object store")]
@@ -904,7 +905,8 @@ Packaging: OCI images (multi-arch, pinned digests), a Helm chart (`infra/helm/ma
 |---|---|---|
 | Hosting | Render Singapore, synthetic data only | NIC / MeitY-empanelled India cloud, Kubernetes |
 | Jobs | Render Workflows (TS tasks; `JOB_RUNNER=render_workflows`), inline in dev/CI (`JOB_RUNNER=inline`) | Temporal Go SDK (`JOB_RUNNER=temporal`) |
-| Messaging edge | n8n Cloud Pro, WhatsApp test number, email | n8n self-hosted (licence check) or a small notifier service; mGov SMS with DLT |
+| Citizen messaging | backend notifier: WhatsApp test number, email, web push | notifier workers; state WhatsApp business number; mGov SMS with DLT |
+| Staff operations | n8n Cloud Pro | n8n self-hosted (licence check) or CronJobs/Temporal schedules + review pages |
 | AI | Gemini API (paid tier before any real user) | Vertex AI `asia-south1`; Bhashini for speech where coverage allows |
 | Sarathi | deeplink (Mode A) + mock | NIC adapter (Mode B) |
 | DigiLocker | mock consent (real pattern) | NeGD requester onboarding |
@@ -920,7 +922,7 @@ Packaging: OCI images (multi-arch, pinned digests), a Helm chart (`infra/helm/ma
 | Hexagonal ports for every government system | adoptable, testable, honest about mocks | more interfaces than a hackathon strictly needs | ports are small; mocks double as demo fixtures |
 | Go backend + Node verifier + TS Workflows tasks (ADR-0011) | one static binary owns all logic; ADK for Go has `RunLive`; scoring stays in one TS codebase | two runtimes (Go, Node); the Go rules engine needs a TS mirror for offline plans | verifier is stateless, < 300 lines around game-core; TS tasks hold no business logic (they call Go job steps); shared golden JSON in `tests/golden/` keeps the Go engine and the TS mirror identical in CI |
 | Render Workflows for durable jobs | sponsor track, retries and fan-out for free | beta; no cron/sleep/webhook; no India region; one more HTTP hop per step | `JobRunner` port; two-run clip pipeline; Temporal for adoption |
-| n8n only at the edge | non-devs edit schedules and copy; approvals with send-and-wait | a SaaS hop for messages | no logic in n8n; outbox; replaceable notifier |
+| n8n for staff ops only | non-devs edit schedules and staff routing; approvals with send-and-wait; flat load as citizens grow | we build the citizen notifier in code | no logic in n8n; no citizen data in n8n; outbox + notifier own the citizen path |
 | Event-sourced case timeline | explainable, idempotent reminders, rebase on rule change | more code than CRUD | single writer path; projections rebuilt nightly sample |
 | Template-first debrief | AI never blocks the user; works when Gemini is down (EC-29) | AI adds "only" phrasing | AI is honest about its role; eval shown |
 | Personal values in on-device vault | server never holds name/address | no cross-device copy-pack | user re-enters on a new device; helper can type on their device |
@@ -933,7 +935,7 @@ Packaging: OCI images (multi-arch, pinned digests), a Helm chart (`infra/helm/ma
 | [ADR-0003](adr/ADR-0003-nextjs-heroui-frontend.md) | Next.js 16 + HeroUI v3 PWA frontend |
 | [ADR-0004](adr/ADR-0004-phaser4-game-core-server-replay.md) | Phaser 4 + `@margdarshak/game-core` with server replay |
 | [ADR-0005](adr/ADR-0005-render-workflows-durable-jobs.md) | Render Workflows (TypeScript SDK tasks) for durable jobs behind the `JobRunner` port |
-| [ADR-0006](adr/ADR-0006-n8n-edge-only.md) | n8n as the messaging and scheduling edge only |
+| [ADR-0006](adr/ADR-0006-n8n-edge-only.md) | n8n for internal and staff operations only (citizen messages via the backend notifier) |
 | [ADR-0007](adr/ADR-0007-rule-packs-as-data-maker-checker.md) | Rule packs as signed data with maker-checker |
 | [ADR-0008](adr/ADR-0008-no-aadhaar-data-handoff-to-sarathi.md) | No Aadhaar data; hand-off to Sarathi |
 | [ADR-0009](adr/ADR-0009-multi-tenant-per-state.md) | Multi-tenant per state |

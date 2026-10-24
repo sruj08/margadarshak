@@ -9,7 +9,8 @@
 | Hosting | **Render**, region **Singapore** (Render has no India region: Oregon, Ohio, Virginia, Frankfurt, Singapore; https://render.com/docs/regions, war-room G4) | **MeghRaj / NIC cloud or a MeitY-empanelled CSP, Indian region** (07 §A6, D-17) |
 | Runtime | 3 Docker services (Go API, Next.js web, Node score verifier) + 1 Render Workflows service (TypeScript) + Render Postgres + Render Key Value | Kubernetes + Helm (`infra/helm/`), or Docker Compose on a single VM for a small NIC install |
 | Durable jobs | **Render Workflows** (TypeScript SDK `@renderinc/sdk` 1.4.0; the Go API starts runs over Render's REST API) | **Temporal** (MIT, self-hosted; Temporal Go SDK `go.temporal.io/sdk` v1.50.0) behind the same `JobRunner` port |
-| Schedules + messaging edge | **n8n Cloud Pro** (sponsor perk) | self-hosted n8n in India **or** Kubernetes CronJobs + backend NotificationAdapter (no business logic is lost, D-16) |
+| Citizen notifications | **backend notifier** in `margdarshak-api` (`NotificationPort`: WhatsApp Cloud API, email, web push; ADR-0006 rev. — the P1 build still relays through the n8n W02 webhook) | same notifier + `MgovSmsNotifier` after TRAI DLT |
+| Schedules + staff operations | **n8n Cloud Pro** (sponsor perk): schedules, human approvals, staff notifications; no citizen messages (ADR-0006 rev.) | self-hosted n8n in India **or** Kubernetes CronJobs + backend review pages (no business logic is lost, D-16) |
 | Object storage | **Cloudflare R2** (blurred clips, ICS, exports) | the CSP's S3-compatible store in India, or MinIO |
 | AI | Gemini API, **paid tier** (D-13) | **Vertex AI in an Indian region** [unverified: model availability in asia-south1; owner AI lead; before the state MoU], Bhashini for speech where the state prefers it |
 | Data | **synthetic only** + consented, pseudonymous field-study rows (18+) | real citizen data under the state's notice; all data, logs, backups and inference in India |
@@ -21,13 +22,13 @@ The same three images (`infra/docker/api.Dockerfile`, `web.Dockerfile`, `score-v
 | # | Component | Image / runtime | Render type, plan | Purpose | Talks to |
 |---|---|---|---|---|---|
 | C1 | `margdarshak-web` | Next.js 16 standalone, Node 22 | `web`, `0.5c-512mb` (legacy "starter") | citizen PWA, Lite mode, state console UI (F-41), clip curator page | C2 over the private network (server-side) and the public URL (browser) |
-| C2 | `margdarshak-api` | Go 1.27 static binary (chi v5, pgx v5 + sqlc, goose, ADK for Go v1.9 + genai v1.76), distroless image (ADR-0011) | `web`, `0.5c-512mb` (legacy "starter"; `GOMEMLIMIT=400MiB`; move to `1c-2g` if the k6 burst needs it) | the **one backend** (D-17): rules engine, cases, adapters, ADK agents, `/internal/*` for n8n, `/internal/job-steps/*` for Workflows tasks | Postgres, Key Value, C3, Render API (start/poll task runs), Gemini, Sarvam, R2, n8n webhooks |
+| C2 | `margdarshak-api` | Go 1.27 static binary (chi v5, pgx v5 + sqlc, goose, ADK for Go v1.9 + genai v1.76), distroless image (ADR-0011) | `web`, `0.5c-512mb` (legacy "starter"; `GOMEMLIMIT=400MiB`; move to `1c-2g` if the k6 burst needs it) | the **one backend** (D-17): rules engine, cases, adapters, ADK agents, `/internal/*` for n8n, `/internal/job-steps/*` for Workflows tasks; per ADR-0006 rev. also the notifier worker process that sends citizen messages from the outbox (BACKEND §7.2) | Postgres, Key Value, C3, Render API (start/poll task runs), Gemini, Sarvam, R2, n8n webhooks |
 | C3 | `margdarshak-score-verifier` | Node 22, `@margdarshak/game-core` | `pserv` (private, no public URL), `0.5c-512mb` | replays every game session from seed + events and **overwrites the client score** (anti-cheat, API-35) | called by C2 only (Workflows replays go through C2 job steps) |
 | C4 | `margdarshak-workflows` | Node 22, TypeScript, `@renderinc/sdk` 1.4.0 (`services/workflows`) | `workflow` (per-task compute, default `flex`) | durable jobs: **`clip_ingest`** (headline: transcode → blur faces/plates → propose windows → hand to raters), `clip_finalize` (agreement → publish), `case_clock_sweep` (+ `clock_batch`), `session_debrief`, `debrief_backfill`, `nightly_stats`, `rulepack_reevaluate`, `user_export`, `user_delete`, `replay_pending_sessions`. Media steps run in the task; every business step is an HMAC call to C2 `/internal/job-steps/{step}` (the API owns the DB, Gemini and n8n) | C2 (private network), R2 (outbound only: runs **cannot receive inbound connections**, B-sponsors §1) |
 | C5 | `margdarshak-db` | Render Postgres 16 | `0.1c-256mb` (legacy "basic-256mb") | system of record for Margdarshak's own objects (E-01..E-31); **not** a copy of Sarathi | C2 only (Workflows tasks reach data through C2) |
 | C6 | `margdarshak-kv` | Render Key Value (Redis-compatible) | `256mb`, `volatile-lru`, private only | rate limits, anonymous sessions, idempotency keys, AI circuit breaker | C2 |
 | C7 | Cloudflare R2 | — | — | `margdarshak-clips-ingest` (raw uploads, 14-day lifecycle delete), `margdarshak-clips-public` (blurred, published clips + manifest), `margdarshak-exports` (user data exports, 7-day expiry) | C2, C4 (media steps); browser via presigned URLs and the public clips domain |
-| C8 | n8n Cloud Pro | — | — | 15 workflows: schedules, WhatsApp/email out, approvals in (N8N_WORKFLOWS.md) | C2 `/internal/*` and API-55 over HTTPS + HMAC; WhatsApp Cloud API; Gmail; Telegram |
+| C8 | n8n Cloud Pro | — | — | staff workflows W01, W07–W09, W12–W18: schedules, human approvals, staff notifications; no citizen messages or data (N8N_WORKFLOWS.md; the P1 build still relays citizen messages through W02 until the notifier lands) | C2 `/internal/*` and API-55 over HTTPS + HMAC; WhatsApp Cloud API (staff number only after the change); Gmail; Telegram |
 | C9 | External | — | — | Gemini API (paid), Sarvam Saaras (Dogri ASR, M-08), Meta WhatsApp Cloud API (test number), Sentry, Grafana Cloud | — |
 
 **Why Render Workflows here is load-bearing, not decorative** (B-sponsors §7 test): the clip pipeline outlives a request, retries (blur and Gemini calls fail), fans out per clip, and continues after a human wait. The case clock repeats daily. Render Workflows has **no cron, no sleep and no completion webhook** (B-sponsors §1), so n8n supplies the schedule and the human waits, and the backend polls or awaits the run.
@@ -41,7 +42,7 @@ flowchart TB
     WA[Meta WhatsApp<br/>Cloud API]:::ext
     GEM[Gemini API<br/>paid tier]:::ext
     SAR[Sarvam Saaras<br/>Dogri ASR]:::ext
-    N8N[n8n Cloud Pro<br/>15 workflows]:::ext
+    N8N[n8n Cloud Pro<br/>staff workflows]:::ext
     R2[(Cloudflare R2<br/>ingest / public / exports)]:::ext
     SEN[Sentry + Grafana Cloud<br/>OTLP]:::ext
     GH[GitHub Actions]:::ext
@@ -67,7 +68,8 @@ flowchart TB
   API -->|"outbound HTTPS"| GEM & SAR & R2 & SEN
   N8N -->|"HMAC POST /internal/clock/sweep (API-65)<br/>/internal/webhooks/n8n (API-66), API-55"| API
   API -->|"signed envelope webhooks"| N8N
-  N8N <--> WA
+  API -->|"notifier: citizen templates"| WA
+  N8N -->|"staff number only"| WA
   GH -->|"POST /v1/services/{id}/deploys"| Render
   classDef ext fill:#f6f6f6,stroke:#999,color:#333;
 ```
@@ -79,7 +81,7 @@ flowchart TB
 | Data | Hackathon location | Production location | Note |
 |---|---|---|---|
 | Case and learning data (E-01..E-31) | Render Postgres, Singapore | Postgres in an Indian region | Hackathon holds **synthetic data only**, stated in the README and on the first-launch disclaimer (D-01) |
-| Contacts (E-14) | Postgres (field-level encrypted) + n8n execution data (minimal, success executions not saved) | Postgres in India; NotificationAdapter → NIC/mGov SMS or WhatsApp BSP | Phone + first name only, opt-in only |
+| Contacts (E-14) | Postgres (field-level encrypted); never sent to n8n (ADR-0006) | Postgres in India; NotificationAdapter → NIC/mGov SMS or WhatsApp BSP | Phone + first name only, opt-in only |
 | Clips (E-20) | R2 (Cloudflare; bucket location hint APAC [unverified: R2 jurisdiction options; owner Ops lead]) | India-region object store | Faces and plates blurred; 100 % blur audit before publish (M-09) |
 | Logs and traces | Render logs (retention per plan), Grafana Cloud, Sentry | Loki/Tempo in India, **rolling 180 days within Indian jurisdiction** (CERT-In Directions, 28 Apr 2022, war-room G6) | PII-redacted at source (OBSERVABILITY.md §2) |
 | Backups | Render Postgres backups (plan-dependent) + nightly `pg_dump` to R2 | WAL + base backups in India; DR copy in a second Indian region | vendor claim that backups/DR must also be in India (07 §A6) is treated as a design assumption |
@@ -115,7 +117,7 @@ flowchart TB
       APIp[api × 3..40]
       VERp[score-verifier × 2]
       WRK[jobrunner worker × 2..30]
-      CRON[CronJobs<br/>case clock, test eve, digests]
+      CRON[CronJobs<br/>case clock, digests]
       N8Np[n8n self-hosted<br/>optional]
     end
     subgraph DATA["Data subnet (no internet)"]

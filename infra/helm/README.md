@@ -23,7 +23,7 @@ infra/helm/
 │       ├── score-verifier-deployment.yaml   ClusterIP only, port 8081, never on Ingress
 │       ├── score-verifier-service.yaml
 │       ├── jobrunner-worker-deployment.yaml JobRunner=temporal worker (api image, `/app/api worker`; Temporal Go SDK, design only)
-│       ├── scheduler-cronjobs.yaml   replaces n8n Schedule triggers when n8n is not used (W01, W04, W13, W15)
+│       ├── scheduler-cronjobs.yaml   replaces n8n Schedule triggers when n8n is not used (W01, W13, W15)
 │       ├── migrate-job.yaml          helm.sh/hook: pre-install,pre-upgrade; `/app/api migrate up` (goose, embedded migrations)
 │       ├── ingress.yaml              TLS (state CA or Let's Encrypt), WAF annotations, HSTS
 │       ├── hpa.yaml                  web, api, worker
@@ -50,9 +50,9 @@ infra/helm/
 | OpenTelemetry Collector | `open-telemetry/opentelemetry-collector` | traces, metrics, logs → state SIEM / Grafana stack | yes |
 | Grafana LGTM | `grafana/loki`, `grafana/tempo`, `prometheus-community/kube-prometheus-stack` | dashboards, alerts, 180-day log retention (CERT-In) | yes |
 | External Secrets | `external-secrets/external-secrets` | pull secrets from the state's Vault / CSP KMS | yes |
-| n8n (optional) | self-hosted n8n, if the state accepts its licence | messaging edge + approvals; otherwise `scheduler-cronjobs.yaml` + backend NotificationAdapter | yes |
+| n8n (optional) | self-hosted n8n, if the state accepts its licence | schedules, staff approvals and staff notifications (no citizen messages; ADR-0006); otherwise `scheduler-cronjobs.yaml` + backend review pages | yes |
 
-> **n8n licence note:** n8n is distributed under its "Sustainable Use License" (fair-code), not an OSI open-source licence [unverified for government self-hosting terms; owner: Nestiq legal; due before the first state MoU]. Because n8n holds **no business logic** (D-16), a state can drop it and lose only the editable canvas. Schedules move to CronJobs and messages go through the backend's NotificationAdapter.
+> **n8n licence note:** n8n is distributed under its "Sustainable Use License" (fair-code), not an OSI open-source licence [unverified for government self-hosting terms; owner: Nestiq legal; due before the first state MoU]. Because n8n holds **no business logic** (D-16), a state can drop it and lose only the editable canvas. Schedules move to CronJobs and staff queues to the backend's review pages; citizen messages already go through the backend's NotificationAdapter either way.
 
 ## 3. Values contract (keys `deploy.yml` and tenant files rely on)
 ```yaml
@@ -101,7 +101,6 @@ scheduler:
   timezone: Asia/Kolkata          # CronJob .spec.timeZone
   jobs:
     caseClock: "30 6 * * *"
-    testEve: "0 19 * * *"
     analyticsDigest: "0 21 * * *"
     rulesFreshness: "0 9 * * 1"
 

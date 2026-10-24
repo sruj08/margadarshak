@@ -51,6 +51,13 @@ Evidence lives in [docs/08-project/P0_P1_VERIFICATION.md](docs/08-project/P0_P1_
 ### Docs refreshed (24 Oct)
 - `docs/05-ops/N8N_WORKFLOWS.md` now lists W08's `/internal/clips/...` endpoints; `services/workflows/P2-PHASE2.md` covers `clip_generate`; TEAM.md records the MD-229 decision (DEC-018, ADR-0012); CHANGELOG and README carry the P0–P2 status.
 
+### From the 24 Oct merge (teammate's n8n scope change, ADR-0006 rev., TEAM DEC-022)
+The docs now record the decision that citizen messages go through a backend notifier and n8n handles staff operations only. The code has not moved yet:
+- **Backend notifier:** build `WhatsAppCloudNotifier` / `EmailNotifier` and the outbox worker in `services/api`; until then the P1 build delivers through the n8n W02 webhook (`internal/adapters/notify/n8n.go`).
+- **W01 watchdog:** the teammate's W01 polls `GET /internal/clock/sweep/{id}/status`, which the Go API does not have; the merged W01 keeps the version tested against the real API. Add the endpoint, then adopt the watchdog.
+- **OpenAPI:** our `api/openapi.yaml` was kept (the teammate's edits were description-only plus dropping the `letter_approval` / `request_fallback` webhook events, which the W02 path still uses). Re-apply them with the notifier, then run `go generate` and `pnpm gen:api`.
+- **CI wording scope:** the teammate's CI step called a missing `scripts/ci/check-wording.mjs` to scan `services/api`; `pnpm lint:facts` covers the TS and n8n copy. Extend it to notifier templates once they exist.
+
 ### Open decisions (for the clip bank)
 - 24 → 30 fps conversion of generated clips (judder vs scoring maths) — video_generation_guide.md §5.
 - Blur layer on AI clips in precheck (faces/plates second safety net) — video_generation_guide.md §3.

@@ -79,7 +79,7 @@ flowchart TB
   - **Verhoeff-invalid** strings, which check that false positives stay low. These live in the static corpus `tests/fixtures/pii/aadhaar_like.txt`.
 
   The TS mirror (`log.ts`) uses the same seeded generator logic.
-- Phone numbers use the reserved-looking pattern `+91 90000 0XXXX` and are never messaged (n8n sandbox recipients are team numbers configured only in the n8n vault).
+- Phone numbers use the reserved-looking pattern `+91 90000 0XXXX` and are never messaged (test recipients are team numbers configured only in a secret store: the n8n vault in the P1 build, the API environment once the backend notifier lands).
 - Clips in tests are CC0/synthetic (`tests/fixtures/media/`, Git LFS); no bystander footage.
 - Field-study data never enters any test or CI system.
 - Builders and seeds:
@@ -395,7 +395,7 @@ EVAL_MODE=model EVAL_AGENT=debrief go test -tags evals ./internal/adapters/ai/ev
 | Input | oversize payloads, invalid enums, JSON bombs, Unicode confusables in reports | schemathesis + custom |
 | Uploads (API-42) | non-image, > 2 MB, polyglot files, EXIF present → rejected/stripped; not persisted | API |
 | Prompt injection | red-team eval cases (§7); tool calls outside enum ignored | eval |
-| Redaction | §9.4 corpus through all loggers, Sentry `beforeSend`, n8n payload builder | unit |
+| Redaction | §9.4 corpus through all loggers, Sentry `beforeSend`, notifier and n8n payload builders | unit |
 | Headers | CSP, HSTS, frame-ancestors, Permissions-Policy present on every route | e2e |
 | DAST | OWASP ZAP baseline against the staging URL (nightly), full scan before any state pilot | CI |
 | Dependencies / secrets | `pnpm audit --prod`, `govulncheck ./...`, golangci-lint `gosec`, `detect-secrets` | every PR |

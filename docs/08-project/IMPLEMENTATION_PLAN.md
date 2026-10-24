@@ -30,7 +30,7 @@
 | 7 | **AI for everyone; under 18 = family mode** | D-13 revised, P-07 | Age band, family mode and parental consent service (MD-049) in P0; contract tests: a minor's case exists only inside an adult account with parental consent, AI works for it, squads and share cards need the parent's consent, a child's data is never profiled |
 | 8 | **Every module has an owner who can explain it** | D-24 | Owners per epic (TEAM §3); the architecture slide labels each module with its owner (MD-631) |
 | 9 | **Evidence is pre-registered and reported either way** | D-22 | FIELD_STUDY; MD-241, MD-627, MD-628 |
-| 10 | **Render Workflows are load-bearing, n8n is the edge** | D-15, D-16 | RW-1..RW-4 each solve "outlives a request / retries / fan-out / later"; n8n workflows hold no business logic (review checklist in MD-127) |
+| 10 | **Render Workflows are load-bearing, n8n is staff operations only** | D-15, D-16, ADR-0006 | RW-1..RW-4 each solve "outlives a request / retries / fan-out / later"; n8n workflows hold no business logic and send nothing to citizens (review checklist in MD-127) |
 
 ---
 
@@ -196,7 +196,7 @@ The ladder orders the build so the team can stop at **any rung** and still have 
 |---|---|---|---|---|
 | **1 · Nazar heart** (slice B) | Real clips → blurred → two raters → Kerala-format mock → server-verified score → template debrief → field-study counters | MD-001, 002, 005, 006, 007, 016, 052, 201, 205, 206, 216, 217, 218, 219, 220, 221, 222, 223, 226, 237, 238, 239, 241, 242 | Scan the QR, take the 3-minute test on their phone, see "1.4 s late ≈ 16 m at 40 km/h", see the live N and % below 60 | P0, P2 |
 | **2 · Plan to application** (slice A) | 3-tap plan card → blockers → one-question LL application → photo fixer → check answers → fee → Sarathi hand-off (simulated eKYC) | MD-018..024, 027..034, 036, 037, 041, 045, 046, 047, 048, 101, 102, 103, 106, 107, 109, 110, 111, 112, 113, 114, 115 | Plan Kabir's bike + car in 3 taps; see Tanvi's address and relation-line blockers; reach check-answers in ~6 screens | P0, P1 |
-| **3 · Stage-aware home + journey sweeper** (slice C) | Home with 4 verbs → persona switcher → stage card → case clock on RW-2 triggered by n8n W1 → WhatsApp test-number message | MD-054, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 132 | Switch Kabir from "LL day 12" to "LL day 31"; watch the Render Runs page retry; receive the WhatsApp nudge | P1 |
+| **3 · Stage-aware home + journey sweeper** (slice C) | Home with 4 verbs → persona switcher → stage card → case clock on RW-2 triggered by n8n W1 → WhatsApp test-number message from the backend notifier | MD-054, 119, 121, 122, 123, 125, 126, 127, 128, 129, 130, 132 | Switch Kabir from "LL day 12" to "LL day 31"; watch the Render Runs page retry; receive the WhatsApp nudge | P1 |
 | **4 · AI that admits limits** | DebriefAgent with validator; template fallback; `adk eval` in CI; guardrail-fires demo | MD-301, 302, 303, 304, 305, 306, 308, 309, 321, 328 | See the validator reject "₹0 fee" and the template take over; see 150-case eval results | P3 |
 | **5 · Thin breadth, no dead buttons** | LL simulator + readiness; Stopping Distance; Blind Spot; slot finder (mock); Live Intel (seeded, k ≥ 5); track explainer; fail and recover; approval tracker; renew surface; privacy centre; voice guide (off the critical path) | MD-209 (subset), 211, 212, 213, 214, 227, 228, 401, 402, 403, 404, 408, 413, 417, 430, 133, 134, 313, 314, 316 | Walk S0 → S9 on mocks without hitting a dead control | P2, P3, P4, P1 |
 | **6 · Survive judging** | Lite mode measured, warm-up, axe clean on main routes, D-25 re-verification, field studies run, demo script, video, deck, submission | MD-612, 615, 601 (main routes), 622, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635 | Everything above, on a phone, on 4G, days later from the video link | P6 |
@@ -328,7 +328,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 1. The 3-tap licence plan with class planner and the 20 blockers, no login (EP-07).
 2. The guided LL application: one question per screen, autosave/resume, photo fixer on device, check answers, fee and payment-pending guidance, Sarathi hand-off Mode A (and Mode B skeleton) (EP-08).
 3. Home with four verbs and the stage-aware home driven by an authoritative journey state machine, with a tracker and My Licence (EP-09).
-4. The case clock: timeline computation on server time, RW-2 sweep, n8n W1/W2, WhatsApp/email/web push, nudge limits and STOP (EP-10).
+4. The case clock: timeline computation on server time, RW-2 sweep triggered by n8n W1, the backend notifier (WhatsApp/email/web push), nudge limits and STOP (EP-10).
 5. Privacy centre, consent artefacts, export/delete, privacy-preserving analytics (EP-11).
 6. The journey-test lab replica and its logging (EP-17a).
 7. Edge cases owned by these features: EC-01..06, 09..11, 15, 21, 22, 26, 30 (EP-43).
@@ -367,8 +367,8 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | MD-124 | My Licence tab | EP-09 | FE+BE | M | MD-117 |
 | MD-125 | Timeline computation | EP-10 | BE | M | MD-033, MD-121 |
 | MD-126 | RW-2 Case-clock sweep (Render Workflow) | EP-10 | BE | M | MD-052, MD-125 |
-| MD-127 | n8n W1 daily case-clock tick | EP-10 | BE+AG | S | MD-126, MD-053 |
-| MD-128 | n8n W2 milestone event notifier | EP-10 | BE+AG | S | MD-127 |
+| MD-127 | n8n W1 daily case-clock trigger and watchdog | EP-10 | BE+AG | S | MD-126, MD-053 |
+| MD-128 | Milestone event notifications (backend notifier) | EP-10 | BE+AG | S | MD-129 |
 | MD-129 | WhatsApp, email and web push delivery | EP-10 | BE | M | MD-042 |
 | MD-130 | Nudge limits, quiet hours and STOP | EP-10 | BE | S | MD-129 |
 | MD-131 | WhatsApp template drafting and approval | EP-10 | PD | S | — |
@@ -500,12 +500,12 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 
 **Goals**
 1. ADK runtime with env-pinned models on the paid tier; the adult + consent + flag gate; PII plugin; number-provenance validator; explicit safety settings and tone lint; circuit breaker and template fallback; LLM cost and latency observability; W12 alerts (EP-18).
-2. DebriefAgent as an ADK graph (code → one LLM node → validator → render), the debrief card, commentary record-then-score, RW-3 fan-out, CoachAgent + W6 (EP-19).
+2. DebriefAgent as an ADK graph (code → one LLM node → validator → render), the debrief card, commentary record-then-score, RW-3 fan-out, CoachAgent weekly plan (EP-19).
 3. VoiceGuideAgent live with a closed action enum, the voice orb with captions, the Dogri cascade and a text fallback (EP-20).
 4. TutorAgent, ScreenDecoderAgent with the verified catalogue, Road Sign Snap (EP-21).
 5. Eval sets of ≥ 30 cases per agent (150 for the debrief) in CI, a red-team set, a human review loop and the "guardrail fires" demo (EP-22).
 
-**Workstreams:** WS-AI, WS-AUTO (RW-3, W6, W12).
+**Workstreams:** WS-AI, WS-AUTO (RW-3, W12).
 
 **Entry criteria:** `game-sdk@1` frozen (MD-201), verifier live (MD-206), template debrief shipped (MD-242), family mode (MD-049) and consent (MD-133) live, PII utility (MD-138).
 
@@ -525,7 +525,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | MD-309 | Debrief card UI | EP-19 | FE | M | MD-242, MD-308 |
 | MD-310 | Commentary mode: record, then score (D-12) | EP-19 | BE+FE | L | MD-222, MD-302, MD-315 |
 | MD-311 | RW-3 Session-debrief fan-out (Render Workflow) | EP-19 | BE | M | MD-308, MD-052 |
-| MD-312 | CoachAgent (M-03) and n8n W6 weekly plan | EP-19 | BE | M | MD-308, MD-211 |
+| MD-312 | CoachAgent (M-03) and weekly plan | EP-19 | BE | M | MD-308, MD-211 |
 | MD-313 | VoiceGuideAgent live (M-01) over WebSocket | EP-20 | BE | XL | MD-301, MD-302, MD-303 |
 | MD-314 | Voice orb UI and transcript | EP-20 | FE | M | MD-313 |
 | MD-315 | Dogri cascade (M-08) | EP-20 | BE | M | MD-040, MD-313 |
@@ -564,16 +564,16 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 ### 5.5 P4 · DL test and after
 
 **Goals**
-1. Slot finder (reminder-only) and RTO Live Intel (structured, k ≥ 5, moderated through W9, alerts through W3, corruption reports deep-linked out) (EP-23).
-2. Driving-test readiness: animated track explainer, test-eve checklist (W4), test-day co-pilot, vehicle-for-test checklist and listing, Track Test Twin (G5) (EP-24).
-3. Fail and recover: private debrief → drill → retest, retest-gap rules, RTI template, W10 (EP-25).
-4. Approval tracker, escalation letters, W11 (EP-26).
+1. Slot finder (reminder-only) and RTO Live Intel (structured, k ≥ 5, flagged reports moderated through W9, slot alerts from the backend notifier, corruption reports deep-linked out) (EP-23).
+2. Driving-test readiness: animated track explainer, test-eve checklist (notifier), test-day co-pilot, vehicle-for-test checklist and listing, Track Test Twin (G5) (EP-24).
+3. Fail and recover: private debrief → drill → retest, retest-gap rules, RTI template, fail follow-up timers (EP-25).
+4. Approval tracker, escalation letters with in-app approval (EP-26).
 5. New-rider year: pledge + riding lock, refresher, missions, first-vehicle checklist, scam checker (rules decide), challan link, Golden Hour (G9, static card), Helmet Fit (G8), Practice Record, practice log (EP-27).
 6. Renew/fix surface, family mode, Helper mode, the s.199A card (EP-28).
 7. Remaining simulations: Junction Scan (G2), Night & Glare (G6), Hill Road (G7) (EP-29).
 8. Edge cases EC-07, 08, 12, 13, 14, 16, 17, 23, 24, 25 (EP-43).
 
-**Workstreams:** WS-JRNY, WS-GAME, WS-AUTO (W3, W4, W9, W10, W11), WS-PRIV (intermediary duties).
+**Workstreams:** WS-JRNY, WS-GAME, WS-AUTO (W9), WS-PRIV (intermediary duties).
 
 **Entry criteria:** journey state machine (MD-121), timeline (MD-125), notifications (MD-129/130), game host and sim-core (MD-205, MD-202), consent (MD-133). The intermediary/grievance page (MD-620) is pulled forward into P4 before Live Intel is public.
 
@@ -585,21 +585,21 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | MD-402 | Slot finder and "notify me" (reminder-only) | EP-23 | BE+FE | M | MD-401, MD-125 |
 | MD-403 | Live Intel structured report form | EP-23 | FE | S | MD-401 |
 | MD-404 | Intel aggregation with k-threshold | EP-23 | BE | M | MD-403 |
-| MD-405 | n8n W9 Live Intel moderation | EP-23 | BE | S | MD-404, MD-053 |
-| MD-406 | n8n W3 slot-watch alerts | EP-23 | BE | S | MD-405, MD-402 |
+| MD-405 | Live Intel moderation (inline precheck + n8n W9 for flagged reports) | EP-23 | BE | S | MD-404, MD-053 |
+| MD-406 | Slot-watch alerts (backend notifier) | EP-23 | BE | S | MD-405, MD-402 |
 | MD-407 | Corruption reports, grievance and takedown | EP-23 | PD | S | MD-404 |
 | MD-408 | Animated track explainer | EP-24 | FE | L | MD-021 |
-| MD-409 | Test-eve "what to bring" and n8n W4 | EP-24 | BE | S | MD-125, MD-129 |
+| MD-409 | Test-eve "what to bring" reminder | EP-24 | BE | S | MD-125, MD-129 |
 | MD-410 | Test-day co-pilot | EP-24 | FE | M | MD-409 |
 | MD-411 | Vehicle-for-test checklist and listing | EP-24 | PD+FE | S | MD-401 |
 | MD-412 | Track Test Twin (G5) | EP-24 | FE | XL | MD-202, MD-229, MD-408 |
 | MD-413 | Result entry, private debrief and retest path | EP-25 | FE+BE | M | MD-121, MD-242 |
 | MD-414 | Retest gap, multiple fails and remedial training | EP-25 | BE | S | MD-033 |
 | MD-415 | RTI s.6 test-record request template | EP-25 | PD+BE | S | MD-418 |
-| MD-416 | n8n W10 fail follow-up | EP-25 | BE | S | MD-413 |
+| MD-416 | Fail follow-up timers (backend) | EP-25 | BE | S | MD-413 |
 | MD-417 | Approval tracker | EP-26 | FE | S | MD-123 |
 | MD-418 | Escalation letter drafting (facts only) | EP-26 | BE | M | MD-125 |
-| MD-419 | n8n W11 letter approval flow | EP-26 | BE | S | MD-418 |
+| MD-419 | Letter approval flow (backend) | EP-26 | BE | S | MD-418 |
 | MD-420 | Novice pledge and riding lock | EP-27 | FE | S | MD-124 |
 | MD-421 | Monthly hazard refresher (opt-in) | EP-27 | BE+FE | S | MD-223 |
 | MD-422 | First night and highway missions | EP-27 | FE | S | MD-210 |
@@ -649,7 +649,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 ### 5.6 P5 · Ecosystem
 
 **Goals**
-1. Driving-school portal: listing with "Sponsored" labels, bookings, the Pro dashboard with consented learner progress and hazard-training logs, W7 lead routing, W5 parent cards, onboarding (EP-30).
+1. Driving-school portal: listing with "Sponsored" labels, bookings, the Pro dashboard with consented learner progress and hazard-training logs, W7 lead routing, weekly parent cards, onboarding (EP-30).
 2. State/RTO console with RBAC, aggregation pipelines (k ≥ 5), decision views and the ontology mapping (EP-31).
 3. Rule-pack studio with maker-checker, signed publishing with mid-case re-evaluation (EC-27), W15 source freshness, the CC-BY clip bank publication (EP-32).
 4. Multi-tenancy: tenant config, UX4G white-label theming, Postgres RLS and per-tenant keys, tenant onboarding runbook (EP-33).
@@ -666,12 +666,15 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | MD-502 | Lesson and vehicle bookings | EP-30 | BE | M | MD-501 |
 | MD-503 | School Pro dashboard | EP-30 | FE+BE | XL | MD-502, MD-133, MD-429 |
 | MD-504 | n8n W7 lead routing | EP-30 | BE | S | MD-502 |
-| MD-505 | n8n W5 weekly parent card | EP-30 | BE | S | MD-431 |
+| MD-505 | Weekly parent card (backend notifier) | EP-30 | BE | S | MD-431 |
 | MD-506 | School onboarding and verification | EP-30 | PD | M | MD-501 |
 | MD-507 | Console scaffolding with RBAC | EP-31 | FE | M | MD-048, MD-020 |
 | MD-508 | Aggregation pipelines | EP-31 | BE | L | MD-136, MD-121 |
 | MD-509 | Decision views | EP-31 | FE | L | MD-508 |
 | MD-510 | Ontology and action mapping | EP-31 | BE | M | MD-508 |
+| MD-519 | n8n W16 RTO morning brief | EP-31 | BE | S | MD-508, MD-053 |
+| MD-520 | n8n W17 stall and SLA alerts with acknowledgement | EP-31 | BE | S | MD-508, MD-053 |
+| MD-521 | n8n W18 staff task reminders | EP-31 | BE | XS | MD-053 |
 | MD-511 | Rule studio with maker-checker | EP-32 | FE+BE | L | MD-507, MD-028 |
 | MD-512 | Publish pipeline and mid-case re-evaluation | EP-32 | BE | M | MD-511, MD-125 |
 | MD-513 | n8n W15 source freshness check | EP-32 | BE | S | MD-511 |
@@ -831,7 +834,7 @@ As in [BACKLOG §0.3](BACKLOG.md): CI green (lint, types, unit, contract, e2e sm
 | WS-JRNY Journey | EP-07..EP-10, EP-23..EP-28 | FE screens, BE state and clock | P1, P4 |
 | WS-GAME Games and learning | EP-12..EP-16, EP-24 (Track Twin), EP-27 (G8, G9), EP-29 | FE | P2, P4 |
 | WS-AI AI layer and evals | EP-18..EP-22 | BE | P3 → P6 |
-| WS-AUTO Durable jobs and n8n | RW-1..RW-4, W1..W15 | BE | P1 → P5 |
+| WS-AUTO Durable jobs, notifier and n8n | RW-1..RW-4, W1, W7–W9, W12–W18 | BE | P1 → P5 |
 | WS-EVID Field evidence | EP-17a, EP-17b, EP-38 | PD (BE for analysis) | G0 → P6, P7 pilot |
 | WS-PRIV Privacy, security, legal | EP-11, EP-35, EP-37 | PD for legal text, BE for controls | P0 → P7 |
 | WS-ECO Ecosystem | EP-30, EP-31 | PD product, FE/BE build | P5 |
@@ -897,11 +900,11 @@ flowchart LR
 | Phase | PD | FE | BE | Agents |
 |---|---|---|---|---|
 | P0 | G0, repo, branding, domain; tokens and copy; J&K and partial rule packs; class catalogue; **clip capture starts**; recruitment opens | Monorepo, hooks, compose; component kit; shell + PWA; i18n; footer; CI e2e/axe/budgets | Python layout, rules schema + engine, adapters + contract harness, FastAPI + DB + auth, JobRunner, observability, Render blueprint | Golden rule cases (MD-034), mock adapters (MD-039..043), Storybook stories (MD-026), re-pin script (MD-008) |
-| P1 | Plan card copy, blockers' fix text, WhatsApp templates, privacy notice, lab replica check | Plan wizard and card, form engine, photo fixer, check answers, home, tracker, lab replica | Plan/case APIs, blocker engine, state machine, timeline, RW-2 + W1/W2, consent, analytics | EC tests (MD-801..), n8n exports, analytics taxonomy checks |
+| P1 | Plan card copy, blockers' fix text, WhatsApp templates, privacy notice, lab replica check | Plan wizard and card, form engine, photo fixer, check answers, home, tracker, lab replica | Plan/case APIs, blocker engine, state machine, timeline, RW-2 + W1, notifier, consent, analytics | EC tests (MD-801..), n8n exports, analytics taxonomy checks |
 | P2 | Clip rating (2 raters), blur audit, question bank review, finding templates, HYPOTHESES.md | game-core, sim-core, host, Nazar player, LL sim, Stopping Distance, Blind Spot, gamification UI | Verifier service, RW-1 clip pipeline, manifest/R2, study export, RW-4, gamification engine | Golden replays (MD-207), variant drafts (MD-209, human-approved), dark-pattern checks (MD-235) |
 | P3 | Tone list, Hindi rater for evals, human review loop | Debrief card UI, voice orb, decoder UI, Sign Snap UI | ADK runtime, gate, PII plugin, validator, DebriefAgent, RW-3, voice live, Dogri cascade, tutor, decoder | Eval sets (MD-321..325), red-team drafts (MD-326) |
-| P4 | Content: first-vehicle, golden hour (medical reviewer), RTI template, s.199A card, corruption deep-links | Slot UI, Live Intel form, track explainer, co-pilot, Track Twin, Helmet Fit, Golden Hour, remaining sims | Offices/slots, intel aggregation + W9/W3, test-eve W4, fail W10, letters W11, scam checker, Practice Record, helper/family | EC tests for P4 cases |
-| P5 | School onboarding, pricing, tenant runbook | Console scaffolding, decision views, rule studio UI, theming | Bookings, Pro APIs, aggregation, publish pipeline, RLS, W5/W7/W15 | — |
+| P4 | Content: first-vehicle, golden hour (medical reviewer), RTI template, s.199A card, corruption deep-links | Slot UI, Live Intel form, track explainer, co-pilot, Track Twin, Helmet Fit, Golden Hour, remaining sims | Offices/slots, intel aggregation + W9, test-eve, fail follow-up and letters (notifier), scam checker, Practice Record, helper/family | EC tests for P4 cases |
+| P5 | School onboarding, pricing, tenant runbook | Console scaffolding, decision views, rule studio UI, theming | Bookings, Pro APIs, aggregation, publish pipeline, RLS, W7/W15/W16–W18 | — |
 | P6 | a11y matrix, screen-reader tests, language review, legal memos, field studies, demo, video, deck | Lite and device matrix, photosensitivity audit, clip delivery | ASVS, LLM Top 10, threat model, DAST, VAPT pack, CERT-In drill, load test, warm-up | — |
 | P7 | DigiLocker onboarding, MoU, forward deployment, baseline, training | (console changes from the pilot) | Real adapters, JobRunner for NIC/MeitY clouds, Helm/Terraform, India storage | — |
 

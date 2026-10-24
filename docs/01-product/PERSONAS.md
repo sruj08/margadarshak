@@ -88,7 +88,7 @@
 - **Ψ2 Overconfidence at peak risk.** Crash/near-crash rates are ~8× higher in the first 3 months of solo driving than on the learner permit ([PMC3088306](https://pmc.ncbi.nlm.nih.gov/articles/PMC3088306)); calibration did not improve over two years after the test ([SWOV](https://swov.nl/nl/publicatie/investigating-calibration-ability-young-novice-drivers-relative-experienced-drivers)). → Calibration is Margdarshak's main safety job (F-21 calibration penalty, Nazar pre-mock prediction).
 - **Ψ3 Fear appeals don't work and backfire with him.** Threat appeals raised fear (r = .64) but had no effect on behaviour (r = .03), and young men with high driving self-esteem shown death imagery reported *greater* risk intention ([PMC3656854](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3656854/)). → No gore, no "1.72 lakh died" splash (F-24 "no fear imagery").
 - **Ψ4 Friends raise his risk and are his distribution.** → Squads are co-op (F-26), the share card rewards anticipation, never speed.
-- **Ψ6 Failing is humiliation.** → Private fail debrief (F-13), no outcome words in notification previews (n8n W10).
+- **Ψ6 Failing is humiliation.** → Private fail debrief (F-13), no outcome words in notification previews (fail follow-up TimelineEvents, sent by the notifier).
 - **Ψ9 Hazard-perception training is the evidence-backed bet.** Horswill's online course reduced heavy braking and speeding in an on-road RCT ([SWOV](https://swov.nl/en/publicatie/online-hazard-perception-training-course-reduces-heavy-braking-speeding-and-over-revving)); commentary training lifted novices to experienced-driver detection (Isler 2009). → Nazar (F-23) and record-then-score commentary (F-25, D-12).
 - **Ψ10 Gamification: g = .49 cognitive, .25 behavioural** ([Sailer & Homner 2020](https://link.springer.com/article/10.1007/s10648-019-09498-w)). → XP only for learning acts, diminishing after 45 min (F-26).
 
@@ -390,7 +390,7 @@ Excited (turns 18) → confused (research) → tentative hope (decides Khud) →
 - **Deployment**: containerised, Apache-2.0, deployable on NIC or a MeitY-empanelled Indian cloud; audit-ready pack (never "STQC-certified", D-19).
 
 ### What would make them stop
-- Any claim of integration they didn't authorise; naming individual examiners; data leaving India in production; a vendor-locked SaaS canvas holding business logic (hence n8n stays at the messaging edge, D-16).
+- Any claim of integration they didn't authorise; naming individual examiners; data leaving India in production; a vendor-locked SaaS canvas holding business logic (hence n8n only runs internal and staff operations, holds no citizen data and no rules, D-16).
 
 ---
 

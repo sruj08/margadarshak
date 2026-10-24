@@ -22,7 +22,7 @@
 |---|---|---|---|---|---|
 | M-01 | VoiceGuideAgent | `GEMINI_MODEL_LIVE` → `gemini-3.8-live`; fallback `GEMINI_MODEL_LIVE_FALLBACK` → `gemini-2.5-flash-native-audio-preview-12-2025` | Cloud (Gemini Live via ADK for Go `Runner.RunLive`) | **Build (thin, bounded):** Hindi + English, 8 destinations, 10 fields (04 §3.1) | **Yes** (parent's consent) |
 | M-02 | DebriefAgent | `GEMINI_MODEL_DEBRIEF` → `gemini-3.1-flash-lite` | Cloud (one `Runner.Run` call inside the Go debrief pipeline) | **Build:** deep slice B | **Yes** (parent's consent) |
-| M-03 | CoachAgent | `GEMINI_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly batch through n8n W6 → API | Build (thin) | **Yes** (parent's consent) |
+| M-03 | CoachAgent | `GEMINI_MODEL_COACH` → `gemini-3.1-flash-lite` | Cloud, weekly coach-plan TimelineEvent inside the `case_clock_sweep` run (n8n W6 retired, ADR-0006 rev.) | Build (thin) | **Yes** (parent's consent) |
 | M-04 | TutorAgent | `GEMINI_MODEL_TUTOR` → `gemini-3.1-flash-lite` | Cloud | Build (thin; explanations reviewed offline, see §M-04) | **Yes** (parent's consent) |
 | M-05 | ScreenDecoderAgent | `GEMINI_MODEL_VISION` → `gemini-3.6-flash` | Cloud (vision) | Build: status-screenshot path. Paper slip is **thin/stretch** (04 §3.6) | **Yes** (parent's consent) |
 | M-06 | ClipWindowProposer | `GEMINI_MODEL_VIDEO` → `gemini-3.8-flash` | Cloud, **offline**: the TypeScript Render Workflows clip task calls a Go API job step that runs the agent | **Build first** (04 §4 order 2; D-15 headline Workflow) | n/a (never user-facing) |
@@ -174,7 +174,7 @@ Each card covers task, model, why chosen, alternatives, inputs/outputs, latency 
 | Intended use | Narrating code-computed results to users who consented to "AI coach" (for a family member's case, the parent consented) |
 | Limitations | Can't compute, can't cite `verified:false` rules, can't mention numbers except through placeholders. The Golden Hour game (G9) is **template-only** (safety-critical first-aid content, D-14 row 12): DebriefAgent is never called for `golden_hour` sessions |
 
-### M-03 CoachAgent (F-26, n8n W6)
+### M-03 CoachAgent (F-26, weekly TimelineEvent)
 
 | Field | Value |
 |---|---|
@@ -183,7 +183,7 @@ Each card covers task, model, why chosen, alternatives, inputs/outputs, latency 
 | Inputs | `CoachPlan` JSON: `week_goal_sessions`, `due_topics[]` (IDs), `fading_nodes[]`, `streak_state` (enum), `locale`, `allowed_drill_ids` |
 | Outputs | `CoachDraft` ([PROMPTS §3.2](PROMPTS.md#32-coachdraft-m-03)): `headline`, `plan_items[]` (drill IDs in order), `intention_prompt`, all digit-free |
 | Cost | ≈ 2k in + 300 out ≈ $0.001/run. 4 runs/month ≈ **₹0.5/user/month** (08 §5.8) |
-| Latency | Batch (n8n Monday 07:00); p90 < 6 s per user is fine [D]. Batched inside one n8n execution (08 §6) |
+| Latency | Batch (weekly, inside the `case_clock_sweep` Workflows run); p90 < 6 s per user is fine [D]. Batched per sweep page, never one n8n execution per user |
 | Fallback | Template plan ("This week: 4 short sessions. Start with {{topic}}") |
 | Limitations | No guilt, no streak shaming, no "your friend beat you" (08 §4.10). Quiet hours 22:00–07:00 IST [D]. Max 1 nudge/day |
 

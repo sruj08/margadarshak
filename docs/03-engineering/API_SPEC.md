@@ -138,8 +138,9 @@ Announced with the IETF `RateLimit-Policy` / `RateLimit` headers (draft-ietf-htt
 - The plan card is cached on the device after API-01, so it opens offline.
 
 ### 1.10 Webhooks (outbound) and callbacks (inbound)
-- **Outbound to n8n** (from `ops.outbox`): `POST {N8N_BASE}/webhook/<flow>` with `Margdarshak-Signature`, at-least-once, exponential retry up to 24 h. Flows: `notify-batch` (W1/W4), `milestone` (W2), `slot-intel` (W3), `school-lead` (W7), `clip-review` (W8), `intel-moderation` (W9), `fail-followup` (W10), `letter-approval` (W11), `alert` (W12), `field-session` (W14).
-- **Inbound from n8n** (internal scope; n8n never queries Postgres): API-65 clock sweep, API-66 receipts/replies/STOP/approvals, API-67 start a job (e.g. `clip_finalize` after the two-rater wait in W08), API-68 Live Intel precheck + decision (W9), API-69 fire a slot watcher (W3), API-72 dispatch a user-approved letter (W11), API-73 next school for a lead (W7). **Inbound from the payment adapter**: API-24.
+- **Citizen messages do not go through n8n** (ADR-0006 rev. 2026-10-24). They are `ops.outbox` rows sent by the backend notifier (`NotificationPort`: `WhatsAppCloudNotifier`, `EmailNotifier`, `WebPushNotifier`, `ConsoleNotifier`), at-least-once with exponential retry up to 24 h.
+- **Outbound to n8n** (staff work only, from `ops.outbox`): `POST {N8N_BASE}/webhook/<flow>` with `Margdarshak-Signature`, at-least-once, exponential retry up to 24 h. Flows: `school-lead` (W07), `clip-review` (W08), `intel-moderation` (W09, flagged reports only), `alert` (W12), `field-session` (W14), `console-alert` (W17).
+- **Inbound from n8n** (internal scope; n8n never queries Postgres): API-65 clock sweep (W01), API-66 staff receipts/decisions/acknowledgements, API-67 start a job (e.g. `clip_finalize` after the two-rater wait in W08), API-68 Live Intel decision for flagged reports (W09), API-73 next school for a lead (W07). **Inbound from Meta and the email provider**: API-66 citizen delivery receipts, replies and STOP (EC-30). **Called by the backend internally, not by n8n**: API-68 precheck (inline on API-28), API-69 fire slot watchers (from the API-68 decision handler), API-72 dispatch a user-approved letter. **Inbound from the payment adapter**: API-24.
 - An AsyncAPI 3.0 description of these events is roadmap (owner Backend lead, Phase 3).
 
 ### 1.11 Observability headers
@@ -205,7 +206,7 @@ Scope: public. Returns every class (all classes are in the engine, D-05) with `m
 Scope: public. Fee table (`fee_id`, `per`, `amount_paise`, `rule_id`) plus a computed `quote` when `classes` is given (one class → `subtotal_govt_fee_paise: 70000`, `total_paise: 90000`).
 
 #### API-04 `POST /v1/plans/{planId}/whatsapp`
-Scope: anon or user. Idempotency: required. Creates a `whatsapp_updates` consent artefact, stores the phone encrypted (E-14) and queues the approved template `plan_card_v1` via NotificationPort → n8n → WhatsApp Cloud API. Hackathon: Meta test number, allow-listed recipients only (R-08).
+Scope: anon or user. Idempotency: required. Creates a `whatsapp_updates` consent artefact, stores the phone encrypted (E-14) and queues the approved template `plan_card_v1` in the outbox; the backend notifier (`WhatsAppCloudNotifier`) sends it through the Meta WhatsApp Cloud API (n8n is not on this path). Hackathon: Meta test number, allow-listed recipients only (R-08).
 ```json
 // request
 { "phone_e164": "+919876543210", "consent": { "purpose": "whatsapp_updates", "notice_version": "notice-2026.10.23-hi", "granted": true }, "language": "hi" }
@@ -226,7 +227,7 @@ Scope: public. LL test format for the simulator (F-22): questions, pass mark, ti
 Scope: public. White-label config (F-58): languages, UX4G theme tokens, adapter modes per port, feature flags, current rule pack, hosting mode, grievance officer. The frontend reads it at boot to choose the skin and to show "simulated" chips for mock adapters.
 ```json
 { "tenant": "JK", "languages": ["en", "hi", "doi"], "adapters": { "sarathi": "deeplink", "digilocker": "mock", "aadhaar_offline": "disabled",
-  "bhashini": "mock", "payment": "sarathi_redirect", "notification": "n8n", "slot": "mock" },
+  "bhashini": "mock", "payment": "sarathi_redirect", "notification": "whatsapp_cloud", "slot": "mock" },
   "features": { "ai_coach": true, "voice_guide": true, "live_intel": true, "sms": false }, "hosting_mode": "independent",
   "disclaimer_key": "footer.not_affiliated_simulated_data" }
 ```
@@ -649,7 +650,7 @@ Scope internal (n8n Schedule, 06:30 IST). Starts the `case_clock_sweep` Render W
 ```
 
 #### API-66 `POST /internal/webhooks/n8n`
-Scope internal. Events: `delivery_receipt`, `inbound_reply`, `inbound_opt_out` (STOP → `opted_out_channels`, EC-30), `school_lead_decision`, `letter_approval`, `field_form_submitted`. Idempotent by `(event, id)`. `204`.
+Scope internal. Citizen channel events from the Meta/email webhooks: `delivery_receipt`, `inbound_reply`, `inbound_opt_out` (STOP → `opted_out_channels`, EC-30). Staff events from n8n: staff receipts, `school_lead_decision`, `field_form_submitted`, acknowledgements. Idempotent by `(event, id)`. `204`.
 
 #### API-67 `POST /internal/jobs/{job}`
 Scope internal (n8n). Starts an allow-listed job through `JobRunnerPort` (Render Workflows in the hackathon, Temporal in production, inline in dev/CI) with an input-derived idempotency key. Jobs: `case_clock_sweep`, `clip_finalize`, `nightly_stats`, `debrief_backfill`, `replay_pending_sessions`. The clip pipeline is split because Workflows has no sleep API and a 24 h run cap: `clip_ingest` run → **two-rater wait in n8n W08** → n8n calls API-67 `clip_finalize`.
@@ -674,7 +675,7 @@ P2 job steps. Render Workflows tasks call `POST /internal/job-steps/{step}` (`ru
 | `stats.field_study_publish` | `{as_of, numbers, stdout, script_sha256, prereg_hash}` → `{as_of, published}`; stores what `field-kit/nazar_stats.mjs` printed, unmodified, for API-71 |
 
 #### API-68 `POST /internal/intel/{reportId}/precheck` and `POST /internal/intel/{reportId}/decision`
-Scope internal (n8n W9). Precheck is computed in code (schema, PII patterns, duplicates, account age, corroboration) and n8n only routes on it; the decision carries the moderator's send-and-wait answer or `decided_by: "auto_rule"`.
+Scope internal. Precheck is computed in code (schema, PII patterns, duplicates, account age, corroboration) and runs inline on API-28; low-risk reports auto-publish in the backend (`decided_by: "auto_rule"`) and only flagged reports go to n8n W09, which posts the moderator's send-and-wait answer as the decision. On a `slots_opened` publish the backend fires slot-watch alerts itself (API-69 logic).
 ```json
 // precheck 200
 { "report_id": "rpt_01JB8ZK", "risk": "low", "corroborating_24h": 3, "auto_publish_allowed": true, "flags": [] }
@@ -683,10 +684,10 @@ Scope internal (n8n W9). Precheck is computed in code (schema, PII patterns, dup
 ```
 
 #### API-69 `POST /internal/watchers/{slotWatchId}/fire`
-Scope internal (n8n W3). Marks a slot watch fired for a moderated `slots_opened` report and returns the templated messages to send (`OutboundMessage[]`: `notification_id`, `channel`, `template_id`, `to` for opted-in users only, `vars`, `idempotency_key`). Reminder only; no booking.
+Scope internal (backend only; called by the API-68 decision handler, not by n8n). Marks a slot watch fired for a moderated `slots_opened` report and queues the templated messages in the outbox for the notifier (`OutboundMessage[]`: `notification_id`, `channel`, `template_id`, `to` for opted-in users only, `vars`, `idempotency_key`). Reminder only; no booking.
 
 #### API-72 `POST /internal/letters/{letterId}/dispatch`
-Scope internal (n8n W11). Only after the user's explicit in-app approval: returns the PDF link and messages (PDF to the user; a copy to the published RTO grievance address only if the user ticked it). `409` if not approved. We never file on CPGRAMS for the user.
+Scope internal (backend letter flow, not n8n). Only after the user's explicit in-app approval: returns the PDF link and queues the messages for the notifier (PDF emailed to the user; a copy to the published RTO grievance address only if the user ticked it). `409` if not approved. We never file on CPGRAMS for the user.
 
 #### API-73 `POST /internal/leads`
 Scope internal (n8n W7). Given a booking and the previous school's outcome (`declined` / `timeout`), returns the next school to offer the lead to (routing computed in code from consent, area, class and prior declines), the wait window and the messages.
@@ -735,7 +736,7 @@ P2 (P2 D-23): `nazar` is the latest `study.public_stats` payload (what `stats.fi
 - CORS: only the web origin(s) from tenant config; no wildcard. CSRF is not applicable (bearer tokens, no cookies) except the DigiLocker callback, which validates `state` + PKCE.
 - Request size caps: 64 KB JSON default, 640 KB API-35 body (512 KB replay + the client preview), 1 MB screenshot, 2 MB Aadhaar artefact (mock), 100 events analytics.
 - All text inputs are length-capped; AI-bound text passes the PII gate (regex + Verhoeff for Aadhaar, 4–8-digit OTP, PAN, phone) before any model call (EC-20).
-- `/internal/*` is not routed through the public CDN and additionally IP-allowlisted to n8n Cloud egress where n8n publishes ranges `[unverified]` (owner Platform lead, H+8).
+- `/internal/*` is not routed through the public CDN and additionally IP-allowlisted to n8n Cloud egress where n8n publishes ranges `[unverified]` (owner Platform lead, H+8). Exception: the channel-webhook handler of API-66 (Meta receipts, replies, STOP; email provider events) accepts provider IPs and is authenticated by the provider signature (`X-Hub-Signature-256` for Meta) instead, since citizen messaging no longer runs through n8n (ADR-0006).
 
 ## 6. Inconsistencies and proposals for PROJECT_BRIEF
 | # | Item | Proposal |
@@ -746,7 +747,7 @@ P2 (P2 D-23): `nazar` is the latest `study.public_stats` payload (what `stats.fi
 | 4 | F-56 DigiLocker adapter needs OAuth endpoints | Add API-21/API-22 |
 | 5 | F-56 AadhaarOffline (mock-only) has no endpoint | Add API-18 (mock; state service in government mode) |
 | 6 | API-15 event list lacks `application_submitted`, `payment_pending`, `payment_confirmed`, `ll_test_failed` (needed for S2→S3 and EC-09) | Add them to the enum |
-| 7 | Moderator decisions have no admin endpoint (only via n8n) | Add API-56 |
+| 7 | Moderator decisions have no admin endpoint (only via n8n W09) | Add API-56 |
 | 8 | Profile/age band update has no endpoint | Add API-59 `GET/PATCH /v1/me` |
 | 9 | Wire casing: this spec and `openapi.yaml` use snake_case JSON; BACKEND.md §14/§16 examples and FRONTEND snippets use camelCase keys | Decide once before codegen (recommendation: snake_case on the wire, camelCase in TS via the generated client's mapper); owner Backend lead, H+4 |
 | 10 | API-40 needs `POST /v1/voice/ticket` (FRONTEND §9) | Listed under API-40 in `openapi.yaml` |

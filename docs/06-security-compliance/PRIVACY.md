@@ -251,7 +251,7 @@ DPDP Act s.2(f) defines a child as under 18. s.9(1) requires verifiable parental
 | Google (Gemini API, paid tier) | Redacted prompts, finding IDs, screenshots, commentary audio | Gemini API terms: data "may be stored transiently or cached in any country in which Google or its agents maintain facilities" ([terms](https://ai.google.dev/gemini-api/terms), updated 2026-04-28) | PUR-AI-FEATURES consent; paid tier (no use for product improvement; limited logging for abuse) | 1–2 |
 | Google Vertex AI (production) | Same | Mumbai `asia-south1` listed for in-region ML processing of several Gemini models ([data residency](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/data-residency)); coverage of current model versions **[unverified]**, AI, 2026-12-01 | Enterprise terms + DPA | 3+ |
 | Sarvam AI (Saaras ASR, Dogri) | Commentary/voice audio from users who chose Dogri | India **[unverified]**, AI, 2026-10-30 | Consent + DPA | 1–2 |
-| n8n Pro (cloud) | First name, phone (for the send), template vars | EU **[unverified]**, OPS, 2026-10-24; production: self-hosted n8n in India | DPA; minimal payload; 7-day logs | 1–2 |
+| n8n Pro (cloud) | No citizen personal data (ADR-0006); staff work contacts (team, school and RTO/state staff), IDs and k-anonymous aggregates only | EU **[unverified]**, OPS, 2026-10-24; production: self-hosted n8n in India | DPA; minimal payload; 7-day logs | 1–2 |
 | Meta (WhatsApp Cloud API) | Phone, template vars | Global | WhatsApp Business terms; opt-in | 1–2 |
 | Email provider | Email, message | **[choose at H0]**, OPS | DPA | 1–2 |
 | Cloudflare R2 | Blurred clips, static assets (no PII) | Global CDN | — | 1–2 |
@@ -269,7 +269,7 @@ DPDP Act s.2(f) defines a child as under 18. s.9(1) requires verifiable parental
 | Access / export | API-61 | Step-up → JSON + human-readable PDF (EN/HI) → download link valid 24 h | ≤ 24 h (usually instant) |
 | Correction / completion / updating (s.12) | Case screens, Privacy centre | User edits; DOB change < 18 → ≥ 18 needs declaration and is rate-limited | Instant |
 | Erasure (s.12) | API-62, API-17 | Step-up → confirm screen listing what gets deleted and what we keep (E-15 proofs, E-30 metadata, 1 year) → done | Instant; backups roll off in 30 days |
-| Withdraw consent (s.6(4)) | F-54 per purpose; WhatsApp "STOP" | Immediate effect; downstream processors told (n8n stops sends) | ≤ 1 min |
+| Withdraw consent (s.6(4)) | F-54 per purpose; WhatsApp "STOP" | Immediate effect; the backend notifier stops sends on that channel | ≤ 1 min |
 | Grievance redressal (s.13) | Footer, Privacy centre, `grievance@` | Ticket ID → acknowledgement 24 h → resolution 15 days → escalation to the Board explained | 24 h / 15 days |
 | Nominate (s.14) | Privacy centre | Name + contact of nominee for death/incapacity | Phase 3+ |
 | Helper revocation | Privacy centre → Helpers | Revoke → helper sessions killed (EC-25) | Instant |

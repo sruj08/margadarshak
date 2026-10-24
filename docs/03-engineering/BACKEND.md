@@ -28,7 +28,7 @@ flowchart LR
   subgraph Clients
     W[apps/web PWA]
     C[apps/console]
-    N8[n8n Pro<br/>messaging edge + schedules]
+    N8[n8n Pro<br/>internal ops: schedules,<br/>staff approvals + alerts]
   end
   subgraph Render["Render (Singapore) — Phase 1–2"]
     API[services/api<br/>Go 1.27 · chi · ADK Go<br/>one static binary]
@@ -44,7 +44,7 @@ flowchart LR
   W -->|HTTPS REST /v1, WS /v1/voice| API
   C -->|HTTPS /v1/school, /v1/console, /v1/admin| API
   N8 -->|HMAC /internal/*| API
-  API -->|HMAC webhooks: what to send to whom| N8
+  API -->|HMAC webhooks: staff tasks only| N8
   API -->|private network HTTP| SV
   API -->|POST /v1/task-runs| RAPI
   RAPI --> WF
@@ -184,7 +184,7 @@ sequenceDiagram
 | `AadhaarOffline` | `VerifyOfflineXML(ctx, zip []byte, shareCode string)` / `VerifySecureQR(ctx, payload)` → age band + name only; **never** stores the number | `aadhaaroffline/mock` | **Mock-only in Margdarshak.** Real offline QR/XML verification carries OVSE duties, so in government mode it runs through the state's own system (PROJECT_BRIEF F-56, D-07) |
 | `Bhashini` | `Translate(ctx, text, src, tgt)` · `ASR(ctx, audio, lang)` · `TTS(ctx, text, lang)` | `bhashini/mock` (returns reviewed strings) | Bhashini ULCA pipelines |
 | `Payment` | `RedirectURL(ctx, caseID) (string, error)` · `Status(ctx, ref)` | `payment/redirect` (points to Sarathi/state gateway; we never take money) | PayGov / state gateway status adapter |
-| `Notifier` | `Send(ctx, notify.Message) (MsgID, error)` (template ID, channel, recipient ref, vars, idempotency key) · `Status(ctx, MsgID)` | `notify/n8n` (WhatsApp sandbox/test numbers, email), `notify/webpush`, `notify/console` (dev) | Same + SMS after TRAI DLT (D-16) |
+| `Notifier` | `Send(ctx, notify.Message) (MsgID, error)` (template ID, channel, recipient ref, vars, idempotency key) · `Status(ctx, MsgID)` | P1 build: `notify/n8n` (WhatsApp sandbox/test numbers, email), `notify/webpush`, `notify/console` (dev). Target (ADR-0006 rev., 24 Oct): `WhatsAppCloudNotifier` (Meta Cloud API, called directly), `EmailNotifier` (SMTP), so citizen messages never go through n8n | Same with the state's WhatsApp business number + SMS after TRAI DLT (D-16) |
 | `Slots` | `ListOffices(ctx, state, near)` · `Availability(ctx, officeID, week)` | `slot/mock` (seeded, labelled) | State slot API via adapter |
 | `ScoreVerifier` | `Verify(ctx, VerifyRequest) (VerifiedResult, error)` | `scoring/http` (private network, HMAC) | same |
 | `Narrator` | `Debrief(ctx, DebriefInput) (DebriefDraft, error)` · `Coach(ctx, CoachPlan) (CoachDraft, error)` | `ai/debrief`, `ai/coach` (ADK Go llmagent on Gemini Flash-Lite), `ai/template` (fallback, EC-29) | + India-region model or Bhashini/local Indic model behind the same port (D-17) |
@@ -498,7 +498,7 @@ Overlays may add state items. Example: J&K postage, which `02-rules-process.md` 
   - A re-computation that yields the same key is a no-op (`INSERT … ON CONFLICT DO NOTHING`).
   - A changed due date cancels the old row and inserts the new one.
 
-### 7.2 Execution: n8n triggers, Workflows orchestrates, the Go API decides
+### 7.2 Execution: n8n triggers, Workflows orchestrates, the Go API decides, the notifier delivers
 
 Render Workflows has **no native cron and no documented sleep** (`B-sponsors.md` §1). So durable timers are rows in Postgres, swept on a schedule:
 
@@ -529,11 +529,13 @@ sequenceDiagram
   T-->>R: summary {due, fired, skipped_opt_out, failed}
 ```
 
-- **Exactly-once user effect:** `notification.idempotency_key = timelineEventKey + ":" + channel`. n8n receives the key and drops duplicates. The WhatsApp send is keyed too.
-- **WhatsApp opt-out "STOP" (EC-30):** the inbound n8n webhook (API-66) sets that channel's consent to withdrawn. The batch skips that channel and falls back to web push / in-app only.
+- **As built (P1):** the batch is delivered through the n8n W02 webhook, as drawn above.
+- **Decided change (24 Oct, ADR-0006 rev., TEAM DEC-022):** citizen messages move to a notifier worker inside `services/api` (same image, separate process). `clock.fire_batch` then only inserts Notification rows with `send_after`; the notifier claims due rows (`SKIP LOCKED`), applies quiet hours, the ≤ 1 nudge/day cap and per-number rate limits, and sends through the WhatsApp Cloud API / email / web push, keyed by `idempotency_key`. Receipts come back on the Meta channel webhook (API-66). n8n leaves this path. Tracked in `whats_left.md`.
+- **Exactly-once user effect:** `notification.idempotency_key = timelineEventKey + ":" + channel`. The receiver (n8n today, the notifier after the change) drops duplicates. The WhatsApp send is keyed too.
+- **WhatsApp opt-out "STOP" (EC-30):** the inbound channel webhook (API-66) sets that channel's consent to withdrawn. The batch skips that channel and falls back to web push / in-app only.
 - **Family mode:** reminders for a family member's case (e.g. a 16–17 learner) go to the account holder's opted-in channels. There are no streak nudges or engagement campaigns on a minor's case (no behavioural tracking).
 - **Other triggers:** the sweep also runs after a deploy and on demand from the console. It is idempotent by `as_of`.
-- **If n8n is down:** nothing the user sees changes. In-app timelines read the same rows. n8n can only delay a message, never change a fact.
+- **If n8n is down:** nothing the user sees changes. In-app timelines read the same rows. On-call can start the sweep through API-65 by hand (idempotent by `as_of`).
 - **If Workflows is down:** `JOB_RUNNER=inline` runs the same Go step handlers in process (§8.4).
 
 ---
@@ -689,7 +691,7 @@ ADK for Go has agents (`llmagent`, `sequentialagent`, `parallelagent`, `loopagen
 |---|---|---|---|---|
 | VoiceGuideAgent (M-01) | live (bidi audio) | Go API process: `(*runner.Runner).RunLive(ctx, userID, sessionID, agent.LiveRunConfig{…})` behind the WS endpoint API-40 | `GEMINI_MODEL_LIVE` = `gemini-3.8-live` (fallback `GEMINI_MODEL_LIVE_FALLBACK` = `gemini-2.5-flash-native-audio-preview-12-2025`; ADK Go support for 3.8 Live is to be confirmed at H0) | <ul><li>`functiontool.New` tools: `navigate(route_id: enum)`, `fill_field(field_id: enum, value)`, `get_rule(rule_id)`, `get_fee_quote(case_id)`, `get_case_summary(case_id)`, `read_debrief(sid)`, `open_drill(drill_id: enum)`.</li><li>**No submit/pay/book tools exist.**</li></ul> |
 | DebriefAgent (M-02) | pipeline step (§10) | Go API (inline) and the `session_debrief` task (API step) | `GEMINI_MODEL_DEBRIEF` | none |
-| CoachAgent (M-03) | pipeline step | Go API, weekly via n8n W6 → API-67 | `GEMINI_MODEL_DEBRIEF` | none; input = plan JSON computed by code |
+| CoachAgent (M-03) | pipeline step | Go API, weekly coach-plan TimelineEvent in `case_clock_sweep` (n8n W6 retired, ADR-0006 rev.) | `GEMINI_MODEL_DEBRIEF` | none; input = plan JSON computed by code |
 | TutorAgent (M-04) | single LLM call with retrieved reviewed text | Go API | `GEMINI_MODEL_DEBRIEF` | content-grounded only (reviewed question bank) |
 | ScreenDecoderAgent (M-05) | vision | Go API (API-42) | `GEMINI_MODEL_VISION` (Gemini Flash) | matches the verified error catalogue; `unknown` allowed |
 | ScamExplainer (M-10) | single LLM call | Go API (API-43) | `GEMINI_MODEL_DEBRIEF` | explains the rules verdict; never decides "safe" |
@@ -774,7 +776,7 @@ The function returns `domain.Error{Code: "FORBIDDEN" | "CONSENT_REQUIRED" | "PAR
 | Telemetry | unique `(sid, seq)` |
 | Workflows runs | input-derived key sent as Render `idempotencyKey` and stored in `job_runs` (unique) |
 | Job steps (`/internal/job-steps/*`) | unique `(run_id, step, input_sha256)` in `job_steps`; a replay returns the stored result |
-| Inbound webhooks (n8n) | HMAC + nonce replay cache (Key Value, 10 min) + unique `delivery_id` |
+| Inbound webhooks (n8n staff events, Meta/email channel receipts) | HMAC (n8n) or provider signature (Meta `X-Hub-Signature-256`) + nonce replay cache (Key Value, 10 min) + unique `delivery_id` |
 
 ---
 

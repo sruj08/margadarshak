@@ -25,7 +25,7 @@ margdarshak/
 ├── packages/ui                  tokens.css · tokens.json (design tokens, contrast-checked)
 ├── packages/rules · rulepacks/  (empty) rule-pack schemas · state rule packs (data)
 ├── infra/                       render.yaml · docker/ (api, web, score-verifier, compose) · helm/README.md
-├── n8n/                         README + 4 exported workflows (W01, W04, W08, W09)
+├── n8n/                         README + exported workflows: staff ops W01, W08, W09, W13, W14; W02 citizen relay (P1, retiring per ADR-0006 rev.)
 ├── scripts/                     gh_import_backlog.mjs (307 tickets) · check_contrast.mjs · evals/gen_debrief_150.mjs
 ├── field-kit/                   Superseded field kit + nazar_stats.mjs (current protocol: docs/08-project/FIELD_STUDY.md)
 └── docs/

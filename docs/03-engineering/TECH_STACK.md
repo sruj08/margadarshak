@@ -116,7 +116,7 @@ Package layout and conventions: [BACKEND §2](BACKEND.md). Decision record: [ADR
 | Durable jobs (hackathon) | Render Workflows, **TypeScript** SDK (`services/workflows`) | **`@renderinc/sdk` 1.4.0** (npm) | sponsor track; per-run instances, `ctx.run()` chaining, `Promise.all` fan-out, retries with backoff, 30 s–24 h timeouts (B-sponsors §1). The Go API starts runs through the `JobRunner` port with Render's REST API (`POST https://api.render.com/v1/task-runs` `{task: "<WORKFLOW_SLUG>/<task>", input: [...], idempotencyKey}` → `202` TaskRun; status polled with `GET /v1/task-runs/{id}` into `job_runs`) (ADR-0005) | Render cron jobs (no fan-out/retries), a queue + workers on Render (more moving parts) | MIT |
 | Durable jobs (production) | Temporal (Go SDK `go.temporal.io/sdk`) behind the `JobRunner` port | **v1.50.0** (to be added to `go.mod` when built); Temporal server **1.32.x** image tag seen on Docker Hub, pin at adoption | self-hostable on MeghRaj/NIC; native durable timers (human waits inside one workflow); workflows and activities in the same Go codebase | cloud-specific queues | MIT |
 | Dev/CI jobs | inline runner (`JOB_RUNNER=inline`) | — | the same Go step handlers run in a goroutine in-process; media steps are skipped with fixture clips | — | — |
-| Automation edge | n8n Cloud Pro (team perk); self-host image for adoption | n8n **2.44.6** (npm `latest`, Node ≥ 24) | schedules, WhatsApp/email, send-and-wait approvals; non-devs edit copy and timing | Zapier (no self-host), code-only (slower to change copy) | Sustainable Use License — fine for internal use; **check suitability for government self-hosting** (owner Platform lead, before any MoU) |
+| Internal ops automation | n8n Cloud Pro (team perk); self-host image for adoption | n8n **2.44.6** (npm `latest`, Node ≥ 24) | schedules, staff send-and-wait approvals, staff notifications; non-devs edit staff routing and timing. No citizen messages (ADR-0006 rev.; the P1 build still uses the W02 webhook until the notifier lands) | Zapier (no self-host), code-only (slower to change copy) | Sustainable Use License — fine for internal use; **check suitability for government self-hosting** (owner Platform lead, before any MoU) |
 | Workflows CLI | Render CLI | ≥ 2.12.0 (local task server `http://localhost:8120`; the API uses it with `RENDER_USE_LOCAL_DEV=true`) | `render workflows dev -- pnpm --filter @margdarshak/workflows start` | — | — |
 
 ## 8. Infrastructure and hosting
@@ -160,7 +160,7 @@ Package layout and conventions: [BACKEND §2](BACKEND.md). Decision record: [ADR
 | Citizen auth | anonymous device session (`md_sid` cookie) → email magic link / Google (OIDC; `github.com/coreos/go-oidc/v3` **v3.21.0** for ID-token checks) | + DigiLocker OAuth 2.0 (PKCE) / Jan Parichay via adapters | **never Aadhaar-OTP login** (brief §15) |
 | Identity documents | hand-off to Sarathi's own eKYC; AadhaarOffline **mock only** | state's OVSE service; DigiLocker `DRVLC` pull | ADR-0008 |
 | Government fees | redirect to Sarathi / state gateway; mock gateway | PayGov / state treasury reconciliation by receipt number | we never collect government fees |
-| Messaging | WhatsApp Cloud API via n8n (test number), email | + mGov / NIC SMS after TRAI DLT registration | ≤ 1 nudge/day; STOP honoured |
+| Messaging | backend notifier: WhatsApp Cloud API (test number), email (SMTP), web push | + state WhatsApp business number, mGov / NIC SMS after TRAI DLT registration | ≤ 1 nudge/day; STOP honoured |
 | Languages | Gemini Live (hi/en), Sarvam (doi in, hi out), IndicTrans2 (offline authoring) | + Bhashini | claim only en + hi full, Dogri voice-in |
 | Password hashing (admin break-glass only) | argon2id from `golang.org/x/crypto/argon2` (**v0.58.0**) | same | citizens have no passwords |
 
@@ -168,7 +168,7 @@ Package layout and conventions: [BACKEND §2](BACKEND.md). Decision record: [ADR
 | Sponsor | How we use it | Load-bearing? |
 |---|---|---|
 | **Render** | hosting for all services; **Render Workflows** (TypeScript tasks, started by the Go API over the REST API) for `clip_ingest` (headline, visible retry), `clip_finalize`, `case_clock_sweep` + `clock_batch` fan-out, `session_debrief`, `nightly_stats`, `rulepack_reevaluate`, `user_export`/`user_delete`, `replay_pending_sessions` | yes — bonus track; judged on effective use of Workflows |
-| **n8n** (Pro perk) | the 15 edge workflows (schedules, WhatsApp/email, two-rater wait W08, moderation W9, lead routing W7, letter approval W11, digests, field-test export) | yes — but holds no business logic (ADR-0006) |
+| **n8n** (Pro perk) | internal and staff workflows (case-clock trigger W01, lead routing W07, two-rater wait W08, moderation W09, alerts, digests, field-test export, RTO/staff W16–W18) | yes — but holds no business logic and sends nothing to citizens (ADR-0006 rev.) |
 | Mastra | not used: our agents are ADK for Go (live voice through `RunLive` is a requirement). Noted for a possible TS agent later | no |
 | GeeksforGeeks, CodeCrafters, OSEN | no product integration | no |
 

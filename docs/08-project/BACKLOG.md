@@ -18,7 +18,7 @@ This file is the **single source of ticket IDs** (MD-xxx). The [IMPLEMENTATION_P
   - [ ] testable criterion
   - [ ] testable criterion
 ```
-- `phase` ∈ P0..P7 (see the plan). `epic` = EP-xx below. `depends` = MD IDs or `—`. `refs` = IDs from PROJECT_BRIEF (F, E, API, M, EC, R, P), directives (D-xx), n8n workflows (W1..W15), games (G1..G10) and Render Workflows (RW-1..RW-4) and verification gaps from `margdarshak-verification.md` §3.1 (VG-1..VG-14).
+- `phase` ∈ P0..P7 (see the plan). `epic` = EP-xx below. `depends` = MD IDs or `—`. `refs` = IDs from PROJECT_BRIEF (F, E, API, M, EC, R, P), directives (D-xx), n8n workflows (W1, W7–W9, W12–W18; W2–W6, W10, W11 retired to the backend, ADR-0006), games (G1..G10) and Render Workflows (RW-1..RW-4) and verification gaps from `margdarshak-verification.md` §3.1 (VG-1..VG-14).
 - `owner` is a **role**, not a person (see [TEAM](TEAM.md)): **PD** product/design lead · **FE** frontend + game engineer · **BE** backend + AI engineer · **AG** AI coding agent. `AG` never appears alone: `FE+AG` means an agent implements and FE reviews and merges; the human named first is accountable.
 - `estimate` (ideal person-days, one focused person, no meetings): **XS** ≤ 0.5 · **S** 1 · **M** 2–3 · **L** 4–5 · **XL** 6–10. Anything above XL is split before work starts.
 - Ranges: P0 = MD-001..099 · P1 = MD-101..199 · P2 = MD-201..299 · P3 = MD-301..399 · P4 = MD-401..499 · P5 = MD-501..599 · P6 = MD-601..699 · P7 = MD-701..799 · **edge-case conformance MD-801..830 maps one-to-one to EC-01..EC-30** (MD-8NN ↔ EC-NN).
@@ -46,11 +46,12 @@ This file is the **single source of ticket IDs** (MD-xxx). The [IMPLEMENTATION_P
 |---|---|---|
 | RW-1 | **Clip ingest pipeline** (headline): transcode → blur faces/plates → proposeWindows → awaitTwoRaters → computeAgreement → publish | MD-217 |
 | RW-2 | **Case-clock sweep**: due milestones per case, idempotent per (case, milestone) | MD-126 |
-| RW-3 | **Session-debrief fan-out**: per-scenario scoring in parallel → assemble → narrate → card → n8n | MD-311 |
+| RW-3 | **Session-debrief fan-out**: per-scenario scoring in parallel → assemble → narrate → card → notifier | MD-311 |
 | RW-4 | **Field-study stats**: recompute % below 60, r, CIs, pre/post gain | MD-239 |
 
-### 0.6 n8n workflows referenced here (08 §6; D-16: messaging edge and schedules only)
-W1 MD-127 · W2 MD-128 · W3 MD-406 · W4 MD-409 · W5 MD-505 · W6 MD-312 · W7 MD-504 · W8 MD-220 · W9 MD-405 · W10 MD-416 · W11 MD-419 · W12 MD-329 · W13 MD-141 · W14 MD-240 · W15 MD-513.
+### 0.6 n8n workflows referenced here (D-16, ADR-0006: internal and staff operations only; no citizen messages)
+W1 MD-127 · W7 MD-504 · W8 MD-220 · W9 MD-405 · W12 MD-329 · W13 MD-141 · W14 MD-240 · W15 MD-513 · W16 MD-519 · W17 MD-520 · W18 MD-521.
+Retired to the backend notifier (numbers not reused): W2 → MD-128 · W3 → MD-406 · W4 → MD-409 · W5 → MD-505 · W6 → MD-312 · W10 → MD-416 · W11 → MD-419.
 
 ---
 
@@ -89,7 +90,7 @@ W1 MD-127 · W2 MD-128 · W3 MD-406 · W4 MD-409 · W5 MD-505 · W6 MD-312 · W7
 | EP-28 | Renew/fix, family and Helper mode | P4 | FE | MD-430..433 |
 | EP-29 | Remaining simulations: Junction Scan, Night & Glare, Hill Road | P4 | FE | MD-434..436 |
 | EP-30 | Driving-school portal | P5 | PD | MD-501..506 |
-| EP-31 | State / RTO console | P5 | BE | MD-507..510 |
+| EP-31 | State / RTO console | P5 | BE | MD-507..510, MD-519..521 |
 | EP-32 | Rule-pack studio | P5 | BE | MD-511..514 |
 | EP-33 | Multi-tenancy and white-label | P5 | BE | MD-515..518 |
 | EP-34 | Accessibility and localisation audit | P6 | PD | MD-601..604 |
@@ -433,7 +434,7 @@ Goal: hexagonal ports with mock implementations that pass the same contract test
 
 ### MD-042 · NotificationAdapter: console and email
 - **Meta:** phase=P0 · epic=EP-05 · owner=BE+AG · estimate=S · depends=MD-036 · refs=F-53, E-13, D-16
-- **Description:** Console (dev), email (SMTP to a transactional provider chosen by BE at G0 and recorded in TECH_STACK), web push (VAPID) stubs; WhatsApp sends go through n8n (MD-129). SMS implementation returns `disabled_until_dlt`.
+- **Description:** Console (dev), email (SMTP to a transactional provider chosen by BE at G0 and recorded in TECH_STACK), web push (VAPID) stubs; WhatsApp sends go through the backend `WhatsAppCloudNotifier` (MD-129), never n8n. SMS implementation returns `disabled_until_dlt`.
 - **Acceptance:**
   - [ ] Delivery state (queued/sent/delivered/failed/opted_out) written to E-13.
   - [ ] SMS call path returns the disabled status and is covered by a test.
@@ -517,7 +518,7 @@ Goal: one Python backend, one Postgres, durable jobs behind an interface, observ
 
 ### MD-053 · Internal HMAC channel for n8n
 - **Meta:** phase=P0 · epic=EP-06 · owner=BE · estimate=S · depends=MD-046 · refs=API-65, API-66, D-16
-- **Description:** `/internal/*` routes accept only HMAC-SHA256 signed requests with timestamp (± 5 min) and nonce; n8n holds the secret in its credential vault. n8n receives "what to send to whom" from `/jobs/*`; it never computes rules.
+- **Description:** `/internal/*` routes accept only HMAC-SHA256 signed requests with timestamp (± 5 min) and nonce; n8n holds the secret in its credential vault. n8n receives staff task lists from `/internal/jobs/*`; it never computes rules and never receives citizen contacts.
 - **Acceptance:**
   - [ ] Replay and stale-timestamp requests rejected.
   - [ ] Route list documented in API_SPEC.
@@ -718,7 +719,7 @@ Goal: one headline, four verbs, a mic and a calm trust line; then a home that al
   - [ ] DL-holder view appears only when a DL mirror exists.
 
 ## EP-10 · Case clock and notifications (P1)
-Goal: the timeline nobody owns, owned: day-30 unlock, LL expiry from day 180, test eve, approval chase; durable timers on Render Workflows, n8n as trigger and messaging edge (F-09, F-53, D-15, D-16).
+Goal: the timeline nobody owns, owned: day-30 unlock, LL expiry from day 180, test eve, approval chase; durable timers on Render Workflows, n8n only as the daily trigger, citizen messages sent by the backend notifier (F-09, F-53, D-15, D-16, ADR-0006).
 
 ### MD-125 · Timeline computation
 - **Meta:** phase=P1 · epic=EP-10 · owner=BE · estimate=M · depends=MD-033, MD-121 · refs=F-09, E-12, EC-07, EC-15
@@ -729,42 +730,43 @@ Goal: the timeline nobody owns, owned: day-30 unlock, LL expiry from day 180, te
 
 ### MD-126 · RW-2 Case-clock sweep (Render Workflow)
 - **Meta:** phase=P1 · epic=EP-10 · owner=BE · estimate=M · depends=MD-052, MD-125 · refs=RW-2, API-65, F-09, D-15
-- **Description:** A Workflow task that loads due milestones in batches, fans out per case, writes Notification intents, and is idempotent per key; retries with backoff on adapter errors. Triggered by n8n (W1) through API-65 because Workflows has no cron.
+- **Description:** A Workflow task that loads due milestones in batches, fans out per case, writes Notification intents with `send_after` (incl. test eve, weekly coach plan and family card), and is idempotent per key; retries with backoff on adapter errors. Triggered by n8n (W1) through API-65 because Workflows has no cron.
 - **Acceptance:**
   - [ ] Running the sweep twice sends nothing twice (test).
   - [ ] Injected failure shows a retry on the Render Runs page (screenshot for the deck).
 
-### MD-127 · n8n W1 daily case-clock tick
+### MD-127 · n8n W1 daily case-clock trigger and watchdog
 - **Meta:** phase=P1 · epic=EP-10 · owner=BE+AG · estimate=S · depends=MD-126, MD-053 · refs=W1, API-65, D-16
-- **Description:** Schedule 06:30 IST → HMAC `POST /internal/clock/sweep` → split by channel → WhatsApp template / email / web push → `POST /jobs/ack`. Workflow JSON exported to `n8n/W1-case-clock.json`.
+- **Description:** Schedule 06:30 IST → HMAC `POST /internal/clock/sweep` → poll sweep status (counts only) → alert W12 if not completed in 30 min. The sweep queues outbox rows; the backend notifier (MD-129) delivers. Workflow JSON exported to `n8n/workflows/W01-case-clock-tick.json`.
 - **Acceptance:**
   - [ ] Exported workflow imports cleanly into a fresh n8n.
-  - [ ] No rule logic inside n8n nodes (review checklist).
+  - [ ] No rule logic inside n8n nodes and no citizen recipient in any payload (review checklist).
 
-### MD-128 · n8n W2 milestone event notifier
-- **Meta:** phase=P1 · epic=EP-10 · owner=BE+AG · estimate=S · depends=MD-127 · refs=W2, F-53, D-16
-- **Description:** Webhook `milestone_reached` (LL issued, payment pending > 2 h, test result) → HMAC verify → template message → wait 24 h → if not opened, email fallback. The SMS branch exists but is disabled until TRAI DLT registration (MD-623).
+### MD-128 · Milestone event notifications (backend notifier)
+- **Meta:** phase=P1 · epic=EP-10 · owner=BE+AG · estimate=S · depends=MD-129 · refs=F-53, D-16
+- **Description:** On `milestone_reached` (LL issued, payment pending > 2 h, test result) the case reducer writes an outbox row → the notifier sends the template → if unseen after 24 h, email/web push fallback. The SMS adapter exists but is disabled until TRAI DLT registration (MD-623). Replaces n8n W2 (ADR-0006).
 - **Acceptance:**
-  - [ ] SMS node disabled and labelled; test proves no SMS call.
+  - [ ] SMS adapter disabled and labelled; test proves no SMS call.
 
 ### MD-129 · WhatsApp, email and web push delivery
 - **Meta:** phase=P1 · epic=EP-10 · owner=BE · estimate=M · depends=MD-042 · refs=F-53, E-13, R-08
-- **Description:** WhatsApp Cloud API through n8n with the test number in the hackathon tenant; email via the chosen SMTP provider; web push via VAPID. Delivery receipts update E-13.
+- **Description:** Outbox worker in `services/api` with `WhatsAppCloudNotifier` (Meta WhatsApp Cloud API, called directly, test number in the hackathon tenant), `EmailNotifier` (chosen SMTP provider) and `WebPushNotifier` (VAPID). Claims due rows with `SKIP LOCKED`, keyed sends, retries up to 24 h. Meta webhook receipts (API-66, `X-Hub-Signature-256`) update E-13. n8n is not in this path (ADR-0006).
 - **Acceptance:**
   - [ ] Each channel delivers a template to a team device in the demo tenant.
+  - [ ] With n8n stopped, queued notifications are still delivered.
 
 ### MD-130 · Nudge limits, quiet hours and STOP
 - **Meta:** phase=P1 · epic=EP-10 · owner=BE · estimate=S · depends=MD-129 · refs=F-53, EC-30, D-16
 - **Description:** At most 1 nudge per day per user, tied to a real deadline; quiet hours 22:00–07:00 IST; "STOP" on WhatsApp or one tap in-app opts out per channel and is honoured before the next message.
 - **Acceptance:**
   - [ ] Property test: no user receives 2 nudges in a day.
-  - [ ] STOP reply flips consent and suppresses the next send (e2e via the n8n test number).
+  - [ ] STOP reply flips consent and suppresses the next send (e2e via the WhatsApp test number).
 
 ### MD-131 · WhatsApp template drafting and approval
 - **Meta:** phase=P1 · epic=EP-10 · owner=PD · estimate=S · depends=— · refs=R-08, F-53
 - **Description:** Draft templates (plan summary, day-30 unlock, LL expiry T-30/T-7, test eve, retest ready, letter ready) in en/hi, utility category, no outcome words in previews for fail messages; submit early because approvals take days.
 - **Acceptance:**
-  - [ ] Template list with approval status tracked in `n8n/templates.md`.
+  - [ ] Template list with approval status tracked in `services/api/notify/templates.md`.
 
 ### MD-132 · Case clock UI
 - **Meta:** phase=P1 · epic=EP-10 · owner=FE · estimate=S · depends=MD-125 · refs=F-09, EC-07
@@ -1211,13 +1213,13 @@ Goal: after every session, "how you did · where you lacked · what you could ha
 
 ### MD-311 · RW-3 Session-debrief fan-out (Render Workflow)
 - **Meta:** phase=P3 · epic=EP-19 · owner=BE · estimate=M · depends=MD-308, MD-052 · refs=RW-3, F-25, D-15
-- **Description:** For multi-scenario sessions: score each scenario in parallel → assemble findings → narrate → persist → n8n sends the optional WhatsApp card. Retries on 429.
+- **Description:** For multi-scenario sessions: score each scenario in parallel → assemble findings → narrate → persist → the notifier sends the optional WhatsApp card. Retries on 429.
 - **Acceptance:**
   - [ ] A 3-scenario session produces one card; an injected 429 shows a retry.
 
-### MD-312 · CoachAgent (M-03) and n8n W6 weekly plan
-- **Meta:** phase=P3 · epic=EP-19 · owner=BE · estimate=M · depends=MD-308, MD-211 · refs=M-03, W6, F-26
-- **Description:** The plan (due FSRS cards + staircase levels) is computed in code; CoachAgent words it with an implementation-intention prompt ("On __ at __ I will..."); W6 Monday 07:00 sends it within the ≤ 1 nudge/day rule and stores the reply.
+### MD-312 · CoachAgent (M-03) and weekly plan
+- **Meta:** phase=P3 · epic=EP-19 · owner=BE · estimate=M · depends=MD-308, MD-211 · refs=M-03, F-26
+- **Description:** The plan (due FSRS cards + staircase levels) is computed in code; CoachAgent words it with an implementation-intention prompt ("On __ at __ I will..."); a weekly TimelineEvent (Monday 07:00 send window) is queued by the case-clock sweep and sent by the notifier within the ≤ 1 nudge/day rule; replies land on API-66 and are stored. Replaces n8n W6.
 - **Acceptance:**
   - [ ] Same validator as MD-304 passes on all coach outputs; replies stored as intentions.
 
@@ -1358,15 +1360,15 @@ Goal: honest slot help without scraping or bots, and crowd intel that is structu
 - **Acceptance:**
   - [ ] Below threshold the UI shows "not enough reports yet" (test).
 
-### MD-405 · n8n W9 Live Intel moderation
+### MD-405 · Live Intel moderation (inline precheck + n8n W9 for flagged reports)
 - **Meta:** phase=P4 · epic=EP-23 · owner=BE · estimate=S · depends=MD-404, MD-053 · refs=W9, F-11
-- **Description:** New report → backend precheck (PII, phone/UPI patterns, duplicates, agent-promotion classifier) → auto-publish only if low risk and ≥ 3 corroborating reports in 24 h → else moderator approve/edit/reject → notify reporter → if "slots opened", trigger W3.
+- **Description:** New report → backend precheck inline on API-28 (PII, phone/UPI patterns, duplicates, agent-promotion classifier) → auto-publish only if low risk and ≥ 3 corroborating reports in 24 h → else W9 sends it to the moderator (approve/edit/reject) → notify reporter → if "slots opened", the backend fires slot-watch alerts (MD-406).
 - **Acceptance:**
   - [ ] Moderator decisions logged in E-30.
 
-### MD-406 · n8n W3 slot-watch alerts
-- **Meta:** phase=P4 · epic=EP-23 · owner=BE · estimate=S · depends=MD-405, MD-402 · refs=W3, D-08
-- **Description:** On a moderated "slots opened at office X" report: watchers fetched from the backend, message "Reported {time} by {n} users, check Sarathi now", labelled crowd-reported. No fake urgency.
+### MD-406 · Slot-watch alerts (backend notifier)
+- **Meta:** phase=P4 · epic=EP-23 · owner=BE · estimate=S · depends=MD-405, MD-402 · refs=F-10, API-69, D-08
+- **Description:** On a published "slots opened at office X" report, the decision handler fires watchers (API-69 logic) into the outbox; message "Reported {time} by {n} users, check Sarathi now", labelled crowd-reported. No fake urgency. Replaces n8n W3.
 - **Acceptance:**
   - [ ] Respects quiet hours and ≤ 1 nudge/day.
 
@@ -1386,9 +1388,9 @@ Goal: make the driving test predictable: track explained, what to bring, a test-
 - **Acceptance:**
   - [ ] Static SVG fallback in Lite and reduced-motion modes.
 
-### MD-409 · Test-eve "what to bring" and n8n W4
-- **Meta:** phase=P4 · epic=EP-24 · owner=BE · estimate=S · depends=MD-125, MD-129 · refs=F-12, W4
-- **Description:** Checklist from the rule pack (LL, RC, insurance, PUC, L-plate, helmet, documents) sent at 19:00 the day before, with an ICS file; sets the co-pilot ready flag.
+### MD-409 · Test-eve "what to bring" reminder
+- **Meta:** phase=P4 · epic=EP-24 · owner=BE · estimate=S · depends=MD-125, MD-129 · refs=F-12
+- **Description:** Checklist from the rule pack (LL, RC, insurance, PUC, L-plate, helmet, documents) as a `test_eve` TimelineEvent with `send_after` 19:00 the day before, sent by the notifier with an ICS link; sets the co-pilot ready flag. Replaces n8n W4.
 - **Acceptance:**
   - [ ] Checklist items carry sources; sent once per test date.
 
@@ -1432,9 +1434,9 @@ Goal: a private, face-saving path from a failed test back to a booked retest (F-
 - **Acceptance:**
   - [ ] Template filled only with the user's own case facts; downloadable PDF.
 
-### MD-416 · n8n W10 fail follow-up
-- **Meta:** phase=P4 · epic=EP-25 · owner=BE · estimate=S · depends=MD-413 · refs=W10
-- **Description:** Webhook `test_failed` → wait 18 h → private "your retest plan is ready" → wait until the retest-eligible date from the backend → reminder + remedial-training list.
+### MD-416 · Fail follow-up timers (backend)
+- **Meta:** phase=P4 · epic=EP-25 · owner=BE · estimate=S · depends=MD-413 · refs=F-13, EC-08
+- **Description:** `test_failed` schedules TimelineEvents: private "your retest plan is ready" at +18 h, then a reminder + remedial-training list on the retest-eligible date from the rules engine; both sent by the notifier. Replaces n8n W10.
 - **Acceptance:**
   - [ ] Preview text has no outcome words (template review).
 
@@ -1452,9 +1454,9 @@ Goal: a private, face-saving path from a failed test back to a booked retest (F-
 - **Acceptance:**
   - [ ] Unknown timelines render as "the notified timeline for your state is not known to us".
 
-### MD-419 · n8n W11 letter approval flow
-- **Meta:** phase=P4 · epic=EP-26 · owner=BE · estimate=S · depends=MD-418 · refs=W11
-- **Description:** Stalled-stage webhook → draft → push "review your letter" → wait for explicit in-app approval (Wait-node resume) → PDF emailed to the user with CPGRAMS steps → optional email to the published grievance address only if the user ticks it.
+### MD-419 · Letter approval flow (backend)
+- **Meta:** phase=P4 · epic=EP-26 · owner=BE · estimate=S · depends=MD-418 · refs=F-14, API-72
+- **Description:** Stalled-stage TimelineEvent → draft → push "review your letter" → explicit in-app approval → PDF emailed to the user with CPGRAMS steps (notifier) → optional email to the published grievance address only if the user ticks it (API-72). Replaces n8n W11.
 - **Acceptance:**
   - [ ] Nothing leaves without explicit approval (test).
 
@@ -1601,9 +1603,9 @@ Goal: the first paying buyer: schools that must now give hazard training (Kerala
 - **Acceptance:**
   - [ ] Timeout path tested; lead log contains no learner phone unless consented.
 
-### MD-505 · n8n W5 weekly parent card
-- **Meta:** phase=P5 · epic=EP-30 · owner=BE · estimate=S · depends=MD-431 · refs=W5, F-17
-- **Description:** Sunday 10:00, only for adult learners who opted in to share with a named parent, or for a parent's own family-mode case of a minor: backend-rendered card (progress, next date, the government fee compared with the agent quote the learner entered) → WhatsApp image template.
+### MD-505 · Weekly parent card (backend notifier)
+- **Meta:** phase=P5 · epic=EP-30 · owner=BE · estimate=S · depends=MD-431 · refs=F-17
+- **Description:** Weekly TimelineEvent (Sunday 10:00 send window), only for adult learners who opted in to share with a named parent, or for a parent's own family-mode case of a minor: backend-rendered card (progress, next date, the government fee compared with the agent quote the learner entered) → WhatsApp image template via the notifier. Replaces n8n W5.
 - **Acceptance:**
   - [ ] No card for users without the consent purpose; for a minor's family-mode case the card goes only to the account-holding parent.
 
@@ -1639,6 +1641,26 @@ Goal: decision views for officers: where applications stall, why people fail, wh
 - **Description:** Map objects, links and actions from 07 §C3 onto our entities and events, so every console action writes an event that feeds the next decision.
 - **Acceptance:**
   - [ ] Ontology doc page generated from the code registry.
+
+### MD-519 · n8n W16 RTO morning brief
+- **Meta:** phase=P5 · epic=EP-31 · owner=BE · estimate=S · depends=MD-508, MD-053 · refs=W16, F-41, D-14
+- **Description:** Schedule 08:00 IST Mon–Sat → `POST /internal/jobs/rto-brief` → one brief per office to opted-in RTO/ARTO staff (email or work WhatsApp): tests expected today, stalled applications by stage, top query themes, LL expiries due this week (counts), Live Intel items awaiting a response, link to the console view. Aggregates only, k ≥ 5; government mode.
+- **Acceptance:**
+  - [ ] Payload contains no applicant, examiner or agent names and no cell below k = 5 (test).
+  - [ ] One execution covers every office.
+
+### MD-520 · n8n W17 stall and SLA alerts with acknowledgement
+- **Meta:** phase=P5 · epic=EP-31 · owner=BE · estimate=S · depends=MD-508, MD-053 · refs=W17, F-41
+- **Description:** The backend computes thresholds (stall rate above the 4-week baseline, approval backlog past right-to-service days, fail-reason spike, slot utilisation drop) and calls W17 at most once per office per metric per week → send-and-wait to the nominated officer (Acknowledge / Not ours, 48 h) → on timeout, notify the state nodal officer → acknowledgement recorded in the console.
+- **Acceptance:**
+  - [ ] Timeout path escalates exactly once (test).
+  - [ ] Thresholds live in backend config, not in n8n nodes.
+
+### MD-521 · n8n W18 staff task reminders
+- **Meta:** phase=P5 · epic=EP-31 · owner=BE · estimate=XS · depends=MD-053 · refs=W18, F-42, F-11
+- **Description:** Daily 10:00 IST → `POST /internal/jobs/staff-tasks` → one digest per staff member: rule-pack changes awaiting a checker, moderation items older than 6 h, overdue clip ratings, school sign-off requests pending > 3 days, privacy grievances near deadline.
+- **Acceptance:**
+  - [ ] One message per person per day, never one per task.
 
 ## EP-32 · Rule-pack studio (P5)
 
@@ -1838,7 +1860,7 @@ Goal: decision views for officers: where applications stall, why people fail, wh
 
 ### MD-623 · TRAI DLT registration (production SMS)
 - **Meta:** phase=P6 · epic=EP-37 · owner=PD · estimate=M · depends=— · refs=D-16, F-53
-- **Description:** Register the entity, headers and templates on a DLT platform; only then enable the SMS branch in W2.
+- **Description:** Register the entity, headers and templates on a DLT platform; only then enable the `MgovSmsNotifier` adapter.
 - **Acceptance:**
   - [ ] Registration IDs recorded; SMS flag stays off until done.
 
@@ -2231,7 +2253,7 @@ Goal: each edge case has a rule row or a screen state, and a test (D-20). The ph
 - **Meta:** phase=P1 · epic=EP-43 · owner=BE+AG · estimate=XS · depends=MD-130 · refs=EC-30
 - **Description:** STOP honoured before the next message; confirmation sent once.
 - **Acceptance:**
-  - [ ] n8n test-number e2e.
+  - [ ] WhatsApp test-number e2e through the notifier.
 
 ---
 
@@ -2253,7 +2275,7 @@ Goal: each edge case has a rule row or a screen state, and a test (D-20). The ph
 | Games G1..G10 | G1 MD-222..225 · G2 MD-434 · G3 MD-227 · G4 MD-228 · G5 MD-412 · G6 MD-435 · G7 MD-436 · G8 MD-427 · G9 MD-426 · G10 MD-214 |
 | Agents M-01..M-09 | M-01 MD-313 · M-02 MD-308 · M-03 MD-312 · M-04 MD-317 · M-05 MD-318 · M-06 MD-217/325 · M-07 MD-320 · M-08 MD-315 · M-09 MD-217/427 |
 | Evals | MD-321..327 (≥ 30 per agent) |
-| n8n W1..W15 | see §0.6 |
+| n8n W1, W7–W9, W12–W18 | see §0.6 |
 | Render Workflows RW-1..RW-4 | MD-217 · MD-126 · MD-311 · MD-239 |
 | EC-01..EC-30 | MD-801..830 |
 | Legal/doc (D-18) | MD-002/003/005/135/617..624/611/609/601 |

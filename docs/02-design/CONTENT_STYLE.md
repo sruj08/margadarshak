@@ -99,7 +99,7 @@ The young applicant is **overconfident about the road and terrified of the proce
 | R7 | **Calibration over praise.** Feedback names the gap between confidence and accuracy, privately and without lecturing | Overconfidence is the core risk (`05` §1.2) | Debrief templates |
 | R8 | **Rewards are for learning acts**, never for opening the app; no cash or redeemable prizes | Deci, Koestner & Ryan 1999; Online Gaming Act 2025 (D-11) | Gamification spec |
 | R9 | **Streaks are weekly, repairable and silent on break**, phrased as a refill | Silverman & Barasch 2023 (`05` principle 16) | Streak copy (§5.15) |
-| R10 | **At most 1 nudge a day, tied to a real deadline or a chosen plan** | `05` §3 quit trigger 7 | n8n rate limit (D-16) |
+| R10 | **At most 1 nudge a day, tied to a real deadline or a chosen plan** | `05` §3 quit trigger 7 | backend notifier daily cap (`NotificationPort`, D-16) |
 | R11 | **Honest scope** in every AI and hand-off moment: "We can't book, pay or submit" | Quit trigger 2: he blames us for system failures (`05` §3) | AIDisclosure component |
 | R12 | **Never moralise about his own risk; talk about other people's safety** (pillion, pedestrians) when a "why" is needed | Mill's harm principle framing (`05` §5.1); reactance (quit trigger 4) | Review |
 | R13 | **Don't shame the agent user.** "If you used help, here's the 30-day hazard plan anyway, because the road doesn't check your licence." | `05` §3 cheat vectors | Review |
@@ -481,7 +481,7 @@ Variables are formatted server-side. **No personal data beyond the date** appear
 | "Submit", "Proceed" | Buttons | Outcome verbs |
 
 ### 8.4 Lint implementation
-- `scripts/copy-lint` (Phase 2): runs on `messages/*.json`, `content/**`, `ai/prompts/**`, `n8n/templates/**`.
+- `scripts/copy-lint` (Phase 2): runs on `messages/*.json`, `content/**`, `ai/prompts/**`, the backend notifier templates (`services/api/**/notify/templates/**`), `n8n/workflows/**`.
 - It uses a regex list for EN and HI hard bans (word-boundary aware; "first" is flagged only in patterns like `\b(India'?s|the|world'?s) first\b` and `\bfirst[- ]ever\b`), and it detects rupee and number literals.
 - Soft bans produce warnings that need a reviewer's `// copy-ok: reason` comment in `CONTEXT.md`.
 

@@ -62,7 +62,7 @@ Same arc, with the Render Workflows beat, the adoption frame and the business mo
 - **Screen:** Margdarshak home: language first (each in its own script), one headline, four verb tiles, a mic, the trust line "Govt fee for one vehicle class: ₹700 + ₹200 card (your state may add a service charge). Never pay agents."
 - **Taps:** हिन्दी → "Get my first licence" → age 19 → motorcycle-with-gears + car pictures → Jammu & Kashmir.
 - **Plan card:** classes MCWG + LMV-NT on one LL; fee breakdown ₹1,150 + ₹200 card with "source: CMVR r.32, checked 22 Oct 2026" and "your state may add a service charge"; documents; maximum RTO visits; earliest DL test day 31; LL valid 6 months; low-confidence rows marked "verify at your RTO".
-- **Say:** "Three taps, no login. Every number on this card is computed from the rules file with its source. The class planner puts bike and car on one learner's licence; if he'd otherwise do them one after the other, that saves him a second application and a second 30-day wait. Send to WhatsApp." *(tap; phone buzzes via n8n)*
+- **Say:** "Three taps, no login. Every number on this card is computed from the rules file with its source. The class planner puts bike and car on one learner's licence; if he'd otherwise do them one after the other, that saves him a second application and a second 30-day wait. Send to WhatsApp." *(tap; phone buzzes; sent by our backend notifier)*
 - **Optional 5-second aside (Tanvi persona, EC-02):** switch age/address example to show the "Aadhaar address in another district" warning, only if time allows.
 
 ### 3.3 1:30–2:15 — Voice and family
@@ -80,8 +80,8 @@ Same arc, with the Render Workflows beat, the adoption frame and the business mo
 - **Say:** "Day 31. The home screen knows. Now the part India's test never checks. Kerala starts a hazard perception test on 1 December: ten clips, ten marks each, sixty to pass. These are Jammu roads, filmed by passengers, faces and plates blurred. 1.4 seconds late at 40 km/h is 16 metres. The scorer computed that. Gemini only explains it, choosing from a list of findings. If a number in its text didn't come from the scorer, it's replaced. We run 30 eval cases per agent in CI."
 
 ### 3.6 3:45–4:15 — Render Workflows (sponsor beat, 20–30 s)
-- **Screen:** Render dashboard → Workflows → Runs: `ingest_clip` parent run fanning out to `transcode → blur → propose_windows → await_two_raters → compute_agreement → publish`, one child retrying after an injected failure; then the n8n canvas: Schedule Trigger → Render run-task API → `journey_sweep` → WhatsApp.
-- **Say:** "Every clip goes through a durable pipeline on Render Workflows: transcode, blur faces and plates, Gemini proposes hazard windows, two humans rate, we compute agreement, then publish. Here's a real run retrying after a failure we injected. Workflows has no cron, so n8n's schedule triggers the case clock: LL-expiry warnings, the test-eve checklist, approval chasers."
+- **Screen:** Render dashboard → Workflows → Runs: `ingest_clip` parent run fanning out to `transcode → blur → propose_windows → await_two_raters → compute_agreement → publish`, one child retrying after an injected failure; then the n8n canvas: Schedule Trigger → Render run-task API → `journey_sweep` → watchdog, and the W08 two-rater clip-review queue.
+- **Say:** "Every clip goes through a durable pipeline on Render Workflows: transcode, blur faces and plates, Gemini proposes hazard windows, two humans rate, we compute agreement, then publish. Here's a real run retrying after a failure we injected. Workflows has no cron, so n8n's schedule triggers the case clock: LL-expiry warnings, the test-eve checklist, approval chasers. n8n is our staff operations layer: it starts jobs and waits for humans. Messages to citizens go out from our backend, so n8n's load doesn't grow with users."
 
 ### 3.7 4:15–4:45 — Proof and adoption
 - **Screen:** evidence slide (before/after + field numbers), then the one-slide adoption frame.
@@ -100,8 +100,8 @@ Same arc, with the Render Workflows beat, the adoption frame and the business mo
 |---|---|---|---|
 | **`ingest_clip` (headline)**: transcode → blur faces/plates (M-09) → `propose_windows` (Gemini video, M-06, ±1 s) → `await_two_raters` → `compute_agreement` → `publish` | Long (minutes per clip), failure-prone (video, model 429s), parallel per clip, waits for humans | Runs page with a parent fanning into children and one **injected retry** | Effective use; technical implementation; innovation |
 | `field_stats_nightly`: % < 60 with Wilson CI, r with Fisher-z CI, pre/post gain | Batch with retry; feeds the live counters (API-71) | The stats card updating | Real-world impact |
-| `debrief_fanout`: score each scenario in parallel → assemble → narrate → n8n WhatsApp card | Fan-out + retry on Gemini 429 | One session's debrief landing on a phone | UX |
-| `journey_sweep`: LL day 25 "book now", LL-expiry T-30/T-7, test-eve checklist, approval-stall letter | "Later and repeatedly"; **n8n Schedule Trigger → Render run-task API**, because Workflows has no cron | n8n canvas screenshot + WhatsApp on a real phone | Effective use; impact |
+| `debrief_fanout`: score each scenario in parallel → assemble → narrate → WhatsApp card via the backend notifier | Fan-out + retry on Gemini 429 | One session's debrief landing on a phone | UX |
+| `journey_sweep`: LL day 25 "book now", LL-expiry T-30/T-7, test-eve checklist, approval-stall letter | "Later and repeatedly"; **n8n Schedule Trigger → Render run-task API**, because Workflows has no cron; the backend notifier sends the messages | n8n canvas screenshot + WhatsApp on a real phone | Effective use; impact |
 
 **Design facts we can defend:** each task run gets its own instance; retries default to 3 with exponential backoff; runs over compute limits queue rather than fail; Hobby allows 50 root runs/min, so we fan out through chained runs (1,000/min); run duration up to 24 h; flex compute at $0.20/CPU-h + $0.05/GB-h, no charge when idle (B-sponsors §1, [Render Workflows limits](https://render.com/docs/workflows-limits)). The tasks sit behind a `JobRunner` interface so a government cloud can run them on Celery or Temporal-style infrastructure (D-17).
 
@@ -119,7 +119,7 @@ Same arc, with the Render Workflows beat, the adoption frame and the business mo
 | 7 | **Nazar: 1.4 s late ≈ 16 m.** | Clip still, tap timeline, debrief card, provenance chip | Sambyal, Tickoo | Timeline graphic |
 | 8 | **Responsible AI.** | Code computes, Gemini narrates; allowlisted IDs; provenance guard; ≥ 30 evals per agent (pass rate [z]%); adult account holders, minors in family mode; "never sent to AI" list (Aadhaar, OTP, face); AI can't submit, pay or book | Sambyal | Boundary diagram: green (code) vs blue (AI) |
 | 9 | **Evidence from this weekend.** | Nazar: n, % < 60 (95% CI), r (95% CI), pre/post; journey test: k/n, minutes, SUS, agent intent; before/after metrics; pre-registration hash; "convenience sample" footnote | Tickoo, Gaur | One chart: score distribution with the 60 line |
-| 10 | **Architecture (who built what).** | Next.js 16 PWA · FastAPI + ADK 2.12 · Postgres 16 · Node score verifier · Render Workflows · n8n edge · adapters (mock/real). Each box has a team member's name (D-24) | Dutta, Kapoor | C4 container diagram |
+| 10 | **Architecture (who built what).** | Next.js 16 PWA · FastAPI + ADK 2.12 · Postgres 16 · Node score verifier · Render Workflows · notifier · n8n staff ops · adapters (mock/real). Each box has a team member's name (D-24) | Dutta, Kapoor | C4 container diagram |
 | 11 | **Built to be hosted by a state.** | Adapter spec · Apache-2.0 · MeghRaj-ready containers · state owns data · audit-ready pack · J&K pilot plan · "MoRTH stopped private data sharing on 1 Oct 2026; our design never needed it" | Kapoor, Dutta, Rutvik | Plug-and-socket diagram |
 | 12 | **Who pays.** | Citizens: never · Driving schools: Pro (Kerala HPT duty) · States: support licence · CSR/grants · Insurers: roadmap line only | Rutvik | Four columns |
 | A1 | Render Workflows | Runs page screenshot with the retry; n8n canvas | Render seat | Screenshots |
@@ -192,7 +192,7 @@ Answers are short enough to say in one breath. "[fill]" means a number measured 
 *Lens: a working end-to-end system, clear architecture, the team understands its code, social relevance for J&K, women and rural users (C-judges §3).*
 | # | Question | Answer |
 |---|---|---|
-| 1 | Show me the architecture. | Next.js 16 PWA → FastAPI backend with Google ADK agents → Postgres 16 → a Node verifier that replays game sessions → Render Workflows for durable jobs → n8n only for WhatsApp and schedules → adapters with mock and real versions for Sarathi, DigiLocker, Bhashini, payment and notifications. *(slide 10)* |
+| 1 | Show me the architecture. | Next.js 16 PWA → FastAPI backend with Google ADK agents → Postgres 16 → a Node verifier that replays game sessions → Render Workflows for durable jobs → a backend notifier for citizen WhatsApp, email and push → n8n only for schedules and staff approvals → adapters with mock and real versions for Sarathi, DigiLocker, Bhashini, payment and notifications. *(slide 10)* |
 | 2 | Which part did *you* build, versus the AI tool? | Each module has an owner on slide 10, and each of us can open the code and explain it. [Owner names per module.] We used AI coding tools as assistants and say so in the README. |
 | 3 | Walk me through what happens when I tap "J&K" on the plan. | The client sends age, classes and state to API-01. The rules engine loads the CMVR base pack plus the J&K overlay, checks eligibility per class, computes fees from `fees.json`, runs blocker rules, and returns the plan with rule IDs and sources. No AI. |
 | 4 | How is this relevant to J&K? | Jammu roads in the clips, hill-road content for NH44, Dogri voice-in, the J&K rules (online LL at home or a CSC), and a pilot plan with one J&K RTO/ARTO. |
@@ -207,7 +207,7 @@ Answers are short enough to say in one breath. "[fill]" means a number measured 
 | 13 | Can it handle grievance and accountability? | It drafts facts-only escalation letters and an RTI template; corruption reports deep-link to the vigilance channel and CPGRAMS. We never host accusations. |
 | 14 | Is there a README so I can run it? | Yes: clone, copy `.env.example`, `docker compose up`, seed data. It notes that the first load on Render can take up to a minute. |
 | 15 | What was hardest technically? | Scoring taps fairly on video over a slow network: we preload the whole MP4 and score against `video.currentTime`, then replay the session on the server so client scores can't be faked. |
-| 16 | What's mocked and what's real? | Real: rules engine, plan, application flow, photo fixer, learning, Nazar scoring, AI debrief, Workflows, WhatsApp via n8n. Mocked and labelled: Sarathi, DigiLocker, Aadhaar, payment, slots. |
+| 16 | What's mocked and what's real? | Real: rules engine, plan, application flow, photo fixer, learning, Nazar scoring, AI debrief, Workflows, WhatsApp via our notifier, n8n staff queues. Mocked and labelled: Sarathi, DigiLocker, Aadhaar, payment, slots. |
 | 17 | Could GCET students keep building this? | Yes. It's Apache-2.0 with contract tests, so a student team can implement a new state rule pack or adapter without touching the core. |
 | 18 | Could it be used in teaching road safety? | The 22-module curriculum and the mini-games work as classroom material; the clip bank is CC-BY. |
 | 19 | How do you handle deaf or blind applicants? | The hazard game is visual-only, which suits deaf users; blind users get an audio-described alternative path. Captions, screen-reader labels, 48 px targets, a rights card for adapted vehicles (EC-13). |
@@ -285,13 +285,14 @@ Answers are short enough to say in one breath. "[fill]" means a number measured 
 | 13 | What happens when Sarathi is down? | Drafts are kept, a status banner shows, the hand-off waits; no data loss (EC-11). Telangana had a Sarathi outage in June 2026 that stalled about 4,000 applications. |
 | 14 | Do you use Bhashini? | It's the government-preferred speech path behind our `BhashiniAdapter`. For the hackathon we use Gemini Live and Sarvam Saaras for Dogri, because Bhashini onboarding terms weren't available in time. |
 | 15 | Open standards? | OpenAPI 3.1 for the core and the adapter contract, OpenTelemetry, Apache-2.0 code, CC-BY content, UX4G design tokens, WCAG 2.1 AA / GIGW 3.0. |
-| 16 | How many services is that? Isn't it fragile? | One Python backend and one Postgres, a PWA, a small Node verifier, Workflows for jobs, n8n only at the messaging edge. Voice is not on the critical demo path. |
+| 16 | How many services is that? Isn't it fragile? | One Python backend and one Postgres, a PWA, a small Node verifier, Workflows for jobs, n8n only for staff operations. If n8n is down, citizens notice nothing. Voice is not on the critical demo path. |
 | 17 | Security audit path? | ASVS L2, OWASP LLM Top 10, ZAP in CI, SBOM, threat model, then VAPT by an STQC- or CERT-In-empanelled auditor for a safe-to-host certificate. |
 | 18 | Data residency for AI? | Production uses Vertex AI in an Indian region or Bhashini/local models per state, behind an `LLMPort`. Hackathon AI calls go to the Gemini API on the paid tier. |
 | 19 | What happens at a district-wide 2G drop? | The PWA keeps working offline for practice; the case clock runs on the server, so reminders still arrive by WhatsApp or SMS later (SMS after DLT). |
 | 20 | Could the score verifier be a bottleneck? | A replay is a pure function over a few hundred events; it's horizontally scalable and stateless. |
 | 21 | Load test method? | k6 against API-01, API-12 and API-35 with a ramp to [fill] virtual users; we report p50/p95/error rate. |
 | 22 | Anything HPC-relevant? | Honestly, no. This is a latency and reliability problem, not a compute one. The heavy part (video blur and window proposals) runs offline in Workflows. |
+| 23 | You have millions of users. Will n8n hold up? | n8n isn't on the citizen path. Reminders and alerts (up to ≈ 660k a day at national peak, capped at one per user per day) go from our outbox through a backend notifier that scales with the API. n8n runs schedules, the clip-review and moderation queues, and briefs and alerts for RTO and school staff. Its load grows with staff and offices, not citizens: about the same number of runs at 1k or 10M users. In government mode it's self-hosted, or replaced by CronJobs and our own review pages without changing anything citizens see (ADR-0006). |
 
 ---
 

@@ -64,7 +64,7 @@ flowchart TB
     CLIP[clip_ingest: transcode → blur → M-06 propose → two raters → agreement → publish]
     FAN[debrief_fanout]
   end
-  N8N[n8n Pro: schedules + messaging edge only] -->|HMAC POST| REST
+  N8N[n8n Pro: schedules + staff operations only, no citizen messages] -->|HMAC POST| REST
   N8N -->|run-task API| Jobs
   RUN -->|Gemini API, paid tier| GEM[(Gemini)]
   VG -->|Dogri cascade| SAR[(Sarvam Saaras / Bulbul)]
@@ -310,7 +310,7 @@ flowchart LR
 - A missing top finding → fail.
 - Injection inside facts (e.g. a facts key named like an instruction) → keys are validated against the `FactKey` registry before the prompt is built; unknown keys are dropped and logged.
 
-**Fan-out.** `debrief_fanout` (Render Workflows TypeScript task) calls the Go API's debrief step once per scenario in parallel (`Promise.all` over `ctx.run`) for multi-game sessions, retries on Gemini 429 with exponential backoff, assembles, and pushes the card via n8n (D §2.1, "build, don't headline").
+**Fan-out.** `debrief_fanout` (Render Workflows TypeScript task) calls the Go API's debrief step once per scenario in parallel (`Promise.all` over `ctx.run`) for multi-game sessions, retries on Gemini 429 with exponential backoff, assembles, and queues the card in the outbox for delivery (the backend notifier per ADR-0006 rev.; the n8n channel in the P1 build) (D §2.1, "build, don't headline").
 
 **Eval.** `ai/evals/debrief_150.jsonl` (150 cases, 15 adversarial). Gates in [AI_EVALS §3](AI_EVALS.md).
 
@@ -318,9 +318,9 @@ flowchart LR
 
 ### 3.3 CoachAgent (M-03)
 
-**Purpose.** Weekly plan wording (F-26; n8n W6 Monday 07:00 → `POST /jobs/coach`).
+**Purpose.** Weekly plan wording (F-26; weekly coach-plan TimelineEvent, run inside the daily `case_clock_sweep` Workflows run that n8n W01 triggers).
 
-**Pipeline:** `[code] plan_week` (FSRS due cards + staircase + goal) → `[code] gate` (consent, the parent's for a family member's case; opted into the channel; quiet hours) → `[LLM] coach_agent` (`CoachDraft`) → `[code] validate` (no digits, drill IDs ∈ allowed, banned nagging phrases) → `[code] render` → `[code] enqueue` (n8n sends).
+**Pipeline:** `[code] plan_week` (FSRS due cards + staircase + goal) → `[code] gate` (consent, the parent's for a family member's case; opted into the channel; quiet hours) → `[LLM] coach_agent` (`CoachDraft`) → `[code] validate` (no digits, drill IDs ∈ allowed, banned nagging phrases) → `[code] render` → `[code] enqueue` (outbox row; the backend notifier sends, ADR-0006 rev.).
 
 **Tools:** none. **State:** `plan` (session), `temp:draft`.
 

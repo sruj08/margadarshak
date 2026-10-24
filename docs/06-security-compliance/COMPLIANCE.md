@@ -78,7 +78,7 @@
 |---|---|
 | **Requirements** | Publish rules, privacy policy and user agreement; inform users not to host prohibited content (Rule 3(1)(b)); act on court/government orders (Rule 3(1)(d)), now **within 3 hours** after the amendment notified 10 Feb 2026 and in force 20 Feb 2026 ([SS Rana](https://ssrana.in/articles/india-tightens-oversight-on-ai-generated-content-under-it-rules/), [Business Today](https://www.businesstoday.in/amp/technology/story/govt-tightens-rules-on-ai-generated-content-mandates-labels-and-faster-takedowns-515505-2026-02-10)); 2-hour window for non-consensual intimate imagery complaints; **label synthetically generated information** (audio/visual/audio-visual content created or altered to appear authentic) with a prominent label and provenance metadata; grievance officer: acknowledge within 24 h, resolve within 15 days (Rule 3(2)) **[2021 text, unverified re-read]**; Grievance Appellate Committee route (2022 amendment) |
 | **Where it bites** | Live Intel (F-11), squads (F-26), school listings/feedback (F-40), any synthetic audio from the voice guide (F-30), AI-generated debrief audio, share cards |
-| **MVP compliance** | Live Intel: structured fields only, no free text, no names, k ≥ 5, report button, grievance officer in the footer, takedown queue in n8n (moderation workflow), 3-hour SLA for government/court orders, 24 h/15 days for user grievances (D-14). Squads: no free-text chat. Voice guide output is labelled "AI voice" on screen and in the transcript, and share cards carry no synthetic imagery of people. No user-uploaded media in Phase 1–2 (clips come only through our contributor pipeline) |
+| **MVP compliance** | Live Intel: structured fields only, no free text, no names, k ≥ 5, report button, grievance officer in the footer, takedown queue in n8n (moderation workflow W09, for reports the backend precheck flags), 3-hour SLA for government/court orders, 24 h/15 days for user grievances (D-14). Squads: no free-text chat. Voice guide output is labelled "AI voice" on screen and in the transcript, and share cards carry no synthetic imagery of people. No user-uploaded media in Phase 1–2 (clips come only through our contributor pipeline) |
 | **Production plan** | Grievance officer resident in India; monthly takedown log; counsel review whether Margdarshak is an intermediary for each surface; provenance metadata on any synthetic audio/video we publish (C2PA-style) |
 | **Owner** | LC + GO |
 | **Status** | SECONDARY (2026 amendment); 2021 base rules from model knowledge **[unverified]** |
@@ -151,7 +151,7 @@
 | | |
 |---|---|
 | **Requirements** | Commercial SMS requires principal-entity registration on an operator DLT platform, registered headers and content templates, and consent/preference scrubbing **[HUNCH from verification G11; not searched]** |
-| **MVP compliance** | **No SMS** in Phase 1–2 (D-16). WhatsApp test number + email via n8n only |
+| **MVP compliance** | **No SMS** in Phase 1–2 (D-16). WhatsApp test number + email only, sent by the backend notifier (n8n sends no citizen messages, ADR-0006) |
 | **Production plan** | Nestiq registers on DLT (entity, headers, templates) before any SMS; or, in government mode, use the STD's mGov/NIC gateway with its DLT templates |
 | **Owner** | OPS |
 | **Status** | HUNCH |
@@ -160,7 +160,7 @@
 | | |
 |---|---|
 | **Requirements** | Opt-in before business-initiated messages; approved templates outside the 24-hour customer-service window; honour opt-out; no prohibited content; quality rating; test numbers reach about 5 allow-listed recipients (B-sponsors §3) **[policy page not re-read; verify, OPS, 2026-10-24]** |
-| **MVP compliance** | PUR-REMIND-WA artefact; template-only reminders; "STOP" handled by n8n → API-66 → consent withdrawn (EC-30); footer: "Margdarshak never asks for money, OTP or Aadhaar"; ≤ 1 nudge/day |
+| **MVP compliance** | PUR-REMIND-WA artefact; template-only reminders; "STOP" handled by the Meta channel webhook → API-66 → consent withdrawn (EC-30); footer: "Margdarshak never asks for money, OTP or Aadhaar"; ≤ 1 nudge/day |
 | **Production plan** | Verified business account under Nestiq; template approval per language; quality monitoring |
 | **Owner** | OPS + PL |
 | **Status** | CARRIED |

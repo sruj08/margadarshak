@@ -266,26 +266,18 @@ Rules are exact, and AI would invent things. **AI is for everyone (D-13 revised)
 ---
 
 ## 8. Automation with n8n (sponsor: n8n Pro)
-n8n is the **messaging and schedule edge**, never the business logic. It runs 15 workflows:
-- **Daily and scheduled:**
-  - the daily case-clock trigger, which calls Render Workflows
-  - the test-eve "what to bring" WhatsApp message
-  - the weekly parent and coach cards
-  - the analytics digest
-  - a weekly check for changes in rule sources
-- **Event-driven alerts:**
-  - milestone alerts: day 30 unlocked, LL expiring
-  - crowd-reported slot alerts
-  - fail follow-up
-  - incident alerts
-- **Review and approval queues:**
-  - school lead routing
-  - the two-approval clip review queue
-  - RTO Live Intel moderation
-  - escalation letters, with the user's approval
-- **Field work:** the field-test export to Google Sheets
+n8n is our **internal operations layer for staff**, never the business logic and never the channel to citizens. Every message a citizen gets (day-30 unlock, LL expiry, test eve, slot alerts, coach and parent cards, fail follow-up, letters) is queued by the backend and sent by our own notifier, which scales with the API.
 
-Approvals go through WhatsApp or our own page, which resumes a Wait node; Telegram and Gmail "send and wait" are unreliable. SMS waits for TRAI DLT registration. Details are in `docs/05-ops/N8N_WORKFLOWS.md`.
+**Why:** at national scale there can be hundreds of thousands of citizen messages a day. If n8n sent them, it would become the bottleneck and hold millions of phone numbers. Instead, n8n's load grows with staff and offices, not citizens: it runs about the same number of times at 1k users or 10M.
+
+What n8n runs:
+- **Schedules:** the daily case-clock trigger (which starts Render Workflows), the analytics digest, a weekly check for changes in rule sources.
+- **Review and approval queues:** the two-approval clip review, RTO Live Intel moderation (only reports our code flags), school lead routing.
+- **Staff notifications:** on-call incident alerts, daily task reminders for our team and school staff.
+- **For RTO and state staff (once a state adopts):** a morning brief per office (tests today, where applications are stuck, common questions), and stall alerts that the officer acknowledges, escalating to the state if nobody does. Aggregates only; no applicant or examiner names.
+- **Field work:** the field-test export to Google Sheets.
+
+Approvals go through WhatsApp or our own page, which resumes a Wait node; Telegram and Gmail "send and wait" are unreliable. SMS waits for TRAI DLT registration. Details are in `docs/05-ops/N8N_WORKFLOWS.md` and ADR-0006.
 
 ---
 
@@ -305,12 +297,14 @@ flowchart LR
   subgraph Government Adapter Layer
     SA[SarathiPort] --- DA[DigiLockerPort] --- AA[AadhaarOfflinePort] --- BA[BhashiniPort] --- PA[PaymentPort] --- SL[SlotPort]
   end
-  N8N[n8n · WhatsApp/email edge]
+  NT[Notifier · WhatsApp/email/push to citizens]
+  N8N[n8n · staff ops: schedules, approvals, RTO alerts]
   PWA --> API --> DB
   API --> SV
   API --> ADK
   API --> WF
-  WF --> N8N
+  API --> NT
+  N8N --> API
   API --> SA & DA & AA & BA & PA & SL
 ```
 - **Hexagonal core.** Every government integration is a *port* with a **mock** adapter (used in the hackathon) and a **real** adapter, used once a state adopts us. Both pass the same contract tests.

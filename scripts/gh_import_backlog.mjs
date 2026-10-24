@@ -198,7 +198,8 @@ export function check(tickets, epics) {
     ),
     ...range(1, 31).map((i) => `EC-${pad2(i)}`),
     ...range(1, 10).map((i) => `M-${pad2(i)}`),
-    ...range(1, 16).map((i) => `W${i}`),
+    // W2–W6, W10, W11 moved to the backend notifier (ADR-0006 rev.)
+    ...[1, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18].map((i) => `W${i}`),
     ...range(1, 11).map((i) => `G${i}`),
     ...range(1, 5).map((i) => `RW-${i}`),
   ];
