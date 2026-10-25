@@ -1,5 +1,5 @@
 # Demo Script
-> Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Demo driver (with Pitch lead) · Status: Draft v0.1 · Last updated: 2026-10-23
+> Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Demo driver (with Pitch lead) · Status: Draft v0.2 · Last updated: 2026-10-25
 > Related: [PITCH](PITCH.md) (words) · [VISION](VISION.md) · [PROJECT_BRIEF](PROJECT_BRIEF.md) · `docs/02-design/UI_SPEC.md` (screens) · `docs/03-engineering/FRONTEND.md` (routes) · `docs/05-ops/RUNBOOK.md` (demo-day emergency plan) · `docs/08-project/HACKATHON_PLAN.md`
 > **Route names below are the demo contract.** If `UI_SPEC.md` or `FRONTEND.md` name a route differently, those documents win and this file is updated (owner: Demo driver).
 > Every screen shows the footer: *"Independent prototype by team Chanakya. Not affiliated with MoRTH, NIC or any State Transport Department. Uses simulated government data."* All identities are synthetic. No real Aadhaar, phone or OTP is ever typed on stage.
@@ -63,6 +63,37 @@
 
 ---
 
+## 2A. The end-to-end story for the video (built and tested 25 Oct 2026)
+One continuous run, LL to DL, on the Go API. `/demo` lists the same chapters with a link to each screen and a "Start a fresh demo on this phone" button. Covered by `tests/e2e/specs/real-story.spec.ts` (Go API, every state checked on the server) and `journey-story.spec.ts` (device API, with the demo clock).
+
+**Setup:** `apps/web/.env.local` has `NEXT_PUBLIC_API_URL=http://localhost:8000` and the Gemini key; run `pnpm dev:all` (web on 3000, API on 8000 with embedded Postgres). Phone profile 360 × 800 in DevTools, or a real phone on the same network. Remove `NEXT_PUBLIC_API_URL` to record on the device API instead; the demo clock ("Skip 30 days", "Skip to test day") appears only there.
+
+| # | Chapter | Route | Exact clicks | What the judge sees (PS1 box it ticks) |
+|---|---|---|---|---|
+| 1 | Language | `/language` | Tap हिन्दी or English | Language first, in its own script (multilingual) |
+| 2 | What you need, then state | `/plan` | "My first licence" (or "I already have a learner's licence") → state picker (all 36 states and UTs) | Same order as Sarathi: service first, then state; never "rules not found" |
+| 3 | Connect Aadhaar | `/plan` (same wizard) | **Connect Aadhaar through DigiLocker** → Allow (let the connect animation tick through) → tilt the identity card → Next | Date of birth and address come from Aadhaar, so age is never asked when connected; consent with purpose; details on a 3D card with only the last 4 digits; no Aadhaar or OTP field. "Type my age instead" is the fallback |
+| 3b | Vehicle → plan | `/plan` | Bike with gears → Show my plan (have-LL path: enter the LL issue date first) | Steps, documents, fee lines from `fees.json`, earliest dates, sources; the Aadhaar details carry into the application (requirements, fees, eligibility) |
+| 4 | One question per screen | `/apply` | Me → General → No licence yet → Yes → Yes → Form 1 tick → Signature later → Check answers tick | Progress, autosave, check answers before paying (application-flow improvement) |
+| 5 | Pay | `/apply/fee` → **Pay now** → `/pay?for=ll` | UPI → "I've approved it in my UPI app" | Simulated state e-payment gateway with fee lines; the car waits at the toll booth, the barrier lifts on success, the receipt (transaction ID, GRN) prints down (process transparency) |
+| 6 | Learn | `/learn` | Open a lesson, a Nazar clip or Stopping Distance; show streak and readiness | Interactive learning and gamification (learning effectiveness) |
+| 7 | LL test | `/test/ll` | 4 tutorial cards → Face check → Start the test → answer → Reveal | Road-safety tutorial (CMVR r.11), Sarathi-style checklist, the test screen in the state's own format (beginner-friendly test) |
+| 7b | LL not passed (optional) | result → `/test/ll` | Retake the test → (device API: Skip 1 day) → Pay the LL retest fee | The fail is recorded on the case (`ll_test_failed`); retake opens after the state's gap (`PRM-LL-RETEST-GAP-DAYS`) and the retest fee from `fees.json` |
+| 8 | LL issued | `/test/ll/issued` | — | Form 3 learner's licence with QR; "Driving test unlocks on …" from `PRM-MIN-WAIT-DAYS` (30-day bridge) |
+| 9 | Track explainer | `/dl/track` | Play the walk-through; switch Two-wheeler / Car | Animated 8-track and S/H-track with the steps examiners watch (understand the driving test) |
+| 9b | Driving schools | `/dl/school` (card on LL issued and DL apply) | Read the four cases → "I'll train at an accredited centre" | Not compulsory for private classes; transport training, accredited centres (replace the RTO test), remedial course, test vehicle, each with its source; the choice adds the centre's certificate to the DL checklist |
+| 10 | DL application | `/dl/apply` | Pay the DL fee (UPI) | LL linked, documents list, DL-stage fee; booking for a date on or after the unlock (EC-07) |
+| 11 | Slot | `/dl/slot` | Pick office (J&K pack offices), day, time → Book this slot | Slots never before the unlock or after LL expiry; "notify me" is reminder-only (appointments) |
+| 12 | Test day | `/dl/test-day` | Show the slip, what to bring, the evening-before WhatsApp preview → Not passed → "Forgot to indicate" → Record | Appointment slip with QR; calm retest plan (common mistakes) |
+| 13 | Retest | `/dl/retest` → pay retest → `/dl/slot?retest=1` | Book a slot (earliest = fail date + `PRM-RETEST-GAP-DAYS`) → Passed → Record | The Go machine enforces the retest gap |
+| 14 | DL issued | `/dl/issued` | Approval SMS received → I've received my card | DL card, "In your DigiLocker", Speed Post steps, "You did it, without an agent" |
+| 15 | Voice guide | Home mic | Say "Mere papa 52 saal ke hain, unko car ka licence chahiye" or "book my driving test" | Gemini picks one intent from a closed list; code chooses the screen (AI assistance, D-09) |
+| 16 | Before and after | `/compare` | Scroll | Today's portal against this prototype, each row with its source |
+
+Everything labelled "Simulated" (DigiLocker, gateway, examiner, WhatsApp preview) is a stand-in with the same shape as the government step; say so in one phrase on camera.
+
+---
+
 ## 3. The run (5-minute version; exact clicks)
 Timings match [PITCH §3](PITCH.md). The 3-minute version uses beats 3.1, 3.2, 3.3 (voice only), 3.4 (photo + check answers only), 3.5 (one line), 3.6, 3.8, 3.9.
 
@@ -79,10 +110,10 @@ Timings match [PITCH §3](PITCH.md). The 3-minute version uses beats 3.1, 3.2, 3
 | # | Action (Phone A) | Expected | Fallback |
 |---|---|---|---|
 | 6 | Tap **हिन्दी** on the language picker (`/`) | Home in Hindi: headline, 4 verb tiles, mic, trust line "₹700 + ₹200 card…" | **F-3**: if the API is slow, the home renders from the PWA cache (static); continue |
-| 7 | Tap tile **"पहला लाइसेंस लें"** (Get my first licence) → `/plan` | Step 1/3: age | — |
-| 8 | Tap age **19** (or enter DOB 2007-05-14) | Step 2/3: vehicle pictures | — |
-| 9 | Tap **motorcycle (with gears)** and **car** pictures → "Next" | Step 3/3: state | — |
-| 10 | Tap **Jammu & Kashmir** | Plan card (`/plan/result`): MCWG + LMV-NT on one LL; fee lines LL ₹150 × 2, LL test ₹50, DL test ₹300 × 2, DL ₹200 = ₹1,150 + card ₹200; "source: CMVR r.32, checked 22 Oct 2026"; documents; max RTO visits; earliest DL test "day 31"; LL validity 6 months | **F-4**: API-01 error → the client shows the cached plan for this exact input (seeded in the PWA cache at T−60); if that fails, show slide `fallback/03-plan-card.png` |
+| 7 | Tap tile **"पहला लाइसेंस लें"** (Get my first licence) → `/plan` | "What do you need?" → My first licence | — |
+| 8 | Pick **Jammu & Kashmir** in the state picker | "Connect your Aadhaar" | — |
+| 9 | Connect Aadhaar through DigiLocker → Allow → Next (or "Type my age instead" → 19) | Vehicle pictures | — |
+| 10 | Tap **motorcycle (with gears)** and **car** → "Show my plan" | Plan card (`/plan/result`): MCWG + LMV-NT on one LL; fee lines LL ₹150 × 2, LL test ₹50, DL test ₹300 × 2, DL ₹200 = ₹1,150 + card ₹200; "source: CMVR r.32, checked 22 Oct 2026"; documents; max RTO visits; earliest DL test "day 31"; LL validity 6 months | **F-4**: API-01 error → the client shows the cached plan for this exact input (seeded in the PWA cache at T−60); if that fails, show slide `fallback/03-plan-card.png` |
 | 11 | Scroll once to show "Smart class planner" note and "verify at your RTO" chips | — | — |
 | 12 | Tap **"WhatsApp पर भेजें"** (Send to WhatsApp) → choose the demo contact | Toast "Sent"; Phone C buzzes in ≤ 10 s (API-04 → outbox → notifier → WhatsApp template) | **F-5**: if no buzz in 10 s, narrator continues; Phone holder shows `fallback/04-whatsapp-plan.png` on Phone C's gallery; the email copy also arrives |
 
@@ -194,14 +225,15 @@ Never drop: the plan card (3.2), Nazar + debrief (3.6), the evidence slide (3.8)
 ## 7. The ≤ 5-minute submission video (shot list)
 | Time | Shot | Source |
 |---|---|---|
-| 0:00–0:20 | parivahan.gov.in scroll + agent price card | Screen recording |
-| 0:20–1:20 | One continuous citizen run on a phone: language → 3 taps → plan card → WhatsApp buzz | Phone screen recording + phone-in-hand B-roll (no faces of participants) |
-| 1:20–1:45 | Voice line → Form 1A card | Screen recording |
-| 1:45–2:20 | Apply: photo fixer → check answers → hand-off | Screen recording |
-| 2:20–3:10 | Day 31 → Nazar clip → tap → debrief "1.4 s late ≈ 16 m" | Screen recording |
-| 3:10–3:40 | Render Runs page with retry + n8n canvas + WhatsApp on a real phone | Screen recordings |
-| 3:40–4:20 | Evidence slide; a consented audio-only quote | Slide + audio |
-| 4:20–4:45 | Architecture slide with owners | Slide |
+| 0:00–0:20 | parivahan.gov.in scroll (about 120 links) | Screen recording |
+| 0:20–0:50 | §2A chapters 1–2: language → plan in 3 taps (show the 36-state dropdown) | Phone screen recording |
+| 0:50–1:30 | §2A chapters 3–5: DigiLocker consent → one question per screen → check answers → payment receipt | Phone screen recording |
+| 1:30–2:05 | §2A chapters 6–8: learn (one Nazar clip + debrief) → LL test tutorial and screen → learner's licence | Phone screen recording |
+| 2:05–2:45 | §2A chapters 9–11: track explainer → DL fee → slot no earlier than the unlock | Phone screen recording |
+| 2:45–3:25 | §2A chapters 12–14: test day → not passed → retest gap → passed → DL in DigiLocker | Phone screen recording |
+| 3:25–3:50 | §2A chapter 15: voice line in Hindi → the right screen | Phone screen recording |
+| 3:50–4:20 | §2A chapter 16 (`/compare`) + evidence slide | Screen + slide |
+| 4:20–4:45 | Architecture slide (Go API, rule packs for 36 states and UTs, adapters with mocks) | Slide |
 | 4:45–5:00 | QR + tagline + non-affiliation line | Slide |
 
 The replica of Sarathi screens used in the journey test is labelled "lab replica" in any shot that shows it, and is never shown at a public URL (field kit §11.8).

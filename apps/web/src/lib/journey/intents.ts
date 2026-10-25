@@ -12,6 +12,9 @@ export const INTENTS = [
   "signature",
   "practise",
   "mock_test",
+  "ll_test",
+  "book_test",
+  "track",
   "signs",
   "stopping",
   "readiness",
@@ -34,7 +37,13 @@ export const langOf = (text: string): "hi" | "en" => (/[\u0900-\u097F]/.test(tex
 // Specific intents come first; the first match wins.
 const RULES: Array<[Intent, RegExp]> = [
   ["about_voice", /(voice guide|what can you do|kya kar sakte|वॉइस|आवाज़ वाला|क्या कर सकते)/i],
-  // Pay, submit and book are never done by Margdarshak: these go to the hand-off screen.
+  [
+    "book_test",
+    /(book.*(driving|dl|test)|(driving|dl) test.*(book|slot)|test slot|slot book|टेस्ट.*(बुक|स्लॉट)|स्लॉट)/i,
+  ],
+  ["track", /(track test|8 track|figure ?8|h track|s track|how.*driving test|ड्राइविंग टेस्ट कैसे|ट्रैक)/i],
+  ["ll_test", /(take.*(ll|learner).*test|give.*(ll|learner).*test|ll test de|लर्नर.*टेस्ट दे)/i],
+  // Pay and submit on Sarathi are never done by Margdarshak: these go to the hand-off screen.
   ["handoff", /(pay|payment|submit|book|slot|भुगतान|पेमेंट|जमा|बुक|स्लॉट)/i],
   ["photo", /(photo|फोटो|फ़ोटो|तस्वीर)/i],
   ["signature", /(signature|दस्तखत|हस्ताक्षर|सिग्नेचर)/i],
@@ -80,6 +89,9 @@ export const INTENT_HREF: Record<Intent, string | null> = {
   signature: "/apply/signature",
   practise: "/learn",
   mock_test: "/learn/practise/ll-sim",
+  ll_test: "/test/ll",
+  book_test: "/dl/apply",
+  track: "/dl/track",
   signs: "/learn/review?topic=LL1",
   stopping: "/learn/practise/stopping-distance",
   readiness: "/learn/readiness",

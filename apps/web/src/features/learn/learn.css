@@ -88,6 +88,70 @@
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.025em;
   }
+  /* .ml-input sets the background shorthand; keep the select chevron from globals.css. */
+  select.ml-input {
+    appearance: none;
+    padding-inline-end: 44px;
+    background-image: var(--md-select-chevron);
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+    cursor: pointer;
+  }
+  /* A fieldset styled as a card: the legend sits inside the card, never on its border. */
+  fieldset.ml-card {
+    border: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  fieldset.ml-card > legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 4px;
+  }
+  fieldset.ml-card > legend + * {
+    clear: both;
+  }
+  .ml-result-head {
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+  }
+  .ml-guess {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 8px;
+  }
+  .ml-guess .ml-opt {
+    justify-content: center;
+    min-height: 48px;
+    padding: 8px;
+  }
+  details.ml-card > summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 32px;
+    cursor: pointer;
+    list-style: none;
+  }
+  details.ml-card > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.ml-card > summary::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform var(--md-dur-fast) var(--md-ease-standard);
+  }
+  details.ml-card[open] > summary::before {
+    transform: rotate(45deg);
+  }
   .ml-list {
     display: grid;
     gap: 8px;

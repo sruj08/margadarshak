@@ -6,6 +6,7 @@ import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { EmptyState } from "@margdarshak/ui/components/empty-state";
 import { StatusGlyph } from "@margdarshak/ui/components/status-glyph";
+import { Fingerprint } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRuleText } from "@/components/journey/rule-text";
@@ -13,7 +14,8 @@ import { BackLink } from "@/components/journey/status";
 import { classNames } from "@/components/plan/plan-card";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cacheCase, getActiveCase, setActiveCase, setCaseFacts } from "@/lib/case/case-store";
-import { ApiError, getCase, myLicences, startCase } from "@/lib/journey/api";
+import { applyPrefill } from "@/lib/journey/aadhaar-prefill";
+import { ApiError, getCase, myLicences, patchCase, postEvent, startCase } from "@/lib/journey/api";
 import { toCasePath, type VehicleClassCode } from "@/lib/journey/api-types";
 import { chosenPath, type PlanRecord, toCaseFacts } from "@/lib/journey/plan-model";
 import { getPlan, latestPlan } from "@/lib/journey/plan-store";
@@ -28,6 +30,7 @@ import { recordScreen } from "@/lib/journey/trial-log";
  */
 export function ApplyStart() {
   const t = useTranslations("applyStart");
+  const tf = useTranslations("flow.digilocker");
   const tc = useTranslations("common");
   const rt = useRuleText();
   const router = useRouter();
@@ -65,7 +68,14 @@ export function ApplyStart() {
   const path = chosenPath(plan, rec.answers);
   const existing = getActiveCase();
 
-  const start = async () => {
+  const holdsLl = rec.answers.intent === "have_ll" && !!rec.answers.llIssuedOn;
+  const canConnect =
+    !holdsLl &&
+    !rec.answers.aadhaarLinked &&
+    !plan.family_mode_required &&
+    path?.path_id !== "non_aadhaar";
+
+  const start = async (next = "/apply/q/for_whom") => {
     setBusy(true);
     setError(false);
     try {
@@ -91,11 +101,29 @@ export function ApplyStart() {
         persona: null,
         local: res.local,
       });
+      const caseId = res.data.case_id;
+      // Details fetched from Aadhaar while planning move into this case's on-device vault.
+      if (await applyPrefill(caseId))
+        await patchCase(caseId, { answers: { digilocker_prefill: "yes" } }, res.data.version).catch(
+          () => null,
+        );
+      // EC-22: an LL already held is recorded with its real issue date; the DL steps follow.
+      if (holdsLl && rec.answers.llIssuedOn) {
+        await postEvent(caseId, {
+          type: "ll_issued",
+          occurred_on: rec.answers.llIssuedOn,
+          payload: { classes },
+        }).catch(() => null);
+        const fresh = await getCase(caseId).catch(() => null);
+        if (fresh) cacheCase(fresh.data);
+        router.push("/dl/apply");
+        return;
+      }
       if (!plan.family_mode_required)
         track("application_started", {
           path: path?.path_id === "non_aadhaar" ? "non_aadhaar" : "aadhaar",
         });
-      router.push("/apply/q/for_whom");
+      router.push(next);
     } catch (e) {
       if (e instanceof ApiError && e.code === "CASE_EXISTS") {
         if (await openExistingCase(rec.id, plan.family_mode_required)) {
@@ -171,14 +199,26 @@ export function ApplyStart() {
         </Banner>
       ) : null}
       <div className="mj-actions">
+        {canConnect ? (
+          <Button
+            variant="primary"
+            size="lg"
+            isPending={busy}
+            onPress={() => void start("/apply/digilocker")}
+            data-testid="start-connect"
+          >
+            <Fingerprint aria-hidden="true" />
+            {tf("startConnect")}
+          </Button>
+        ) : null}
         <Button
-          variant="primary"
+          variant={canConnect ? "secondary" : "primary"}
           size="lg"
           isPending={busy}
           onPress={() => void start()}
           data-testid="start-case"
         >
-          {t("cta")}
+          {holdsLl ? tf("startDl") : canConnect ? tf("startSelf") : t("cta")}
         </Button>
       </div>
     </div>

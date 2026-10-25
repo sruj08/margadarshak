@@ -7,6 +7,7 @@ import type { EventRecorder } from "@margdarshak/game-core/sdk";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { RoadProgress } from "@/components/fx/ride";
 import { CoachSummary, type SummaryLink, type SummaryRow } from "@/features/ai/CoachSummary";
 import { getSessionRecord } from "@/features/games/results-store";
 import type { SessionOutcome, WebGame, WebGameModule, WebGameProps } from "@/features/games/types";
@@ -212,6 +213,7 @@ function LlSimGame(props: WebGameProps) {
           </span>
         ) : null}
       </div>
+      <RoadProgress value={index} max={qs.length} />
       <p ref={announced} className="md-sr-only" aria-live="polite" />
       {q.doc.visuals.map((v) => (
         <SignVisual key={v.id} visual={v} />

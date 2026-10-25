@@ -26,7 +26,7 @@ export default async function WelcomePage({ params }: { params: Promise<{ locale
     <div className="md-page md-page--narrow" data-screen="SCR-002">
       <section className="md-onboard" aria-labelledby="welcome-h1">
         <div className="md-hero__glow" aria-hidden="true" />
-        <BrandMark name={tb("name")} locale={locale} />
+        <BrandMark name={tb("name")} locale={locale} variant="stacked" />
         <h1 id="welcome-h1" className="md-display">
           <SplitText text={tm("tagline")} delay={45} duration={0.6} splitType="words" />
         </h1>

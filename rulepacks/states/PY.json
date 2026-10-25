@@ -1,0 +1,117 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "PY",
+  "name": "Puducherry overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://transport.py.gov.in",
+  "rules": [
+    {
+      "id": "PY-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.py.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": false,
+          "where": ["rto"]
+        }
+      },
+      "text": {
+        "en": "In Puducherry the LL test is taken at the RTO or transport office.",
+        "hi": "Puducherry में लर्नर लाइसेंस टेस्ट RTO या परिवहन कार्यालय पर होता है।"
+      },
+      "source": {
+        "title": "Puducherry: learner's licence test mode",
+        "url": "https://transport.py.gov.in/Learner%27s%20Licence"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "PY-PRM-LL-FORMAT",
+      "kind": "param",
+      "overrides": "PRM-LL-FORMAT",
+      "textKey": "rule.py.ll.format",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "questions": 10,
+          "passCorrect": 6,
+          "passPct": 60,
+          "timerSeconds": null
+        }
+      },
+      "text": {
+        "en": "Puducherry LL test: {questions} questions, {passCorrect} correct to pass."
+      },
+      "source": {
+        "title": "Puducherry: learner's licence test format",
+        "url": "https://transport.py.gov.in/Learner%27s%20Licence"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "PY-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.py.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": false,
+          "tracks": ["inspector test, result given on the spot"]
+        }
+      },
+      "text": {
+        "en": "Puducherry driving tests are judged by an inspector: inspector test, result given on the spot."
+      },
+      "source": {
+        "title": "Puducherry: driving test type",
+        "url": "https://transport.py.gov.in/d.l"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "PY-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.py.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "The LL test is in the LLR room at the transport office: 10 questions, 6 correct to pass."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Puducherry transport department",
+        "url": "https://transport.py.gov.in"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

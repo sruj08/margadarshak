@@ -139,6 +139,7 @@ export function PlanCardScreen() {
 
 function PlanCard({ record }: { record: PlanRecord }) {
   const t = useTranslations("planCard");
+  const tFlow = useTranslations("flow.wizard");
   const tc = useTranslations("common");
   const tf = useTranslations("fees");
   const ti = useTranslations("issue");
@@ -524,7 +525,11 @@ function PlanCard({ record }: { record: PlanRecord }) {
             className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
             data-testid="start-application"
           >
-            {minor ? t("ctaMinor") : t("cta")}
+            {minor
+              ? t("ctaMinor")
+              : record.answers.intent === "have_ll"
+                ? tFlow("planCtaDl")
+                : t("cta")}
           </Link>
         )}
         <Button variant="secondary" size="lg" onPress={() => setShareOpen(true)}>

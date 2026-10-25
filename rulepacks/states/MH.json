@@ -11,7 +11,7 @@
   "maker": "rules-agent",
   "checker": null,
   "approvedAt": null,
-  "notes": "Partial: verify at your RTO. LL test at home since 2021 (Aadhaar), 60% pass; driving tests mostly manual, 17 automated tracks planned.",
+  "notes": "Partial: verify at your RTO. Faceless LL paused Sept 2025 (test at RTO); LL 15/9; tracks being automated. Checked 2026-10-25.",
   "rules": [
     {
       "id": "MH-PRM-LL-TEST-MODE",
@@ -19,19 +19,25 @@
       "overrides": "PRM-LL-TEST-MODE",
       "textKey": "rule.mh.ll.test_mode",
       "condition": true,
-      "output": { "value": { "onlineAvailable": true, "where": ["home_online", "rto"] } },
+      "output": {
+        "value": {
+          "onlineAvailable": false,
+          "where": ["rto"]
+        }
+      },
       "text": {
-        "en": "In Maharashtra the LL test can be taken at home with Aadhaar (since 2021)."
+        "en": "Maharashtra paused the home (faceless) LL test in September 2025. Apply and book online, then take the test at the RTO.",
+        "hi": "महाराष्ट्र ने सितंबर 2025 में घर से (फेसलेस) LL टेस्ट रोक दिया। ऑनलाइन आवेदन और बुकिंग करें, फिर टेस्ट RTO पर दें।"
       },
       "source": {
-        "title": "Udayavani: Maharashtra RTOs let people take the learner's licence test from home",
-        "url": "https://www.udayavani.com/english-news/maha-rtos-to-let-people-take-learners-licence-test-from-home"
+        "title": "Hindustan Times, Sept 2025 and Apr 2026: faceless LL suspended; tests at RTO",
+        "url": "https://www.hindustantimes.com/cities/mumbai-news/faceless-ll-system-suspended-in-light-of-malpractices-101758309933150.html"
       },
       "grade": "S",
-      "checkedOn": "2026-10-22",
+      "checkedOn": "2026-10-25",
       "confidence": "medium",
       "verified": false,
-      "approvers": ["maker:rules-agent@2026-10-23"]
+      "approvers": ["maker:rules-agent@2026-10-25"]
     },
     {
       "id": "MH-PRM-DL-TEST",
@@ -43,21 +49,24 @@
         "value": {
           "known": true,
           "automated": false,
-          "tracks": ["manual test by inspector", "17 automated tracks planned"]
+          "tracks": [
+            "inspector test at most RTOs",
+            "46 automated tracks contracted or approved (2025–26)"
+          ]
         }
       },
       "text": {
-        "en": "Maharashtra driving tests are mostly manual; automated tracks are planned."
+        "en": "Maharashtra driving tests are mostly judged by an inspector; 46 automated tracks are being rolled out."
       },
       "source": {
-        "title": "Team-BHP: Maharashtra to introduce AI-based driving tests",
-        "url": "https://www.team-bhp.com/news/maharashtra-introduce-ai-based-driving-tests"
+        "title": "Free Press Journal, Apr 2026: 8 more automated tracks, 46 in total",
+        "url": "https://www.freepressjournal.in/mumbai/maharashtra-transport-dept-to-roll-out-8-more-automated-driving-test-tracks-video-based-system-to-curb-rto-corruption-total-to-reach-46"
       },
       "grade": "S",
-      "checkedOn": "2026-10-22",
+      "checkedOn": "2026-10-25",
       "confidence": "medium",
       "verified": false,
-      "approvers": ["maker:rules-agent@2026-10-23"]
+      "approvers": ["maker:rules-agent@2026-10-25"]
     },
     {
       "id": "MH-NTC-MANUAL-TEST",
@@ -78,6 +87,34 @@
       "confidence": "medium",
       "verified": false,
       "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "MH-PRM-LL-FORMAT",
+      "kind": "param",
+      "overrides": "PRM-LL-FORMAT",
+      "textKey": "rule.mh.ll.format",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "questions": 15,
+          "passCorrect": 9,
+          "passPct": 60,
+          "timerSeconds": null
+        }
+      },
+      "text": {
+        "en": "Maharashtra LL test: {questions} questions, {passCorrect} correct to pass, in about 7 minutes."
+      },
+      "source": {
+        "title": "Lokmat, quoting a deputy RTO: 15 questions, 9 correct, 7 minutes",
+        "url": "https://www.lokmat.com/akola/online-exam-learning-license-now/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
     }
   ]
 }

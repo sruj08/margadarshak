@@ -1,0 +1,89 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "LA",
+  "name": "Ladakh overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://ladakh.gov.in",
+  "rules": [
+    {
+      "id": "LA-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.la.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": false,
+          "where": ["rto"]
+        }
+      },
+      "text": {
+        "en": "In Ladakh the LL test is taken at the RTO or transport office.",
+        "hi": "Ladakh में लर्नर लाइसेंस टेस्ट RTO या परिवहन कार्यालय पर होता है।"
+      },
+      "source": {
+        "title": "Ladakh: learner's licence test mode",
+        "url": "https://www.hindustantimes.com/cities/pune-news/maha-seeks-temporary-suspension-of-faceless-learners-licence-service-101758395336105.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "LA-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.la.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": true,
+          "tracks": ["automated driving test centres at Phyang (Leh) and Kargil"]
+        }
+      },
+      "text": {
+        "en": "Ladakh driving tests run on automated tracks: automated driving test centres at Phyang (Leh) and Kargil."
+      },
+      "source": {
+        "title": "Ladakh: driving test type",
+        "url": "https://www.reachladakh.com/news/social-news/automated-driving-test-centre-automated-testing-station-opened-at-phyang"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "LA-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.la.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Automated test centres opened at Phyang (Mar 2026) and Kargil (Jul 2026)."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Ladakh transport department",
+        "url": "https://ladakh.gov.in"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

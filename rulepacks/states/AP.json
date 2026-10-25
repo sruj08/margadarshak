@@ -1,0 +1,113 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "AP",
+  "name": "Andhra Pradesh overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://www.aptransport.org",
+  "rules": [
+    {
+      "id": "AP-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.ap.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": true,
+          "where": ["home_online", "rto"]
+        }
+      },
+      "text": {
+        "en": "In Andhra Pradesh the LL test can be taken online at home with Aadhaar face authentication, or at the RTO.",
+        "hi": "Andhra Pradesh में लर्नर लाइसेंस टेस्ट आधार फेस ऑथेंटिकेशन के साथ घर से ऑनलाइन, या RTO पर दिया जा सकता है।"
+      },
+      "source": {
+        "title": "Andhra Pradesh: learner's licence test mode",
+        "url": "https://assets.thehansindia.com/news/cities/visakhapatnam/ap-introduces-sarathi-online-learners-licence-registration-test-1135244"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "AP-PRM-LL-RETEST-GAP-DAYS",
+      "kind": "param",
+      "overrides": "PRM-LL-RETEST-GAP-DAYS",
+      "textKey": "rule.ap.ll.retest_gap_days",
+      "condition": true,
+      "output": {
+        "value": 7
+      },
+      "text": {
+        "en": "In Andhra Pradesh, a failed LL test can be retaken after {value} day(s), with the LL retest fee."
+      },
+      "source": {
+        "title": "Andhra Pradesh: learner's licence retest gap",
+        "url": "https://aptransport.org/html/faqs-licence.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "AP-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.ap.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": true,
+          "tracks": [
+            "9 automated driving test tracks (Anantapur, Chittoor, Gannavaram, Tirupati, Kurnool, Guntur, Nellore, Proddatur, Gambheeram)"
+          ]
+        }
+      },
+      "text": {
+        "en": "Andhra Pradesh driving tests run on automated tracks: 9 automated driving test tracks (Anantapur, Chittoor, Gannavaram, Tirupati, Kurnool, Guntur, Nellore, Proddatur, Gambheeram)."
+      },
+      "source": {
+        "title": "Andhra Pradesh: driving test type",
+        "url": "https://www.marutisuzuki.com/corporate/media/press-releases/2026/february/maruti-suzuki-signs-memorandum-of-agreement-with-transport-department"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "AP-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.ap.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Home LL test with a secure exam browser and live face match (from late Sept 2026); without Aadhaar, or after 5 failed face matches, the test is at the RTO. A failed LL test can be retaken after 7 days."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Andhra Pradesh transport department",
+        "url": "https://www.aptransport.org"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

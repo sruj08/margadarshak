@@ -11,6 +11,8 @@ export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
   {
     swSrc: "src/app/sw.ts",
     useNativeEsbuild: true,
+    // The brand .webp files are raster masters for slides and sharing; the app uses the SVGs.
+    globIgnores: ["**/node_modules/**/*", "public/brand/*.webp"],
     additionalPrecacheEntries: [
       { url: "/en/offline", revision },
       { url: "/hi/offline", revision },

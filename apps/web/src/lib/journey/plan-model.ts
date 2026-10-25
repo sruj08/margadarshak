@@ -29,7 +29,15 @@ export type AgeAnswer =
 
 export type AadhaarAnswer = "yes" | "no" | "none";
 
+/** What the person came for (SCR-009): a first licence, or a DL with an LL already held (EC-22). */
+export type PlanIntent = "first" | "have_ll";
+
 export interface PlanAnswers {
+  intent?: PlanIntent;
+  /** EC-22: issue date of the LL already held (intent "have_ll"). */
+  llIssuedOn?: string | null;
+  /** Age and address came from Aadhaar over DigiLocker (simulated), not typed. */
+  aadhaarLinked?: boolean;
   age: AgeAnswer;
   /** Picture IDs from classes.json (`bike_gear`, `car`, ...). */
   vehicles: string[];
@@ -121,6 +129,7 @@ export function toEngineInput(a: PlanAnswers, asOf: string): PlanInput {
     home_test_device: triState(a.homeTestDevice),
     has_test_vehicle: triState(a.hasTestVehicle),
   };
+  if (a.intent === "have_ll" && a.llIssuedOn) input.ll_issued_on = a.llIssuedOn;
   return input;
 }
 
@@ -159,6 +168,10 @@ export function toApiRequest(
   if (typeof a.mobileLinked === "boolean") req.aadhaar_mobile_linked = a.mobileLinked;
   if (typeof a.homeTestDevice === "boolean") req.home_test_device = a.homeTestDevice;
   if (typeof a.hasTestVehicle === "boolean") req.has_test_vehicle = a.hasTestVehicle;
+  if (a.intent === "have_ll" && a.llIssuedOn) {
+    req.already_holds_ll = true;
+    req.ll_issued_on = a.llIssuedOn;
+  }
   if (language === "en" || language === "hi") req.language = language;
   return req;
 }

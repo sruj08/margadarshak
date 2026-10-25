@@ -1,0 +1,69 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "MP",
+  "name": "Madhya Pradesh overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://transport.mp.gov.in",
+  "rules": [
+    {
+      "id": "MP-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.mp.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": true,
+          "where": ["home_online", "rto"]
+        }
+      },
+      "text": {
+        "en": "In Madhya Pradesh the LL test can be taken online at home with Aadhaar face authentication, or at the RTO.",
+        "hi": "Madhya Pradesh में लर्नर लाइसेंस टेस्ट आधार फेस ऑथेंटिकेशन के साथ घर से ऑनलाइन, या RTO पर दिया जा सकता है।"
+      },
+      "source": {
+        "title": "Madhya Pradesh: learner's licence test mode",
+        "url": "https://timesofindia.indiatimes.com/city/bhopal/now-get-learners-licence-test-done-at-home-in-madhya-pradesh/articleshow/85000335.cms"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "MP-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.mp.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": false,
+          "tracks": ["mostly inspector tests"]
+        }
+      },
+      "text": {
+        "en": "Madhya Pradesh driving tests are judged by an inspector: mostly inspector tests."
+      },
+      "source": {
+        "title": "Madhya Pradesh: driving test type",
+        "url": "https://www.bhaskar.com/local/mp/indore/news/one-license-is-being-made-in-30-seconds-at-indore-rto-132898142.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

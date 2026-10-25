@@ -48,6 +48,7 @@ function NoCase() {
 export function FeeScreen() {
   const t = useTranslations("feeScreen");
   const ta = useTranslations("apply");
+  const tp = useTranslations("flow.pay");
   const { inr } = useFmt();
   const s = useCaseSession();
   useEffect(() => {
@@ -103,11 +104,18 @@ export function FeeScreen() {
       <PayOnline s={s} />
       <div className="mj-sticky mj-actions">
         <Link
-          href="/apply/handoff"
+          href="/pay?for=ll"
           className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
+          data-testid="fee-pay"
+        >
+          {tp("payNow", { amount: inr(q.ll_stage_paise) })}
+        </Link>
+        <Link
+          href="/apply/handoff"
+          className={buttonClassName({ variant: "secondary", size: "lg", fullWidth: true })}
           data-testid="fee-continue"
         >
-          {t("cta")}
+          {tp("orSarathi")}
         </Link>
       </div>
     </div>

@@ -1,0 +1,139 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "TS",
+  "name": "Telangana overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://transport.telangana.gov.in",
+  "rules": [
+    {
+      "id": "TS-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.ts.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": false,
+          "where": ["rto"]
+        }
+      },
+      "text": {
+        "en": "In Telangana the LL test is taken at the RTO or transport office.",
+        "hi": "Telangana में लर्नर लाइसेंस टेस्ट RTO या परिवहन कार्यालय पर होता है।"
+      },
+      "source": {
+        "title": "Telangana: learner's licence test mode",
+        "url": "https://transport.telangana.gov.in/html/faq-llr.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "TS-PRM-LL-FORMAT",
+      "kind": "param",
+      "overrides": "PRM-LL-FORMAT",
+      "textKey": "rule.ts.ll.format",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "questions": 20,
+          "passCorrect": 12,
+          "passPct": 60,
+          "timerSeconds": null
+        }
+      },
+      "text": {
+        "en": "Telangana LL test: {questions} questions, {passCorrect} correct to pass."
+      },
+      "source": {
+        "title": "Telangana: learner's licence test format",
+        "url": "https://transport.telangana.gov.in/html/faq-llr.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "TS-PRM-LL-RETEST-GAP-DAYS",
+      "kind": "param",
+      "overrides": "PRM-LL-RETEST-GAP-DAYS",
+      "textKey": "rule.ts.ll.retest_gap_days",
+      "condition": true,
+      "output": {
+        "value": 7
+      },
+      "text": {
+        "en": "In Telangana, a failed LL test can be retaken after {value} day(s), with the LL retest fee."
+      },
+      "source": {
+        "title": "Telangana: learner's licence retest gap",
+        "url": "https://transport.telangana.gov.in/html/faq-license.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "TS-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.ts.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": false,
+          "tracks": ["inspector test; AI cameras planned on Hyderabad tracks"]
+        }
+      },
+      "text": {
+        "en": "Telangana driving tests are judged by an inspector: inspector test; AI cameras planned on Hyderabad tracks."
+      },
+      "source": {
+        "title": "Telangana: driving test type",
+        "url": "https://telanganatoday.com/telangana-transport-department-plans-ai-powered-cameras-for-driving-tests"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "TS-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.ts.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "The LL test is in Telugu, Hindi or English: 20 questions, 12 correct to pass. A failed LL test can be retaken after 7 days."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Telangana transport department",
+        "url": "https://transport.telangana.gov.in"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

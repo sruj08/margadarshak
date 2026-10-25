@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" fill="none" role="img" aria-label="Margdarshak Symbol — The Seeing Wheel">
+  <title>Margdarshak</title>
+  <defs>
+    <linearGradient id="md-monolith-fill" x1="25%" y1="0%" x2="75%" y2="100%">
+      <stop offset="0%" stop-color="#282A32" />
+      <stop offset="42%" stop-color="#1B1C22" />
+      <stop offset="100%" stop-color="#101115" />
+    </linearGradient>
+    <linearGradient id="md-monolith-rim" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.22" />
+      <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.18" />
+    </linearGradient>
+    <linearGradient id="md-wordmark-fill" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#23252C" />
+      <stop offset="100%" stop-color="#121317" />
+    </linearGradient>
+    <radialGradient id="md-orb-aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F9730C" stop-opacity="0.20" />
+      <stop offset="55%" stop-color="#FEB12B" stop-opacity="0.07" />
+      <stop offset="100%" stop-color="#FEB12B" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="md-orb-fill" cx="48%" cy="48%" r="66%" fx="34%" fy="28%">
+      <stop offset="0%" stop-color="#FFE494" />
+      <stop offset="28%" stop-color="#FEB12B" />
+      <stop offset="72%" stop-color="#F9730C" />
+      <stop offset="100%" stop-color="#D44E00" />
+    </radialGradient>
+    <linearGradient id="md-orb-rim" x1="25%" y1="0%" x2="75%" y2="100%">
+      <stop offset="0%" stop-color="#FFF9E6" stop-opacity="0.65" />
+      <stop offset="45%" stop-color="#FEB12B" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#8C2D00" stop-opacity="0.35" />
+    </linearGradient>
+  </defs>
+  <g id="margdarshak-symbol" transform="translate(-430.08, -310.02) scale(1.84)">
+      <!-- Ambient Nazar Foresight Halo -->
+      <circle cx="512" cy="424.5" r="118.4" fill="url(#md-orb-aura)" />
+      <!-- Upper Steering & Horizon Arch -->
+      <path d="M 322.72 560.14 A 220 220 0 1 1 701.28 560.14 A 4.2 4.2 0 0 1 695.14 561.36 L 649.5 527.12 A 4.2 4.2 0 0 1 648.32 521.76 A 155 155 0 1 0 375.68 521.76 A 4.2 4.2 0 0 1 374.5 527.12 L 328.86 561.36 A 4.2 4.2 0 0 1 322.72 560.14 Z" fill="url(#md-monolith-fill)" stroke="url(#md-monolith-rim)" stroke-width="1.2" stroke-linejoin="round" />
+      <!-- Lower Road & Spoke Chevron -->
+      <path d="M 509.61 515.8 A 3.99 3.99 0 0 1 514.39 515.8 L 706.7 660.03 A 3.04 3.04 0 0 1 704.88 665.5 L 606.93 665.5 A 3.8 3.8 0 0 1 604.65 664.74 L 514.51 597.13 A 4.18 4.18 0 0 0 509.49 597.13 L 419.35 664.74 A 3.8 3.8 0 0 1 417.07 665.5 L 319.12 665.5 A 3.04 3.04 0 0 1 317.3 660.03 Z" fill="url(#md-monolith-fill)" stroke="url(#md-monolith-rim)" stroke-width="1.2" stroke-linejoin="round" />
+      <!-- Central Nazar Seeing-Stone Orb -->
+      <circle cx="512" cy="424.5" r="80" fill="url(#md-orb-fill)" />
+      <circle cx="512" cy="424.5" r="79.2" fill="none" stroke="url(#md-orb-rim)" stroke-width="1.6" />
+  </g>
+</svg>

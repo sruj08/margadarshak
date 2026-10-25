@@ -1,5 +1,6 @@
 import type ai from "./messages/en/ai.json";
 import type curator from "./messages/en/curator.json";
+import type flow from "./messages/en/flow.json";
 import type games from "./messages/en/games.json";
 import type learnHub from "./messages/en/learnHub.json";
 import type llSim from "./messages/en/llSim.json";
@@ -22,6 +23,7 @@ interface P2Messages {
   study: typeof study;
   curator: typeof curator;
   ai: typeof ai;
+  flow: typeof flow;
 }
 
 declare module "next-intl" {

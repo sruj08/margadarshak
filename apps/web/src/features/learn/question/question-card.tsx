@@ -4,6 +4,7 @@ import type { ConfidenceLevel } from "@margdarshak/gamification";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { Ride } from "@/components/fx/ride";
 import { QuestionCoach } from "@/features/ai/QuestionCoach";
 import type { BankItem, PracticeKeyEntry } from "../content/bank-types";
 import { SignVisual } from "../ui/sign-visual";
@@ -169,6 +170,13 @@ export function QuestionCard({
             role="status"
             data-testid="feedback"
           >
+            <Ride
+              key={`${item.id}-${result.optionId}`}
+              ok={result.correct}
+              vehicle={
+                [...item.id].reduce((n, c) => n + c.charCodeAt(0), 0) % 2 === 0 ? "bike" : "car"
+              }
+            />
             <p className="md-h3">{result.correct ? `✓ ${t("right")}` : `▲ ${t("notQuite")}`}</p>
             {!result.correct && chosen ? <p>{t("youChose", { a: chosen.text })}</p> : null}
             {!result.correct && right ? (

@@ -1,6 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { onboard } from "./helpers";
-import { type Age, cardFacts, makePlan, mobileOnly } from "./journey-helpers";
+import {
+  type Age,
+  cardFacts,
+  makePlan,
+  mobileOnly,
+  openPlanToAge,
+  replayPlan,
+  tapChoice,
+} from "./journey-helpers";
 
 /**
  * P1 · S1 Licence plan (MD-101, MD-103, MD-105, MD-107, MD-108), at 360 px on the mock API.
@@ -21,7 +29,8 @@ test("Kabir: plan in 3 taps from the home tile (MD-101, P1 DoD)", async ({ page 
     vehicles: [/Bike with gears/, /^Car/],
     aadhaar: "Yes",
   });
-  expect(screens).toHaveLength(3);
+  // need → state → Aadhaar → age (typed, not connected) → vehicles.
+  expect(screens).toHaveLength(5);
   const facts = await cardFacts(page);
   expect(facts.classes).toEqual(["MCWG", "LMV-NT"]);
   // fees.json: 2 classes = 115000 + 20000 card, formatted by Intl (no literal in copy).
@@ -29,6 +38,52 @@ test("Kabir: plan in 3 taps from the home tile (MD-101, P1 DoD)", async ({ page 
   expect(facts.visits).toContain("1");
   await expect(page.getByText("One application, 2 vehicles")).toBeVisible();
   await expect(page.getByTestId("start-application")).toBeVisible();
+});
+
+test("Sarathi order: need → state → connect Aadhaar (no age typed) → vehicle → plan", async ({
+  page,
+}) => {
+  await page.goto("/en/plan");
+  await tapChoice(page, "radio", /^My first licence/);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(page.locator("[data-screen='SCR-012']")).toBeVisible();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await tapChoice(page, "radio", /^Connect Aadhaar through DigiLocker/);
+  await page.getByRole("button", { name: "Connect Aadhaar", exact: true }).click();
+  await expect(page.locator("main input, main textarea")).toHaveCount(0);
+  await page.getByTestId("plan-allow").click();
+  await expect(page.getByTestId("id-card")).toBeVisible({ timeout: 10_000 });
+  await page.getByTestId("plan-connected-next").click();
+  await expect(page.locator("[data-screen='SCR-011']")).toBeVisible();
+  await expect(page.locator("[data-screen='SCR-010']")).toHaveCount(0);
+  await tapChoice(page, "checkbox", /Bike with gears/);
+  await page.getByRole("button", { name: "Show my plan" }).click();
+  expect((await cardFacts(page)).classes).toEqual(["MCWG"]);
+});
+
+test("EC-22 I already have an LL: its date gives a driving-licence plan", async ({ page }) => {
+  await openPlanToAge(page, "Yes");
+  // Back to the first screen to choose the LL path, then forward with the answers kept.
+  await page.goto("/en/plan?step=need");
+  await tapChoice(page, "radio", /^I already have a learner's licence/);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await tapChoice(page, "radio", "20 to 39");
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await tapChoice(page, "checkbox", /Bike with gears/);
+  await page.getByRole("button", { name: /^Next/ }).click();
+  await expect(page.locator("[data-screen='SCR-011B']")).toBeVisible();
+  const d = new Date(Date.now() - 40 * 86_400_000);
+  await page.getByLabel("Day", { exact: true }).fill(String(d.getDate()).padStart(2, "0"));
+  await page.getByLabel("Month", { exact: true }).fill(String(d.getMonth() + 1).padStart(2, "0"));
+  await page.getByLabel("Year", { exact: true }).fill(String(d.getFullYear()));
+  await page.getByRole("button", { name: "Show my plan" }).click();
+  await expect(page.getByTestId("start-application")).toHaveText("Apply for my driving licence");
+  await page.getByTestId("start-application").click();
+  await page.getByTestId("start-case").click();
+  await expect(page).toHaveURL(/\/dl\/apply/);
+  await expect(page.getByTestId("dl-continue")).toBeVisible();
 });
 
 test("Fee breakdown sheet lists every line with a source (MD-103, D-06)", async ({ page }) => {
@@ -81,13 +136,11 @@ test("EC-01: year-only DOB asks for a full date-of-birth document", async ({ pag
 test("EC-05 Rahul (16-17): only the 50 cc tile, family mode, guardian consent (MD-805)", async ({
   page,
 }) => {
-  await page.goto("/en/plan");
-  await page.getByRole("radio", { name: "16 or 17", exact: true }).check({ force: true });
+  await openPlanToAge(page, "Yes");
+  await tapChoice(page, "radio", "16 or 17");
   await page.getByRole("button", { name: "Next", exact: true }).click();
   await expect(page.getByRole("checkbox", { name: /Bike with gears/ })).toBeDisabled();
-  await page.getByRole("checkbox", { name: /Up to 50 cc/ }).check({ force: true });
-  await page.getByRole("button", { name: /^Next/ }).click();
-  await page.getByRole("radio", { name: "Yes", exact: true }).check({ force: true });
+  await tapChoice(page, "checkbox", /Up to 50 cc/);
   await page.getByRole("button", { name: "Show my plan" }).click();
   const facts = await cardFacts(page);
   expect(facts.classes).toEqual(["MC50CC"]);
@@ -176,14 +229,11 @@ for (const g of GOLDEN) {
     const online = await cardFacts(page);
 
     await page.getByRole("link", { name: "Change my answers" }).click();
-    await expect(page.locator("[data-screen='SCR-010']")).toBeVisible();
+    await expect(page.locator("[data-screen='SCR-009']")).toBeVisible();
     await page.waitForLoadState("networkidle");
     await context.setOffline(true);
     // Walk the wizard again without network: the TS rules mirror computes the card.
-    await page.getByRole("button", { name: "Next", exact: true }).click();
-    await page.getByRole("button", { name: /^Next/ }).click();
-    await page.getByRole("radio", { name: new RegExp(`^${g.aadhaar}`) }).check({ force: true });
-    await page.getByRole("button", { name: "Show my plan" }).click();
+    await replayPlan(page);
     await expect(page.getByTestId("computed-on-phone")).toBeVisible();
     const offline = await cardFacts(page);
     await context.setOffline(false);

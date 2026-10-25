@@ -97,3 +97,4 @@
 .cu-choice--card{align-items:flex-start;padding:var(--md-space-3);border-radius:var(--md-r-lg);background:var(--md-surface);box-shadow:inset 0 0 0 1.5px var(--md-border),var(--md-e0);transition:transform var(--md-dur-fast) var(--md-ease-spring),box-shadow var(--md-dur-fast) var(--md-ease-spring)}
 .cu-choice--card:active{transform:scale(var(--md-press-scale-subtle))}
 .cu-choice--card input{margin-top:2px}
+select.cu-select{appearance:none;padding-inline-end:44px;background-image:var(--md-select-chevron);background-repeat:no-repeat;background-position:right 14px center;background-size:18px;cursor:pointer}

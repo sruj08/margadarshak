@@ -1,0 +1,89 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "KA",
+  "name": "Karnataka overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://transport.karnataka.gov.in",
+  "rules": [
+    {
+      "id": "KA-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.ka.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": true,
+          "where": ["home_online", "rto"]
+        }
+      },
+      "text": {
+        "en": "In Karnataka the LL test can be taken online at home with Aadhaar face authentication, or at the RTO.",
+        "hi": "Karnataka में लर्नर लाइसेंस टेस्ट आधार फेस ऑथेंटिकेशन के साथ घर से ऑनलाइन, या RTO पर दिया जा सकता है।"
+      },
+      "source": {
+        "title": "Karnataka: learner's licence test mode",
+        "url": "https://www.thehindu.com/news/national/karnataka/karnataka-introduces-ai-powered-smart-lock-to-curb-llr-fraud-tighten-online-testing-norms/article70335429.ece"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "KA-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.ka.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": false,
+          "tracks": ["about 20 automated tracks live, more under construction"]
+        }
+      },
+      "text": {
+        "en": "Karnataka uses both: about 20 automated tracks live, more under construction."
+      },
+      "source": {
+        "title": "Karnataka: driving test type",
+        "url": "https://kannada.asianetnews.com/karnataka-districts/dandeli-automated-driving-test-track-inauguration-ramalinga-reddy-gvd/articleshow-rme90gs"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "KA-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.ka.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "The LL test is offered in Kannada, Hindi and English."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Karnataka transport department",
+        "url": "https://transport.karnataka.gov.in"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

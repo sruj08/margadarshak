@@ -2,6 +2,7 @@ import { formatIsoDate } from "@margdarshak/ui/lib/format";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { SITE_UPDATED } from "@/lib/site";
+import { BrandMark } from "./brand-mark";
 
 /**
  * Non-affiliation footer (C-04, MD-005, D-01): on every page, every theme, including errors and the
@@ -9,11 +10,13 @@ import { SITE_UPDATED } from "@/lib/site";
  */
 export async function SiteFooter({ compact = false }: { compact?: boolean }) {
   const t = await getTranslations("footer");
+  const tb = await getTranslations("brand");
   const locale = await getLocale();
   const updated = formatIsoDate(SITE_UPDATED, locale, "long");
   return (
     <footer className="md-footer" data-testid="non-affiliation-footer">
       <div className="md-footer__inner">
+        <BrandMark name={tb("name")} locale={locale} />
         <p className="md-footer__notice">{t("notAffiliated")}</p>
         {compact ? null : (
           <ul className="md-footer__links">

@@ -587,7 +587,7 @@
       "base_version": "IN-base@2026.10.0",
       "classes_version": "2026.10.0",
       "fees_version": "2026.10.0",
-      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "hash": "0ecb4e21d43b3caf205a3a6f86052ad07bae02e7d797ed3e274190d85cfdf88a",
       "pack_id": "JK",
       "partial": false,
       "version": "2026.10.0"
@@ -1211,7 +1211,7 @@
       "base_version": "IN-base@2026.10.0",
       "classes_version": "2026.10.0",
       "fees_version": "2026.10.0",
-      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "hash": "0ecb4e21d43b3caf205a3a6f86052ad07bae02e7d797ed3e274190d85cfdf88a",
       "pack_id": "JK",
       "partial": false,
       "version": "2026.10.0"
@@ -1855,7 +1855,7 @@
       "base_version": "IN-base@2026.10.0",
       "classes_version": "2026.10.0",
       "fees_version": "2026.10.0",
-      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "hash": "0ecb4e21d43b3caf205a3a6f86052ad07bae02e7d797ed3e274190d85cfdf88a",
       "pack_id": "JK",
       "partial": false,
       "version": "2026.10.0"
@@ -2567,7 +2567,7 @@
       "base_version": "IN-base@2026.10.0",
       "classes_version": "2026.10.0",
       "fees_version": "2026.10.0",
-      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "hash": "0ecb4e21d43b3caf205a3a6f86052ad07bae02e7d797ed3e274190d85cfdf88a",
       "pack_id": "JK",
       "partial": false,
       "version": "2026.10.0"
@@ -3199,7 +3199,7 @@
       "base_version": "IN-base@2026.10.0",
       "classes_version": "2026.10.0",
       "fees_version": "2026.10.0",
-      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "hash": "0ecb4e21d43b3caf205a3a6f86052ad07bae02e7d797ed3e274190d85cfdf88a",
       "pack_id": "JK",
       "partial": false,
       "version": "2026.10.0"
@@ -3443,7 +3443,22 @@
             }
           ],
           "smart_card_paise": 20000,
-          "state_items": [],
+          "state_items": [
+            {
+              "amount_paise": 26000,
+              "fee_id": "FEE-KL-SERVICE-REPORTED",
+              "included_in_total": false,
+              "label_key": "fee.kl.service_reported",
+              "provenance": {
+                "checked_on": "2026-10-25",
+                "confidence": "medium",
+                "grade": "P-state",
+                "source_title": "Kerala MVD fees: service charge 60 on LL and 200 on the digital licence",
+                "source_url": "https://mvd.kerala.gov.in/en/fees-0",
+                "verified": false
+              }
+            }
+          ],
           "subtotal_govt_fee_paise": 70000,
           "total_paise": 90000
         },
@@ -3625,7 +3640,22 @@
         }
       ],
       "smart_card_paise": 20000,
-      "state_items": [],
+      "state_items": [
+        {
+          "amount_paise": 26000,
+          "fee_id": "FEE-KL-SERVICE-REPORTED",
+          "included_in_total": false,
+          "label_key": "fee.kl.service_reported",
+          "provenance": {
+            "checked_on": "2026-10-25",
+            "confidence": "medium",
+            "grade": "P-state",
+            "source_title": "Kerala MVD fees: service charge 60 on LL and 200 on the digital licence",
+            "source_url": "https://mvd.kerala.gov.in/en/fees-0",
+            "verified": false
+          }
+        }
+      ],
       "subtotal_govt_fee_paise": 70000,
       "total_paise": 90000
     },
@@ -3636,14 +3666,14 @@
       "status": "announced"
     },
     "ll_test": {
-      "confidence": "low",
-      "known": false,
+      "confidence": "medium",
+      "known": true,
       "mode": "rto",
       "online_available": false,
-      "pass_correct": 9,
+      "pass_correct": 18,
       "pass_pct": 60,
-      "questions": 15,
-      "rule_ids": ["KL-PRM-LL-TEST-MODE", "PRM-LL-FORMAT"],
+      "questions": 30,
+      "rule_ids": ["KL-PRM-LL-TEST-MODE", "KL-PRM-LL-FORMAT"],
       "verified": false,
       "where": ["rto"]
     },
@@ -3787,7 +3817,7 @@
       "base_version": "IN-base@2026.10.0",
       "classes_version": "2026.10.0",
       "fees_version": "2026.10.0",
-      "hash": "dbdf14467693605c1b2bd4d920ae74bc39ede517cf0b9e932d7aab488b985330",
+      "hash": "9830bb5d2eb5d777c1e7246a49c6b41221a3063e44407a3789aeb316bf0041e1",
       "pack_id": "KL",
       "partial": true,
       "version": "2026.10.0"
@@ -3819,7 +3849,7 @@
         "due_on": "2026-12-20",
         "key": "ll.test.at_rto",
         "n": 3,
-        "rule_ids": ["KL-PRM-LL-TEST-MODE", "PRM-LL-FORMAT", "RT-NO-ONLINE-LL"],
+        "rule_ids": ["KL-PRM-LL-TEST-MODE", "KL-PRM-LL-FORMAT", "RT-NO-ONLINE-LL"],
         "visit": 1
       },
       {
@@ -3878,12 +3908,14 @@
       "DOC-VALID-LL",
       "FEE-DL-ISSUE",
       "FEE-DL-TEST",
+      "FEE-KL-SERVICE-REPORTED",
       "FEE-LL-ISSUE",
       "FEE-LL-TEST",
       "FEE-SMART-CARD",
       "KL-NTC-HPT",
       "KL-PRM-DL-TEST",
       "KL-PRM-HPT",
+      "KL-PRM-LL-FORMAT",
       "KL-PRM-LL-TEST-MODE",
       "KL-WRN-SLOT-BACKLOG",
       "NTC-ADTC-OPTION",
@@ -3893,7 +3925,6 @@
       "NTC-STATE-CHARGES",
       "PLN-NON-AADHAAR-AT-RTO",
       "PRM-FORM1A-AGE",
-      "PRM-LL-FORMAT",
       "PRM-LL-VALIDITY-MONTHS",
       "PRM-MIN-WAIT-DAYS",
       "PRM-TUTORIAL-DAYS",
@@ -4465,7 +4496,7 @@
       "base_version": "IN-base@2026.10.0",
       "classes_version": "2026.10.0",
       "fees_version": "2026.10.0",
-      "hash": "2795e5438597bd49bfc903f17cc31265dc8c8375aefb4ed28133209da06cb68c",
+      "hash": "0ecb4e21d43b3caf205a3a6f86052ad07bae02e7d797ed3e274190d85cfdf88a",
       "pack_id": "JK",
       "partial": false,
       "version": "2026.10.0"

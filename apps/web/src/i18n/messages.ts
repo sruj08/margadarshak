@@ -19,6 +19,7 @@ export const MESSAGE_NAMESPACES = [
   "study",
   "curator",
   "ai",
+  "flow",
 ] as const;
 
 export type MessageNamespace = (typeof MESSAGE_NAMESPACES)[number];

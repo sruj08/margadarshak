@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { COMING, type ComingId } from "@/components/home/services-data";
 import { BackLink } from "@/components/journey/status";
-import { Link } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import { enterLocale } from "@/i18n/page-locale";
 
 export function generateStaticParams() {
@@ -38,6 +38,16 @@ const TODAY: Record<ComingId, string> = {
   console: "/help",
 };
 
+/** Services that now have their own screen in the LL-to-DL flow. */
+const BUILT: Partial<Record<ComingId, string>> = {
+  "book-test": "/dl/apply",
+  "test-day": "/dl/test-day",
+  "test-vehicle": "/dl/test-day",
+  retest: "/dl/retest",
+  approval: "/dl/issued",
+  digilocker: "/dl/issued",
+};
+
 function isComing(v: string): v is ComingId {
   return (COMING as readonly string[]).includes(v);
 }
@@ -61,9 +71,11 @@ export default async function ComingServicePage({
 }: {
   params: Promise<{ locale: string; serviceId: string }>;
 }) {
-  await enterLocale(params);
+  const locale = await enterLocale(params);
   const { serviceId } = await params;
   if (!isComing(serviceId)) notFound();
+  const built = BUILT[serviceId];
+  if (built) redirect({ href: built, locale });
   const t = await getTranslations("comingService");
   const tx = await getTranslations("a11y");
   return (

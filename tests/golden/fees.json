@@ -4,7 +4,12 @@
       "id": "FEE-1-class-JK",
       "description": "One class (LMV-NT), J&K: 15000 + 5000 + 30000 + 20000 = 70000, + 20000 card = 90000; J&K slot-booking amount shown as reported, not added",
       "refs": ["F-02", "D-06"],
-      "input": { "as_of": "2026-10-23", "state": "JK", "dob": "2000-01-01", "vehicles": ["car"] },
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "JK",
+        "dob": "2000-01-01",
+        "vehicles": ["car"]
+      },
       "expect": {
         "fees": {
           "classes": ["LMV-NT"],
@@ -15,15 +20,30 @@
               "amount_paise": 15000,
               "stage": "LL"
             },
-            { "fee_id": "FEE-LL-TEST", "class_code": null, "amount_paise": 5000, "stage": "LL" },
+            {
+              "fee_id": "FEE-LL-TEST",
+              "class_code": null,
+              "amount_paise": 5000,
+              "stage": "LL"
+            },
             {
               "fee_id": "FEE-DL-TEST",
               "class_code": "LMV-NT",
               "amount_paise": 30000,
               "stage": "LL"
             },
-            { "fee_id": "FEE-DL-ISSUE", "class_code": null, "amount_paise": 20000, "stage": "DL" },
-            { "fee_id": "FEE-SMART-CARD", "class_code": null, "amount_paise": 20000, "stage": "DL" }
+            {
+              "fee_id": "FEE-DL-ISSUE",
+              "class_code": null,
+              "amount_paise": 20000,
+              "stage": "DL"
+            },
+            {
+              "fee_id": "FEE-SMART-CARD",
+              "class_code": null,
+              "amount_paise": 20000,
+              "stage": "DL"
+            }
           ],
           "ll_stage_paise": 50000,
           "subtotal_govt_fee_paise": 70000,
@@ -34,7 +54,10 @@
               "fee_id": "FEE-JK-SLOT-BOOKING-REPORTED",
               "amount_paise": 105000,
               "included_in_total": false,
-              "provenance": { "verified": false, "confidence": "low" }
+              "provenance": {
+                "verified": false,
+                "confidence": "low"
+              }
             },
             {
               "fee_id": "FEE-JK-POSTAGE-REPORTED",
@@ -43,9 +66,19 @@
             }
           ],
           "excludes": ["state_service_charge", "postage"],
-          "provenance": { "grade": "S", "checked_on": "2026-10-22", "verified": true }
+          "provenance": {
+            "grade": "S",
+            "checked_on": "2026-10-22",
+            "verified": true
+          }
         },
-        "notices": { "$includes": [{ "rule_id": "NTC-STATE-CHARGES" }] }
+        "notices": {
+          "$includes": [
+            {
+              "rule_id": "NTC-STATE-CHARGES"
+            }
+          ]
+        }
       }
     },
     {
@@ -60,7 +93,9 @@
       },
       "expect": {
         "fees": {
-          "lines": { "$len": 7 },
+          "lines": {
+            "$len": 7
+          },
           "ll_stage_paise": 95000,
           "subtotal_govt_fee_paise": 115000,
           "total_paise": 135000,
@@ -88,7 +123,9 @@
       },
       "expect": {
         "fees": {
-          "lines": { "$len": 9 },
+          "lines": {
+            "$len": 9
+          },
           "ll_stage_paise": 140000,
           "subtotal_govt_fee_paise": 160000,
           "total_paise": 180000
@@ -103,7 +140,7 @@
     },
     {
       "id": "FEE-1-class-ll-stage-MH",
-      "description": "LL-stage subtotal for one class is 50000 (Delhi Rs 500); no state items outside J&K",
+      "description": "LL-stage subtotal for one class is 50000 (Delhi Rs 500); no state items outside J&K The MH charge above the central DL fee is reported, never added.",
       "refs": ["D-06"],
       "input": {
         "as_of": "2026-10-23",
@@ -116,7 +153,12 @@
           "ll_stage_paise": 50000,
           "subtotal_govt_fee_paise": 70000,
           "total_paise": 90000,
-          "state_items": []
+          "state_items": [
+            {
+              "fee_id": "FEE-MH-DL-EXTRA-REPORTED",
+              "included_in_total": false
+            }
+          ]
         },
         "saving": null
       }
@@ -125,19 +167,32 @@
       "id": "FEE-retest-heads",
       "description": "Retest heads listed with the quote: LL retest 5000 per attempt, DL retest 30000 per class attempt",
       "refs": ["EC-08"],
-      "input": { "as_of": "2026-10-23", "state": "KL", "dob": "1999-09-09", "vehicles": ["car"] },
+      "input": {
+        "as_of": "2026-10-23",
+        "state": "KL",
+        "dob": "1999-09-09",
+        "vehicles": ["car"]
+      },
       "expect": {
         "fees": {
           "retest": [
-            { "fee_id": "FEE-LL-RETEST", "amount_paise": 5000, "per": "attempt" },
-            { "fee_id": "FEE-DL-RETEST", "amount_paise": 30000, "per": "class_attempt" }
+            {
+              "fee_id": "FEE-LL-RETEST",
+              "amount_paise": 5000,
+              "per": "attempt"
+            },
+            {
+              "fee_id": "FEE-DL-RETEST",
+              "amount_paise": 30000,
+              "per": "class_attempt"
+            }
           ]
         }
       }
     },
     {
       "id": "FEE-per-bundle-split",
-      "description": "Split plan: each bundle carries its own quote (MCWG now 90000; LMV-TR at 20 another 90000)",
+      "description": "Split plan: each bundle carries its own quote (MCWG now 90000; LMV-TR at 20 another 90000) Tamil Nadu issues digital licences only from 15 Sept 2026 (no smart card).",
       "refs": ["EC-21", "F-03"],
       "input": {
         "as_of": "2026-10-23",
@@ -147,10 +202,24 @@
       },
       "expect": {
         "bundles": [
-          { "classes": ["MCWG"], "fees": { "total_paise": 90000 } },
-          { "classes": ["LMV-TR"], "fees": { "total_paise": 90000 }, "ll_from": "2028-01-10" }
+          {
+            "classes": ["MCWG"],
+            "fees": {
+              "total_paise": 70000
+            }
+          },
+          {
+            "classes": ["LMV-TR"],
+            "fees": {
+              "total_paise": 70000
+            },
+            "ll_from": "2028-01-10"
+          }
         ],
-        "fees": { "classes": ["MCWG"], "total_paise": 90000 },
+        "fees": {
+          "classes": ["MCWG"],
+          "total_paise": 70000
+        },
         "saving": null
       }
     },
@@ -164,7 +233,14 @@
         "dob": "2006-05-05",
         "vehicles": ["scooter", "car"]
       },
-      "expect": { "fees": { "total_paise": 135000, "state_items": { "$len": 2 } } }
+      "expect": {
+        "fees": {
+          "total_paise": 135000,
+          "state_items": {
+            "$len": 2
+          }
+        }
+      }
     },
     {
       "id": "FEE-smart-card-line",

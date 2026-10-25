@@ -4,9 +4,11 @@ import { Disclosure } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { type LanguageOption, LanguagePicker } from "@margdarshak/ui/components/language-picker";
 import { useState } from "react";
+import { BrandMark } from "@/components/shell/brand-mark";
 import { COOKIE_WELCOMED, rememberLanguage } from "@/lib/prefs/device";
 
 interface Props {
+  brandName: string;
   current: string;
   titles: { lang: string; text: string }[];
   hint: string;
@@ -23,7 +25,7 @@ function hasCookie(name: string): boolean {
  * Pre-selects the language the proxy suggested (from the URL / Accept-Language) but never continues
  * on its own. Continue stores the choice for a year and goes to the launch notice once per device.
  */
-export function LanguageScreen({ current, titles, hint, options, more, cta }: Props) {
+export function LanguageScreen({ brandName, current, titles, hint, options, more, cta }: Props) {
   const [value, setValue] = useState<string>(current);
   const [busy, setBusy] = useState(false);
   const labelledBy = titles.map((_, i) => `lang-title-${i}`).join(" ");
@@ -31,6 +33,7 @@ export function LanguageScreen({ current, titles, hint, options, more, cta }: Pr
   return (
     <section className="md-onboard">
       <div className="md-hero__glow" aria-hidden="true" />
+      <BrandMark name={brandName} locale={current} variant="mark" />
       <div className="md-onboard__titles">
         {titles.map((title, i) =>
           i === 0 ? (

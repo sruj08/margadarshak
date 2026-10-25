@@ -46,6 +46,7 @@ export const caseIssues = deviceIssues;
 export function TaskList() {
   const t = useTranslations("apply");
   const tc = useTranslations("common");
+  const tf = useTranslations("flow.digilocker");
   const rt = useRuleText();
   const s = useCaseSession();
   const open = useCaseIssues(s);
@@ -111,6 +112,24 @@ export function TaskList() {
       <p className="mj-caption" role="status">
         <SavedAgo at={s.savedAt} status={s.saveStatus} />
       </p>
+
+      <Link
+        href="/apply/digilocker"
+        className="mj-card mj-card--soft"
+        style={{ textDecoration: "none", color: "inherit" }}
+        data-testid="digilocker-card"
+      >
+        <span className="mj-chips">
+          <StatusGlyph
+            kind={s.answers["digilocker_prefill"] === "yes" ? "done" : "info"}
+            size={20}
+          />
+          <strong>
+            {s.answers["digilocker_prefill"] === "yes" ? tf("cardDone") : tf("cardTitle")}
+          </strong>
+        </span>
+        <span className="mj-caption">{tf("cardLine")}</span>
+      </Link>
 
       <ol className="mj-tasks" aria-label={t("tasksLabel")}>
         {TASKS.map((task, i) => {
