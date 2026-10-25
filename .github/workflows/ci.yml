@@ -60,6 +60,15 @@ jobs:
         with:
           go-version-file: services/api/go.mod # honours the toolchain line
           cache-dependency-path: services/api/go.sum
+      # Some Go tests run TypeScript (the score verifier contract, the clip-pipeline cross-check).
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - name: pnpm install (for the Go tests that start Node)
+        working-directory: ${{ github.workspace }}
+        run: pnpm install --frozen-lockfile
       - name: Cache embedded PostgreSQL binaries
         uses: actions/cache@v4
         with:
