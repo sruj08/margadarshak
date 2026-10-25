@@ -134,9 +134,11 @@
   }
   .mj-toprow {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px 12px;
+    min-width: 0;
     min-height: var(--md-target-min);
   }
   .mj-chips {
@@ -1298,6 +1300,143 @@
     line-height: 1.45;
     color: var(--md-ink-2);
     font-weight: 400;
+  }
+  @media (min-width: 64rem) {
+    .mj-voice,
+    .mj-voice.button {
+      gap: 18px;
+      padding: 16px 22px;
+    }
+    .mj-voice__orb {
+      width: 56px;
+      height: 56px;
+    }
+  }
+
+  /* ---------- Voice sheets (SCR-005): orb, captions, confirm cards, text box ---------- */
+  .mj-voice-live {
+    gap: 12px;
+  }
+  .mj-voice-live > .mj-voice__orb {
+    justify-self: center;
+    width: 64px;
+    height: 64px;
+    margin-block: 10px 6px;
+  }
+  .mj-voice-live > .md-button,
+  .mj-voice-live > .button {
+    width: 100%;
+  }
+  .mj-chip {
+    justify-self: center;
+    max-width: 100%;
+    border-radius: var(--md-r-lg);
+    background: var(--md-success-soft, var(--md-surface-2));
+    color: var(--md-ink);
+  }
+  .mj-chip > summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: var(--md-target-min);
+    padding: 0 16px;
+    font-size: var(--md-text-label);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  .mj-chip > summary::-webkit-details-marker {
+    display: none;
+  }
+  .mj-chip > summary:focus-visible {
+    outline: var(--md-focus-width) solid var(--md-focus);
+    outline-offset: 2px;
+    border-radius: var(--md-r-lg);
+  }
+  .mj-chip > p {
+    padding: 0 16px 12px;
+  }
+  /* The transcript scrolls inside itself, so long talks never push the confirm cards or the text box off screen. */
+  .mj-captions {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    max-height: 28dvh;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+  }
+  .mj-captions:empty {
+    display: none;
+  }
+  .mj-caption--you,
+  .mj-caption--guide {
+    max-width: 88%;
+    padding: 8px 12px;
+    border-radius: var(--md-r-lg);
+    font-size: var(--md-text-label);
+    line-height: var(--md-lh-body);
+    color: var(--md-ink);
+    overflow-wrap: anywhere;
+  }
+  .mj-caption--you {
+    justify-self: end;
+    background: var(--md-primary-soft);
+  }
+  .mj-caption--guide {
+    justify-self: start;
+    background: var(--md-surface-2);
+  }
+  .mj-voice-confirm legend {
+    font-weight: 600;
+  }
+  .mj-voice-confirm__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .mj-voice-confirm__actions > * {
+    flex: 1 1 140px;
+  }
+  .mj-voice-status:empty {
+    display: none;
+  }
+  .mj-voice-form {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  /* Text box and Send share one row, even on a 360 px phone. */
+  .mj-voice-form__row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 0;
+  }
+  .mj-voice-form__row > .mj-input {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .mj-voice-form__row > :last-child {
+    flex: none;
+    min-height: var(--md-target-min);
+  }
+  .mj-voice-chips {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .mj-voice-chips > .md-button,
+  .mj-voice-chips > .button {
+    max-width: 100%;
+    height: auto;
+    min-height: var(--md-target-min);
+    white-space: normal;
+    text-align: start;
   }
 
   /* ---------- Parcel tracker (SCR-070) ---------- */

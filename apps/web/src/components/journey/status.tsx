@@ -123,13 +123,13 @@ export function SarathiStatusBanner({ onStatus }: { onStatus?: (down: boolean) =
             </span>
             <span className="fl-shell__lock">
               <CheckCircle2 aria-hidden="true" />
-              n8n W15
+              {t("watchdogChip")}
             </span>
           </div>
 
           <div className="fl-shell__body" style={{ gap: "14px", padding: "18px 20px" }}>
             <p className="mj-caption" style={{ margin: 0, lineHeight: 1.5 }}>
-              {down ? report?.reason ?? t("watchdogHintDown") : t("watchdogHintUp")}
+              {down ? t("watchdogHintDown") : t("watchdogHintUp")}
             </p>
 
             {down && report?.endpoints && report.endpoints.length > 0 ? (

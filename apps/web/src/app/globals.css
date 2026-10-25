@@ -11,7 +11,8 @@
  * ============================================================================================== */
 @layer base {
   html {
-    scroll-padding-top: 72px;
+    scroll-padding-top: calc(72px + env(safe-area-inset-top));
+    overflow-x: clip;
   }
   body {
     position: relative;
@@ -128,6 +129,7 @@
   }
   .md-page {
     width: 100%;
+    min-width: 0;
     max-width: calc(var(--md-measure) + 2 * var(--md-gutter));
     margin-inline: auto;
     padding: 28px var(--md-gutter) 56px;
@@ -137,6 +139,18 @@
   }
   .md-page--narrow {
     max-width: calc(480px + 2 * var(--md-gutter));
+  }
+  /* Flex and grid children may shrink below their content width: no 360 px horizontal overflow. */
+  .md-page > *,
+  .md-stack > *,
+  .md-section > * {
+    min-width: 0;
+  }
+  @media (min-width: 64rem) {
+    .md-page {
+      padding-top: 36px;
+      padding-bottom: 72px;
+    }
   }
   .md-display {
     font-family: var(--md-font-display);
@@ -340,6 +354,7 @@
     backdrop-filter: var(--md-backdrop-blur);
     -webkit-backdrop-filter: var(--md-backdrop-blur);
     border-bottom: 1px solid var(--md-hairline);
+    padding-top: env(safe-area-inset-top);
   }
   .md-topbar::after {
     content: "";
@@ -360,7 +375,14 @@
     max-width: calc(var(--md-measure-wide) + 2 * var(--md-gutter));
     min-height: 60px;
     margin-inline: auto;
-    padding-inline: var(--md-gutter);
+    padding-inline: max(var(--md-gutter), env(safe-area-inset-left))
+      max(var(--md-gutter), env(safe-area-inset-right));
+  }
+  .md-topbar__brand {
+    min-width: 0;
+  }
+  .md-topbar__actions {
+    flex: none;
   }
   .md-topbar__brand {
     display: inline-flex;
@@ -442,7 +464,7 @@
     inset-inline: 0;
     bottom: 0;
     z-index: var(--md-z-tabbar);
-    padding-bottom: env(safe-area-inset-bottom);
+    padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     background: var(--md-surface-glass, color-mix(in srgb, var(--md-surface) 88%, transparent));
     backdrop-filter: var(--md-backdrop-blur);
     -webkit-backdrop-filter: var(--md-backdrop-blur);
@@ -473,8 +495,10 @@
     justify-items: center;
     align-content: center;
     gap: 2px;
+    min-width: 0;
     min-height: var(--md-tabbar-h);
     padding: 6px 4px;
+    overflow-wrap: anywhere;
     color: var(--md-ink-2);
     font-size: 0.875rem;
     font-weight: 500;
@@ -520,7 +544,9 @@
       inset-inline: 0 auto;
       top: 0;
       width: 240px;
-      padding: 88px 14px 24px;
+      padding: calc(88px + env(safe-area-inset-top)) 14px 24px max(14px, env(safe-area-inset-left));
+      overflow-y: auto;
+      overscroll-behavior: contain;
       border-top: 0;
       border-inline-end: 1px solid var(--md-hairline);
       background: var(--md-bg);
@@ -880,6 +906,9 @@
   .md-dl-stage {
     perspective: 1150px;
     padding: 2px 0;
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
   }
 
   .md-dl-card {

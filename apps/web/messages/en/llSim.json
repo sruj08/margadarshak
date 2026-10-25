@@ -1,7 +1,7 @@
 {
   "title": "LL test simulator",
   "back": "Practise",
-  "label": "Practice and familiarisation, not certification.",
+  "label": "Practice only. This is not your real test.",
   "states": {
     "JK": "Jammu & Kashmir",
     "AN": "Andaman & Nicobar Islands",
@@ -61,7 +61,7 @@
     "start": "Start the exam",
     "practice": "Practise with feedback",
     "yourMocks": "Your mocks: {list}",
-    "deviceNote": "Without the server, a practice exam uses practice questions and is scored on this phone as a practice result."
+    "deviceNote": "Without an internet connection, a practice exam uses practice questions and is scored on this phone."
   },
   "exam": {
     "title": "LL practice exam",
@@ -126,7 +126,7 @@
     "again": "Take another exam",
     "readiness": "See your readiness",
     "missing": "This result isn't on this phone.",
-    "label": "Practice and familiarisation, not certification."
+    "label": "Practice only. This is not your real test."
   },
   "family": {
     "MANDATORY": "Mandatory signs",

@@ -39,6 +39,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // The on-screen keyboard shrinks the layout viewport, so dvh-bounded sheets keep their inputs in view.
+  interactiveWidget: "resizes-content",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fcfcfa" },
     { media: "(prefers-color-scheme: dark)", color: "#0c0c0f" },

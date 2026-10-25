@@ -73,7 +73,7 @@
     "reviewed": "Reviewed explanation",
     "thinking": "Coach is thinking…",
     "status": {
-      "preview": "The AI coach needs the live server. The reviewed explanation is shown above.",
+      "preview": "The AI coach isn't connected right now. The checked explanation is shown above.",
       "offline": "You're offline. The reviewed explanation is shown above.",
       "signin": "Sign in and turn on AI help to hear the coach explain each answer.",
       "consent": "Turn on AI help to hear the coach explain each answer and ask you a quick question.",
@@ -132,7 +132,7 @@
     "mock": "Take a mock test",
     "review": "Review today's questions",
     "status": {
-      "preview": "The AI coach needs the live server; this summary is counted on this phone.",
+      "preview": "The AI coach isn't connected right now; this summary was worked out on this phone.",
       "offline": "You are offline; this summary is counted on this phone.",
       "signin": "Sign in and turn on AI help for a spoken summary from the coach.",
       "consent": "Turn on AI help for a spoken summary from the coach.",

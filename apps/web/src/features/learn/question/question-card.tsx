@@ -147,21 +147,24 @@ export function QuestionCard({
                 checked={confidence === c}
                 onChange={() => setConfidence(c)}
               />
-              <span>{t(`conf${c}`)}</span>
+              <ConfLabel text={t(`conf${c}`)} />
             </label>
           ))}
         </div>
       </fieldset>
       {result === null ? (
-        <button
-          type="button"
-          className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
-          disabled={!ready}
-          aria-disabled={!ready}
-          onClick={check}
-        >
-          {t("check")}
-        </button>
+        <>
+          <p className="ml-keys">{t("keys")}</p>
+          <button
+            type="button"
+            className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
+            disabled={!ready}
+            aria-disabled={!ready}
+            onClick={check}
+          >
+            {t("check")}
+          </button>
+        </>
       ) : (
         <>
           <div
@@ -203,5 +206,19 @@ export function QuestionCard({
         </>
       )}
     </div>
+  );
+}
+
+/** "Certain · 100%" as two lines (word, then percent); the separator stays in the label text for
+ * screen readers and for getByLabelText, it is only hidden visually. */
+function ConfLabel({ text }: { text: string }) {
+  const at = text.lastIndexOf(" · ");
+  if (at < 0) return <span>{text}</span>;
+  return (
+    <span>
+      <span className="ml-conf__word">{text.slice(0, at)}</span>
+      <span className="md-sr-only"> · </span>
+      <span className="ml-conf__pct">{text.slice(at + 3)}</span>
+    </span>
   );
 }

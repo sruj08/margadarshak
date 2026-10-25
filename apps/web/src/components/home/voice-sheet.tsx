@@ -205,7 +205,7 @@ export function VoiceSheet({
       description={t("comingSoon")}
       closeLabel={ta("close")}
     >
-      <div className="mj-screen" style={{ gap: 14 }} data-screen="SCR-005">
+      <div className="mj-screen mj-voice-live" data-screen="SCR-005">
         <p>{t("whatItWillDo")}</p>
         <p className="mj-muted">{t("boundary")}</p>
         <Button
@@ -218,7 +218,7 @@ export function VoiceSheet({
           <Mic aria-hidden="true" />
           {phase === "recording" ? t("stop") : t("speak")}
         </Button>
-        <p className="mj-caption" role="status" aria-live="polite">
+        <p className="mj-caption mj-voice-status" role="status" aria-live="polite">
           {phase === "recording"
             ? t("listening")
             : phase === "thinking"
@@ -228,8 +228,7 @@ export function VoiceSheet({
                 : ""}
         </p>
         <form
-          className="mj-screen"
-          style={{ gap: 10 }}
+          className="mj-voice-form"
           onSubmit={(e) => {
             e.preventDefault();
             ask(text);
@@ -252,7 +251,7 @@ export function VoiceSheet({
               data-testid="tell-us"
             />
           </div>
-          <fieldset className="mj-chips" style={{ border: 0, padding: 0, margin: 0 }}>
+          <fieldset className="mj-chips mj-voice-chips">
             <legend className="md-sr-only">{t("examples")}</legend>
             {chips.map((c) => (
               <Button

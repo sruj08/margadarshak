@@ -12,7 +12,7 @@
     "offline": "You're offline. Mock tests and saved lessons still work.",
     "family": "Family mode: you're learning in {holder}'s account. Everything works here, AI included.",
     "parent": "your parent",
-    "deviceEstimate": "On-device estimate from the answers on this phone. The server's number replaces it when you're online.",
+    "deviceEstimate": "A rough number worked out on this phone from your answers. It updates when you're back online.",
     "savedHere": "Saved on this phone. It syncs when you're online."
   },
   "topics": {
@@ -27,6 +27,7 @@
     "conf75": "Fairly · 75%",
     "conf100": "Certain · 100%",
     "check": "Check",
+    "keys": "Keyboard: 1–4 picks an answer, Q / W / E sets how sure you are, Enter checks.",
     "right": "Right",
     "notQuite": "Not quite",
     "youChose": "You chose: {a}",
@@ -41,8 +42,8 @@
     "emptyTitle": "All caught up.",
     "emptyLine": "Your next review opens tomorrow.",
     "emptyCta": "Practise something else",
-    "pending": "Saved on this phone, will sync",
-    "synced": "Synced",
+    "pending": "Saved on this phone. We'll save it online when you're connected.",
+    "synced": "Saved",
     "doneTitle": "Review done",
     "doneScore": "{n} cards · {right} right",
     "doneCal": "Sure and wrong: {k}",
@@ -162,7 +163,7 @@
     "overSure": "over-sure",
     "window": "Over your last {n} rated answers on this phone.",
     "sureWrong": "Sure and wrong this week: {k}",
-    "badge": "Calibrated badge: needs a Brier score of 0.18 or less over 40 or more answers.",
+    "badge": "Calibrated badge: earned when, over 40 or more answers, how sure you said you were closely matches how often you were right.",
     "cta": "Practise my \"sure but wrong\" cards"
   },
   "practise": {
@@ -173,7 +174,7 @@
     "trains": "Trains {modules}",
     "draft": "Draft, not medical advice",
     "soon": "Coming soon",
-    "label": "Practice and familiarisation, not certification."
+    "label": "Practice only. This is not your real test."
   },
   "lite": {
     "skip": "Skip to main content",

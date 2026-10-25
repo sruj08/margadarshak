@@ -211,7 +211,7 @@
     "retry": "Try again",
     "row": "{date}: {pct} out of 100",
     "rowPending": "{date}: score after it's checked",
-    "provisional": "provisional",
+    "provisional": "not checked yet",
     "checked": "checked"
   }
 }

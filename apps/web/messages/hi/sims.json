@@ -211,7 +211,7 @@
     "retry": "फिर कोशिश करें",
     "row": "{date}: 100 में से {pct}",
     "rowPending": "{date}: जाँच के बाद स्कोर",
-    "provisional": "अस्थायी",
+    "provisional": "अभी जाँचा नहीं गया",
     "checked": "जाँचा गया"
   }
 }

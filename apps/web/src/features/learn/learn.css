@@ -245,6 +245,10 @@
   .ml-q {
     display: grid;
     gap: 12px;
+    min-width: 0;
+  }
+  .ml-q > * {
+    min-width: 0;
   }
   .ml-q fieldset {
     display: grid;
@@ -290,6 +294,11 @@
     outline: var(--md-focus-width) solid var(--md-focus);
     outline-offset: 2px;
   }
+  .ml-opt > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: var(--md-lh-body);
+  }
   .ml-opt input {
     width: 20px;
     height: 20px;
@@ -304,10 +313,69 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
   }
+  /* Radio above the words, so "Certain · 100%" gets the whole cell width on a 360 px phone. */
   .ml-conf .ml-opt {
+    flex-direction: column;
     justify-content: center;
+    gap: 6px;
     text-align: center;
-    padding: 8px;
+    padding: 10px 6px;
+    font-size: var(--md-text-label);
+  }
+  .ml-conf .ml-opt > span {
+    display: grid;
+    gap: 2px;
+    overflow-wrap: normal;
+    text-wrap: balance;
+  }
+  .ml-conf__word {
+    font-weight: 600;
+  }
+  .ml-conf__pct {
+    font-family: var(--md-font-num);
+    font-variant-numeric: tabular-nums;
+    color: var(--md-ink-2);
+  }
+  .ml-q > .ml-chip {
+    justify-self: start;
+  }
+  /* Keyboard hint: only where there is a keyboard and a fine pointer (laptops). */
+  .ml-keys {
+    display: none;
+    font-size: var(--md-text-caption);
+    color: var(--md-ink-2);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ml-keys {
+      display: block;
+    }
+  }
+  /* Laptop: a centred card; with a sign, the sign sits beside the question and its options. */
+  @media (min-width: 64rem) {
+    .ml-q {
+      width: 100%;
+      max-width: 680px;
+      margin-inline: auto;
+    }
+    .ml-q:has(> .ml-sign) {
+      max-width: 860px;
+      grid-template-columns: 220px minmax(0, 1fr);
+      column-gap: 28px;
+      align-items: start;
+    }
+    .ml-q:has(> .ml-sign) > * {
+      grid-column: 2;
+    }
+    .ml-q:has(> .ml-sign) > .ml-sign {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+      position: sticky;
+      top: calc(76px + env(safe-area-inset-top));
+    }
+    .ml-q:has(> .ml-sign) > .ml-sign ~ .ml-sign {
+      grid-row: auto;
+      position: static;
+    }
   }
   .ml-feedback {
     display: grid;

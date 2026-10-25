@@ -461,7 +461,7 @@
     flex-direction: column;
     width: 100%;
     max-width: 640px;
-    max-height: min(88dvh, 760px);
+    max-height: min(88dvh, 720px);
     margin-inline: auto;
     background: var(--md-overlay-glass, var(--md-overlay));
     backdrop-filter: saturate(180%) blur(24px);
@@ -530,6 +530,8 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     color: var(--md-ink);
     font-size: var(--md-text-body);
     line-height: var(--md-lh-body);

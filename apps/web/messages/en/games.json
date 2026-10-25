@@ -1,6 +1,6 @@
 {
   "meta": { "hiReview": "source" },
-  "label": "Practice and familiarisation, not certification",
+  "label": "Practice only. This is not your real test.",
   "checkedOn": "checked {date}",
   "source": {
     "heading": "Where this comes from",
@@ -16,11 +16,11 @@
     "offlineBody": "Practice still works on this phone. Scores are checked when you're back online."
   },
   "stage": {
-    "starting": "Getting your session ready",
+    "starting": "Getting your game ready",
     "submitting": "Saving your run",
     "ready": "Everything is loaded. Start when you're ready.",
     "start": "Start",
-    "device": "Practice on this phone: the score here is provisional and doesn't count for your card.",
+    "device": "You're practising on this phone. This score hasn't been checked yet and doesn't count for your card.",
     "loadingGame": "Loading the game",
     "loading": "Loading {x} of {y} MB",
     "loadingItems": "Loading {x} of {y}",
@@ -42,7 +42,7 @@
   "reveal": {
     "checked": "Checked",
     "queued": "Saved on this phone. It will be checked when you're online.",
-    "provisional": "Provisional: not checked yet",
+    "provisional": "Not checked yet: this score may change",
     "updated": "Score updated after check",
     "passed": "Passed",
     "notyet": "Not yet",
@@ -100,10 +100,10 @@
     "title": "Your debrief",
     "offline": "You're offline. These notes are made on this phone.",
     "missing": "This session isn't on this phone.",
-    "missingLine": "Debriefs are kept on the phone that played the session.",
+    "missingLine": "Your results stay on the phone you played on.",
     "practise": "Go to practice",
     "waiting": "Your debrief appears once this run is checked.",
-    "provisional": "Provisional score: these notes use this phone's check.",
+    "provisional": "Score not checked yet: these notes use this phone's check.",
     "more": "More",
     "share": "Share my score",
     "boundary": "AI can't book, pay or submit",
@@ -117,7 +117,7 @@
     "cta": "Start the next drill",
     "improved": "Something from your last session didn't come up this time.",
     "why": "Why these numbers?",
-    "whyLine": "Every number on this card was measured in your session by the app's scoring code. The coach only words it.",
+    "whyLine": "Every number on this card was measured while you played. The coach only puts it into words.",
     "whyMetres": "Distance = seconds late × speed ÷ 3.6 (km/h to metres per second).",
     "whyNone": "This card has no measured numbers.",
     "helpful": "Was this helpful?",

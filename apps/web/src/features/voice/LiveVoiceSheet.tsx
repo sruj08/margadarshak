@@ -63,7 +63,7 @@ export function LiveVoiceSheet({
       description={status}
       closeLabel={ta("close")}
     >
-      <div className="mj-screen" style={{ gap: 12 }} data-screen="SCR-005" data-testid="voice-live">
+      <div className="mj-screen mj-voice-live" data-screen="SCR-005" data-testid="voice-live">
         <div className={`mj-voice__orb mj-voice__orb--${v.phase}`} aria-hidden="true">
           <Mic size={26} strokeWidth={1.75} />
         </div>
@@ -97,14 +97,14 @@ export function LiveVoiceSheet({
         </ol>
 
         {v.confirm.map((c) => (
-          <fieldset key={c.actionId} className="mj-card mj-card--soft">
+          <fieldset key={c.actionId} className="mj-card mj-card--soft mj-voice-confirm">
             <legend>
               {c.kind === "navigate" ? t("live.confirmOpen") : t("live.confirmField")}
             </legend>
             <p>
               <strong>{c.label}</strong>
             </p>
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="mj-voice-confirm__actions">
               <Button
                 variant="primary"
                 onPress={() => v.accept(c.actionId)}
@@ -140,8 +140,7 @@ export function LiveVoiceSheet({
         {v.dogriDraft !== null ? <p className="mj-caption">{t("live.dogriCheck")}</p> : null}
 
         <form
-          className="mj-screen"
-          style={{ gap: 8 }}
+          className="mj-voice-form"
           onSubmit={(e) => {
             e.preventDefault();
             v.sendText(text);
@@ -151,22 +150,24 @@ export function LiveVoiceSheet({
           <Label htmlFor="voice-text" className="md-field__label">
             {t("live.typeHere")}
           </Label>
-          <Input
-            id="voice-text"
-            className="mj-input"
-            value={text}
-            maxLength={500}
-            autoComplete="off"
-            onChange={(e) => setText(e.target.value)}
-            data-testid="voice-text"
-          />
-          <Button
-            variant="primary"
-            type="submit"
-            isDisabled={text.trim() === "" || v.phase === "connecting"}
-          >
-            {t("live.send")}
-          </Button>
+          <div className="mj-voice-form__row">
+            <Input
+              id="voice-text"
+              className="mj-input"
+              value={text}
+              maxLength={500}
+              autoComplete="off"
+              onChange={(e) => setText(e.target.value)}
+              data-testid="voice-text"
+            />
+            <Button
+              variant="primary"
+              type="submit"
+              isDisabled={text.trim() === "" || v.phase === "connecting"}
+            >
+              {t("live.send")}
+            </Button>
+          </div>
         </form>
         <p className="mj-caption">{t("live.onScreenWins")}</p>
         <p className="mj-caption">{t("privacy")}</p>
