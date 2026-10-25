@@ -43,7 +43,7 @@ and short simulations with an AI coach train the road skills India's test never 
 > paise, dates from the rules, scores from a deterministic engine that the server replays. The
 > language model narrates and may only pick IDs from allow-lists. If it fails, a reviewed template answers instead.
 
-Built by **Team Chanakya** ([@Nestiq Private Limited](https://github.com/Sruj08)) for **HackCache '26**
+Built by **Team Chanakya** for **HackCache '26**
 (CachedInfo × GCET Jammu), PS1: *Making mParivahan & Driving Licence Services Accessible to Everyone*.
 
 ---
@@ -579,5 +579,5 @@ Contributing: [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) · [`CODE_OF_CONDUCT.
 
 <div align="center">
 <br/>
-Built by <b>Team Chanakya</b> · Nestiq Private Limited
+Built by <b>Team Chanakya</b>
 </div>
