@@ -1,5 +1,6 @@
 "use client";
 
+import "./flow.css";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { EmptyState } from "@margdarshak/ui/components/empty-state";

@@ -39,6 +39,19 @@ func (s *Server) GetHealth(w http.ResponseWriter, r *http.Request, params gen.Ge
 				status = gen.HealthStatusDegraded
 			}
 		}
+		if s.deps.Registry != nil && s.deps.Registry.SarathiMock() != nil {
+			if mh := s.deps.Registry.SarathiMock().Health(r.Context()); mh.Status == "down" {
+				impl := "deeplink"
+				if prev, ok := adaptersOut["sarathi"]; ok && prev.Implementation != nil {
+					impl = *prev.Implementation
+				}
+				st := gen.HealthAdaptersStatus("down")
+				adaptersOut["sarathi"] = healthAdapter{Implementation: &impl, Status: &st}
+				if status == gen.HealthStatusOk {
+					status = gen.HealthStatusDegraded
+				}
+			}
+		}
 	}
 	if params.Deep != nil && *params.Deep {
 		pings := map[string]func(context.Context) error{"postgres": func(ctx context.Context) error { _, err := s.deps.DB.Ping(ctx); return err }}

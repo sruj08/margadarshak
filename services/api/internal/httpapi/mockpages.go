@@ -1,11 +1,13 @@
 package httpapi
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -77,6 +79,8 @@ func (s *Server) mountMockPages(r chi.Router) {
 	r.Post("/mock/digilocker/authorize", s.mockDigiLockerDecide)
 	r.Get("/mock/payment/{intent}", s.mockPaymentPage)
 	r.Post("/mock/payment/{intent}", s.mockPaymentComplete)
+	r.Get("/mock/sarathi/watchdog", s.mockSarathiWatchdog)
+	r.Post("/mock/sarathi/watchdog", s.mockSarathiWatchdog)
 	// P2 clip media (OBJECT_STORE=mock): signed, expiring URLs with Range support (decision D5).
 	if s.deps.MockMedia != nil {
 		r.Handle("/mock/media/*", s.deps.MockMedia)
@@ -203,4 +207,81 @@ func firstToken(t []string) string {
 		return ""
 	}
 	return t[0]
+}
+
+type sarathiEndpointStatus struct {
+	Name       string `json:"name"`
+	Status     string `json:"status"`
+	HTTPStatus int    `json:"http_status"`
+	LatencyMs  int    `json:"latency_ms"`
+}
+
+type sarathiWatchdogResponse struct {
+	Status     string                  `json:"status"`
+	Mode       string                  `json:"mode"`
+	HTTPStatus int                     `json:"http_status"`
+	LatencyMs  int                     `json:"latency_ms"`
+	CheckedAt  string                  `json:"checked_at"`
+	Source     string                  `json:"source"`
+	WorkflowID string                  `json:"workflow_id"`
+	Reason     string                  `json:"reason"`
+	Endpoints  []sarathiEndpointStatus `json:"endpoints"`
+}
+
+// mockSarathiWatchdog backs the 1-click judge toggle for W15 (Sarathi Portal Outage Watchdog, EC-11).
+// It allows either the n8n W15 workflow or the browser fallback to inject/clear FaultOutage on
+// SarathiMock so GET /v1/health immediately reflects adapters.sarathi.status = "down" | "ok".
+func (s *Server) mockSarathiWatchdog(w http.ResponseWriter, r *http.Request) {
+	mode := strings.TrimSpace(r.URL.Query().Get("mode"))
+	if mode == "" && r.Body != nil {
+		var body struct {
+			Mode string `json:"mode"`
+		}
+		_ = json.NewDecoder(r.Body).Decode(&body)
+		mode = strings.TrimSpace(body.Mode)
+	}
+	if mode == "" {
+		mode = "status"
+	}
+
+	if s.deps.Registry != nil && s.deps.Registry.SarathiMock() != nil {
+		switch mode {
+		case "simulate_down":
+			s.deps.Registry.SarathiMock().InjectFault(ports.FaultOutage)
+		case "restore", "probe":
+			s.deps.Registry.SarathiMock().InjectFault(ports.FaultNone)
+		}
+	}
+
+	status := "ok"
+	if s.deps.Registry != nil && s.deps.Registry.SarathiMock() != nil {
+		if h := s.deps.Registry.SarathiMock().Health(r.Context()); h.Status == "down" {
+			status = "down"
+		}
+	}
+
+	httpStatus := 200
+	latencyMs := 178
+	reason := "Sarathi stateSelection.do responded within normal threshold"
+	if status == "down" {
+		httpStatus = 503
+		latencyMs = 4210
+		reason = "HTTP 503 Service Unavailable · Parivahan afternoon peak timeout (via n8n W15)"
+	}
+
+	writeJSON(w, http.StatusOK, sarathiWatchdogResponse{
+		Status:     status,
+		Mode:       mode,
+		HTTPStatus: httpStatus,
+		LatencyMs:  latencyMs,
+		CheckedAt:  s.now().UTC().Format(time.RFC3339),
+		Source:     "n8n-w15-bridge",
+		WorkflowID: "W15-sarathi-outage-watchdog",
+		Reason:     reason,
+		Endpoints: []sarathiEndpointStatus{
+			{Name: "State Selection (stateSelection.do)", Status: status, HTTPStatus: httpStatus, LatencyMs: latencyMs},
+			{Name: "LL Application (newLLDet.do)", Status: status, HTTPStatus: httpStatus, LatencyMs: latencyMs + 110},
+			{Name: "Form 1A / Slot Booking (llSlotBook.do)", Status: status, HTTPStatus: httpStatus, LatencyMs: latencyMs + 85},
+		},
+	})
 }

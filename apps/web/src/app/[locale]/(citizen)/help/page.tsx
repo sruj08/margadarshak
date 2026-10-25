@@ -1,6 +1,10 @@
+import "@/components/journey/journey.css";
 import { Banner } from "@margdarshak/ui/components/banner";
+import { buttonClassName } from "@margdarshak/ui/components/button-class";
+import { SlidersHorizontal } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { VoiceButton } from "@/components/home/voice-sheet";
 import { Link } from "@/i18n/navigation";
 import { enterLocale } from "@/i18n/page-locale";
 import { GOV_HELPDESK_EMAIL, GRIEVANCE_EMAIL } from "@/lib/site";
@@ -10,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-/** Help tab (SCR-181): contacts, scam hygiene, and the voice guide's honest scope. */
+/** Help tab (SCR-181): contacts, scam hygiene, live voice guide, and AI/Voice settings shortcut. */
 export default async function HelpPage({ params }: { params: Promise<{ locale: string }> }) {
   await enterLocale(params);
   const t = await getTranslations("help");
@@ -28,6 +32,17 @@ export default async function HelpPage({ params }: { params: Promise<{ locale: s
           {t("voiceTitle")}
         </h2>
         <p>{t("voiceBody")}</p>
+        <VoiceButton />
+        <div className="mj-actions">
+          <Link
+            href="/settings"
+            className={buttonClassName({ variant: "secondary" })}
+            data-testid="help-settings-link"
+          >
+            <SlidersHorizontal aria-hidden="true" size={16} />
+            <span>{t("openSettingsCta")}</span>
+          </Link>
+        </div>
       </section>
 
       <section className="md-section" aria-labelledby="help-contact">

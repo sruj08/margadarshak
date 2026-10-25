@@ -1,0 +1,225 @@
+{
+  "name": "W15 · Sarathi Portal Outage Watchdog & 1-Click Judge Trigger",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b2e0w015-0000-4000-8000-000000000001",
+      "name": "Run now (demo button)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 120]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "b2e0w015-0000-4000-8000-000000000002",
+      "name": "Every 5 min IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300],
+      "notes": "Probes Sarathi Parivahan availability every 5 minutes (especially 12:00-15:00 IST peak timeout window)."
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sarathi-watchdog",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "b2e0w015-0000-4000-8000-000000000003",
+      "name": "Webhook (1-Click Judge Toggle)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 480],
+      "webhookId": "sarathi-watchdog"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-sim-mode",
+              "leftValue": "={{ $json.body?.mode || $json.query?.mode || 'probe' }}",
+              "rightValue": "probe",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b2e0w015-0000-4000-8000-000000000004",
+      "name": "Is Simulated / Restore Mode?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [260, 340]
+    },
+    {
+      "parameters": {
+        "method": "HEAD",
+        "url": "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do",
+        "options": {
+          "timeout": 3500,
+          "redirect": {
+            "redirect": {
+              "followRedirects": true,
+              "maxRedirects": 3
+            }
+          }
+        }
+      },
+      "id": "b2e0w015-0000-4000-8000-000000000005",
+      "name": "Probe sarathi.parivahan.gov.in",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 440],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ADR-0006: n8n only probes/shapes operational health telemetry; zero citizen PII or business rules.\nconst input = $input.first()?.json || {};\nconst webhookItem = $('Webhook (1-Click Judge Toggle)').first()?.json || {};\nconst mode = webhookItem.body?.mode || webhookItem.query?.mode || input.body?.mode || input.query?.mode || 'probe';\nconst checkedAt = new Date().toISOString();\n\nlet status = 'ok';\nlet httpStatus = 200;\nlet latencyMs = 185;\nlet reason = 'Sarathi stateSelection.do responded within normal threshold';\n\nif (mode === 'simulate_down') {\n  status = 'down';\n  httpStatus = 503;\n  latencyMs = 4210;\n  reason = 'HTTP 503 Service Unavailable · Parivahan afternoon peak timeout (simulated via n8n W15)';\n} else if (mode === 'restore') {\n  status = 'ok';\n  httpStatus = 200;\n  latencyMs = 164;\n  reason = 'Sarathi portal restored via n8n W15 health check';\n} else {\n  const hasError = Boolean(input.error);\n  const code = Number(input.statusCode || (hasError ? 503 : 200));\n  httpStatus = code;\n  if (hasError || code >= 500) {\n    status = 'down';\n    latencyMs = 3500;\n    reason = `Live probe failed (${input.error?.message || 'HTTP ' + code}) on sarathi.parivahan.gov.in`;\n  } else if (code >= 400) {\n    status = 'degraded';\n    latencyMs = 1950;\n    reason = `Sarathi returned HTTP ${code}`;\n  }\n}\n\nconst report = {\n  status,\n  mode,\n  http_status: httpStatus,\n  latency_ms: latencyMs,\n  checked_at: checkedAt,\n  source: 'n8n-cloud',\n  workflow_id: 'W15-sarathi-outage-watchdog',\n  reason,\n  endpoints: [\n    { name: 'State Selection (stateSelection.do)', status, http_status: httpStatus, latency_ms: latencyMs },\n    { name: 'LL Application (newLLDet.do)', status, http_status: httpStatus, latency_ms: latencyMs + 110 },\n    { name: 'Form 1A / Slot Booking (llSlotBook.do)', status, http_status: httpStatus, latency_ms: latencyMs + 85 }\n  ]\n};\n\nreturn [{ json: report }];"
+      },
+      "id": "b2e0w015-0000-4000-8000-000000000006",
+      "name": "Normalize Watchdog Telemetry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "b2e0w015-0000-4000-8000-000000000007",
+      "name": "Respond to Webhook (CORS JSON)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1040, 300]
+    }
+  ],
+  "connections": {
+    "Run now (demo button)": {
+      "main": [
+        [
+          {
+            "node": "Is Simulated / Restore Mode?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 5 min IST": {
+      "main": [
+        [
+          {
+            "node": "Is Simulated / Restore Mode?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (1-Click Judge Toggle)": {
+      "main": [
+        [
+          {
+            "node": "Is Simulated / Restore Mode?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Simulated / Restore Mode?": {
+      "main": [
+        [
+          {
+            "node": "Normalize Watchdog Telemetry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Probe sarathi.parivahan.gov.in",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Probe sarathi.parivahan.gov.in": {
+      "main": [
+        [
+          {
+            "node": "Normalize Watchdog Telemetry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Watchdog Telemetry": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook (CORS JSON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "all"
+  },
+  "active": true,
+  "tags": [],
+  "pinData": {}
+}

@@ -21,6 +21,11 @@ export async function SiteFooter({ compact = false }: { compact?: boolean }) {
         {compact ? null : (
           <ul className="md-footer__links">
             <li>
+              <Link href="/settings" className="md-footer__link">
+                {t("settings")}
+              </Link>
+            </li>
+            <li>
               <Link href="/welcome" className="md-footer__link">
                 {t("about")}
               </Link>

@@ -84,6 +84,12 @@ export const GROUPS: Record<GroupId, ServiceItem[]> = {
       live: true,
       synonyms: "road sign photo camera meaning signboard संकेत फ़ोटो कैमरा बोर्ड",
     },
+    {
+      id: "settings",
+      href: "/settings",
+      live: true,
+      synonyms: "settings ai coach voice commands microphone speak theme सेटिंग्स कोच आवाज़ माइक",
+    },
   ],
   holder: [
     {

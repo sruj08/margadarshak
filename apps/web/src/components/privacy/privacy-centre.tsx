@@ -33,11 +33,11 @@ import { GRIEVANCE_EMAIL } from "@/lib/site";
 
 /** Purposes a person can switch here (PRIVACY.md §4.2 mapped to the API-60 enum). */
 const PURPOSES = [
+  "ai_coach",
+  "ai_voice",
   "whatsapp_updates",
   "email_updates",
   "web_push",
-  "ai_coach",
-  "ai_voice",
   "analytics",
   "field_study",
   "helper_link",

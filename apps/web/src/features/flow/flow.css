@@ -48,25 +48,39 @@
   .fl-shell__bar--bank {
     background: linear-gradient(90deg, #22409a, #3557c0);
   }
+  .fl-shell__bar--outage {
+    background: linear-gradient(90deg, #991b1b, #b45309);
+  }
+  .fl-shell__ident {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+  }
   .fl-shell__brand {
     display: grid;
-    gap: 2px;
-    line-height: 1.15;
+    gap: 3px;
+    min-width: 0;
+    line-height: 1.2;
   }
   .fl-shell__brand strong {
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     letter-spacing: 0.01em;
   }
   .fl-shell__brand span {
     font-size: var(--md-text-caption);
-    opacity: 0.85;
+    opacity: 0.88;
   }
   .fl-shell__lock {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    flex-shrink: 0;
+    white-space: nowrap;
     font-size: var(--md-text-caption);
-    opacity: 0.9;
+    opacity: 0.92;
   }
   .fl-shell__lock svg {
     width: 14px;
@@ -124,11 +138,17 @@
     display: grid;
     grid-template-columns: 40px 1fr auto;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
+    gap: 14px;
+    padding: 14px 16px;
     border-radius: var(--md-r-lg);
     background: var(--md-surface-2);
     box-shadow: inset 0 0 0 1px var(--md-hairline);
+  }
+  .fl-doc__text {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+    line-height: 1.35;
   }
   .fl-doc__icon {
     display: grid;
@@ -146,6 +166,7 @@
   .fl-doc small {
     display: block;
     color: var(--md-ink-3);
+    line-height: 1.4;
   }
 
   /* ---------- Method tabs, options ---------- */
@@ -296,12 +317,18 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    flex-shrink: 0;
+    white-space: nowrap;
     padding: 4px 10px;
     border-radius: var(--md-r-full);
     background: var(--md-success-soft);
     color: var(--md-success);
     font-weight: 700;
     font-size: var(--md-text-caption);
+  }
+  .fl-stamp--warn {
+    background: var(--md-warning-soft);
+    color: var(--md-warning-ink);
   }
 
   /* ---------- Processing ---------- */

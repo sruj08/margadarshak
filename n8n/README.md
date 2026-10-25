@@ -13,9 +13,12 @@ The team has **n8n Pro (cloud)** through the HackCache all-team perk ("n8n pro m
 n8n/
 ├── README.md
 └── workflows/
+    ├── P01-demo-sweep.json                 Manual + 08:00 IST demo sweep → API-65
     ├── W01-case-clock-tick.json            Schedule 06:30 IST → API-65 → Render Workflows sweep → watchdog (the backend notifier delivers)
     ├── W08-clip-review-queue.json          Webhook from Workflows → rater 1 → rater 2 (our page resumes the Wait node) → finalize
-    └── W09-live-intel-moderation.json      Webhook for reports the backend flags → moderator WhatsApp approve/reject → API-68
+    ├── W09-live-intel-moderation.json      Webhook for reports the backend flags → moderator WhatsApp approve/reject → API-68
+    ├── W14-field-test-capture.json         Webhook for consented field-study session-end summaries
+    └── W15-sarathi-outage-watchdog.json    Every 5m + 1-click judge webhook (`/webhook/sarathi-watchdog`) → probes `sarathi.parivahan.gov.in` / simulates HTTP 503 outage for EC-11 offline prep fallback
 ```
 W07 and W12–W18 are specified in N8N_WORKFLOWS.md and exported here as they are built. W02–W06, W10 and W11 were citizen-facing and moved to the backend (N8N_WORKFLOWS §0.2); their numbers are not reused.
 

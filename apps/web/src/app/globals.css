@@ -1812,9 +1812,40 @@
     gap: 12px;
   }
   .md-settings__heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: var(--md-text-label);
     font-weight: 600;
     color: var(--md-ink);
+  }
+  .md-settings__ai-box {
+    padding: 16px;
+    border-radius: var(--md-r-xl);
+    background: color-mix(in oklch, var(--md-primary-soft) 55%, var(--md-surface));
+    border: 1.5px solid color-mix(in oklch, var(--md-primary) 30%, var(--md-hairline));
+    box-shadow: var(--md-e0);
+  }
+  .md-settings__ai-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .md-settings-hub__ai-card {
+    border: 1.5px solid color-mix(in oklch, var(--md-primary) 35%, var(--md-hairline));
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--md-primary-soft) 45%, var(--md-surface)) 0%,
+      var(--md-surface) 100%
+    );
+  }
+  .md-settings-hub__tools {
+    display: grid;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--md-hairline);
   }
   .md-settings__hint {
     font-size: var(--md-text-label);
@@ -1909,6 +1940,9 @@
     text-align: start;
   }
   .md-switch__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-weight: 600;
     font-size: var(--md-text-label);
     color: var(--md-ink);
