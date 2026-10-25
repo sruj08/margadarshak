@@ -5,11 +5,12 @@ import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { Sheet } from "@margdarshak/ui/components/sheet";
 import { ArrowRight, Mic, Monitor, Moon, Sparkles, Sun, Volume2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { APP_LOCALES, LANGUAGE_META } from "@/i18n/routing";
 import { changeConsent, listConsents } from "@/lib/journey/api";
-import { clearThisDevice } from "@/lib/prefs/device";
+import { clearThisDevice, rememberLanguage } from "@/lib/prefs/device";
 import type { ThemePref } from "@/lib/prefs/prefs";
 import { usePrefs } from "./providers";
 
@@ -28,6 +29,8 @@ export function SettingsSheet({
 }) {
   const t = useTranslations("settings");
   const ta = useTranslations("a11y");
+  const locale = useLocale();
+  const pathname = usePathname();
   const { prefs, setPrefs } = usePrefs();
   const [confirming, setConfirming] = useState(false);
   const [clearing, setClearing] = useState(false);
@@ -100,9 +103,9 @@ export function SettingsSheet({
   const allAiActive = aiCoachOn && aiVoiceOn && coachSpeakOn;
 
   const themes: { id: ThemePref; label: string; icon: React.ReactNode }[] = [
-    { id: "system", label: t("themeSystem"), icon: <Monitor aria-hidden="true" size={18} /> },
     { id: "light", label: t("themeLight"), icon: <Sun aria-hidden="true" size={18} /> },
     { id: "dark", label: t("themeDark"), icon: <Moon aria-hidden="true" size={18} /> },
+    { id: "system", label: t("themeSystem"), icon: <Monitor aria-hidden="true" size={18} /> },
   ];
 
   return (
@@ -279,6 +282,28 @@ export function SettingsSheet({
           <h3 id="md-settings-language" className="md-settings__heading">
             {t("language")}
           </h3>
+          <div className="md-settings__lang-grid">
+            {APP_LOCALES.map((code) => {
+              const meta = LANGUAGE_META[code];
+              const active = locale === code;
+              return (
+                <Link
+                  key={code}
+                  href={pathname}
+                  locale={code}
+                  lang={code}
+                  onClick={() => {
+                    rememberLanguage(code);
+                    onOpenChange(false);
+                  }}
+                  aria-current={active ? "true" : undefined}
+                  className={buttonClassName({ variant: active ? "primary" : "secondary" })}
+                >
+                  <span>{meta.nativeLabel}</span>
+                </Link>
+              );
+            })}
+          </div>
           <Link href="/language" className={buttonClassName({ variant: "secondary" })}>
             {t("changeLanguage")}
           </Link>

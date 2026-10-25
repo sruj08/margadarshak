@@ -19,10 +19,12 @@ function fakeHtml() {
 }
 
 describe("display preferences (MD-023)", () => {
-  it("falls back to defaults on missing or broken storage", () => {
+  it("falls back to light mode defaults on missing or broken storage", () => {
+    expect(DEFAULT_PREFS.theme).toBe("light");
     expect(parsePrefs(null)).toEqual(DEFAULT_PREFS);
     expect(parsePrefs("{not json")).toEqual(DEFAULT_PREFS);
     expect(parsePrefs(JSON.stringify({ theme: "neon" }))).toEqual(DEFAULT_PREFS);
+    expect(parsePrefs(JSON.stringify({ theme: "system" })).theme).toBe("system");
   });
 
   it("applies theme, contrast and reduced motion as the attributes tokens.css reads", () => {
@@ -36,11 +38,17 @@ describe("display preferences (MD-023)", () => {
     expect(html.attrs.get("data-contrast")).toBe("more");
     expect(html.attrs.get("data-motion")).toBe("reduced");
     expect(html.classes.has("dark")).toBe(true);
+    expect(html.classes.has("light")).toBe(false);
 
     applyPrefs(html as unknown as HTMLElement, DEFAULT_PREFS);
-    expect(html.attrs.has("data-theme")).toBe(false);
+    expect(html.attrs.get("data-theme")).toBe("light");
     expect(html.attrs.has("data-contrast")).toBe(false);
     expect(html.attrs.has("data-motion")).toBe(false);
+    expect(html.classes.has("light")).toBe(true);
+    expect(html.classes.has("dark")).toBe(false);
+
+    applyPrefs(html as unknown as HTMLElement, { ...DEFAULT_PREFS, theme: "system" });
+    expect(html.attrs.has("data-theme")).toBe(false);
     expect(html.classes.size).toBe(0);
   });
 });

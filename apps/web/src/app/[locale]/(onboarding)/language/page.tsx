@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LanguageScreen } from "@/components/onboarding/language-screen";
 import { enterLocale } from "@/i18n/page-locale";
-import { routing } from "@/i18n/routing";
+import { LANGUAGE_META, routing } from "@/i18n/routing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("lang");
@@ -30,16 +30,54 @@ export default async function LanguagePage({ params }: { params: Promise<{ local
         ]}
         hint={t("hint")}
         options={[
-          { code: "hi", nativeName: "हिन्दी", englishName: "Hindi", lang: "hi" },
-          { code: "en", nativeName: "English", lang: "en" },
+          {
+            code: "hi",
+            nativeName: "हिन्दी",
+            englishName: "Hindi",
+            lang: "hi",
+            caption: LANGUAGE_META.hi.regionLabel,
+          },
+          {
+            code: "en",
+            nativeName: "English",
+            englishName: "Indian English",
+            lang: "en",
+            caption: LANGUAGE_META.en.regionLabel,
+          },
           {
             code: "doi",
             nativeName: "डोगरी",
             englishName: "Dogri",
             lang: "doi",
-            caption: t("dogriCaption"),
-            captionLang: locale,
-            disabled: true,
+            caption: LANGUAGE_META.doi.regionLabel,
+          },
+          {
+            code: "pa",
+            nativeName: "ਪੰਜਾਬੀ",
+            englishName: "Punjabi",
+            lang: "pa",
+            caption: LANGUAGE_META.pa.regionLabel,
+          },
+          {
+            code: "mr",
+            nativeName: "मराठी",
+            englishName: "Marathi",
+            lang: "mr",
+            caption: LANGUAGE_META.mr.regionLabel,
+          },
+          {
+            code: "gu",
+            nativeName: "ગુજરાતી",
+            englishName: "Gujarati",
+            lang: "gu",
+            caption: LANGUAGE_META.gu.regionLabel,
+          },
+          {
+            code: "ta",
+            nativeName: "தமிழ்",
+            englishName: "Tamil",
+            lang: "ta",
+            caption: LANGUAGE_META.ta.regionLabel,
           },
         ]}
         more={{ label: t("more"), body: t("moreBody") }}

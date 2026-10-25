@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createVoiceTicket, type VoiceServerMessage, voiceSocketUrl } from "@/features/ai/api";
+import {
+  createVoiceTicket,
+  type VoiceLocale,
+  type VoiceServerMessage,
+  voiceSocketUrl,
+} from "@/features/ai/api";
 import { type Mic, Player, startMic } from "./audio";
 
 export type VoicePhase = "connecting" | "live" | "text" | "failed";
@@ -37,7 +42,7 @@ export const SCREEN_HREF: Record<string, string> = {
  * text sheet (MD-316). With a ticket but no live audio (breaker open, Dogri) the session runs in
  * text mode over the same socket and the same agent.
  */
-export function useLiveVoice(lang: "hi" | "en" | "doi", onNavigate: (href: string) => void) {
+export function useLiveVoice(lang: VoiceLocale, onNavigate: (href: string) => void) {
   const [phase, setPhase] = useState<VoicePhase>("connecting");
   const [captions, setCaptions] = useState<Caption[]>([]);
   const [confirm, setConfirm] = useState<PendingConfirm[]>([]);

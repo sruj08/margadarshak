@@ -20,6 +20,7 @@ import {
   type SpeechLang,
   speak,
   stopSpeaking,
+  toSpeechLang,
 } from "./speech";
 
 /** What the learner just answered: an LL bank variant, one Nazar clip's scored outcome, or one
@@ -75,6 +76,212 @@ type Reply =
   | { k: "done"; turn: CoachTurn }
   | { k: "failed" };
 
+type TranslateFn = ReturnType<typeof useTranslations<"ai.coachTurn">>;
+
+function CoachFallbackAction({
+  why,
+  retry,
+  t,
+}: {
+  why: AiFailure;
+  retry: () => void;
+  t: TranslateFn;
+}) {
+  if (why === "signin") {
+    return (
+      <Link href="/signin" className="md-coach__btn">
+        {t("signin")}
+      </Link>
+    );
+  }
+  if (why === "consent") {
+    return (
+      <Link href="/privacy" className="md-coach__btn">
+        {t("turnOn")}
+      </Link>
+    );
+  }
+  if (why === "busy" || why === "offline") {
+    return (
+      <button type="button" className="md-coach__btn" onClick={retry}>
+        {t("retry")}
+      </button>
+    );
+  }
+  return null;
+}
+
+function CoachFallbackSection({
+  why,
+  fallbackText,
+  speaking,
+  hush,
+  say,
+  retry,
+  t,
+}: {
+  why: AiFailure;
+  fallbackText: string | null;
+  speaking: boolean;
+  hush: () => void;
+  say: (text: string) => void;
+  retry: () => void;
+  t: TranslateFn;
+}) {
+  return (
+    <section className="md-coach" data-testid="coach-turn" data-state="fallback" data-why={why}>
+      <p className="md-coach__chip">{t("reviewed")}</p>
+      <p className="md-coach__small">
+        {t(`status.${why}`)} <CoachFallbackAction why={why} retry={retry} t={t} />
+      </p>
+      {fallbackText && canSpeak() ? (
+        <button
+          type="button"
+          className="md-coach__btn"
+          onClick={() => (speaking ? hush() : say(fallbackText))}
+          data-testid="coach-listen"
+        >
+          {speaking ? t("stop") : t("listen")}
+        </button>
+      ) : null}
+    </section>
+  );
+}
+
+function CoachFollowUpForm({
+  itemKey,
+  lang,
+  reply,
+  typed,
+  setTyped,
+  listenErr,
+  sendReply,
+  startListening,
+  stopListening,
+  t,
+}: {
+  itemKey: string;
+  lang: SpeechLang;
+  reply: Reply;
+  typed: string;
+  setTyped: (val: string) => void;
+  listenErr: ListenError | null;
+  sendReply: (answer: string) => void;
+  startListening: () => void;
+  stopListening: () => void;
+  t: TranslateFn;
+}) {
+  const listenAvailable = canListen();
+  const isListening = reply.k === "listening";
+  const isThinking = reply.k === "thinking";
+
+  return (
+    <form
+      className="md-coach__stack"
+      onSubmit={(e) => {
+        e.preventDefault();
+        sendReply(typed);
+      }}
+    >
+      {listenAvailable ? (
+        <>
+          <button
+            type="button"
+            className="md-coach__btn"
+            onClick={() => (isListening ? stopListening() : startListening())}
+            disabled={isThinking}
+            aria-pressed={isListening}
+            data-testid="coach-mic"
+          >
+            {isListening ? t("doneSpeaking") : t("answerVoice")}
+          </button>
+          <p className="md-coach__small">{t("micNote")}</p>
+        </>
+      ) : null}
+      {reply.k === "listening" ? (
+        <p role="status" className="md-coach__small" lang={lang}>
+          {reply.text || t("listening")}
+        </p>
+      ) : null}
+      {listenErr ? (
+        <p role="status" className="md-coach__small">
+          {t(`mic.${listenErr}`)}
+        </p>
+      ) : null}
+      <label className="md-field__label" htmlFor={`coach-answer-${itemKey}`}>
+        {listenAvailable ? t("orType") : t("typeAnswer")}
+      </label>
+      <div className="md-coach__row">
+        <input
+          id={`coach-answer-${itemKey}`}
+          className="md-coach__input"
+          value={typed}
+          maxLength={500}
+          onChange={(e) => setTyped(e.target.value)}
+          disabled={isThinking || isListening}
+          lang={lang}
+        />
+        <button
+          type="submit"
+          className="md-coach__btn"
+          disabled={isThinking || typed.trim() === ""}
+        >
+          {t("send")}
+        </button>
+      </div>
+      {isThinking ? (
+        <p role="status" className="md-coach__small">
+          {t("thinking")}
+        </p>
+      ) : null}
+      {reply.k === "failed" ? (
+        <p role="status" className="md-coach__small">
+          {t("replyFailed")}
+        </p>
+      ) : null}
+      <p className="md-coach__small">{t("skipHint")}</p>
+    </form>
+  );
+}
+
+function CoachRatingRow({
+  itemKey,
+  rated,
+  setRated,
+  t,
+}: {
+  itemKey: string;
+  rated: boolean;
+  setRated: (val: boolean) => void;
+  t: TranslateFn;
+}) {
+  if (rated) {
+    return (
+      <p className="md-coach__small" role="status">
+        {t("thanks")}
+      </p>
+    );
+  }
+  return (
+    <div className="md-coach__row md-coach__small">
+      <span>{t("helpful")}</span>
+      {([true, false] as const).map((h) => (
+        <button
+          key={String(h)}
+          type="button"
+          className="md-coach__btn"
+          onClick={() => {
+            setRated(true);
+            void sendAIFeedback("coach", itemKey, h);
+          }}
+        >
+          {h ? t("yes") : t("no")}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /**
  * The question-wise coach (API-79) inside the practice flow: right after an answer it fetches a
  * short spoken explanation of THIS question or clip and reads it aloud; after a mistake it asks one
@@ -92,7 +299,7 @@ export function QuestionCoach({
   fallbackText: string | null;
 }) {
   const t = useTranslations("ai.coachTurn");
-  const lang: SpeechLang = useLocale() === "hi" ? "hi" : "en";
+  const lang: SpeechLang = toSpeechLang(useLocale());
   const key = subjectKey(subject);
   const [fb, setFb] = useState<Feedback>({ k: "loading" });
   const [reply, setReply] = useState<Reply>({ k: "idle" });
@@ -130,10 +337,12 @@ export function QuestionCoach({
     setVoice(on);
     void feedbackFor(key, subjectRef.current).then((r) => {
       if (live.current !== key) return;
-      if (r.ok) {
-        setFb({ k: "ai", turn: r.data });
-        if (on) say(r.data.follow_up ? `${r.data.say} ${r.data.follow_up}` : r.data.say);
-      } else setFb({ k: "fallback", why: aiFailure(r) });
+      if (!r.ok) {
+        setFb({ k: "fallback", why: aiFailure(r) });
+        return;
+      }
+      setFb({ k: "ai", turn: r.data });
+      if (on) say(r.data.follow_up ? `${r.data.say} ${r.data.follow_up}` : r.data.say);
     });
     return () => {
       live.current = "";
@@ -195,26 +404,16 @@ export function QuestionCoach({
     setFb({ k: "loading" });
     void feedbackFor(key, subject, true).then((r) => {
       if (live.current !== key) return;
-      if (r.ok) {
-        setFb({ k: "ai", turn: r.data });
-        if (voice) say(r.data.say);
-      } else setFb({ k: "fallback", why: aiFailure(r) });
+      if (!r.ok) {
+        setFb({ k: "fallback", why: aiFailure(r) });
+        return;
+      }
+      setFb({ k: "ai", turn: r.data });
+      if (voice) say(r.data.say);
     });
   };
 
-  const voiceButton = canSpeak() ? (
-    <button
-      type="button"
-      className="md-coach__btn"
-      onClick={toggleVoice}
-      aria-pressed={voice}
-      data-testid="coach-voice-toggle"
-    >
-      {voice ? t("voiceOff") : t("voiceOn")}
-    </button>
-  ) : null;
-
-  if (fb.k === "loading")
+  if (fb.k === "loading") {
     return (
       <section className="md-coach" aria-busy="true" data-testid="coach-turn" data-state="loading">
         <p className="md-coach__chip">{t("ai")}</p>
@@ -223,46 +422,24 @@ export function QuestionCoach({
         </p>
       </section>
     );
+  }
 
-  if (fb.k === "fallback")
+  if (fb.k === "fallback") {
     return (
-      <section
-        className="md-coach"
-        data-testid="coach-turn"
-        data-state="fallback"
-        data-why={fb.why}
-      >
-        <p className="md-coach__chip">{t("reviewed")}</p>
-        <p className="md-coach__small">
-          {t(`status.${fb.why}`)}{" "}
-          {fb.why === "signin" ? (
-            <Link href="/signin" className="md-coach__btn">
-              {t("signin")}
-            </Link>
-          ) : fb.why === "consent" ? (
-            <Link href="/privacy" className="md-coach__btn">
-              {t("turnOn")}
-            </Link>
-          ) : fb.why === "busy" || fb.why === "offline" ? (
-            <button type="button" className="md-coach__btn" onClick={retry}>
-              {t("retry")}
-            </button>
-          ) : null}
-        </p>
-        {fallbackText && canSpeak() ? (
-          <button
-            type="button"
-            className="md-coach__btn"
-            onClick={() => (speaking ? hush() : say(fallbackText))}
-            data-testid="coach-listen"
-          >
-            {speaking ? t("stop") : t("listen")}
-          </button>
-        ) : null}
-      </section>
+      <CoachFallbackSection
+        why={fb.why}
+        fallbackText={fallbackText}
+        speaking={speaking}
+        hush={hush}
+        say={say}
+        retry={retry}
+        t={t}
+      />
     );
+  }
 
   const turn = fb.turn;
+  const speakSupported = canSpeak();
   return (
     <section
       className="md-coach"
@@ -274,15 +451,25 @@ export function QuestionCoach({
         <p id={`coach-${key}`} className="md-coach__chip">
           {t("ai")}
         </p>
-        {voiceButton}
-        {canSpeak() ? (
-          <button
-            type="button"
-            className="md-coach__btn"
-            onClick={() => (speaking ? hush() : say(turn.say))}
-          >
-            {speaking ? t("stop") : t("replay")}
-          </button>
+        {speakSupported ? (
+          <>
+            <button
+              type="button"
+              className="md-coach__btn"
+              onClick={toggleVoice}
+              aria-pressed={voice}
+              data-testid="coach-voice-toggle"
+            >
+              {voice ? t("voiceOff") : t("voiceOn")}
+            </button>
+            <button
+              type="button"
+              className="md-coach__btn"
+              onClick={() => (speaking ? hush() : say(turn.say))}
+            >
+              {speaking ? t("stop") : t("replay")}
+            </button>
+          </>
         ) : null}
       </div>
       <p lang={lang} data-testid="coach-say">
@@ -299,96 +486,22 @@ export function QuestionCoach({
               <p lang={lang}>{reply.turn.say}</p>
             </div>
           ) : (
-            <form
-              className="md-coach__stack"
-              onSubmit={(e) => {
-                e.preventDefault();
-                sendReply(typed);
-              }}
-            >
-              {canListen() ? (
-                <button
-                  type="button"
-                  className="md-coach__btn"
-                  onClick={() =>
-                    reply.k === "listening" ? stopListening.current?.() : startListening()
-                  }
-                  disabled={reply.k === "thinking"}
-                  aria-pressed={reply.k === "listening"}
-                  data-testid="coach-mic"
-                >
-                  {reply.k === "listening" ? t("doneSpeaking") : t("answerVoice")}
-                </button>
-              ) : null}
-              {canListen() ? <p className="md-coach__small">{t("micNote")}</p> : null}
-              {reply.k === "listening" ? (
-                <p role="status" className="md-coach__small" lang={lang}>
-                  {reply.text || t("listening")}
-                </p>
-              ) : null}
-              {listenErr ? (
-                <p role="status" className="md-coach__small">
-                  {t(`mic.${listenErr}`)}
-                </p>
-              ) : null}
-              <label className="md-field__label" htmlFor={`coach-answer-${key}`}>
-                {canListen() ? t("orType") : t("typeAnswer")}
-              </label>
-              <div className="md-coach__row">
-                <input
-                  id={`coach-answer-${key}`}
-                  className="md-coach__input"
-                  value={typed}
-                  maxLength={500}
-                  onChange={(e) => setTyped(e.target.value)}
-                  disabled={reply.k === "thinking" || reply.k === "listening"}
-                  lang={lang}
-                />
-                <button
-                  type="submit"
-                  className="md-coach__btn"
-                  disabled={reply.k === "thinking" || typed.trim() === ""}
-                >
-                  {t("send")}
-                </button>
-              </div>
-              {reply.k === "thinking" ? (
-                <p role="status" className="md-coach__small">
-                  {t("thinking")}
-                </p>
-              ) : null}
-              {reply.k === "failed" ? (
-                <p role="status" className="md-coach__small">
-                  {t("replyFailed")}
-                </p>
-              ) : null}
-              <p className="md-coach__small">{t("skipHint")}</p>
-            </form>
+            <CoachFollowUpForm
+              itemKey={key}
+              lang={lang}
+              reply={reply}
+              typed={typed}
+              setTyped={setTyped}
+              listenErr={listenErr}
+              sendReply={sendReply}
+              startListening={startListening}
+              stopListening={() => stopListening.current?.()}
+              t={t}
+            />
           )}
         </div>
       ) : null}
-      {rated ? (
-        <p className="md-coach__small" role="status">
-          {t("thanks")}
-        </p>
-      ) : (
-        <div className="md-coach__row md-coach__small">
-          <span>{t("helpful")}</span>
-          {([true, false] as const).map((h) => (
-            <button
-              key={String(h)}
-              type="button"
-              className="md-coach__btn"
-              onClick={() => {
-                setRated(true);
-                void sendAIFeedback("coach", key, h);
-              }}
-            >
-              {h ? t("yes") : t("no")}
-            </button>
-          ))}
-        </div>
-      )}
+      <CoachRatingRow itemKey={key} rated={rated} setRated={setRated} t={t} />
     </section>
   );
 }

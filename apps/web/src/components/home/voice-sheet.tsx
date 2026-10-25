@@ -5,11 +5,19 @@ import { Banner } from "@margdarshak/ui/components/banner";
 import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { Sheet } from "@margdarshak/ui/components/sheet";
-import { Mic } from "lucide-react";
+import { Mic, Volume2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  canListen,
+  listen,
+  speak as speakIndian,
+  stopSpeaking,
+  toSpeechLang,
+} from "@/features/ai/speech";
 import { LiveVoiceSheet } from "@/features/voice/LiveVoiceSheet";
 import { Link, useRouter } from "@/i18n/navigation";
+import { APP_LOCALES, type AppLocale, LANGUAGE_META } from "@/i18n/routing";
 import { INTENT_HREF, INTENTS, type Intent, langOf, routeIntent } from "@/lib/journey/intents";
 import { redact } from "@/lib/redact/redact";
 
@@ -47,7 +55,7 @@ export function VoiceButton() {
 
 interface Answer {
   intent: Intent;
-  lang: "hi" | "en";
+  lang: AppLocale;
   reply: string;
   goLabel: string;
 }
@@ -68,18 +76,20 @@ export function VoiceSheet({
   const [redacted, setRedacted] = useState(false);
   const chips = [t("chip1"), t("chip2"), t("chip3")];
   const locale = useLocale();
+  const [voiceLang, setVoiceLang] = useState<AppLocale>(() => toSpeechLang(locale));
+  useEffect(() => {
+    setVoiceLang(toSpeechLang(locale));
+  }, [locale]);
   const [phase, setPhase] = useState<"idle" | "recording" | "thinking">("idle");
   const [voiceError, setVoiceError] = useState<"micDenied" | "micFail" | "noSpeech" | null>(null);
   const recorder = useRef<MediaRecorder | null>(null);
+  const stopBrowserStt = useRef<(() => void) | null>(null);
+  const browserTranscript = useRef<string>("");
   const startedAt = useRef(0);
 
-  // The on-screen line is the authoritative answer; reading it aloud is a convenience.
-  const speak = (line: string, lang: "hi" | "en") => {
-    if (typeof speechSynthesis === "undefined") return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(line);
-    u.lang = lang === "hi" ? "hi-IN" : "en-IN";
-    speechSynthesis.speak(u);
+  // The on-screen line is the authoritative answer; reading it aloud uses the Indianized voice engine.
+  const speak = (line: string, lang: AppLocale) => {
+    speakIndian(line, toSpeechLang(lang));
   };
 
   // Show and read the answer, then open the screen after a short pause so it can be read first.
@@ -95,37 +105,39 @@ export function VoiceSheet({
     }, 3000);
   };
 
-  const ask = (value: string) => {
+  const ask = (value: string, spoken = false) => {
     const r = redact(value);
     setRedacted(r.changed);
     setText(r.text);
     const intent = routeIntent(r.text);
-    const lang = langOf(r.text);
-    if (lang === locale) {
+    const detected = langOf(r.text);
+    const targetLang: AppLocale =
+      voiceLang !== toSpeechLang(locale) && detected === "en" ? voiceLang : detected;
+    if (targetLang === locale) {
       return present(
-        { intent, lang, reply: t(`intent.${intent}`), goLabel: t(`go_${intent}`) },
-        false,
+        { intent, lang: targetLang, reply: t(`intent.${intent}`), goLabel: t(`go_${intent}`) },
+        spoken,
       );
     }
-    // Typed in the other language: the server returns the reply in that language.
+    // Typed or spoken in another language: the server returns the reply in that language.
     void fetch("/api/voice", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: r.text }),
+      body: JSON.stringify({ text: r.text, lang: targetLang }),
     })
       .then((res) =>
         res.ok ? (res.json() as Promise<Answer>) : Promise.reject(new Error("voice")),
       )
-      .then((a) => present(a, false))
+      .then((a) => present(a, spoken))
       .catch(() =>
         present(
           {
             intent,
-            lang: locale as "hi" | "en",
+            lang: toSpeechLang(locale),
             reply: t(`intent.${intent}`),
             goLabel: t(`go_${intent}`),
           },
-          false,
+          spoken,
         ),
       );
   };
@@ -138,9 +150,19 @@ export function VoiceSheet({
         headers: { "Content-Type": blob.type },
         body: blob,
       });
-      if (!res.ok) throw new Error("voice");
+      if (!res.ok) {
+        if (browserTranscript.current.trim()) {
+          ask(browserTranscript.current, true);
+          return;
+        }
+        throw new Error("voice");
+      }
       const out = (await res.json()) as Partial<Answer> & { transcript: string };
       if (!out.transcript || !out.reply || !(INTENTS as readonly unknown[]).includes(out.intent)) {
+        if (browserTranscript.current.trim()) {
+          ask(browserTranscript.current, true);
+          return;
+        }
         setVoiceError("noSpeech");
         return;
       }
@@ -149,19 +171,40 @@ export function VoiceSheet({
       setText(r.text);
       present(out as Answer, true);
     } catch {
-      setVoiceError("micFail");
+      if (browserTranscript.current.trim()) {
+        ask(browserTranscript.current, true);
+      } else {
+        setVoiceError("micFail");
+      }
     } finally {
       setPhase("idle");
     }
   };
 
   const toggleMic = async () => {
-    if (phase === "recording") return recorder.current?.stop();
+    if (phase === "recording") {
+      stopBrowserStt.current?.();
+      stopBrowserStt.current = null;
+      return recorder.current?.stop();
+    }
     if (phase !== "idle") return;
     setVoiceError(null);
     setAnswer(null);
+    browserTranscript.current = "";
     if (timer.current) clearTimeout(timer.current);
     if (typeof MediaRecorder === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      if (canListen()) {
+        setPhase("recording");
+        stopBrowserStt.current = listen(
+          toSpeechLang(voiceLang),
+          (tText) => {
+            browserTranscript.current = tText;
+            ask(tText, true);
+          },
+          () => setPhase("idle"),
+        );
+        return;
+      }
       return setVoiceError("micFail");
     }
     let stream: MediaStream;
@@ -170,6 +213,17 @@ export function VoiceSheet({
     } catch {
       return setVoiceError("micDenied");
     }
+    if (canListen()) {
+      stopBrowserStt.current = listen(
+        toSpeechLang(voiceLang),
+        (tText) => {
+          browserTranscript.current = tText;
+        },
+        () => {
+          stopBrowserStt.current = null;
+        },
+      );
+    }
     const mimeType = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"].find((m) =>
       MediaRecorder.isTypeSupported(m),
     );
@@ -177,10 +231,16 @@ export function VoiceSheet({
     const chunks: Blob[] = [];
     rec.ondataavailable = (e) => e.data.size > 0 && chunks.push(e.data);
     rec.onstop = () => {
+      stopBrowserStt.current?.();
+      stopBrowserStt.current = null;
       for (const tr of stream.getTracks()) tr.stop();
       const blob = new Blob(chunks, { type: rec.mimeType || "audio/webm" });
-      // Under a second of audio is silence or a mis-tap: do not send it for transcription.
       if (Date.now() - startedAt.current < 900 || blob.size < 2000) {
+        if (browserTranscript.current.trim()) {
+          setPhase("idle");
+          ask(browserTranscript.current, true);
+          return;
+        }
         setPhase("idle");
         return setVoiceError("noSpeech");
       }
@@ -198,7 +258,10 @@ export function VoiceSheet({
     <Sheet
       isOpen={isOpen}
       onOpenChange={(o) => {
-        if (!o && timer.current) clearTimeout(timer.current);
+        if (!o) {
+          if (timer.current) clearTimeout(timer.current);
+          stopSpeaking();
+        }
         onOpenChange(o);
       }}
       title={t("title")}
@@ -208,6 +271,32 @@ export function VoiceSheet({
       <div className="mj-screen mj-voice-live" data-screen="SCR-005">
         <p>{t("whatItWillDo")}</p>
         <p className="mj-muted">{t("boundary")}</p>
+        <fieldset
+          className="md-voice-langs"
+          style={{ border: 0, margin: 0, padding: 0 }}
+          aria-label={t("title")}
+        >
+          {APP_LOCALES.map((code) => {
+            const meta = LANGUAGE_META[code];
+            const active = voiceLang === code;
+            return (
+              <button
+                key={code}
+                type="button"
+                lang={code}
+                className={`md-voice-langs__pill${active ? " md-voice-langs__pill--active" : ""}`}
+                aria-pressed={active}
+                onClick={() => {
+                  setVoiceLang(code);
+                  speakIndian(meta.sampleGreeting, code);
+                }}
+                data-testid={`voice-sheet-lang-${code}`}
+              >
+                {meta.nativeLabel}
+              </button>
+            );
+          })}
+        </fieldset>
         <Button
           variant={phase === "recording" ? "danger" : "primary"}
           size="lg"
@@ -275,7 +364,27 @@ export function VoiceSheet({
         ) : null}
         {answer ? (
           <div className="mj-card mj-card--soft" role="status" data-testid="intent-result">
-            <p lang={answer.lang}>{answer.reply}</p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: 8,
+              }}
+            >
+              <p lang={answer.lang} style={{ margin: 0 }}>
+                {answer.reply}
+              </p>
+              <Button
+                variant="ghost"
+                isIconOnly
+                aria-label={t("speak")}
+                onPress={() => speak(answer.reply, answer.lang)}
+                data-testid="voice-speak-reply"
+              >
+                <Volume2 size={18} aria-hidden="true" />
+              </Button>
+            </div>
             {INTENT_HREF[answer.intent] ? (
               <Link
                 href={INTENT_HREF[answer.intent] as string}

@@ -4,10 +4,9 @@ import { Button } from "@margdarshak/ui/components/button";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { Skeleton } from "@margdarshak/ui/components/skeleton";
 import { StatusGlyph } from "@margdarshak/ui/components/status-glyph";
-import { Award, BadgeCheck, CalendarCheck, FileCheck2, Pause, Play, Truck } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { Award, BadgeCheck, FileCheck2, Pause, Play, Truck } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IndianDrivingLicenceCard } from "@/components/home/indian-driving-licence-card";
 import { useFmt } from "@/components/journey/rule-source";
 import { BackLink } from "@/components/journey/status";
@@ -16,27 +15,12 @@ import { API_MODE, DEMO_TENANT } from "@/lib/journey/api";
 import { addDays, daysBetween, istToday } from "@/lib/journey/dates";
 import { recordScreen } from "@/lib/journey/trial-log";
 import { DemoSkip, NoFlowCase, PseudoQr, SimRibbon } from "./bits";
-import {
-  licenceNumber,
-  officesFor,
-  paramNumber,
-  payLines,
-  refFor,
-  slotDates,
-  useFlow,
-} from "./flow-case";
+import { licenceNumber, paramNumber, payLines, refFor, useFlow } from "./flow-case";
 import { SchoolCard } from "./school";
 
 const PRE_LL = new Set(["PLAN", "LL_APPLYING", "HANDED_OFF", "PAYMENT_PENDING", "LL_TEST"]);
 const TWO_WHEELER = new Set(["MC50CC", "MCWOG", "MCWG"]);
-const TIMES = ["09:30", "10:30", "11:30", "14:00", "15:00"];
 const REASONS = ["balance", "line", "signal", "mirror", "stall", "parking"] as const;
-
-const max = (...d: Array<string | null | undefined>) =>
-  d
-    .filter((x): x is string => !!x)
-    .sort()
-    .at(-1) ?? "";
 
 function useStateName(code: string | undefined) {
   const tc = useTranslations("common");
@@ -199,199 +183,6 @@ export function DlApply() {
         >
           {paid ? t("toSlot") : t("pay", { amount: inr(total) })}
         </Link>
-      </div>
-    </div>
-  );
-}
-
-/** S5 → S6: pick an office, a day (never before the unlock, never after LL expiry) and a time. */
-export function SlotBooking() {
-  const t = useTranslations("flow.dl");
-  const tf = useTranslations("flow");
-  const { date } = useFmt();
-  const router = useRouter();
-  const q = useSearchParams();
-  const retest = q.get("retest") === "1";
-  const s = useFlow();
-  const stateName = useStateName(s.plan?.state);
-  const offices = useMemo(() => officesFor(s.plan, stateName), [s.plan, stateName]);
-  const [office, setOffice] = useState<string>("");
-  const [day, setDay] = useState<string>("");
-  const [time, setTime] = useState<string>("");
-  const [notify, setNotify] = useState(true);
-
-  useEffect(() => {
-    recordScreen("dl.slot");
-  }, []);
-  useEffect(() => {
-    if (offices[0] && !offices.some((o) => o.id === office)) setOffice(offices[0].id);
-  }, [office, offices]);
-
-  const c = s.caseData;
-  const today = istToday();
-  const gap = paramNumber(s.plan, "PRM-RETEST-GAP-DAYS", 7);
-  const lastFail =
-    typeof s.answers["last_fail_on"] === "string" ? (s.answers["last_fail_on"] as string) : null;
-  const earliest = max(
-    today,
-    c?.key_dates?.["dl_test_unlock"],
-    retest && lastFail ? addDays(lastFail, gap) : null,
-  );
-  const until = c?.ll?.expires_on ?? null;
-  const days = useMemo(() => slotDates(earliest, 12, until), [earliest, until]);
-
-  if (!s.ready) return <Skeleton className="mj-skel-row" />;
-  if (!s.active || !s.plan) return <NoFlowCase />;
-  const feeOk = retest
-    ? s.answers["retest_fee_paid"] === "yes"
-    : s.answers["dl_fee_paid"] === "yes";
-  if (!feeOk)
-    return (
-      <div className="mj-screen">
-        <BackLink href={retest ? "/dl/retest" : "/dl/apply"}>{tf("back")}</BackLink>
-        <h1 className="mj-title">{t("slotTitle")}</h1>
-        <Link
-          href={retest ? "/pay?for=retest" : "/pay?for=dl"}
-          className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}
-        >
-          {retest ? t("payRetest") : t("pay", { amount: "" }).trim()}
-        </Link>
-      </div>
-    );
-
-  const left = (d: string, tm: string) => Number(refFor(`${office}:${d}:${tm}`, 1)) % 6;
-  const chosen = offices.find((o) => o.id === office);
-
-  const confirm = async () => {
-    if (!chosen || !day || !time) return;
-    const ok = await s.act("slot_booked", { slot_date: day, office_id: chosen.id, test: "dl" });
-    if (!ok) return;
-    await s.save({
-      slot_time: time,
-      slot_office: chosen.name,
-      slot_notify: notify ? "yes" : "no",
-      ...(retest ? { retest_fee_paid: "used" } : {}),
-    });
-    router.push("/dl/test-day");
-  };
-
-  return (
-    <div className="mj-screen" data-screen="SCR-DL-SLOT">
-      <BackLink href={retest ? "/dl/retest" : "/dl/apply"}>{tf("back")}</BackLink>
-      <header className="mj-head">
-        <h1 className="mj-title">{t("slotTitle")}</h1>
-        <p className="mj-sub">{t("slotSub")}</p>
-      </header>
-
-      <fieldset className="mj-card" style={{ border: 0 }}>
-        <legend className="mj-card__title">{t("office")}</legend>
-        <div className="fl-grid">
-          {offices.map((o) => (
-            <label key={o.id} className="fl-opt" style={{ position: "relative" }}>
-              <input
-                type="radio"
-                name="office"
-                value={o.id}
-                checked={office === o.id}
-                onChange={() => {
-                  setOffice(o.id);
-                  setTime("");
-                }}
-              />
-              <strong>{o.name}</strong>
-              <small>
-                {o.district}
-                {o.track ? ` · ${t("track", { track: o.track })}` : ""}
-                {o.sample ? ` · ${t("sample")}` : ""}
-              </small>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <fieldset className="mj-card" style={{ border: 0 }}>
-        <legend className="mj-card__title">{t("day")}</legend>
-        <div className="fl-chips" role="radiogroup" aria-label={t("day")}>
-          {days.map((d) => {
-            const dt = new Date(`${d}T06:30:00Z`);
-            return (
-              <label key={d} className="fl-day">
-                <input
-                  type="radio"
-                  name="day"
-                  value={d}
-                  checked={day === d}
-                  onChange={() => {
-                    setDay(d);
-                    setTime("");
-                  }}
-                  aria-label={date(d, "long")}
-                />
-                <small>
-                  {dt.toLocaleDateString("en-IN", { weekday: "short", timeZone: "Asia/Kolkata" })}
-                </small>
-                <b>{dt.getUTCDate()}</b>
-                <small>
-                  {dt.toLocaleDateString("en-IN", { month: "short", timeZone: "Asia/Kolkata" })}
-                </small>
-              </label>
-            );
-          })}
-        </div>
-        {until ? (
-          <p className="mj-caption">{t("expiryWarn", { date: date(until, "long") })}</p>
-        ) : null}
-      </fieldset>
-
-      {day ? (
-        <fieldset className="mj-card" style={{ border: 0 }}>
-          <legend className="mj-card__title">{t("time")}</legend>
-          <div className="fl-time">
-            {TIMES.map((tm) => {
-              const n = left(day, tm);
-              return (
-                <label
-                  key={tm}
-                  className="fl-opt"
-                  aria-disabled={n === 0}
-                  style={{ position: "relative" }}
-                >
-                  <input
-                    type="radio"
-                    name="time"
-                    value={tm}
-                    disabled={n === 0}
-                    checked={time === tm}
-                    onChange={() => setTime(tm)}
-                  />
-                  <strong className="mj-num">{tm}</strong>
-                  <small>{t("left", { n })}</small>
-                </label>
-              );
-            })}
-          </div>
-        </fieldset>
-      ) : null}
-
-      <label className="mj-check-row" style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} />
-        <span>{t("notify")}</span>
-      </label>
-      {s.error ? <p className="mj-error">{tf("error")}</p> : null}
-      <SimRibbon />
-
-      <div className="mj-sticky mj-actions">
-        <Button
-          variant="primary"
-          size="lg"
-          fullWidth
-          isDisabled={!day || !time || s.busy}
-          onPress={() => void confirm()}
-          data-testid="slot-confirm"
-        >
-          <CalendarCheck aria-hidden="true" />
-          {t("confirm")}
-        </Button>
       </div>
     </div>
   );

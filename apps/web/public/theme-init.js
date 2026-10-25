@@ -10,11 +10,21 @@
     const raw = localStorage.getItem("md.prefs");
     prefs = raw ? JSON.parse(raw) : null;
   } catch (_e) {
-    prefs = null; // storage disabled: follow the OS
+    prefs = null;
   }
-  if (prefs && (prefs.theme === "light" || prefs.theme === "dark")) {
-    el.setAttribute("data-theme", prefs.theme);
-    el.classList.add(prefs.theme);
+  const theme =
+    prefs && (prefs.theme === "light" || prefs.theme === "dark" || prefs.theme === "system")
+      ? prefs.theme
+      : "light";
+  if (theme === "system") {
+    el.removeAttribute("data-theme");
+    el.classList.remove("dark", "light");
+    if (el.style) el.style.removeProperty("color-scheme");
+  } else {
+    el.setAttribute("data-theme", theme);
+    el.classList.toggle("dark", theme === "dark");
+    el.classList.toggle("light", theme === "light");
+    if (el.style) el.style.colorScheme = theme;
   }
   if (prefs && prefs.contrast === true) el.setAttribute("data-contrast", "more");
   if (prefs && prefs.reducedMotion === true) el.setAttribute("data-motion", "reduced");

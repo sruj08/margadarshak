@@ -2,6 +2,7 @@ import illustrations from "@content/catalogue/illustrations.json";
 import signs from "@content/catalogue/signs.json";
 import client from "@content/generated/ll-bank.client.json";
 import practiceKey from "@content/generated/ll-bank.practice-key.json";
+import { type AppLocale, isAppLocale } from "@/i18n/routing";
 import {
   type Bank,
   type BankItem,
@@ -16,8 +17,12 @@ import {
  * the raw files are 400 KB; the learn data routes serve the trimmed result as JSON.
  */
 
-type Loc = { en: string; hi: string };
-type Locale = "en" | "hi";
+type Locale = AppLocale;
+type Loc = { en: string; hi: string } & Partial<Record<Locale, string>>;
+
+function pickLoc(loc: Loc, locale: Locale): string {
+  return loc[locale] ?? (locale === "hi" || locale === "doi" || locale === "mr" ? loc.hi : loc.en);
+}
 
 interface RawSign {
   sign_id: string;
@@ -64,7 +69,7 @@ function visual(id: string, locale: Locale): BankVisual | null {
       shape: s.shape,
       scheme: s.colour_scheme,
       family: s.family,
-      alt: s.alt[locale],
+      alt: pickLoc(s.alt, locale),
     };
   const i = ILLUSTRATIONS.get(id);
   if (i)
@@ -74,7 +79,7 @@ function visual(id: string, locale: Locale): BankVisual | null {
       shape: "picture",
       scheme: "",
       family: null,
-      alt: i.alt[locale],
+      alt: pickLoc(i.alt, locale),
     };
   return null;
 }
@@ -96,13 +101,13 @@ export function buildBank(locale: Locale): Bank {
       topic: raw.topic,
       form: raw.form,
       pool: raw.pool === "mock" ? "mock" : "practice",
-      stem: raw.stem[locale],
+      stem: pickLoc(raw.stem, locale),
       visuals: raw.stem_assets
         .map((a) => visual(a, locale))
         .filter((v): v is BankVisual => v !== null),
       options: raw.options.map((o) => ({
         id: o.option_id,
-        text: o.text[locale],
+        text: pickLoc(o.text, locale),
         visual: o.asset_id ? visual(o.asset_id, locale) : null,
       })),
     });
@@ -131,7 +136,9 @@ export function buildPracticeKey(locale: Locale): PracticeKey {
     keys: RawKey[];
     explanations: { explanation_id: string; text: Loc }[];
   };
-  const expl = new Map(raw.explanations.map((e) => [e.explanation_id, e.text[locale]] as const));
+  const expl = new Map(
+    raw.explanations.map((e) => [e.explanation_id, pickLoc(e.text, locale)] as const),
+  );
   const out: PracticeKey = {};
   for (const k of raw.keys) {
     out[k.item_id] = {
@@ -144,5 +151,5 @@ export function buildPracticeKey(locale: Locale): PracticeKey {
 }
 
 export function isBankLocale(v: string): v is Locale {
-  return v === "en" || v === "hi";
+  return isAppLocale(v);
 }

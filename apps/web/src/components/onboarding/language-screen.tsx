@@ -3,8 +3,11 @@
 import { Disclosure } from "@heroui/react";
 import { Button } from "@margdarshak/ui/components/button";
 import { type LanguageOption, LanguagePicker } from "@margdarshak/ui/components/language-picker";
+import { Volume2 } from "lucide-react";
 import { useState } from "react";
 import { BrandMark } from "@/components/shell/brand-mark";
+import { canSpeak, speak, stopSpeaking, toSpeechLang } from "@/features/ai/speech";
+import { isAppLocale, LANGUAGE_META } from "@/i18n/routing";
 import { COOKIE_WELCOMED, rememberLanguage } from "@/lib/prefs/device";
 
 interface Props {
@@ -28,7 +31,23 @@ function hasCookie(name: string): boolean {
 export function LanguageScreen({ brandName, current, titles, hint, options, more, cta }: Props) {
   const [value, setValue] = useState<string>(current);
   const [busy, setBusy] = useState(false);
+  const [speakingSample, setSpeakingSample] = useState(false);
   const labelledBy = titles.map((_, i) => `lang-title-${i}`).join(" ");
+  const selectedLocale = isAppLocale(value) ? value : "en";
+  const selectedMeta = LANGUAGE_META[selectedLocale];
+
+  const handleSample = () => {
+    if (!canSpeak()) return;
+    if (speakingSample) {
+      stopSpeaking();
+      setSpeakingSample(false);
+      return;
+    }
+    setSpeakingSample(true);
+    speak(selectedMeta.sampleGreeting, toSpeechLang(selectedLocale), () => {
+      setSpeakingSample(false);
+    });
+  };
 
   return (
     <section className="md-onboard">
@@ -53,7 +72,30 @@ export function LanguageScreen({ brandName, current, titles, hint, options, more
         )}
       </div>
       <p className="md-lead">{hint}</p>
-      <LanguagePicker options={options} value={value} onChange={setValue} labelledBy={labelledBy} />
+      <LanguagePicker
+        options={options}
+        value={value}
+        onChange={(nextCode) => {
+          stopSpeaking();
+          setSpeakingSample(false);
+          setValue(nextCode);
+        }}
+        labelledBy={labelledBy}
+      />
+      <div className="md-onboard__sample-row">
+        <Button
+          variant="secondary"
+          size="md"
+          onPress={handleSample}
+          aria-pressed={speakingSample}
+          className="md-onboard__sample-btn"
+        >
+          <Volume2 aria-hidden="true" size={18} />
+          <span lang={selectedLocale}>
+            {selectedMeta.nativeLabel} · {speakingSample ? "…" : selectedMeta.voicePreviewLabel}
+          </span>
+        </Button>
+      </div>
       <Disclosure className="md-more">
         <Disclosure.Heading>
           <Disclosure.Trigger className="md-more__trigger">
@@ -71,7 +113,8 @@ export function LanguageScreen({ brandName, current, titles, hint, options, more
         className="md-onboard__cta"
         isPending={busy}
         onPress={() => {
-          const locale = value === "hi" ? "hi" : "en";
+          stopSpeaking();
+          const locale = isAppLocale(value) ? value : "en";
           setBusy(true);
           rememberLanguage(locale);
           const next = hasCookie(COOKIE_WELCOMED) ? `/${locale}` : `/${locale}/welcome`;

@@ -141,6 +141,28 @@ export async function answer(page: Page, option: string) {
   await page.waitForURL((u) => u.href !== before);
 }
 
+/**
+ * Walks the simulated Sarathi slot booking to the confirm step: application, first bookable day,
+ * first time with seats. `onCalendar` runs while the calendar is open (for a11y checks).
+ */
+export async function pickSlot(page: Page, onCalendar?: () => Promise<void>) {
+  await page.getByTestId("slot-app-next").click();
+  const day = page.locator(".sb-cal__day:is([data-kind='open'], [data-kind='few'])").first();
+  await day.locator("input").check({ force: true });
+  if (onCalendar) await onCalendar();
+  await page.getByTestId("slot-date-next").click();
+  await page.locator(".sb-time:not([data-full]) input").first().check({ force: true });
+  await page.getByTestId("slot-time-next").click();
+}
+
+/** Books a slot end to end and opens the appointment slip. */
+export async function bookSlot(page: Page, onCalendar?: () => Promise<void>) {
+  await pickSlot(page, onCalendar);
+  await page.getByTestId("slot-confirm").click();
+  await expect(page.getByTestId("slot-ack")).toBeVisible();
+  await page.getByTestId("slot-to-slip").click();
+}
+
 export async function loadPersona(page: Page, name: string, locale = "en") {
   await page.goto(`/${locale}`);
   await page.getByTestId("persona-open").click();

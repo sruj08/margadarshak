@@ -24,14 +24,15 @@ import {
   Trash2,
   Volume2,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { VoiceButton } from "@/components/home/voice-sheet";
 import { usePrefs } from "@/components/shell/providers";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { APP_LOCALES, LANGUAGE_META } from "@/i18n/routing";
 import { changeConsent, listConsents } from "@/lib/journey/api";
 import type { ConsentArtefact, ConsentPurpose } from "@/lib/journey/api-types";
-import { clearThisDevice } from "@/lib/prefs/device";
+import { clearThisDevice, rememberLanguage } from "@/lib/prefs/device";
 import type { ThemePref } from "@/lib/prefs/prefs";
 
 const COACH_VOICE_KEY = "md.coach.voice";
@@ -54,6 +55,8 @@ export function SettingsHub() {
   const t = useTranslations("settings");
   const tp = useTranslations("purpose");
   const tpr = useTranslations("privacyCentre");
+  const locale = useLocale();
+  const pathname = usePathname();
   const { prefs, setPrefs } = usePrefs();
 
   const [consents, setConsents] = useState<ConsentArtefact[]>([]);
@@ -120,9 +123,9 @@ export function SettingsHub() {
   }
 
   const themes: { id: ThemePref; label: string; icon: React.ReactNode }[] = [
-    { id: "system", label: t("themeSystem"), icon: <Monitor aria-hidden="true" size={18} /> },
     { id: "light", label: t("themeLight"), icon: <Sun aria-hidden="true" size={18} /> },
     { id: "dark", label: t("themeDark"), icon: <Moon aria-hidden="true" size={18} /> },
+    { id: "system", label: t("themeSystem"), icon: <Monitor aria-hidden="true" size={18} /> },
   ];
 
   return (
@@ -143,7 +146,11 @@ export function SettingsHub() {
         data-testid="settings-ai-section"
       >
         <div className="mj-row" style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
-          <h2 id="settings-ai-h" className="mj-h2" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+          <h2
+            id="settings-ai-h"
+            className="mj-h2"
+            style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+          >
             <Sparkles aria-hidden="true" size={20} />
             <span>{t("aiSectionTitle")}</span>
           </h2>
@@ -257,9 +264,15 @@ export function SettingsHub() {
         aria-labelledby="settings-appearance-h"
         data-testid="settings-appearance-section"
       >
-        <h2 id="settings-appearance-h" className="mj-h2" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        <h2
+          id="settings-appearance-h"
+          className="mj-h2"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+        >
           <Sun aria-hidden="true" size={18} />
-          <span>{t("appearance")} & {t("language")}</span>
+          <span>
+            {t("appearance")} & {t("language")}
+          </span>
         </h2>
         <p className="mj-muted">{t("description")}</p>
 
@@ -318,6 +331,29 @@ export function SettingsHub() {
           </Switch>
         </div>
 
+        <div className="md-settings__lang-grid">
+          {APP_LOCALES.map((code) => {
+            const meta = LANGUAGE_META[code];
+            const active = locale === code;
+            return (
+              <Link
+                key={code}
+                href={pathname}
+                locale={code}
+                lang={code}
+                onClick={() => rememberLanguage(code)}
+                aria-current={active ? "true" : undefined}
+                className={buttonClassName({ variant: active ? "primary" : "secondary" })}
+              >
+                <span>{meta.nativeLabel}</span>
+                {meta.englishLabel !== meta.nativeLabel ? (
+                  <span style={{ opacity: 0.78, fontSize: "0.85em" }}>· {meta.englishLabel}</span>
+                ) : null}
+              </Link>
+            );
+          })}
+        </div>
+
         <div className="mj-actions">
           <Link href="/language" className={buttonClassName({ variant: "secondary" })}>
             <Globe aria-hidden="true" size={16} />
@@ -332,7 +368,11 @@ export function SettingsHub() {
         aria-labelledby="settings-reminders-h"
         data-testid="settings-reminders-section"
       >
-        <h2 id="settings-reminders-h" className="mj-h2" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        <h2
+          id="settings-reminders-h"
+          className="mj-h2"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+        >
           <Bell aria-hidden="true" size={18} />
           <span>{t("remindersSectionTitle")}</span>
         </h2>
@@ -370,7 +410,11 @@ export function SettingsHub() {
         aria-labelledby="settings-sharing-h"
         data-testid="settings-sharing-section"
       >
-        <h2 id="settings-sharing-h" className="mj-h2" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        <h2
+          id="settings-sharing-h"
+          className="mj-h2"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+        >
           <Share2 aria-hidden="true" size={18} />
           <span>{t("sharingSectionTitle")}</span>
         </h2>
@@ -408,9 +452,15 @@ export function SettingsHub() {
         aria-labelledby="settings-device-h"
         data-testid="settings-device-section"
       >
-        <h2 id="settings-device-h" className="mj-h2" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        <h2
+          id="settings-device-h"
+          className="mj-h2"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+        >
           <ShieldCheck aria-hidden="true" size={18} />
-          <span>{tpr("h1")} & {t("clearTitle")}</span>
+          <span>
+            {tpr("h1")} & {t("clearTitle")}
+          </span>
         </h2>
         <p className="mj-muted">{t("clearHint")}</p>
         <div className="mj-actions">

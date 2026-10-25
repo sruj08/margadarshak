@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createTranslator } from "next-intl";
 import { loadMessages } from "@/i18n/messages";
+import { APP_LOCALES, type AppLocale, isAppLocale } from "@/i18n/routing";
 import { INTENT_HREF, INTENTS, type Intent, langOf, routeIntent } from "@/lib/journey/intents";
 import { redact } from "@/lib/redact/redact";
 
@@ -16,9 +17,9 @@ const MAX_BYTES = 2_000_000;
 const MODEL = process.env["GEMINI_MODEL_STT"] ?? "gemini-3.8-flash";
 
 const PROMPT = `You are the speech-to-text step of Margdarshak, an app that helps people get a driving licence in India.
-Listen to the audio (Hindi, English or Hinglish) and return JSON with:
-- "transcript": exactly what the person said, in the script they spoke it (Devanagari for Hindi words, Latin for English). Do not translate or add words. If you hear nothing clear, use an empty string.
-- "lang": "hi" if the person speaks Hindi or Hinglish, otherwise "en".
+Listen to the audio (Hindi, English, Hinglish, Dogri, Punjabi, Marathi, Gujarati, or Tamil) and return JSON with:
+- "transcript": exactly what the person said, in the script they spoke it (Devanagari for Hindi/Dogri/Marathi, Gurmukhi for Punjabi, Gujarati script for Gujarati, Tamil script for Tamil, Latin for English). Do not translate or add words. If you hear nothing clear, use an empty string.
+- "lang": one of "hi", "en", "doi", "pa", "mr", "gu", "ta" matching the spoken language.
 - "intent": one of ${INTENTS.join(", ")}.
   plan = wants a licence or a plan; fees = asks about cost; apply = start or fill the application; documents = which documents are needed; photo = photo upload; signature = signature upload; practise = practise in general; mock_test = learner licence mock test; ll_test = take the real learner licence test now; book_test = book the driving test or a driving-test slot; track = how the driving test or track works; signs = road signs; stopping = stopping distance or braking; readiness = am I ready for the test; check = application or licence status; renew = renew, lost, duplicate or fix a licence; family = licence for a family member; services = all services; privacy = privacy or data; grievance = a complaint; accessibility = text size or accessibility; handoff = wants to pay or submit on Sarathi; about_voice = asks what the voice guide is or what it can do; help = anything else or unclear.
 Never write out any Aadhaar number, OTP, or phone number: write "[number]" instead.
@@ -28,7 +29,7 @@ const SCHEMA = {
   type: "OBJECT",
   properties: {
     transcript: { type: "STRING" },
-    lang: { type: "STRING", enum: ["hi", "en"] },
+    lang: { type: "STRING", enum: [...APP_LOCALES] },
     intent: { type: "STRING", enum: [...INTENTS] },
   },
   required: ["transcript", "lang", "intent"],
@@ -38,7 +39,7 @@ const json = (body: unknown, status = 200) =>
   NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
 
 /** Fixed copy in the spoken language, never model-written text (D-09). */
-async function answer(transcript: string, intent: Intent, lang: "hi" | "en") {
+async function answer(transcript: string, intent: Intent, lang: AppLocale) {
   const t = createTranslator({
     locale: lang,
     messages: await loadMessages(lang),
@@ -54,15 +55,24 @@ async function answer(transcript: string, intent: Intent, lang: "hi" | "en") {
   });
 }
 
+async function handleTypedText(req: Request) {
+  const body = (await req.json().catch(() => null)) as { text?: unknown; lang?: unknown } | null;
+  const text = redact(typeof body?.text === "string" ? body.text.slice(0, 500) : "").text;
+  if (text.trim() === "") return json({ transcript: "", intent: null });
+  const detected = langOf(text);
+  const chosenLang: AppLocale =
+    typeof body?.lang === "string" && isAppLocale(body.lang) && detected === "en"
+      ? body.lang
+      : detected;
+  return answer(text, routeIntent(text), chosenLang);
+}
+
 export async function POST(req: Request) {
   const mime = (req.headers.get("content-type") ?? "").split(";")[0]?.trim() ?? "";
 
   // Typed text: no model, just the keyword router, answered in the language it was typed in.
   if (mime === "application/json") {
-    const body = (await req.json().catch(() => null)) as { text?: unknown } | null;
-    const text = redact(typeof body?.text === "string" ? body.text.slice(0, 500) : "").text;
-    if (text.trim() === "") return json({ transcript: "", intent: null });
-    return answer(text, routeIntent(text), langOf(text));
+    return handleTypedText(req);
   }
 
   const key = process.env["GEMINI_API_KEY"];
@@ -119,6 +129,6 @@ export async function POST(req: Request) {
   const intent = (INTENTS as readonly unknown[]).includes(parsed.intent)
     ? (parsed.intent as Intent)
     : routeIntent(transcript);
-  const lang = parsed.lang === "hi" || parsed.lang === "en" ? parsed.lang : langOf(transcript);
+  const lang = isAppLocale(parsed.lang as string) ? (parsed.lang as AppLocale) : langOf(transcript);
   return answer(transcript, intent, lang);
 }

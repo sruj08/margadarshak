@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { Messages } from "next-intl";
 import { describe, expect, it } from "vitest";
 import { loadMessages, MESSAGE_NAMESPACES, mergeMessages } from "@/i18n/messages";
+import { REGIONAL_OVERRIDES } from "@/i18n/regional-overrides";
 import en from "../../messages/en.json";
 import hi from "../../messages/hi.json";
 import {
@@ -30,6 +31,28 @@ describe("message catalogues (MD-022, D-06)", () => {
     const loaded = loadCatalogues(messagesDir);
     expect(loaded.problems).toEqual([]);
     expect(compareCatalogues(loaded.catalogues)).toEqual([]);
+  });
+
+  it("every key in REGIONAL_OVERRIDES (doi, pa, mr, gu, ta) exists in the base en catalogue and preserves ICU placeholder signatures", async () => {
+    const enMerged = flatten(await loadMessages("en"));
+    for (const regional of ["doi", "pa", "mr", "gu", "ta"] as const) {
+      const overrideTree = REGIONAL_OVERRIDES[regional];
+      expect(overrideTree).toBeDefined();
+      const flatOverrides = flatten(overrideTree!);
+      expect(flatOverrides.size).toBeGreaterThan(150);
+      for (const [key, val] of flatOverrides.entries()) {
+        expect(
+          enMerged.has(key),
+          `${regional} override contains non-existent schema key: ${key}`,
+        ).toBe(true);
+        const expectedSig = signature(enMerged.get(key)!);
+        const actualSig = signature(val);
+        expect(
+          actualSig,
+          `${regional} override for ${key} has mismatched ICU signature (${actualSig} vs ${expectedSig})`,
+        ).toBe(expectedSig);
+      }
+    }
   });
 
   it("the check catches a missing key and a dropped placeholder", () => {
@@ -72,11 +95,35 @@ describe("P2 message namespaces (plan §3)", () => {
     expect(namespaceFiles(messagesDir, "hi")).toEqual(expected);
   });
 
-  it("loadMessages deep-merges every namespace under its own key, next to the base catalogue", async () => {
+  it("loadMessages deep-merges every namespace and regional override across all 7 locales", async () => {
+    const enFlat = flatten(await loadMessages("en"));
+    const hiFlat = flatten(await loadMessages("hi"));
     for (const locale of ["en", "hi"] as const) {
       const messages = await loadMessages(locale);
       for (const ns of MESSAGE_NAMESPACES) expect(messages[ns]).toBeTypeOf("object");
       expect(messages["footer"]).toEqual((locale === "en" ? en : hi).footer);
+    }
+    const requiredLocalizedKeys = [
+      "home.h1",
+      "welcome.title",
+      "lang.cta",
+      "settings.themeDark",
+      "voice.intent.plan",
+      "learnHub.q.sure",
+      "llSim.title",
+      "games.stage.start",
+      "ai.coachTurn.listen",
+    ];
+    for (const regional of ["doi", "pa", "mr", "gu", "ta"] as const) {
+      const messages = await loadMessages(regional);
+      for (const ns of MESSAGE_NAMESPACES) expect(messages[ns]).toBeTypeOf("object");
+      const flat = flatten(messages);
+      for (const k of requiredLocalizedKeys) {
+        const val = flat.get(k);
+        expect(val, `${regional} missing ${k}`).toBeTruthy();
+        expect(val, `${regional} ${k} was not localized (matches en)`).not.toBe(enFlat.get(k));
+        expect(val, `${regional} ${k} was not localized (matches hi)`).not.toBe(hiFlat.get(k));
+      }
     }
   });
 

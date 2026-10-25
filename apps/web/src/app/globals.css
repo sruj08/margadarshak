@@ -303,6 +303,25 @@
   .md-brand--horizontal[data-art="mark"] {
     --md-brand-h: 38px;
   }
+  /*
+   * Compact (top bar): under 420 px the lockup plus the language switch and settings overflow a
+   * phone, so the symbol stands in. Hiding uses !important so the theme swap rules stay untouched.
+   */
+  .md-brand[data-art="horizontal"] .md-brand__art--narrow {
+    height: 38px;
+    margin-inline-start: calc(38px * -0.104);
+  }
+  @media (min-width: 26.25rem) {
+    .md-brand__art--narrow {
+      display: none !important;
+    }
+  }
+  @media (max-width: 26.24rem) {
+    .md-brand__art--wide,
+    .md-brand--compact .md-brand__word {
+      display: none !important;
+    }
+  }
   @media (min-width: 40rem) {
     .md-brand--horizontal[data-art="horizontal"] {
       --md-brand-h: 52px;
@@ -400,18 +419,31 @@
     align-items: center;
     gap: 6px;
   }
+  .md-topbar__theme.button,
   .md-topbar__settings.button {
     width: var(--md-target-min);
     min-width: var(--md-target-min);
+    min-height: var(--md-target-min);
     padding: 0;
     color: var(--md-ink-2);
+    border-radius: var(--md-r-full);
+    transition:
+      background-color var(--md-dur-fast) var(--md-ease-standard),
+      color var(--md-dur-fast) var(--md-ease-standard),
+      transform var(--md-dur-instant) var(--md-ease-standard);
   }
+  .md-topbar__theme.button svg,
   .md-topbar__settings.button svg {
-    width: 22px;
-    height: 22px;
+    width: 21px;
+    height: 21px;
+    transition: transform var(--md-dur-base) var(--md-ease-spring);
+  }
+  .md-topbar__theme.button:hover svg {
+    transform: rotate(14deg) scale(1.06);
   }
   .md-langswitch {
     display: inline-flex;
+    align-items: center;
     padding: 0;
     gap: 0;
     border-radius: var(--md-r-full);
@@ -425,7 +457,7 @@
     place-items: center;
     min-width: var(--md-target-min);
     min-height: var(--md-target-min);
-    padding-inline: 15px;
+    padding-inline: 12px;
     border-radius: var(--md-r-full);
     color: var(--md-ink-2);
     font-size: var(--md-text-label);
@@ -1771,7 +1803,8 @@
     isolation: isolate;
     display: grid;
     gap: 20px;
-    padding-top: 32px;
+    padding-top: 24px;
+    padding-bottom: 24px;
   }
   .md-onboard__titles {
     display: grid;
@@ -1782,6 +1815,30 @@
     color: var(--md-ink-2);
     font-weight: 600;
     line-height: 1.4;
+  }
+  .md-onboard__sample {
+    font-size: var(--md-text-body);
+    line-height: var(--md-lh-body);
+  }
+  .md-onboard__sample-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 14px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--md-hairline);
+  }
+  .md-onboard__sample-btn.button {
+    min-height: var(--md-target-min);
+    padding-inline: 16px;
+    gap: 8px;
+  }
+  .md-onboard__voice-note {
+    font-size: var(--md-text-caption);
+    color: var(--md-ink-2);
+    font-weight: 600;
   }
   .md-onboard__cta {
     width: 100%;
@@ -1884,6 +1941,47 @@
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+  }
+  .md-settings__lang-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    gap: 8px;
+  }
+  .md-settings__lang-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    min-height: var(--md-target-min);
+    padding: 8px 12px;
+    border-radius: var(--md-r-lg);
+    background: var(--md-surface-2);
+    box-shadow: inset 0 0 0 1px var(--md-border);
+    color: var(--md-ink);
+    text-decoration: none;
+    transition:
+      background-color var(--md-dur-fast) var(--md-ease-standard),
+      box-shadow var(--md-dur-fast) var(--md-ease-standard),
+      transform var(--md-dur-instant) var(--md-ease-standard);
+  }
+  .md-settings__lang-pill:active {
+    transform: scale(var(--md-press-scale-subtle, 0.985));
+  }
+  .md-settings__lang-pill[aria-current="true"] {
+    background: var(--md-primary-soft);
+    color: var(--md-primary-ink);
+    box-shadow: inset 0 0 0 2px var(--md-primary-fill);
+  }
+  .md-settings__lang-native {
+    font-size: var(--md-text-label);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .md-settings__lang-code {
+    font-size: var(--md-text-caption);
+    color: var(--md-ink-2);
+    line-height: 1.2;
   }
   .md-settings__done.button {
     width: 100%;
@@ -1991,6 +2089,48 @@
   .md-switch[data-selected="true"] .switch__control {
     background: var(--md-primary-fill);
     box-shadow: inset 0 0 0 1.5px var(--md-primary-fill);
+  }
+
+  /* ---------- Voice Assistant Sheet (7 Indian Languages + Indianized TTS) ---------- */
+  .md-voice-langs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .md-voice-langs__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: var(--md-target-min);
+    padding: 6px 12px;
+    border: 0;
+    border-radius: var(--md-r-full);
+    background: var(--md-surface-2);
+    box-shadow: inset 0 0 0 1px var(--md-border);
+    color: var(--md-ink);
+    font: inherit;
+    font-size: var(--md-text-caption);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color var(--md-dur-fast) var(--md-ease-standard),
+      box-shadow var(--md-dur-fast) var(--md-ease-standard),
+      transform var(--md-dur-instant) var(--md-ease-standard);
+  }
+  .md-voice-langs__pill:active {
+    transform: scale(var(--md-press-scale, 0.97));
+  }
+  .md-voice-langs__pill[aria-pressed="true"] {
+    background: var(--md-primary-soft);
+    color: var(--md-primary-ink);
+    box-shadow: inset 0 0 0 2px var(--md-primary-fill);
+  }
+  .md-voice-langs__native {
+    font-weight: 700;
+  }
+  .md-voice-langs__sub {
+    color: var(--md-ink-2);
+    font-weight: 500;
   }
 
   /* ---------- Service-worker update prompt ---------- */

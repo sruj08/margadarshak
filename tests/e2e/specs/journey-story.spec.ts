@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 import { onboard } from "./helpers";
-import { answer, makePlan, mobileOnly } from "./journey-helpers";
+import { answer, bookSlot, makePlan, mobileOnly } from "./journey-helpers";
 
 /**
  * The demo story end to end on the device API at 360 px: plan -> DigiLocker autofill -> application
@@ -199,11 +199,9 @@ test("Kabir's whole road: first question to driving licence", async ({ page }) =
   await page.getByTestId("dl-continue").click();
   await payUpi(page);
   await expect(page).toHaveURL(/\/dl\/slot/);
-  await page.locator(".fl-day").first().click();
-  await a11y(page, "slot");
-  const free = page.locator(".fl-time label:not([aria-disabled='true'])").first();
-  await free.click();
-  await page.getByTestId("slot-confirm").click();
+  await bookSlot(page, async () => {
+    await a11y(page, "slot");
+  });
   await expect(page).toHaveURL(/\/dl\/test-day/);
   await expect(page.getByTestId("slot-slip")).toBeVisible();
   await a11y(page, "test day");
@@ -220,9 +218,7 @@ test("Kabir's whole road: first question to driving licence", async ({ page }) =
   await page.getByTestId("retest-continue").click();
   await payUpi(page);
   await expect(page).toHaveURL(/\/dl\/slot\?retest=1/);
-  await page.locator(".fl-day").first().click();
-  await page.locator(".fl-time label:not([aria-disabled='true'])").first().click();
-  await page.getByTestId("slot-confirm").click();
+  await bookSlot(page);
   await expect(page).toHaveURL(/\/dl\/test-day/);
   const skip2 = page.getByRole("button", { name: "Skip to test day" });
   if (await skip2.isVisible()) await skip2.click();

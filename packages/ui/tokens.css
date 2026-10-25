@@ -1252,5 +1252,6 @@ body {
 
 /* Theme switch eases instead of flashing (class added for 350ms by the theme toggle; Vakyam pattern) */
 html.md-theme-easing, html.md-theme-easing *, html.md-theme-easing *::before, html.md-theme-easing *::after {
-  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, fill 300ms ease !important;
+  transition: background-color 280ms cubic-bezier(0.22, 1, 0.36, 1), color 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1), fill 280ms cubic-bezier(0.22, 1, 0.36, 1), stroke 280ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
+

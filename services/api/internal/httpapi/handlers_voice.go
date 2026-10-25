@@ -186,7 +186,8 @@ func (s *Server) OpenVoiceSocket(w http.ResponseWriter, r *http.Request, params 
 	if params.Lang != nil {
 		locale = string(*params.Lang)
 	}
-	if hello.Locale == "en" || hello.Locale == "hi" || hello.Locale == "doi" {
+	switch hello.Locale {
+	case "en", "hi", "doi", "pa", "mr", "gu", "ta":
 		locale = hello.Locale
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), voiceMaxSession)

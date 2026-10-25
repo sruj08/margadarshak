@@ -27,7 +27,7 @@ var fieldHints = map[string]string{
 	"FLD_LL_ISSUE_DATE":        "YYYY-MM-DD",
 	"FLD_AADHAAR_ADDR_MATCHES": "true or false (does the Aadhaar address match where the user lives)",
 	"FLD_TEST_DATE":            "YYYY-MM-DD",
-	"FLD_LANGUAGE":             "en, hi or doi (the app's language)",
+	"FLD_LANGUAGE":             "en, hi, doi, pa, mr, gu or ta (the app's language)",
 }
 
 // catalogueText is the data part of the instruction (PROMPTS state inputs): the closed screen,

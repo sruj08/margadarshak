@@ -1488,6 +1488,41 @@
     background: var(--md-warning-soft);
     font-size: var(--md-text-label);
   }
+  .mj-tracker__action,
+  .mj-tracker__ahead {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    justify-self: start;
+    min-height: 44px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .mj-tracker__action {
+    max-width: 100%;
+    padding: 6px 12px 6px 14px;
+    text-wrap: balance;
+    border-radius: var(--md-r-full);
+    background: var(--md-primary-fill);
+    color: var(--md-ink-inverse);
+    transition: transform var(--md-dur-instant) var(--md-ease-standard);
+  }
+  .mj-tracker__action:active {
+    transform: scale(var(--md-press-scale, 0.97));
+  }
+  .mj-tracker__ahead {
+    margin-top: 2px;
+    color: var(--md-primary);
+    font-size: var(--md-text-label);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .mj-tracker__action svg,
+  .mj-tracker__ahead svg {
+    width: 16px;
+    height: 16px;
+    flex: none;
+  }
   .mj-tracker__date {
     font-family: var(--md-font-num);
     font-size: 0.875rem;

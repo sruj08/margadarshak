@@ -16,7 +16,7 @@ export interface Prefs {
   reducedMotion: boolean;
 }
 
-export const DEFAULT_PREFS: Prefs = { theme: "system", contrast: false, reducedMotion: false };
+export const DEFAULT_PREFS: Prefs = { theme: "light", contrast: false, reducedMotion: false };
 
 export function parsePrefs(raw: string | null | undefined): Prefs {
   if (!raw) return DEFAULT_PREFS;
@@ -26,7 +26,7 @@ export function parsePrefs(raw: string | null | undefined): Prefs {
     const o = v as Record<string, unknown>;
     const theme = o["theme"];
     return {
-      theme: theme === "light" || theme === "dark" ? theme : "system",
+      theme: theme === "light" || theme === "dark" || theme === "system" ? theme : "light",
       contrast: o["contrast"] === true,
       reducedMotion: o["reducedMotion"] === true,
     };
@@ -40,10 +40,12 @@ export function applyPrefs(el: HTMLElement, prefs: Prefs): void {
   if (prefs.theme === "system") {
     el.removeAttribute("data-theme");
     el.classList.remove("dark", "light");
+    if (el.style) el.style.removeProperty("color-scheme");
   } else {
     el.setAttribute("data-theme", prefs.theme);
     el.classList.toggle("dark", prefs.theme === "dark");
     el.classList.toggle("light", prefs.theme === "light");
+    if (el.style) el.style.colorScheme = prefs.theme;
   }
   if (prefs.contrast) el.setAttribute("data-contrast", "more");
   else el.removeAttribute("data-contrast");

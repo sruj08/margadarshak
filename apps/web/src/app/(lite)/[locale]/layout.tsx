@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { isAppLocale, routing } from "@/i18n/routing";
@@ -41,11 +42,12 @@ export default async function LiteLayout({
   const t = await getTranslations("footer");
   const tl = await getTranslations("learnHub.lite");
   return (
-    <html lang={locale} dir="ltr">
+    <html lang={locale} dir="ltr" data-theme="light" className="light" suppressHydrationWarning>
       <body
         className="md-body"
         style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}
       >
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
         <a href="#main" className="md-skip">
           {tl("skip")}
         </a>

@@ -30,16 +30,53 @@ export function usePrefs(): PrefsContextValue {
 const SW_ENABLED =
   process.env.NODE_ENV === "production" || process.env["NEXT_PUBLIC_SW_IN_DEV"] === "true";
 
-export function Providers({ locale, children }: { locale: string; children: ReactNode }) {
-  const [prefs, setPrefsState] = useState<Prefs>(DEFAULT_PREFS);
+const LOCALE_BCP47: Record<string, string> = {
+  en: "en-IN",
+  hi: "hi-IN",
+  doi: "doi-IN",
+  pa: "pa-IN",
+  mr: "mr-IN",
+  gu: "gu-IN",
+  ta: "ta-IN",
+};
 
-  useEffect(() => {
+export function Providers({ locale, children }: { locale: string; children: ReactNode }) {
+  const [prefs, setPrefsState] = useState<Prefs>(() => {
+    if (typeof window === "undefined") return DEFAULT_PREFS;
     try {
-      setPrefsState(parsePrefs(localStorage.getItem(PREFS_KEY)));
+      return parsePrefs(localStorage.getItem(PREFS_KEY));
     } catch {
-      // storage disabled: keep defaults
+      return DEFAULT_PREFS;
     }
-  }, []);
+  });
+
+  // Re-apply whenever locale or prefs change, and guard against Next.js App Router
+  // reconciling <html> attributes/classes when navigating between /[locale] routes.
+  useEffect(() => {
+    const html = document.documentElement;
+    html.lang = locale;
+    applyPrefs(html, prefs);
+    const observer = new MutationObserver(() => {
+      const currentTheme = html.getAttribute("data-theme");
+      if (prefs.theme === "system") {
+        if (
+          currentTheme !== null ||
+          html.classList.contains("light") ||
+          html.classList.contains("dark")
+        ) {
+          applyPrefs(html, prefs);
+        }
+      } else if (
+        currentTheme !== prefs.theme ||
+        !html.classList.contains(prefs.theme) ||
+        html.classList.contains(prefs.theme === "dark" ? "light" : "dark")
+      ) {
+        applyPrefs(html, prefs);
+      }
+    });
+    observer.observe(html, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    return () => observer.disconnect();
+  }, [prefs, locale]);
 
   const setPrefs = useCallback((next: Partial<Prefs>) => {
     setPrefsState((prev) => {
@@ -62,7 +99,7 @@ export function Providers({ locale, children }: { locale: string; children: Reac
 
   return (
     <PrefsContext value={value}>
-      <I18nProvider locale={locale === "hi" ? "hi-IN" : "en-IN"}>
+      <I18nProvider locale={LOCALE_BCP47[locale] ?? "en-IN"}>
         <MotionRoot reduced={prefs.reducedMotion}>
           {/* No reload on reconnect: it would wipe in-progress state such as a review summary;
               offline queues sync on their own when the network returns. */}

@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
-import { isAppLocale, routing } from "./i18n/routing";
+import { type AppLocale, isAppLocale, routing } from "./i18n/routing";
 import { magicLinkRedirect } from "./lib/journey/magic-link";
 
 /**
@@ -11,9 +11,9 @@ import { magicLinkRedirect } from "./lib/journey/magic-link";
  */
 const intl = createMiddleware(routing);
 
-const HOME = /^\/(?:(en|hi)\/?)?$/;
+const HOME = /^\/(?:(en|hi|doi|pa|mr|gu|ta)\/?)?$/;
 
-function suggestedLocale(req: NextRequest, fromPath: string | undefined): "en" | "hi" {
+function suggestedLocale(req: NextRequest, fromPath: string | undefined): AppLocale {
   if (isAppLocale(fromPath)) return fromPath;
   const cookie = req.cookies.get("NEXT_LOCALE")?.value;
   if (isAppLocale(cookie)) return cookie;

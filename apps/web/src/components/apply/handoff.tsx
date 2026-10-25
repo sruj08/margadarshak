@@ -150,6 +150,10 @@ export function FeeScreen() {
   );
 }
 
+function formatClassesLabel(classes: readonly string[] | undefined): string {
+  return classes && classes.length > 0 ? classes.join(", ") : "MCWG, LMV";
+}
+
 /**
  * Sarathi hand-off, Mode A (SCR-040, MD-114, F-07, D-07): the honest boundary. eKYC, OTP, payment
  * and submission happen on Sarathi; Margdarshak prepares the person with a copy-pack. The adapter
@@ -189,11 +193,8 @@ export function Handoff() {
 
   if (!s.ready) return <Skeleton className="mj-skel-row" />;
   if (!s.active) return <NoCase />;
-  const fee = s.plan?.fees ? inr(s.plan.fees.ll_stage_paise) : "₹950";
-  const classesLabel =
-    s.plan?.requested_classes && s.plan.requested_classes.length > 0
-      ? s.plan.requested_classes.join(", ")
-      : "MCWG, LMV";
+  const fee = s.plan?.fees ? inr(s.plan.fees.ll_stage_paise) : inr(95000);
+  const classesLabel = formatClassesLabel(s.plan?.requested_classes);
   const stateCode = s.plan?.state ?? s.facts?.state ?? "JK";
   const caseId = s.active.caseId;
 
@@ -253,7 +254,9 @@ export function Handoff() {
             </div>
             <div>
               <dt>{t("offlineFieldRto")}</dt>
-              <dd className="mj-num">{String(s.answers["rto_office"] || `${stateCode}-02 (Jammu)`)}</dd>
+              <dd className="mj-num">
+                {String(s.answers["rto_office"] || `${stateCode}-02 (Jammu)`)}
+              </dd>
             </div>
             <div>
               <dt>{t("preparedClasses")}</dt>
@@ -298,11 +301,7 @@ export function Handoff() {
 
       {/* 3. Dynamic Outage Fallback (ReceiptRoll Form 1A + On-Device Spec Verifier) */}
       {down ? (
-        <div
-          data-testid="sarathi-offline-prep-kit"
-          className="fl-grid"
-          style={{ gap: "18px" }}
-        >
+        <div data-testid="sarathi-offline-prep-kit" className="fl-grid" style={{ gap: "18px" }}>
           {/* Official Pre-filled CMV Form 1 / 1A fed out of ReceiptRoll */}
           <div data-testid="offline-form1a-sheet">
             <ReceiptRoll>
@@ -337,9 +336,7 @@ export function Handoff() {
                 </div>
                 <div>
                   <dt>{t("offlineFieldDeclaration")}</dt>
-                  <dd>
-                    {s.ctx.form1aNeeded ? t("offlineForm1aDoctor") : t("offlineForm1Self")}
-                  </dd>
+                  <dd>{s.ctx.form1aNeeded ? t("offlineForm1aDoctor") : t("offlineForm1Self")}</dd>
                 </div>
               </dl>
 

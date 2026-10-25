@@ -124,7 +124,7 @@ var Fields = map[string]Field{
 	"FLD_LL_ISSUE_DATE":        {"FLD_LL_ISSUE_DATE", false, match(dateRe)},
 	"FLD_AADHAAR_ADDR_MATCHES": {"FLD_AADHAAR_ADDR_MATCHES", false, oneOf("true", "false")},
 	"FLD_TEST_DATE":            {"FLD_TEST_DATE", false, match(dateRe)},
-	"FLD_LANGUAGE":             {"FLD_LANGUAGE", false, oneOf("en", "hi", "doi")},
+	"FLD_LANGUAGE":             {"FLD_LANGUAGE", false, oneOf("en", "hi", "doi", "pa", "mr", "gu", "ta")},
 }
 
 // Canned replies (VOICE.md §2.4, §4.3). Fixed copy, never model text.
@@ -166,13 +166,21 @@ var Canned = map[string]map[string]string{
 // shortcut: empty until the Dogri reviewer signs off the drafts; add rows only after review.
 var dogriReviewed = map[string]string{}
 
-// Text returns a canned line in the locale (Dogri: the reviewed string, else Hindi).
+// Text returns a canned line in the locale (Dogri/Marathi fall back to Hindi if not directly present; others to English).
 func Text(id, locale string) string {
 	if locale == "doi" {
 		if s, ok := dogriReviewed[id]; ok {
 			return s
 		}
 		locale = "hi"
+	}
+	if s, ok := Canned[id][locale]; ok && s != "" {
+		return s
+	}
+	if locale == "mr" {
+		if s, ok := Canned[id]["hi"]; ok {
+			return s
+		}
 	}
 	if locale != "hi" {
 		locale = "en"

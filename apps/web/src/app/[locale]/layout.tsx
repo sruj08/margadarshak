@@ -31,7 +31,9 @@ export async function generateMetadata({
       icon: [{ url: "/pwa/icon-192.png", sizes: "192x192", type: "image/png" }],
       apple: [{ url: "/pwa/apple-touch-icon.png", sizes: "180x180" }],
     },
-    alternates: { languages: { en: "/en", hi: "/hi" } },
+    alternates: {
+      languages: Object.fromEntries(routing.locales.map((l) => [l, `/${l}`])),
+    },
   };
 }
 
@@ -60,7 +62,13 @@ export default async function LocaleLayout({
   const t = await getTranslations("a11y");
 
   return (
-    <html lang={locale} dir="ltr" className={fontVariables} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir="ltr"
+      data-theme="light"
+      className={`${fontVariables} light`}
+      suppressHydrationWarning
+    >
       <body className="md-body">
         <Script src="/theme-init.js" strategy="beforeInteractive" />
         <a href="#main" className="md-skip">

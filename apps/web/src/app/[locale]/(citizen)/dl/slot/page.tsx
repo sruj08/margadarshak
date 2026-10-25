@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { OfflineBanner } from "@/components/journey/status";
-import { SlotBooking } from "@/features/flow/dl";
+import { SlotBooking } from "@/features/flow/slot";
 import { enterLocale } from "@/i18n/page-locale";
 
 export async function generateMetadata(): Promise<Metadata> {

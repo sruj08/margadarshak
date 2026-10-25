@@ -23,10 +23,10 @@ var (
 	bookRe     = regexp.MustCompile(`(?i)\bbook\b|बुक|booking`)
 	legalRe    = regexp.MustCompile(`(?i)challan .*maaf|चालान .*माफ़|चालान .*माफ|court|vakil|वकील`)
 	familyRe   = regexp.MustCompile(`(?i)\b(papa|mummy|maa|father|mother|bhai|behen|beti|beta ke liye)\b|पापा|मम्मी|माँ के|पिता|माता|बेटी|भाई के`)
-	affirmRe   = regexp.MustCompile(`(?i)^(haan|ha|haa|yes|yeah|ok|okay|sahi hai|theek hai|ठीक है|हाँ|हां|हाँ जी|हां जी|सही है|आं|ji haan)[\s.!,।]*(सही है|sahi hai|ji|जी)?[\s.!।]*$`)
+	affirmRe   = regexp.MustCompile(`(?i)^(haan|ha|haa|yes|yeah|ok|okay|sahi hai|theek hai|ठीक है|हाँ|हां|हाँ जी|हां जी|सही है|आं|हो|होय|ठीक आहे|ਹਾਂ|ਹਾਂ ਜੀ|ਠੀਕ ਹੈ|હા|બરાબર|ஆம்|சரி|ji haan)[\s.!,।]*(सही है|sahi hai|ji|जी|ਜੀ)?[\s.!।]*$`)
 )
 
-// Affirmative reports a clear yes ("haan", "हाँ सही है", "yes", Dogri "आं").
+// Affirmative reports a clear yes ("haan", "हाँ सही है", "yes", Dogri "आं", Punjabi "ਹਾਂ", Marathi "हो", Gujarati "હા", Tamil "ஆம்").
 func Affirmative(s string) bool {
 	return affirmRe.MatchString(strings.TrimSpace(s))
 }

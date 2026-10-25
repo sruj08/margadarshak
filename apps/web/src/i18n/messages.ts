@@ -1,3 +1,4 @@
+import { REGIONAL_OVERRIDES } from "./regional-overrides";
 import type { AppLocale } from "./routing";
 
 /**
@@ -38,15 +39,20 @@ export function mergeMessages(base: Tree, extra: Tree): Tree {
   return out;
 }
 
-/** The full catalogue for a locale: `messages/<locale>.json` plus every namespace file. */
+/** The full catalogue for a locale: `messages/<base>.json` plus every namespace file and regional overrides. */
 export async function loadMessages(locale: AppLocale): Promise<Tree> {
+  const baseFileLocale: "en" | "hi" =
+    locale === "hi" || locale === "doi" || locale === "mr" ? "hi" : "en";
+
   const [base, ...parts] = await Promise.all([
-    import(`../../messages/${locale}.json`).then((m: { default: Tree }) => m.default),
+    import(`../../messages/${baseFileLocale}.json`).then((m: { default: Tree }) => m.default),
     ...MESSAGE_NAMESPACES.map((ns) =>
-      import(`../../messages/${locale}/${ns}.json`).then((m: { default: Tree }) => ({
+      import(`../../messages/${baseFileLocale}/${ns}.json`).then((m: { default: Tree }) => ({
         [ns]: m.default,
       })),
     ),
   ]);
-  return parts.reduce<Tree>((acc, part) => mergeMessages(acc, part), base);
+  const merged = parts.reduce<Tree>((acc, part) => mergeMessages(acc, part), base);
+  const regionalOverride = REGIONAL_OVERRIDES[locale];
+  return regionalOverride ? mergeMessages(merged, regionalOverride) : merged;
 }

@@ -7,7 +7,10 @@ import { Sheet } from "@margdarshak/ui/components/sheet";
 import { Mic } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import type { VoiceLocale } from "@/features/ai/api";
+import { toSpeechLang } from "@/features/ai/speech";
 import { useRouter } from "@/i18n/navigation";
+import { APP_LOCALES, LANGUAGE_META } from "@/i18n/routing";
 import { useLiveVoice } from "./use-live-voice";
 
 /**
@@ -29,8 +32,10 @@ export function LiveVoiceSheet({
   const t = useTranslations("voice");
   const ta = useTranslations("a11y");
   const locale = useLocale();
-  // Dogri is voice input only (M-08): a toggle, not a UI locale.
-  const [lang, setLang] = useState<"hi" | "en" | "doi">(locale === "hi" ? "hi" : "en");
+  const [lang, setLang] = useState<VoiceLocale>(() => toSpeechLang(locale));
+  useEffect(() => {
+    setLang(toSpeechLang(locale));
+  }, [locale]);
   const router = useRouter();
   const navigate = useCallback(
     (href: string) => {
@@ -74,14 +79,29 @@ export function LiveVoiceSheet({
           </details>
         ) : null}
         <p className="mj-caption">{t("boundary")}</p>
-        <Button
-          variant="secondary"
-          onPress={() => setLang(lang === "doi" ? (locale === "hi" ? "hi" : "en") : "doi")}
-          aria-pressed={lang === "doi"}
-          data-testid="voice-dogri-toggle"
+        <fieldset
+          className="md-voice-langs"
+          style={{ border: 0, margin: 0, padding: 0 }}
+          aria-label={t("title")}
         >
-          {lang === "doi" ? t("live.leaveDogri") : t("live.useDogri")}
-        </Button>
+          {APP_LOCALES.map((code) => {
+            const meta = LANGUAGE_META[code];
+            const active = lang === code;
+            return (
+              <button
+                key={code}
+                type="button"
+                lang={code}
+                className={`md-voice-langs__pill${active ? " md-voice-langs__pill--active" : ""}`}
+                aria-pressed={active}
+                onClick={() => setLang(code)}
+                data-testid={code === "doi" ? "voice-dogri-toggle" : `voice-lang-${code}`}
+              >
+                {meta.nativeLabel}
+              </button>
+            );
+          })}
+        </fieldset>
 
         <ol
           className="mj-captions"

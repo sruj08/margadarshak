@@ -1,6 +1,6 @@
 import { expect, type Page, test } from "@playwright/test";
 import { onboard } from "./helpers";
-import { answer, makePlan } from "./journey-helpers";
+import { answer, makePlan, pickSlot } from "./journey-helpers";
 import { activeCase, apiCall, expectApi, useServerClock } from "./real-helpers";
 
 /**
@@ -30,12 +30,13 @@ async function serverState(page: Page, caseId: string) {
 }
 
 async function bookFirstSlot(page: Page) {
-  await page.locator(".fl-day").first().click();
-  await page.locator(".fl-time label:not([aria-disabled='true'])").first().click();
+  await pickSlot(page);
   const res = await expectApi(page, "POST", /\/v1\/cases\/[^/]+\/events$/, () =>
     page.getByTestId("slot-confirm").click(),
   );
   expect(res.status, "slot_booked").toBe(201);
+  await expect(page.getByTestId("slot-ack")).toBeVisible();
+  await page.getByTestId("slot-to-slip").click();
   await expect(page).toHaveURL(/\/dl\/test-day/);
 }
 

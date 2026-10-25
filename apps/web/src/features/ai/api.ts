@@ -119,11 +119,13 @@ export function decodeScreenshot(image: Blob, ocrText: string): Promise<AiResult
   return formCall<ScreenDecode>("/v1/decode/screenshot", form);
 }
 
+export type VoiceLocale = "hi" | "en" | "doi" | "pa" | "mr" | "gu" | "ta";
+
 export function scoreCommentary(
   sid: string,
   ordinal: number,
   audio: Blob,
-  lang: "hi" | "en" | "doi",
+  lang: VoiceLocale,
 ): Promise<AiResult<CommentaryResult>> {
   const form = new FormData();
   form.set("audio", audio, "commentary.webm");
@@ -139,7 +141,7 @@ export function createVoiceTicket(): Promise<
 }
 
 /** API-40 socket URL; the tenant rides in `state` because a browser WebSocket cannot set headers. */
-export function voiceSocketUrl(lang: "hi" | "en" | "doi"): string | null {
+export function voiceSocketUrl(lang: VoiceLocale): string | null {
   if (API_MODE !== "real") return null;
   const base = API_BASE || (typeof location !== "undefined" ? location.origin : "");
   return `${base.replace(/^http/, "ws")}/v1/voice?state=${API_TENANT}&lang=${lang}`;

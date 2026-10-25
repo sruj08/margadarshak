@@ -18,14 +18,24 @@ describe("voice intents", () => {
     ["licence for my father", "family"],
     ["pay the fee", "handoff"],
     ["voice guide kya hai", "about_voice"],
+    ["लर्नर लाइसेंस दी फ़ीस किन्नी ऐ?", "fees"],
+    ["ਲਰਨਰ ਲਾਇਸੰਸ ਦੀ ਫੀਸ ਕਿੰਨੀ ਹੈ?", "fees"],
+    ["लर्नर लायसन्सची फी किती आहे?", "fees"],
+    ["લર્નર લાઇસન્સની ફી કેટલી છે?", "fees"],
+    ["பழகும் உரிமம் கட்டணம் எவ்வளவு?", "fees"],
     ["blah blah", "help"],
   ])("%s -> %s", (text, intent) => {
     expect(routeIntent(text)).toBe(intent);
   });
 
-  it("detects Hindi by script", () => {
+  it("detects Hindi and regional Indian languages by script and vocabulary", () => {
     expect(langOf("मेरा प्लान बनाओ")).toBe("hi");
     expect(langOf("make my plan")).toBe("en");
+    expect(langOf("तुस केह् सिक्खना ऐ")).toBe("doi");
+    expect(langOf("ਲਰਨਰ ਲਾਇਸੰਸ")).toBe("pa");
+    expect(langOf("तुमचे लायसन्स किती आहे")).toBe("mr");
+    expect(langOf("મારું લાઇસન્સ")).toBe("gu");
+    expect(langOf("என் உரிமம்")).toBe("ta");
   });
 
   it("maps every intent to a route or stays on the sheet, and has copy in both languages", () => {

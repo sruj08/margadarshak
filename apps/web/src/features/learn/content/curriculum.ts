@@ -35,8 +35,14 @@ import M22 from "@content/curriculum/M22.json";
  * components as props. Text is the reviewed content pack's own; nothing here is generated.
  */
 
-type Loc = { en: string; hi: string };
-type Locale = "en" | "hi";
+import type { AppLocale } from "@/i18n/routing";
+
+type Locale = AppLocale;
+type Loc = { en: string; hi: string } & Partial<Record<Locale, string>>;
+
+function pickLoc(loc: Loc, locale: Locale): string {
+  return loc[locale] ?? (locale === "hi" || locale === "doi" || locale === "mr" ? loc.hi : loc.en);
+}
 
 interface RawSource {
   title: string;
@@ -158,12 +164,12 @@ function summary(m: RawModule, locale: Locale): ModuleSummary {
     id: m.module_id,
     nodeId: m.skill_id,
     branch: branchOf(m.track),
-    title: m.title[locale],
-    short: skill?.title[locale] ?? m.title[locale],
+    title: pickLoc(m.title, locale),
+    short: skill ? pickLoc(skill.title, locale) : pickLoc(m.title, locale),
     depth: depthOf(m.phase_1_2_depth),
     tenants: Array.isArray(m.available_to) ? m.available_to : null,
     games: m.game_ids,
-    lessons: m.lessons.map((l) => ({ id: l.id, title: l.title[locale] })),
+    lessons: m.lessons.map((l) => ({ id: l.id, title: pickLoc(l.title, locale) })),
     follows: skill?.follows ?? [],
     inTree: skill?.in_skill_tree ?? false,
   };
@@ -178,12 +184,12 @@ export function moduleByNode(nodeId: string, locale: Locale): ModuleDetail | nul
   if (!m) return null;
   return {
     ...summary(m, locale),
-    objectives: m.learning_objectives.map((o) => o.text[locale]),
+    objectives: m.learning_objectives.map((o) => pickLoc(o.text, locale)),
     facts: m.key_facts.map((f) => {
       const src = f.sources[0];
       return {
         id: f.id,
-        text: f.text[locale],
+        text: pickLoc(f.text, locale),
         source: src?.title ?? null,
         sourceUrl: src?.url ?? null,
         checkedOn: src?.checked_on ?? null,
@@ -192,8 +198,8 @@ export function moduleByNode(nodeId: string, locale: Locale): ModuleDetail | nul
     }),
     myths: m.misconceptions.map((x) => ({
       id: x.id,
-      myth: x.myth[locale],
-      correction: x.correction[locale],
+      myth: pickLoc(x.myth, locale),
+      correction: pickLoc(x.correction, locale),
     })),
   };
 }
@@ -243,7 +249,7 @@ export function gameTiles(locale: Locale): GameTile[] {
   return (games as unknown as { games: RawGame[] }).games.map((g) => ({
     id: g.game_id,
     code: g.code,
-    title: g.title[locale],
+    title: pickLoc(g.title, locale),
     depth:
       g.build_depth_phase_1_2 === "deep"
         ? "deep"
@@ -257,7 +263,7 @@ export function gameTiles(locale: Locale): GameTile[] {
 
 export function gameTitle(gameId: string, locale: Locale): string {
   const g = (games as unknown as { games: RawGame[] }).games.find((x) => x.game_id === gameId);
-  return g?.title[locale] ?? gameId;
+  return g ? pickLoc(g.title, locale) : gameId;
 }
 
 /** URL slug of a game's own route (`learn/practise/<slug>`), owned by each game's workstream. */

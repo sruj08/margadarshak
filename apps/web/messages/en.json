@@ -1309,7 +1309,20 @@
       "approval": "RTO: approval usually comes by SMS.",
       "card": "Post: the card can take up to 45 days.",
       "digilocker": "Sarathi: your DL appears in DigiLocker once approved."
-    }
+    },
+    "action": {
+      "plan": "Open my plan",
+      "applied": "Continue my application",
+      "ll_test": "Take the LL test",
+      "practice": "Practise now",
+      "book": "Book a test slot",
+      "dl_test": "My test slip",
+      "approval": "See approval status",
+      "card": "Track my licence",
+      "digilocker": "Open in DigiLocker"
+    },
+    "bookEarly": "Book now for {date} or later",
+    "bookEarlyNoDate": "Book a slot now"
   },
   "homeStage": {
     "strip": "Journey stage {stage}",
@@ -1351,7 +1364,17 @@
       "TEST_DAY": "Driving test",
       "DL_RENEWAL_M60": "Renewal reminder",
       "DL_EXPIRY": "Driving licence expires",
-      "PAYMENT_PENDING_D3": "Check payment at the RTO counter"
+      "PAYMENT_PENDING_D3": "Check payment at the RTO counter",
+      "CASE_STARTED": "Application started",
+      "DL_UNLOCKED": "Driving test unlocked",
+      "SLOT_BOOKED": "Test slot booked",
+      "TEST_EVE": "Reminder: test tomorrow",
+      "RETEST_ELIGIBLE": "You can retest from today",
+      "APPROVAL_CHASE": "Check your approval status",
+      "FORM_1A_AT_40": "Medical certificate needed at renewal",
+      "DL_EXPIRED": "Driving licence expired",
+      "DL_EXPIRED_Y1": "One year since your licence expired",
+      "RULES_CHANGED": "Your state's rules changed"
     },
     "now": {
       "PLAN": "Your plan is ready. Next: your application.",
