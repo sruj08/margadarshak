@@ -7,6 +7,8 @@ import type { EventRecorder } from "@margdarshak/game-core/sdk";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { CoachSummary, type SummaryLink, type SummaryRow } from "@/features/ai/CoachSummary";
+import { getSessionRecord } from "@/features/games/results-store";
 import type { SessionOutcome, WebGame, WebGameModule, WebGameProps } from "@/features/games/types";
 import { loadPracticeKey } from "@/features/learn/bank-client";
 import type { PracticeKey } from "@/features/learn/content/bank-types";
@@ -246,23 +248,51 @@ function LlSimGame(props: WebGameProps) {
   );
 }
 
-/** Lines under the host's score: the state's pass rule, in plain words, never red. */
+/** Lines under the host's score: the state's pass rule, in plain words, never red; then the
+ * coach's session summary (practice and mock). */
 function LlResultsExtra({ outcome }: { outcome: SessionOutcome }) {
   const t = useTranslations("llSim.result");
   const r = outcome.checked?.result;
-  if (!r || outcome.mode !== "mock") return null;
+  if (!r) return null;
   const below = r.findings.find((f) => f.findingId === "LL_MOCK_BELOW_PASS");
   const pass = below?.facts["pass_mark"];
   return (
     <div className="md-stack">
-      {r.score.passed === false && typeof pass === "number" ? (
+      {outcome.mode === "mock" && r.score.passed === false && typeof pass === "number" ? (
         <p>{t("not", { r: r.score.raw, n: r.score.max, p: pass })}</p>
       ) : null}
-      <Link href={`/learn/practise/ll-sim/result/${outcome.sid}`} className="md-link">
-        {t("details")}
-      </Link>
+      <LlSummary outcome={outcome} />
+      {outcome.mode === "mock" ? (
+        <Link href={`/learn/practise/ll-sim/result/${outcome.sid}`} className="md-link">
+          {t("details")}
+        </Link>
+      ) : null}
     </div>
   );
+}
+
+/** One row per question of the run (its own public documents and the scorer's components). */
+function LlSummary({ outcome }: { outcome: SessionOutcome }) {
+  const tt = useTranslations("learnHub.topics");
+  const ts = useTranslations("ai.summary");
+  const rec = getSessionRecord(outcome.sid);
+  const components = outcome.checked?.result?.score.components ?? [];
+  const rows: SummaryRow[] = (rec?.items ?? []).flatMap((it, i) => {
+    const doc = it.public as unknown as ExamPublic | undefined;
+    const comp = components[i];
+    if (!doc || !comp) return [];
+    return [{ ref: doc.id, correct: comp.value > 0, label: tt(doc.topic) }];
+  });
+  const weak = (rec?.items ?? [])
+    .map((it, i) => ((components[i]?.value ?? 1) > 0 ? null : (it.public as unknown as ExamPublic)))
+    .find((d) => d)?.topic;
+  const links: SummaryLink[] = [
+    ...(weak
+      ? [{ href: `/learn/review?topic=${weak}`, label: ts("reviewTopic", { topic: tt(weak) }) }]
+      : []),
+    { href: "/learn/practise/ll-sim", label: ts("mock") },
+  ];
+  return <CoachSummary game="ll" sessionKey={outcome.sid} rows={rows} links={links} />;
 }
 
 const game: WebGame = {

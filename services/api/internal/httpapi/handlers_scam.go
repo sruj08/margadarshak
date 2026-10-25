@@ -18,7 +18,7 @@ func (s *Server) CheckScam(w http.ResponseWriter, r *http.Request) {
 	if !decodeJSON(w, r, &body, false) {
 		return
 	}
-	in := scam.Input{}
+	in := scam.Input{Locale: textLangOf(tutorLocale(r.Header.Get("Accept-Language")))}
 	if body.Text != nil {
 		in.Text = strings.TrimSpace(*body.Text)
 	}

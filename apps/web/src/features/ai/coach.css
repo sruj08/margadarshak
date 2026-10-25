@@ -1,0 +1,95 @@
+/* In-game coach turn and session summary (API-79). Self-contained (used on learn and Nazar
+ * screens, which load different stylesheets). Tokens only; 48 px targets; state in words. */
+@layer components {
+  .md-coach {
+    display: grid;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: var(--md-r-xl);
+    border: 1px solid var(--md-border);
+    background: var(--md-primary-soft);
+    color: var(--md-ink);
+    text-align: start;
+  }
+  .md-coach[data-state="fallback"],
+  .md-coach[data-state="loading"] {
+    background: var(--md-surface-2);
+  }
+  .md-coach__stack {
+    display: grid;
+    gap: 10px;
+  }
+  .md-coach__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 14px;
+  }
+  .md-coach__chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: var(--md-r-full);
+    background: var(--md-surface);
+    color: var(--md-primary-ink);
+    font-size: var(--md-text-caption);
+    font-weight: 600;
+  }
+  .md-coach__small {
+    font-size: var(--md-text-caption);
+    color: var(--md-ink-2);
+  }
+  .md-coach__strong {
+    font-weight: 600;
+  }
+  .md-coach__btn {
+    min-height: 48px;
+    padding: 0 4px;
+    background: none;
+    border: 0;
+    color: var(--md-primary);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .md-coach__btn:disabled {
+    color: var(--md-ink-disabled);
+    cursor: default;
+  }
+  .md-coach__btn:focus-visible {
+    outline: 3px solid var(--md-focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .md-coach__input {
+    flex: 1 1 200px;
+    min-height: 48px;
+    padding: 0 12px;
+    border-radius: var(--md-r-md);
+    border: 1.5px solid var(--md-border-strong);
+    background: var(--md-surface);
+    color: var(--md-ink);
+    font: inherit;
+  }
+  .md-coach__list {
+    margin: 0;
+    padding-inline-start: 1.2em;
+    display: grid;
+    gap: 4px;
+  }
+  .md-coach__pulse {
+    animation: md-coach-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes md-coach-pulse {
+    50% {
+      opacity: 0.45;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .md-coach__pulse {
+      animation: none;
+    }
+  }
+}

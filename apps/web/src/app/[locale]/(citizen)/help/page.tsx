@@ -15,6 +15,7 @@ export default async function HelpPage({ params }: { params: Promise<{ locale: s
   await enterLocale(params);
   const t = await getTranslations("help");
   const tf = await getTranslations("footer");
+  const ta = await getTranslations("ai.tools");
   return (
     <div className="md-page" data-screen="SCR-181">
       <div className="md-stack">
@@ -54,6 +55,9 @@ export default async function HelpPage({ params }: { params: Promise<{ locale: s
         <Banner tone="caution" title={t("scamTitle")} role="note">
           {t("scamBody")}
         </Banner>
+        <Link href="/services/scam" className="md-link" data-testid="help-scam-link">
+          {ta("scam.title")}
+        </Link>
       </section>
     </div>
   );

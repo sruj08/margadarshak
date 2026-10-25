@@ -4,6 +4,7 @@ import { randInt, subStream } from "@margdarshak/game-core/sim";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { QuestionCoach } from "@/features/ai/QuestionCoach";
 import { SD_UI } from "../config";
 import {
   childDistanceM,
@@ -314,6 +315,21 @@ export function BrakeReflex(p: RoundProps<Round2>) {
             </p>
           )}
           <p className="sd-note">{t("speedNote")}</p>
+          {p.mode !== "mock" ? (
+            <QuestionCoach
+              subject={{
+                game: "sim",
+                key: `sd2:${p.seed}:${p.item}:${attempt}`,
+                sim: {
+                  kind: "sd_brake",
+                  surface: p.spec.surface,
+                  outcome:
+                    out.why === "early" ? "too_early" : out.o.collision ? "not_stopped" : "stopped",
+                },
+              }}
+              fallbackText={t("speedNote")}
+            />
+          ) : null}
           <button
             type="button"
             className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}

@@ -67,5 +67,155 @@
     "missed": "Not named in time",
     "off": "Commentary scoring is off right now. Your Nazar score is not affected.",
     "consentNeeded": "Turn on voice in your privacy settings to use commentary."
+  },
+  "coachTurn": {
+    "ai": "AI coach",
+    "reviewed": "Reviewed explanation",
+    "thinking": "Coach is thinking…",
+    "status": {
+      "preview": "The AI coach needs the live server. The reviewed explanation is shown above.",
+      "offline": "You're offline. The reviewed explanation is shown above.",
+      "signin": "Sign in and turn on AI help to hear the coach explain each answer.",
+      "consent": "Turn on AI help to hear the coach explain each answer and ask you a quick question.",
+      "off": "The AI coach is switched off for your state.",
+      "busy": "The coach couldn't answer just now. The reviewed explanation is shown above."
+    },
+    "signin": "Sign in",
+    "turnOn": "Turn on AI help",
+    "retry": "Try again",
+    "listen": "Listen",
+    "stop": "Stop",
+    "replay": "Play again",
+    "voiceOn": "Turn voice on",
+    "voiceOff": "Turn voice off",
+    "followTitle": "Quick question:",
+    "verdict": {
+      "good": "Spot on.",
+      "partly": "Partly right.",
+      "not_yet": "Not quite yet."
+    },
+    "answerVoice": "Answer by voice",
+    "doneSpeaking": "Done speaking",
+    "listening": "Listening… speak now",
+    "mic": {
+      "micDenied": "Microphone access is blocked. Allow it in your browser settings, or type your answer.",
+      "noSpeech": "We didn't hear anything. Try again, or type your answer.",
+      "network": "Voice input needs a connection. Type your answer instead.",
+      "unsupported": "Voice answers don't work in this browser. Type your answer instead.",
+      "failed": "Voice input stopped. Type your answer instead."
+    },
+    "orType": "Or type your answer",
+    "typeAnswer": "Type your answer",
+    "send": "Send",
+    "replyFailed": "The coach couldn't reply just now. You can carry on.",
+    "skipHint": "Not now? Just carry on to the next question.",
+    "helpful": "Was this helpful?",
+    "yes": "Yes",
+    "no": "No",
+    "thanks": "Thanks, noted.",
+    "micNote": "Your browser turns your speech into text; we only receive the text."
+  },
+  "summary": {
+    "title": "Coach's summary",
+    "ai": "AI coach",
+    "auto": "Auto summary",
+    "score": "{right} of {total} right",
+    "strengths": "What went well",
+    "mistakes": "What to work on",
+    "next": "What to practise next",
+    "loading": "Writing your summary…",
+    "allRight": "All right in: {list}",
+    "toWork": "Mistakes in: {list}",
+    "keepGoing": "Every session builds the habit. Keep going.",
+    "reviewTopic": "Review {topic}",
+    "nazarAgain": "Play another Nazar set",
+    "mock": "Take a mock test",
+    "review": "Review today's questions",
+    "status": {
+      "preview": "The AI coach needs the live server; this summary is counted on this phone.",
+      "offline": "You are offline; this summary is counted on this phone.",
+      "signin": "Sign in and turn on AI help for a spoken summary from the coach.",
+      "consent": "Turn on AI help for a spoken summary from the coach.",
+      "off": "The AI coach is switched off for your state.",
+      "busy": "The coach could not write a summary just now."
+    }
+  },
+  "why": {
+    "button": "Why?",
+    "loading": "Getting the explanation…",
+    "note": "Coach note",
+    "none": "No reviewed explanation for this question yet.",
+    "calib": {
+      "sure_and_wrong": "You were sure, but this one was wrong. Worth a second look.",
+      "unsure_and_right": "You were unsure, but right. Trust what you know."
+    }
+  },
+  "scam": {
+    "title": "Is this message a scam?",
+    "intro": "Paste an SMS, WhatsApp message or link about your licence. Fixed rules look for common scam signs; AI only explains what the rules found.",
+    "label": "Message or link",
+    "privacy": "Don't paste your Aadhaar number, OTP or bank details. Long numbers are hidden before checking, and the text is not stored.",
+    "check": "Check this message",
+    "working": "Checking…",
+    "empty": "Paste a message or link first.",
+    "verdict": {
+      "likely_scam": "This looks like a scam",
+      "cannot_verify": "We can't confirm this message"
+    },
+    "flagsTitle": "Warning signs found",
+    "flags": {
+      "apk_link": "It asks you to install an app file (APK). Government services don't send app files by message.",
+      "non_allowlisted_domain": "A link goes to a site that isn't on a government domain (gov.in or nic.in).",
+      "lookalike_domain": "A link name imitates a transport website.",
+      "upi_collect_request": "It involves a UPI request. Never approve a collect request to get a service.",
+      "fee_mismatch": "The fee doesn't match the published fee.",
+      "urgency": "It pushes you to act fast.",
+      "no_test_promise": "It promises a licence without a test, which the process doesn't allow.",
+      "otp_request": "It asks for an OTP or PIN. Never share these.",
+      "impersonation": "It uses a transport service's name but links somewhere else.",
+      "setting_offer": "It offers to arrange or speed up a licence for extra money."
+    },
+    "noFlags": "No known warning signs found. That doesn't prove the message is genuine.",
+    "domains": "Links in the message",
+    "onList": "government domain",
+    "offList": "not a government domain",
+    "explainAi": "AI explanation",
+    "explainRules": "Explanation",
+    "guidance": "Open parivahan.gov.in yourself instead of tapping links in messages.",
+    "another": "Check another message",
+    "limit": "Rules can miss new tricks. When in doubt, don't pay and don't share codes.",
+    "failed": "The checker couldn't be reached. Don't tap the link or pay until you can check on parivahan.gov.in yourself."
+  },
+  "buddy": {
+    "title": "Your prep buddy",
+    "week": "Practised on {d, plural, one {# day} other {# days}} in the last 7 days",
+    "today": "Next up",
+    "then": "After that",
+    "device": "Auto plan from your practice on this phone. It changes after every session.",
+    "start": "Start",
+    "rec": {
+      "review": "Review {topic}: {pct}% right in your recent answers",
+      "start": "Start {topic}: not practised yet",
+      "mock": "Take a mock LL test: none in the last 7 days",
+      "mockAgain": "Take another mock test: the last one was below the pass mark",
+      "mockKeep": "Keep it fresh: one mock test this week",
+      "nazar": "Spot hazards in Nazar: not played in the last 7 days",
+      "strong": "All topics look strong. A mock test keeps you sharp."
+    }
+  },
+  "tools": {
+    "title": "AI help",
+    "snap": {
+      "title": "Road Sign Snap",
+      "line": "Take a photo of a sign to see what it means"
+    },
+    "scam": {
+      "title": "Is this message a scam?",
+      "line": "Check an SMS or link before you pay"
+    },
+    "decode": {
+      "title": "What does this screen mean?",
+      "line": "Upload a Sarathi screenshot, get your next steps"
+    }
   }
 }

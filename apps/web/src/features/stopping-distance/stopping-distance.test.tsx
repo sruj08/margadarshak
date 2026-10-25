@@ -18,6 +18,13 @@ import type { Emit } from "./rounds/types";
 import { StoppingDistanceGame } from "./StoppingDistanceGame";
 import { fakeClock, harness, hostEnd, hostStart, SimsIntl } from "./sims-test-utils";
 
+// The game coach (API-79) renders links; the app router is not mounted in these tests.
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
+
 const C = GAME_CONFIG.stoppingDistance;
 const opts = { gameVersion: "1.0.0", scoringVersion: "1.0", replayInputs: "" };
 const docs = fixtureContentDocs();

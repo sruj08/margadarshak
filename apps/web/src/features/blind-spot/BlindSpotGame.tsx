@@ -154,6 +154,8 @@ export function BlindSpotGame(props: WebGameProps) {
   if (!it || variant === null) return null;
   const key = `${it.index}:${deal}:${variant}`;
   const learn = ctx.mode === "learn";
+  // The question-wise coach runs in practice and learn; a mock keeps test conditions.
+  const coach = ctx.mode !== "mock";
   return (
     <div className="sd-game bs-game" data-testid="bs-game" data-variant={variant}>
       {variant === "decision" ? (
@@ -169,6 +171,7 @@ export function BlindSpotGame(props: WebGameProps) {
             seed={ctx.seed}
             item={it.index}
             learn={learn}
+            coach={coach}
             place={place}
             onDone={next}
           />
@@ -179,6 +182,7 @@ export function BlindSpotGame(props: WebGameProps) {
             seed={ctx.seed}
             item={it.index}
             learn={learn}
+            coach={coach}
             tapOnly={a11y.tapOnly}
             paused={props.paused}
             reducedMotion={a11y.reducedMotion}

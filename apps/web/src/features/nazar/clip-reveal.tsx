@@ -4,6 +4,7 @@ import { bandFor, patternVoids } from "@margdarshak/game-core/scoring";
 import { Button } from "@margdarshak/ui/components/button";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { QuestionCoach } from "@/features/ai/QuestionCoach";
 import type { HazardWindowWire } from "@/features/games/api-types";
 import { hazardLabel } from "./hazard-labels";
 import { ReplayScrubber } from "./replay/ReplayScrubber";
@@ -67,6 +68,7 @@ export function ClipReveal({
   taps,
   durationMs,
   voided,
+  coachKey,
   locale,
   isLast,
   reducedMotion,
@@ -76,6 +78,8 @@ export function ClipReveal({
   taps: readonly number[];
   durationMs: number;
   voided: "hidden" | "stalled" | null;
+  /** Session and clip ordinal: one coach turn per clip. */
+  coachKey?: string;
   locale: string;
   isLast: boolean;
   reducedMotion: boolean;
@@ -120,6 +124,26 @@ export function ClipReveal({
       {windows.length === 0 ? <p>{t("reveal.quiet")}</p> : null}
       {!voided && !fb.pattern ? (
         <p className="mg-note">{t("reveal.falseAlarms", { n: fb.falseAlarms })}</p>
+      ) : null}
+      {coachKey && !voided ? (
+        <QuestionCoach
+          subject={{
+            game: "nazar",
+            key: coachKey,
+            clip: {
+              hazards: fb.hazards.map((h) => ({
+                hazard_type: h.hazardType,
+                band: h.band,
+                early: h.early,
+              })),
+              false_alarms: fb.falseAlarms,
+              pattern: fb.pattern,
+            },
+          }}
+          fallbackText={fb.hazards
+            .map((h) => t("reveal.teach", { hazard: hazardLabel(h.hazardType, locale) }))
+            .join(" ")}
+        />
       ) : null}
       {replaying ? (
         <ReplayScrubber

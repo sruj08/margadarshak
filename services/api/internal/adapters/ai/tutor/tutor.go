@@ -28,6 +28,7 @@ type localised map[string]string
 
 type bankItem struct {
 	ItemID  string    `json:"item_id"`
+	Topic   string    `json:"topic"`
 	Stem    localised `json:"stem"`
 	Options []struct {
 		ID   string    `json:"option_id"`
@@ -121,18 +122,24 @@ func (t *Tutor) AIEnabled() bool { return t.agent != nil }
 // Explain returns the reviewed explanation for a variant and, when allowed, a glue sentence.
 // confidence is the learner's 50/75/100 tap (0 when not asked).
 func (t *Tutor) Explain(ctx context.Context, questionID, variantID, chosen, locale string, confidence int, useAI bool) (*Explanation, error) {
-	textLocale := "en"
-	if locale == "hi" {
-		textLocale = "hi"
+	item, _, err := t.Lookup(questionID, variantID, chosen, locale)
+	if err != nil {
+		return nil, err
 	}
+	return t.ExplainItem(ctx, item, locale, confidence, useAI), nil
+}
+
+// Lookup returns one answered variant from the reviewed bank, and its topic.
+func (t *Tutor) Lookup(questionID, variantID, chosen, locale string) (Item, string, error) {
+	textLocale := textLang(locale)
 	id := questionID + ":" + variantID
 	it, ok := t.items[id]
 	if !ok {
-		return nil, ErrUnknownItem
+		return Item{}, "", ErrUnknownItem
 	}
 	key, ok := t.keys[id]
 	if !ok {
-		return nil, ErrUnknownItem
+		return Item{}, "", ErrUnknownItem
 	}
 	var chosenText, correctText string
 	for _, o := range it.Options {
@@ -144,13 +151,38 @@ func (t *Tutor) Explain(ctx context.Context, questionID, variantID, chosen, loca
 		}
 	}
 	if chosenText == "" || correctText == "" {
-		return nil, ErrUnknownItem
+		return Item{}, "", ErrUnknownItem
 	}
-	item := Item{Question: it.Stem[textLocale], Chosen: chosenText, Correct: correctText, Wrong: chosen != key.Correct,
+	return Item{Question: it.Stem[textLocale], Chosen: chosenText, Correct: correctText, Wrong: chosen != key.Correct,
 		ExplanationID: key.Explanation, ReviewedText: t.expl[key.Explanation][textLocale],
 		// Rules stay empty until a second person verifies them: nothing is AI-citable yet.
-		AllowedRuleIDs: []string{}}
-	return t.ExplainItem(ctx, item, locale, confidence, useAI), nil
+		AllowedRuleIDs: []string{}}, it.Topic, nil
+}
+
+// Topic returns the topic of a bank variant ("" when unknown).
+func (t *Tutor) Topic(questionID, variantID string) string {
+	if it, ok := t.items[questionID+":"+variantID]; ok {
+		return it.Topic
+	}
+	return ""
+}
+
+// Missed describes a variant for a session summary: its question and, when the practice key has
+// it, the correct answer ("" when unknown).
+func (t *Tutor) Missed(questionID, variantID, locale string) string {
+	id := questionID + ":" + variantID
+	it, ok := t.items[id]
+	if !ok {
+		return ""
+	}
+	lang := textLang(locale)
+	out := it.Stem[lang]
+	for _, o := range it.Options {
+		if k, ok := t.keys[id]; ok && o.ID == k.Correct {
+			out += " (correct answer: " + o.Text[lang] + ")"
+		}
+	}
+	return out
 }
 
 // Item is one answered question with its approved explanation (empty ReviewedText = none yet).

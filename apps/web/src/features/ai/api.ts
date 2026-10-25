@@ -39,15 +39,22 @@ async function jsonCall<T>(
   method: "GET" | "POST",
   path: string,
   body?: unknown,
+  timeoutMs?: number,
 ): Promise<AiResult<T>> {
   if (API_MODE !== "real") return { ok: false, status: 0, code: null, reason: "mock" };
   if (!isOnline()) return { ok: false, status: 0, code: null, reason: "offline" };
   try {
     await ensureApiSession();
-    const res = await sendApi(method, path, body === undefined ? {} : { body });
+    const res = await sendApi(method, path, {
+      ...(body === undefined ? {} : { body }),
+      ...(timeoutMs ? { timeoutMs } : {}),
+    });
     if (res.status >= 200 && res.status < 300) return { ok: true, data: res.body as T };
     return { ok: false, status: res.status, code: problemCode(res.body), reason: "problem" };
-  } catch {
+  } catch (e) {
+    // A slow answer is not a lost connection: say "busy" so the screen offers a retry.
+    if (e instanceof DOMException && e.name === "TimeoutError")
+      return { ok: false, status: 408, code: "TIMEOUT", reason: "problem" };
     return { ok: false, status: 0, code: null, reason: "offline" };
   }
 }
@@ -87,7 +94,7 @@ async function formCall<T>(path: string, form: FormData, timeoutMs = 20_000): Pr
 
 export function getCoachPlan(familyMemberId?: string): Promise<AiResult<CoachPlan>> {
   const q = familyMemberId ? `?family_member_id=${encodeURIComponent(familyMemberId)}` : "";
-  return jsonCall<CoachPlan>("GET", `/v1/me/coach-plan${q}`);
+  return jsonCall<CoachPlan>("GET", `/v1/me/coach-plan${q}`, undefined, 20_000);
 }
 
 export function saveCoachIntention(
@@ -145,3 +152,44 @@ export function sendAIFeedback(
 ): Promise<AiResult<unknown>> {
   return jsonCall("POST", "/v1/ai/feedback", { agent, item_id: itemId, helpful });
 }
+
+export type CoachTurn = Schemas["CoachTurn"];
+export type CoachTurnRequest = Schemas["CoachTurnRequest"];
+export type TutorExplanation = Schemas["TutorExplanation"];
+export type ScamVerdict = Schemas["ScamVerdict"];
+
+/** API-79: one coach turn (feedback, reply or summary) in the UI language. */
+export function coachTurn(body: CoachTurnRequest): Promise<AiResult<CoachTurn>> {
+  return jsonCall<CoachTurn>("POST", "/v1/coach/turn", { ...body, locale: apiLocale() }, 15_000);
+}
+
+/** API-41: the reviewed explanation of one answer, plus AI glue when allowed. */
+export function explainAnswer(
+  itemId: string,
+  chosenOptionId: string,
+): Promise<AiResult<TutorExplanation>> {
+  const [question_id = "", variant_id = ""] = itemId.split(":");
+  return jsonCall<TutorExplanation>("POST", "/v1/tutor/explain", {
+    question_id,
+    variant_id,
+    chosen_option_id: chosenOptionId,
+    locale: apiLocale(),
+  });
+}
+
+/** API-43: rules decide the verdict; the explanation is AI-worded when allowed. */
+export function checkScam(text: string): Promise<AiResult<ScamVerdict>> {
+  return jsonCall<ScamVerdict>("POST", "/v1/scam/check", { text: text.slice(0, 4000) }, 20_000);
+}
+
+/** Why an AI call gave nothing, as one key of `ai.status` (the screen keeps its manual path). */
+export function aiFailure(r: Extract<AiResult<unknown>, { ok: false }>): AiFailure {
+  if (r.reason === "mock") return "preview";
+  if (r.reason === "offline") return "offline";
+  if (r.status === 401 || r.code === "FORBIDDEN" || r.code === "UNAUTHENTICATED") return "signin";
+  if (r.code === "CONSENT_REQUIRED") return "consent";
+  if (r.code === "FEATURE_DISABLED") return "off";
+  return "busy";
+}
+
+export type AiFailure = "preview" | "offline" | "signin" | "consent" | "off" | "busy";

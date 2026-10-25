@@ -9,12 +9,14 @@ import (
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/commentary"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/debrief"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/decoder"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/gamecoach"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/scam"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/signsnap"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/tutor"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/voiceguide"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/speech"
 	"github.com/sruj08/margadarshak/services/api/internal/platform/config"
+	"google.golang.org/genai"
 )
 
 // AIAgents are the Google ADK agents (docs/04-ai/AGENTS.md). Each falls back to templates or
@@ -30,6 +32,7 @@ type AIAgents struct {
 	Coach      *coach.Coach
 	Voice      *voiceguide.Guide
 	Speech     speech.Port
+	GameCoach  *gamecoach.Coach
 }
 
 // model picks the env-pinned model for an agent family, else GEMINI_MODEL (MD-301).
@@ -53,7 +56,11 @@ func newAIAgents(ctx context.Context, cfg *config.Config, log *slog.Logger, cont
 	lite.Model = model(cfg.GeminiModelTextLite, cfg.GeminiModel)
 	vision.Model = model(cfg.GeminiModelVision, cfg.GeminiModel)
 	deb.Model = model(cfg.GeminiModelDebrief, lite.Model)
-	out := AIAgents{Scam: scam.New(ctx, log, lite)}
+	// Narrators the learner waits for on screen (scam check, tutor note, game coach, debrief) think little.
+	fast := lite
+	fast.Thinking = genai.ThinkingLevelLow
+	deb.Thinking = genai.ThinkingLevelLow
+	out := AIAgents{Scam: scam.New(ctx, log, fast)}
 	if g := commentary.NewGemini(ctx, log, base); g != nil {
 		out.Commentary = g
 	}
@@ -70,7 +77,7 @@ func newAIAgents(ctx context.Context, cfg *config.Config, log *slog.Logger, cont
 	} else {
 		out.SignSnap = s
 	}
-	if c, err := coach.New(ctx, log, contentDir, lite); err != nil {
+	if c, err := coach.New(ctx, log, contentDir, fast); err != nil {
 		log.Warn("drill catalogue not loaded; API-76 answers 503 (set CONTENT_DIR)", "err", err)
 	} else {
 		out.Coach = c
@@ -80,7 +87,12 @@ func newAIAgents(ctx context.Context, cfg *config.Config, log *slog.Logger, cont
 	} else {
 		out.Debrief = debrief.New(ctx, log, cat, deb)
 	}
-	if t, err := tutor.New(ctx, log, contentDir, lite); err != nil {
+	if g, err := gamecoach.New(ctx, log, contentDir, fast); err != nil {
+		log.Warn("hazard catalogue not loaded; API-79 answers 503 (set CONTENT_DIR)", "err", err)
+	} else {
+		out.GameCoach = g
+	}
+	if t, err := tutor.New(ctx, log, contentDir, fast); err != nil {
 		log.Warn("question bank not loaded; API-41 answers 503 (set CONTENT_DIR)", "err", err)
 	} else {
 		out.Tutor = t
@@ -91,7 +103,7 @@ func newAIAgents(ctx context.Context, cfg *config.Config, log *slog.Logger, cont
 		log.Warn("voice catalogues not loaded; API-40 answers 503 (set CONTENT_DIR)", "rules", rerr, "drills", derr)
 		return out
 	}
-	g, err := voiceguide.New(ctx, voiceguide.Config{AI: lite, LiveModel: cfg.GeminiModelLive, Rules: rules, Drills: drills,
+	g, err := voiceguide.New(ctx, voiceguide.Config{AI: fast, LiveModel: cfg.GeminiModelLive, Rules: rules, Drills: drills,
 		ReadDebrief: readDebrief, Log: log})
 	if err != nil {
 		log.Warn("voice guide disabled", "err", err)

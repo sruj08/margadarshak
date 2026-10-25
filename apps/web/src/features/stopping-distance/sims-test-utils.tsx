@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import { vi } from "vitest";
 import type { HostSession, WebGameModule, WebGameProps } from "@/features/games/types";
+import aiEn from "../../../messages/en/ai.json";
 import gamesEn from "../../../messages/en/games.json";
 import simsEn from "../../../messages/en/sims.json";
 
@@ -13,7 +14,7 @@ export function SimsIntl({ children }: { children: ReactNode }) {
   return (
     <NextIntlClientProvider
       locale="en"
-      messages={{ games: gamesEn, sims: simsEn }}
+      messages={{ games: gamesEn, sims: simsEn, ai: aiEn }}
       timeZone="Asia/Kolkata"
     >
       {children}

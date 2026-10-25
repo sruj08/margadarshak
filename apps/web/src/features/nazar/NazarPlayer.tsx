@@ -395,6 +395,7 @@ export function NazarPlayer(props: WebGameProps) {
             taps={p.taps}
             durationMs={durationOf(p.i)}
             voided={p.voided}
+            coachKey={`${ctx.sid}:${p.i}`}
             locale={locale}
             isLast={p.i + 1 >= n}
             reducedMotion={a11y.reducedMotion}

@@ -66,6 +66,24 @@ export const GROUPS: Record<GroupId, ServiceItem[]> = {
       synonyms: "slot book driving test स्लॉट बुक",
     },
     { id: "check", href: "/licence", live: true, synonyms: "status track where am i स्टेटस कहाँ" },
+    {
+      id: "decode",
+      href: "/services/decode",
+      live: true,
+      synonyms: "screenshot error sarathi status screen meaning स्क्रीनशॉट एरर स्टेटस मतलब",
+    },
+    {
+      id: "scam",
+      href: "/services/scam",
+      live: true,
+      synonyms: "scam fraud fake sms link agent dalal apk धोखा फ़्रॉड नकली मैसेज दलाल",
+    },
+    {
+      id: "snap",
+      href: "/learn/signs/snap",
+      live: true,
+      synonyms: "road sign photo camera meaning signboard संकेत फ़ोटो कैमरा बोर्ड",
+    },
   ],
   holder: [
     {

@@ -11,6 +11,7 @@ export function DecisionPartA(p: {
   seed: number;
   item: number;
   learn: boolean;
+  coach?: boolean;
   place: (probe: { x: number; y: number }) => void;
   onDone: () => void;
 }) {
@@ -21,6 +22,7 @@ export function DecisionPartA(p: {
       seed={p.seed}
       item={p.item}
       learn={p.learn}
+      coach={p.coach ?? false}
       place={p.place}
       onDone={p.onDone}
       picture={(pl) => (

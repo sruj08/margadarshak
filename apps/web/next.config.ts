@@ -69,6 +69,18 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Learn and the games: spoken answers to the game coach (API-79) and Nazar commentary
+      // (API-74) need the microphone, for this origin only.
+      {
+        source: "/:locale(en|hi)/learn/:path*",
+        headers: [
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(self), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), browsing-topics=()",
+          },
+        ],
+      },
       // Journey-test lab replica (MD-139): never indexed.
       {
         source: "/:locale(en|hi)/lab/:path*",

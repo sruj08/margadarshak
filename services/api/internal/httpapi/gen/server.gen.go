@@ -167,6 +167,9 @@ type ServerInterface interface {
 	// RecordPhotoCheck Record photo/signature check metadata (the check runs on device; no image uploaded)
 	// (POST /v1/checks/photo)
 	RecordPhotoCheck(w http.ResponseWriter, r *http.Request, params RecordPhotoCheckParams)
+	// CoachTurn Question-wise game coach (feedback after a question or clip, reply to a follow-up, session summary)
+	// (POST /v1/coach/turn)
+	CoachTurn(w http.ResponseWriter, r *http.Request, params CoachTurnParams)
 	// ConsoleDemand State console - demand forecast (cases reaching DL-test unlock per week) and query deflection
 	// (GET /v1/console/demand)
 	ConsoleDemand(w http.ResponseWriter, r *http.Request, params ConsoleDemandParams)
@@ -707,6 +710,12 @@ func (_ Unimplemented) CheckPracticeRecord(w http.ResponseWriter, r *http.Reques
 // RecordPhotoCheck Record photo/signature check metadata (the check runs on device; no image uploaded)
 // (POST /v1/checks/photo)
 func (_ Unimplemented) RecordPhotoCheck(w http.ResponseWriter, r *http.Request, params RecordPhotoCheckParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// CoachTurn Question-wise game coach (feedback after a question or clip, reply to a follow-up, session summary)
+// (POST /v1/coach/turn)
+func (_ Unimplemented) CoachTurn(w http.ResponseWriter, r *http.Request, params CoachTurnParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -3193,6 +3202,47 @@ func (siw *ServerInterfaceWrapper) RecordPhotoCheck(w http.ResponseWriter, r *ht
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RecordPhotoCheck(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CoachTurn operation middleware
+func (siw *ServerInterfaceWrapper) CoachTurn(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CoachTurnParams
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "Accept-Language" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Accept-Language")]; found {
+		var AcceptLanguage AcceptLanguage
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Accept-Language", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Accept-Language", valueList[0], &AcceptLanguage, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Accept-Language", Err: err})
+			return
+		}
+
+		params.AcceptLanguage = &AcceptLanguage
+
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CoachTurn(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -6609,6 +6659,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/v1/checks/photo", wrapper.RecordPhotoCheck)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/v1/coach/turn", wrapper.CoachTurn)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/v1/console/demand", wrapper.ConsoleDemand)

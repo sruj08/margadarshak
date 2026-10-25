@@ -4,6 +4,7 @@ import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { WhyAnswer } from "@/features/ai/WhyAnswer";
 import { getSessionRecord, type SessionRecord } from "@/features/games/results-store";
 import { loadPracticeKey } from "@/features/learn/bank-client";
 import type { PracticeKey } from "@/features/learn/content/bank-types";
@@ -152,6 +153,13 @@ export function LlResult({ sid }: { sid: string }) {
                     )}
                     {w.right ? <p>{t("answer", { a: w.right.text })}</p> : null}
                     {w.explanation ? <p>{w.explanation}</p> : null}
+                    {w.chosen ? (
+                      <WhyAnswer
+                        itemId={w.doc.id}
+                        chosenOptionId={w.chosen.id}
+                        localText={w.explanation}
+                      />
+                    ) : null}
                   </li>
                 ))}
               </ul>

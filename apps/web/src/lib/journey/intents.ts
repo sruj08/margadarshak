@@ -80,7 +80,7 @@ export const INTENT_HREF: Record<Intent, string | null> = {
   signature: "/apply/signature",
   practise: "/learn",
   mock_test: "/learn/practise/ll-sim",
-  signs: "/learn/practise/nazar",
+  signs: "/learn/review?topic=LL1",
   stopping: "/learn/practise/stopping-distance",
   readiness: "/learn/readiness",
   check: "/licence",

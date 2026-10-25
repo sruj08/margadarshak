@@ -63,6 +63,12 @@ export function setGamesApiLocale(l: string): void {
   locale = l === "hi" ? "hi" : "en";
 }
 
+/** The page's language (<html lang>) wins, so calls made outside a game follow the UI too. */
+function currentLocale(): "en" | "hi" {
+  const page = typeof document === "undefined" ? "" : document.documentElement.lang;
+  return page === "hi" || page === "en" ? page : locale;
+}
+
 function online(): boolean {
   return typeof navigator === "undefined" || navigator.onLine !== false;
 }
@@ -94,7 +100,7 @@ async function send(
   const headers: Record<string, string> = {
     Accept: "application/json, application/problem+json",
     "X-Tenant": TENANT,
-    "Accept-Language": locale,
+    "Accept-Language": currentLocale(),
     "X-Request-Id": crypto.randomUUID(),
   };
   if (method !== "GET") {
@@ -287,7 +293,7 @@ export async function getGameSessionReplay(sid: string): Promise<GameSessionRepl
 
 export const API_BASE = BASE.replace(/\/+$/, "");
 export const API_TENANT = TENANT;
-export const apiLocale = (): "en" | "hi" => locale;
+export const apiLocale = currentLocale;
 export const isOnline = online;
 export { ensureSession as ensureApiSession, send as sendApi };
 
@@ -303,7 +309,7 @@ export async function getServerDebrief(sid: string): Promise<DebriefFetch> {
   if (!online()) return { kind: "none", reason: "offline" };
   try {
     await ensureSession();
-    const res = await send("GET", `/v1/games/sessions/${sid}/debrief`, { timeoutMs: 6_000 });
+    const res = await send("GET", `/v1/games/sessions/${sid}/debrief`, { timeoutMs: 12_000 });
     if (res.status === 200) return { kind: "card", data: res.body as DebriefWire };
     if (res.status === 202) return { kind: "none", reason: "pending" };
     if (res.status === 404) return { kind: "none", reason: "not_found" };

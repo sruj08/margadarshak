@@ -28,6 +28,7 @@ import (
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/commentary"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/debrief"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/decoder"
+	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/gamecoach"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/scam"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/signsnap"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/tutor"
@@ -131,6 +132,8 @@ type Deps struct {
 	Coach      *coach.Coach
 	Voice      *voiceguide.Guide
 	Speech     speech.Port
+	// GameCoach is the question-wise coach in the practice games (API-79); nil answers 503.
+	GameCoach *gamecoach.Coach
 	// VoiceCapMin is the monthly voice minutes per account (MD_VOICE_MONTHLY_CAP_MIN; 0 = 10).
 	VoiceCapMin int
 }

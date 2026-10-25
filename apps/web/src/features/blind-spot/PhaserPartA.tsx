@@ -14,6 +14,7 @@ export function PhaserPartA(p: {
   seed: number;
   item: number;
   learn: boolean;
+  coach?: boolean;
   tapOnly: boolean;
   paused: boolean;
   reducedMotion: boolean;
@@ -50,6 +51,7 @@ export function PhaserPartA(p: {
       seed={p.seed}
       item={p.item}
       learn={p.learn}
+      coach={p.coach ?? false}
       place={p.place}
       onDone={p.onDone}
       picture={Picture}

@@ -22,13 +22,22 @@ const forcedScene = (): string | null => {
   }
 };
 
+/** The showcase scenes (rich renderer) that open every session, in this order. */
+export const SHOWCASE: readonly string[] = ["SCN-009", "SCN-010"];
+
 /**
  * The scene to stage for a clip. A clip named like a catalogue scene (SCN-xxx) is that scene;
- * any other clip (the sample bank) borrows the dressing of a scene with the same first hazard type,
- * chosen by hashing its id, and a clip with no hazards borrows a quiet scene.
+ * a `showcase` scene dresses it next (the session's first clips), keeping the clip's own hazards
+ * and windows; any other clip (the sample bank) borrows the dressing of a scene with the same first
+ * hazard type, chosen by hashing its id, and a clip with no hazards borrows a quiet scene.
  */
-export function pickRow(clipId: string, hazards: readonly PlanHazard[] | null): SceneRow {
-  const exact = SCENES.find((s) => s.id === (forcedScene() ?? clipId));
+export function pickRow(
+  clipId: string,
+  hazards: readonly PlanHazard[] | null,
+  showcase?: string,
+): SceneRow {
+  const exact =
+    SCENES.find((s) => s.id === (forcedScene() ?? clipId)) ?? SCENES.find((s) => s.id === showcase);
   if (exact) return exact;
   const type = hazards === null ? null : (hazards[0]?.type ?? "quiet");
   const pool = SCENES.filter((s) =>
@@ -47,8 +56,9 @@ export function planFor(
   clipId: string,
   hazards: readonly PlanHazard[] | null,
   durationMs?: number,
+  showcase?: string,
 ): ScenePlan {
-  const row = pickRow(clipId, hazards);
+  const row = pickRow(clipId, hazards, showcase);
   const list: PlanHazard[] =
     hazards !== null && forcedScene() === null
       ? [...hazards]
@@ -91,17 +101,24 @@ export async function plansForSession(
   for (const [i, it] of items.entries()) {
     const id = clipIdOf(it.item_ref);
     const dev = deviceClips[i];
-    if (dev) out.push(planFor(id, fromClip(dev), dev.durationMs));
+    // The first clips open in the showcase scenes (their own hazards and windows, so scoring is
+    // unchanged); a mock clip served without windows plays the showcase scene's own hazard.
+    const show = SHOWCASE[i];
+    if (dev) out.push(planFor(id, fromClip(dev), dev.durationMs, show));
     else if (it.reveal)
       out.push(
         planFor(
           id,
           it.reveal.hazards.map((h) => ({ type: h.hazard_type, aMs: h.a_ms, bMs: h.b_ms })),
+          undefined,
+          show,
         ),
       );
     else {
       const c = SCENES.some((s) => s.id === id) ? null : await sample(it.item_ref);
-      out.push(c ? planFor(id, fromClip(c), c.durationMs) : planFor(id, null));
+      out.push(
+        c ? planFor(id, fromClip(c), c.durationMs, show) : planFor(id, null, undefined, show),
+      );
     }
   }
   return out;

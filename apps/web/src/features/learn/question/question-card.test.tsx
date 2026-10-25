@@ -2,9 +2,16 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import ai from "../../../../messages/en/ai.json";
 import learnHub from "../../../../messages/en/learnHub.json";
 import type { BankItem } from "../content/bank-types";
 import { QuestionCard } from "./question-card";
+
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
 
 afterEach(cleanup);
 
@@ -36,7 +43,7 @@ const item: BankItem = {
 function setup() {
   const onAnswered = vi.fn();
   render(
-    <NextIntlClientProvider locale="en" messages={{ learnHub }}>
+    <NextIntlClientProvider locale="en" messages={{ learnHub, ai }}>
       <QuestionCard
         item={item}
         seed="s1"
@@ -86,6 +93,8 @@ describe("QuestionCard: confidence is asked before feedback (UI_SPEC §2.5, GAME
     // Both radio groups are now disabled: the stated confidence can't be changed after the answer.
     expect(screen.getByLabelText("Guess · 50%").closest("fieldset")?.disabled).toBe(true);
     expect(screen.getByLabelText(/Parking/).closest("fieldset")?.disabled).toBe(true);
+    // The question-wise coach follows the feedback (no API here: the labelled reviewed fallback).
+    expect(screen.getByTestId("coach-turn")).toBeTruthy();
   });
 
   it("the sign's description says shape and symbol, never the meaning", () => {

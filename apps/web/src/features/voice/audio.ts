@@ -6,32 +6,16 @@
  * replies are queued back to back and stopped at once on barge-in. Nothing is recorded or stored.
  */
 
-const WORKLET = `
-class Pcm16 extends AudioWorkletProcessor {
-  constructor() { super(); this.buf = []; this.ratio = sampleRate / 16000; this.acc = 0; this.sum = 0; this.n = 0; }
-  process(inputs) {
-    const ch = inputs[0] && inputs[0][0];
-    if (!ch) return true;
-    for (let i = 0; i < ch.length; i++) {
-      this.sum += ch[i]; this.n++; this.acc += 1;
-      if (this.acc >= this.ratio) {
-        const v = Math.max(-1, Math.min(1, this.sum / this.n));
-        this.buf.push(v < 0 ? v * 0x8000 : v * 0x7fff);
-        this.acc -= this.ratio; this.sum = 0; this.n = 0;
-      }
-    }
-    if (this.buf.length >= 320) {
-      const out = new Int16Array(this.buf.splice(0, 320));
-      this.port.postMessage(out.buffer, [out.buffer]);
-    }
-    return true;
-  }
-}
-registerProcessor("md-pcm16", Pcm16);
-`;
+/** Served from public/: worklets load under script-src, which allows 'self' but not blob:. */
+const WORKLET_URL = "/voice/pcm16-worklet.js";
 
 export interface Mic {
   stop(): void;
+}
+
+/** Closes a context once; a second close (socket close and unmount both clean up) is a no-op. */
+function closeContext(ctx: AudioContext | null): void {
+  if (ctx && ctx.state !== "closed") ctx.close().catch(() => {});
 }
 
 /** Starts the mic; onFrame receives 20 ms PCM16 16 kHz frames. Rejects when the mic is denied. */
@@ -40,22 +24,32 @@ export async function startMic(onFrame: (pcm: ArrayBuffer) => void): Promise<Mic
     audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true },
   });
   const ctx = new AudioContext();
-  const url = URL.createObjectURL(new Blob([WORKLET], { type: "text/javascript" }));
+  const release = () => {
+    for (const t of stream.getTracks()) t.stop();
+    closeContext(ctx);
+  };
+  let src: MediaStreamAudioSourceNode;
+  let node: AudioWorkletNode;
   try {
-    await ctx.audioWorklet.addModule(url);
-  } finally {
-    URL.revokeObjectURL(url);
+    await ctx.audioWorklet.addModule(WORKLET_URL);
+    // Chrome starts a context created outside a gesture suspended: no frames would flow.
+    if (ctx.state === "suspended") await ctx.resume();
+    src = ctx.createMediaStreamSource(stream);
+    node = new AudioWorkletNode(ctx, "md-pcm16");
+  } catch (e) {
+    release(); // never leave the mic light on after a failed start
+    throw e;
   }
-  const src = ctx.createMediaStreamSource(stream);
-  const node = new AudioWorkletNode(ctx, "md-pcm16");
   node.port.onmessage = (e: MessageEvent<ArrayBuffer>) => onFrame(e.data);
   src.connect(node);
+  let stopped = false;
   return {
     stop() {
+      if (stopped) return;
+      stopped = true;
       node.port.onmessage = null;
       src.disconnect();
-      for (const t of stream.getTracks()) t.stop();
-      void ctx.close();
+      release();
     },
   };
 }
@@ -68,6 +62,8 @@ export class Player {
 
   private context(): AudioContext {
     this.ctx ??= new AudioContext({ sampleRate: 24000 });
+    // Created after a socket message (no gesture), so it may start suspended: no sound otherwise.
+    if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
     return this.ctx;
   }
 
@@ -108,7 +104,7 @@ export class Player {
 
   close(): void {
     this.stop();
-    void this.ctx?.close();
+    closeContext(this.ctx);
     this.ctx = null;
   }
 }

@@ -4,6 +4,7 @@ import type { ConfidenceLevel } from "@margdarshak/gamification";
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { QuestionCoach } from "@/features/ai/QuestionCoach";
 import type { BankItem, PracticeKeyEntry } from "../content/bank-types";
 import { SignVisual } from "../ui/sign-visual";
 import { shuffledOptions } from "../variants";
@@ -179,6 +180,10 @@ export function QuestionCard({
             {!result.correct && result.confidence === "100" ? <p>{t("overconf")}</p> : null}
             {result.correct && result.confidence === "50" ? <p>{t("underconf")}</p> : null}
           </div>
+          <QuestionCoach
+            subject={{ game: "ll", itemId: item.id, chosenOptionId: result.optionId }}
+            fallbackText={answerKey?.explanation ?? null}
+          />
           <button
             ref={continueRef}
             type="button"

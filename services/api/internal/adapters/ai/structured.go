@@ -37,6 +37,9 @@ type Config struct {
 	Model   string
 	Timeout time.Duration
 	Log     *slog.Logger
+	// Thinking caps the model's thinking (empty = model default). Narrators the learner waits
+	// for on screen use ThinkingLevelLow (gemini-3.8-flash rejects MINIMAL).
+	Thinking genai.ThinkingLevel
 }
 
 // Enabled reports whether a key is configured.
@@ -84,6 +87,10 @@ func NewStructuredWithModel(llm model.LLM, cfg Config, name, instruction string,
 	}
 	temp := float32(0.2)
 	block := genai.HarmBlockThresholdBlockMediumAndAbove
+	var thinking *genai.ThinkingConfig
+	if cfg.Thinking != "" {
+		thinking = &genai.ThinkingConfig{ThinkingLevel: cfg.Thinking}
+	}
 	a, err := llmagent.New(llmagent.Config{
 		Name:         name,
 		Model:        llm,
@@ -93,7 +100,8 @@ func NewStructuredWithModel(llm model.LLM, cfg Config, name, instruction string,
 		DisallowTransferToParent: true,
 		DisallowTransferToPeers:  true,
 		GenerateContentConfig: &genai.GenerateContentConfig{
-			Temperature: &temp,
+			Temperature:    &temp,
+			ThinkingConfig: thinking,
 			SafetySettings: []*genai.SafetySetting{
 				{Category: genai.HarmCategoryHarassment, Threshold: block},
 				{Category: genai.HarmCategoryHateSpeech, Threshold: block},

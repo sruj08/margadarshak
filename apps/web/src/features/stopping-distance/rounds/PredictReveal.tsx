@@ -3,6 +3,7 @@
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { QuestionCoach } from "@/features/ai/QuestionCoach";
 import { SD_UI } from "../config";
 import { m1, type Round1, stopBreakdown, TEACHING } from "../physics";
 import { Stepper, useNum } from "./Stepper";
@@ -99,6 +100,25 @@ export function PredictReveal(p: RoundProps<Round1>) {
               mu: num(surface === "wet" ? TEACHING.muWet : TEACHING.muDry),
             })}
           </p>
+          {p.mode !== "mock" ? (
+            <QuestionCoach
+              subject={{
+                game: "sim",
+                key: `sd1:${p.seed}:${p.item}`,
+                sim: {
+                  kind: "sd_predict",
+                  surface,
+                  outcome:
+                    guess < real.totalM * 0.85
+                      ? "under"
+                      : guess > real.totalM * 1.15
+                        ? "over"
+                        : "close",
+                },
+              }}
+              fallbackText={null}
+            />
+          ) : null}
           <button
             type="button"
             className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}

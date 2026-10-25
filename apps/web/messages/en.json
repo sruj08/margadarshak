@@ -1653,6 +1653,18 @@
       "console": {
         "title": "State console",
         "line": "For transport departments"
+      },
+      "decode": {
+        "title": "What does this screen mean?",
+        "line": "Upload a Sarathi screenshot, get your next steps"
+      },
+      "scam": {
+        "title": "Is this message a scam?",
+        "line": "Check an SMS or link before you pay"
+      },
+      "snap": {
+        "title": "Road Sign Snap",
+        "line": "Take a photo of a sign to see what it means"
       }
     }
   },

@@ -1949,6 +1949,237 @@ func (e CoachPlanTone) Valid() bool {
 	}
 }
 
+// Defines values for CoachSimOutcomeKind.
+const (
+	BsPlace   CoachSimOutcomeKind = "bs_place"
+	SdBrake   CoachSimOutcomeKind = "sd_brake"
+	SdPredict CoachSimOutcomeKind = "sd_predict"
+	SdSight   CoachSimOutcomeKind = "sd_sight"
+)
+
+// Valid indicates whether the value is a known member of the CoachSimOutcomeKind enum.
+func (e CoachSimOutcomeKind) Valid() bool {
+	switch e {
+	case BsPlace:
+		return true
+	case SdBrake:
+		return true
+	case SdPredict:
+		return true
+	case SdSight:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachSimOutcomeOutcome.
+const (
+	CanSee      CoachSimOutcomeOutcome = "can_see"
+	CantSee     CoachSimOutcomeOutcome = "cant_see"
+	Close       CoachSimOutcomeOutcome = "close"
+	NotStopped  CoachSimOutcomeOutcome = "not_stopped"
+	Over        CoachSimOutcomeOutcome = "over"
+	Overran     CoachSimOutcomeOutcome = "overran"
+	Stopped     CoachSimOutcomeOutcome = "stopped"
+	TooEarly    CoachSimOutcomeOutcome = "too_early"
+	Under       CoachSimOutcomeOutcome = "under"
+	WithinSight CoachSimOutcomeOutcome = "within_sight"
+)
+
+// Valid indicates whether the value is a known member of the CoachSimOutcomeOutcome enum.
+func (e CoachSimOutcomeOutcome) Valid() bool {
+	switch e {
+	case CanSee:
+		return true
+	case CantSee:
+		return true
+	case Close:
+		return true
+	case NotStopped:
+		return true
+	case Over:
+		return true
+	case Overran:
+		return true
+	case Stopped:
+		return true
+	case TooEarly:
+		return true
+	case Under:
+		return true
+	case WithinSight:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachSimOutcomePrompt.
+const (
+	AboutToOvertake      CoachSimOutcomePrompt = "about_to_overtake"
+	BesideInSlowTraffic  CoachSimOutcomePrompt = "beside_in_slow_traffic"
+	StoppedAheadOfTruck  CoachSimOutcomePrompt = "stopped_ahead_of_truck"
+	TruckAboutToTurnLeft CoachSimOutcomePrompt = "truck_about_to_turn_left"
+	WaitBehindAtLight    CoachSimOutcomePrompt = "wait_behind_at_light"
+)
+
+// Valid indicates whether the value is a known member of the CoachSimOutcomePrompt enum.
+func (e CoachSimOutcomePrompt) Valid() bool {
+	switch e {
+	case AboutToOvertake:
+		return true
+	case BesideInSlowTraffic:
+		return true
+	case StoppedAheadOfTruck:
+		return true
+	case TruckAboutToTurnLeft:
+		return true
+	case WaitBehindAtLight:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachSimOutcomeSurface.
+const (
+	Dry CoachSimOutcomeSurface = "dry"
+	Wet CoachSimOutcomeSurface = "wet"
+)
+
+// Valid indicates whether the value is a known member of the CoachSimOutcomeSurface enum.
+func (e CoachSimOutcomeSurface) Valid() bool {
+	switch e {
+	case Dry:
+		return true
+	case Wet:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachTurnKind.
+const (
+	CoachTurnKindFeedback CoachTurnKind = "feedback"
+	CoachTurnKindReply    CoachTurnKind = "reply"
+	CoachTurnKindSummary  CoachTurnKind = "summary"
+)
+
+// Valid indicates whether the value is a known member of the CoachTurnKind enum.
+func (e CoachTurnKind) Valid() bool {
+	switch e {
+	case CoachTurnKindFeedback:
+		return true
+	case CoachTurnKindReply:
+		return true
+	case CoachTurnKindSummary:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachTurnSource.
+const (
+	CoachTurnSourceAi CoachTurnSource = "ai"
+)
+
+// Valid indicates whether the value is a known member of the CoachTurnSource enum.
+func (e CoachTurnSource) Valid() bool {
+	switch e {
+	case CoachTurnSourceAi:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachTurnVerdict.
+const (
+	CoachTurnVerdictGood        CoachTurnVerdict = "good"
+	CoachTurnVerdictLessThannil CoachTurnVerdict = "<nil>"
+	CoachTurnVerdictNotYet      CoachTurnVerdict = "not_yet"
+	CoachTurnVerdictPartly      CoachTurnVerdict = "partly"
+)
+
+// Valid indicates whether the value is a known member of the CoachTurnVerdict enum.
+func (e CoachTurnVerdict) Valid() bool {
+	switch e {
+	case CoachTurnVerdictGood:
+		return true
+	case CoachTurnVerdictLessThannil:
+		return true
+	case CoachTurnVerdictNotYet:
+		return true
+	case CoachTurnVerdictPartly:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachTurnRequestGame.
+const (
+	CoachTurnRequestGameLl    CoachTurnRequestGame = "ll"
+	CoachTurnRequestGameNazar CoachTurnRequestGame = "nazar"
+	CoachTurnRequestGameSim   CoachTurnRequestGame = "sim"
+)
+
+// Valid indicates whether the value is a known member of the CoachTurnRequestGame enum.
+func (e CoachTurnRequestGame) Valid() bool {
+	switch e {
+	case CoachTurnRequestGameLl:
+		return true
+	case CoachTurnRequestGameNazar:
+		return true
+	case CoachTurnRequestGameSim:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachTurnRequestKind.
+const (
+	CoachTurnRequestKindFeedback CoachTurnRequestKind = "feedback"
+	CoachTurnRequestKindReply    CoachTurnRequestKind = "reply"
+	CoachTurnRequestKindSummary  CoachTurnRequestKind = "summary"
+)
+
+// Valid indicates whether the value is a known member of the CoachTurnRequestKind enum.
+func (e CoachTurnRequestKind) Valid() bool {
+	switch e {
+	case CoachTurnRequestKindFeedback:
+		return true
+	case CoachTurnRequestKindReply:
+		return true
+	case CoachTurnRequestKindSummary:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CoachTurnRequestLocale.
+const (
+	CoachTurnRequestLocaleEn CoachTurnRequestLocale = "en"
+	CoachTurnRequestLocaleHi CoachTurnRequestLocale = "hi"
+)
+
+// Valid indicates whether the value is a known member of the CoachTurnRequestLocale enum.
+func (e CoachTurnRequestLocale) Valid() bool {
+	switch e {
+	case CoachTurnRequestLocaleEn:
+		return true
+	case CoachTurnRequestLocaleHi:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CommentaryResultFindingsFindingId.
 const (
 	NAZCOMMMISSEDMENTION CommentaryResultFindingsFindingId = "NAZ_COMM_MISSED_MENTION"
@@ -8511,6 +8742,20 @@ type ClockSweepRequest struct {
 	Tenants    *[]StateCode `json:"tenants,omitempty"`
 }
 
+// CoachClipOutcome defines model for CoachClipOutcome.
+type CoachClipOutcome struct {
+	FalseAlarms *int `json:"false_alarms,omitempty"`
+	Hazards     []struct {
+		// Band Scorer band (1 earliest); null = not spotted
+		Band       *int   `json:"band,omitempty"`
+		Early      *bool  `json:"early,omitempty"`
+		HazardType string `json:"hazard_type"`
+	} `json:"hazards"`
+
+	// Pattern Rhythmic tapping voided the clip
+	Pattern *bool `json:"pattern,omitempty"`
+}
+
 // CoachIntention defines model for CoachIntention.
 type CoachIntention struct {
 	Day     CoachIntentionDay   `json:"day"`
@@ -8551,6 +8796,90 @@ type CoachPlanSource string
 
 // CoachPlanTone defines model for CoachPlan.Tone.
 type CoachPlanTone string
+
+// CoachQuestionRef defines model for CoachQuestionRef.
+type CoachQuestionRef struct {
+	ChosenOptionId string `json:"chosen_option_id"`
+	QuestionId     string `json:"question_id"`
+	VariantId      string `json:"variant_id"`
+}
+
+// CoachSimOutcome One Stopping Distance round or Blind Spot placement, as closed enums computed by the game
+type CoachSimOutcome struct {
+	Kind    CoachSimOutcomeKind     `json:"kind"`
+	Outcome CoachSimOutcomeOutcome  `json:"outcome"`
+	Prompt  *CoachSimOutcomePrompt  `json:"prompt,omitempty"`
+	Surface *CoachSimOutcomeSurface `json:"surface,omitempty"`
+}
+
+// CoachSimOutcomeKind defines model for CoachSimOutcome.Kind.
+type CoachSimOutcomeKind string
+
+// CoachSimOutcomeOutcome defines model for CoachSimOutcome.Outcome.
+type CoachSimOutcomeOutcome string
+
+// CoachSimOutcomePrompt defines model for CoachSimOutcome.Prompt.
+type CoachSimOutcomePrompt string
+
+// CoachSimOutcomeSurface defines model for CoachSimOutcome.Surface.
+type CoachSimOutcomeSurface string
+
+// CoachTurn defines model for CoachTurn.
+type CoachTurn struct {
+	FollowUp  *string       `json:"follow_up,omitempty"`
+	Kind      CoachTurnKind `json:"kind"`
+	Mistakes  *[]string     `json:"mistakes,omitempty"`
+	NextSteps *[]string     `json:"next_steps,omitempty"`
+
+	// Say Spoken narration (no digits)
+	Say       string            `json:"say"`
+	Source    CoachTurnSource   `json:"source"`
+	Strengths *[]string         `json:"strengths,omitempty"`
+	Verdict   *CoachTurnVerdict `json:"verdict,omitempty"`
+}
+
+// CoachTurnKind defines model for CoachTurn.Kind.
+type CoachTurnKind string
+
+// CoachTurnSource defines model for CoachTurn.Source.
+type CoachTurnSource string
+
+// CoachTurnVerdict defines model for CoachTurn.Verdict.
+type CoachTurnVerdict string
+
+// CoachTurnRequest defines model for CoachTurnRequest.
+type CoachTurnRequest struct {
+	// Answer reply: the learner's words (typed or transcribed on the device)
+	Answer *string           `json:"answer,omitempty"`
+	Clip   *CoachClipOutcome `json:"clip,omitempty"`
+
+	// FollowUp reply: the question the coach asked
+	FollowUp *string                 `json:"follow_up,omitempty"`
+	Game     CoachTurnRequestGame    `json:"game"`
+	Kind     CoachTurnRequestKind    `json:"kind"`
+	Locale   *CoachTurnRequestLocale `json:"locale,omitempty"`
+	Question *CoachQuestionRef       `json:"question,omitempty"`
+
+	// Results summary: one row per question (ll) or hazard (nazar)
+	Results *[]struct {
+		Correct bool `json:"correct"`
+
+		// Ref <question_id>:<variant_id> (ll) or a hazard type (nazar)
+		Ref string `json:"ref"`
+	} `json:"results,omitempty"`
+
+	// Sim One Stopping Distance round or Blind Spot placement, as closed enums computed by the game
+	Sim *CoachSimOutcome `json:"sim,omitempty"`
+}
+
+// CoachTurnRequestGame defines model for CoachTurnRequest.Game.
+type CoachTurnRequestGame string
+
+// CoachTurnRequestKind defines model for CoachTurnRequest.Kind.
+type CoachTurnRequestKind string
+
+// CoachTurnRequestLocale defines model for CoachTurnRequest.Locale.
+type CoachTurnRequestLocale string
 
 // CommentaryResult API-74. Never carries the transcript.
 type CommentaryResult struct {
@@ -11692,6 +12021,11 @@ type RecordPhotoCheckParams struct {
 	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
 }
 
+// CoachTurnParams defines parameters for CoachTurn.
+type CoachTurnParams struct {
+	AcceptLanguage *AcceptLanguage `json:"Accept-Language,omitempty"`
+}
+
 // ConsoleDemandParams defines parameters for ConsoleDemand.
 type ConsoleDemandParams struct {
 	State *StateQuery `form:"state,omitempty" json:"state,omitempty"`
@@ -12223,6 +12557,9 @@ type CreatePaymentIntentJSONRequestBody CreatePaymentIntentJSONBody
 
 // RecordPhotoCheckJSONRequestBody defines body for RecordPhotoCheck for application/json ContentType.
 type RecordPhotoCheckJSONRequestBody = PhotoCheckCreate
+
+// CoachTurnJSONRequestBody defines body for CoachTurn for application/json ContentType.
+type CoachTurnJSONRequestBody = CoachTurnRequest
 
 // DecodeScreenshotMultipartRequestBody defines body for DecodeScreenshot for multipart/form-data ContentType.
 type DecodeScreenshotMultipartRequestBody DecodeScreenshotMultipartBody

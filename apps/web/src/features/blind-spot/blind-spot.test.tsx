@@ -17,6 +17,13 @@ import { BlindSpotGame } from "./BlindSpotGame";
 import { type PartA, type PartB, placementCorrect, probeFor, spotsFor, zoneHit } from "./geometry";
 import { type LanePos, Ride, type SpeedMode } from "./ride";
 
+// The game coach (API-79) renders links; the app router is not mounted in these tests.
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
+
 const { loadPhaser } = vi.hoisted(() => ({
   loadPhaser: vi.fn(() => Promise.reject(new Error("Phaser must not load here"))),
 }));

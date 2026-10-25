@@ -1,9 +1,11 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { CoachSummary } from "@/features/ai/CoachSummary";
 import { getSessionRecord } from "@/features/games/results-store";
 import type { SessionOutcome } from "@/features/games/types";
 import { keralaFormat } from "./format";
+import { hazardLabel } from "./hazard-labels";
 import { anyAiScene } from "./origin";
 
 /** Clip marks at or above this pass the clip (GAME_DESIGN §2.7 item pass). */
@@ -18,6 +20,8 @@ const CLIP_PASS_MARKS = 6;
  */
 export function NazarResultsExtra({ outcome }: { outcome: SessionOutcome }) {
   const t = useTranslations("nazar");
+  const ts = useTranslations("ai.summary");
+  const locale = useLocale();
   const analysis = outcome.checked?.nazar?.analysis ?? [];
   const hazards = analysis.flatMap((c) => c.hazards);
   const spotted = hazards.filter((h) => h.credit > 0).length;
@@ -58,6 +62,18 @@ export function NazarResultsExtra({ outcome }: { outcome: SessionOutcome }) {
         </p>
       ) : null}
       <p className="mg-note">{t("notTest")}</p>
+      {hazards.length > 0 ? (
+        <CoachSummary
+          game="nazar"
+          sessionKey={outcome.sid}
+          rows={hazards.map((h) => ({
+            ref: h.hazard_type,
+            correct: h.credit > 0,
+            label: hazardLabel(h.hazard_type, locale),
+          }))}
+          links={[{ href: "/learn/practise/nazar", label: ts("nazarAgain") }]}
+        />
+      ) : null}
     </div>
   );
 }

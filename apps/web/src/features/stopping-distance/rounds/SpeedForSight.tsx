@@ -3,6 +3,7 @@
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { QuestionCoach } from "@/features/ai/QuestionCoach";
 import { SD_UI } from "../config";
 import { type Round3, sightDistanceM, sightOutcome, stopBreakdown } from "../physics";
 import { Stepper, useNum } from "./Stepper";
@@ -89,6 +90,20 @@ export function SpeedForSight(p: RoundProps<Round3>) {
             {t("maxSafe", { x: sightM, kmh: o.maxSafeKmh })}
           </p>
           <p className="sd-note">{t("speedNote")}</p>
+          {p.mode !== "mock" ? (
+            <QuestionCoach
+              subject={{
+                game: "sim",
+                key: `sd3:${p.seed}:${p.item}`,
+                sim: {
+                  kind: "sd_sight",
+                  surface,
+                  outcome: o.overKmh > 0 ? "overran" : "within_sight",
+                },
+              }}
+              fallbackText={t("speedNote")}
+            />
+          ) : null}
           <button
             type="button"
             className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}

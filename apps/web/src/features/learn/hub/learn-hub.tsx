@@ -5,6 +5,7 @@ import { SplitText } from "@margdarshak/ui/components/split-text";
 import { SpotlightOverlay } from "@margdarshak/ui/components/spotlight-card";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { CoachPlanCard } from "@/features/ai/CoachPlanCard";
 import { Link } from "@/i18n/navigation";
 import { getReviewQueue } from "../api";
 import type { ReviewItem } from "../api-types";
@@ -32,6 +33,7 @@ export function LearnHub({
   const t = useTranslations("learnHub.hub");
   const tt = useTranslations("learnHub.topics");
   const tr = useTranslations("me.ranks");
+  const ta = useTranslations("ai.tools");
   const locale = useLocale();
   const { state, error, reload } = useLearner(conceptCounts);
   const [queue, setQueue] = useState<ReviewItem[] | null>(null);
@@ -119,6 +121,27 @@ export function LearnHub({
             </Link>
           </>
         )}
+      </section>
+
+      <CoachPlanCard />
+
+      <section className="ml-card" aria-labelledby="hub-ai" data-testid="hub-ai-tools">
+        <h2 id="hub-ai" className="md-h3">
+          {ta("title")}
+        </h2>
+        <ul className="ml-list">
+          {(["snap", "scam"] as const).map((k) => (
+            <li key={k}>
+              <Link
+                href={k === "snap" ? "/learn/signs/snap" : "/services/scam"}
+                className="md-link"
+              >
+                {ta(`${k}.title`)}
+              </Link>
+              <p className="ml-small">{ta(`${k}.line`)}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {state ? (

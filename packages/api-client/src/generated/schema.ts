@@ -1077,6 +1077,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/coach/turn": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Question-wise game coach (feedback after a question or clip, reply to a follow-up, session summary)
+         * @description `feedback`: a short spoken explanation of one answered LL question (looked up in the reviewed
+         *     bank) or one Nazar clip outcome (hazard catalogue + the scorer's band), plus one follow-up
+         *     question after a mistake. `reply`: the coach's answer to the learner's reply to that follow-up.
+         *     `summary`: strengths, mistakes and next steps from code-counted tallies. Every fact comes from
+         *     code; the GameCoachAgent only narrates (no digits, D-09). Gate: tenant `ai_coach` flag and the
+         *     holder's `ai_coach` consent (403 otherwise). 503 `AI_UNAVAILABLE` when the model is off or its
+         *     draft breaks a rule: the client keeps the reviewed text (EC-29).
+         */
+        post: operations["coachTurn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/ai/feedback": {
         parameters: {
             query?: never;
@@ -4314,6 +4340,68 @@ export interface components {
             }[];
             /** @constant */
             confirm_required: true;
+        };
+        CoachQuestionRef: {
+            question_id: string;
+            variant_id: string;
+            chosen_option_id: string;
+        };
+        CoachClipOutcome: {
+            hazards: {
+                hazard_type: string;
+                /** @description Scorer band (1 earliest); null = not spotted */
+                band?: number | null;
+                early?: boolean;
+            }[];
+            false_alarms?: number;
+            /** @description Rhythmic tapping voided the clip */
+            pattern?: boolean;
+        };
+        /** @description One Stopping Distance round or Blind Spot placement, as closed enums computed by the game */
+        CoachSimOutcome: {
+            /** @enum {string} */
+            kind: "sd_predict" | "sd_brake" | "sd_sight" | "bs_place";
+            /** @enum {string} */
+            outcome: "under" | "close" | "over" | "stopped" | "not_stopped" | "too_early" | "within_sight" | "overran" | "can_see" | "cant_see";
+            /** @enum {string} */
+            surface?: "dry" | "wet";
+            /** @enum {string} */
+            prompt?: "wait_behind_at_light" | "truck_about_to_turn_left" | "beside_in_slow_traffic" | "about_to_overtake" | "stopped_ahead_of_truck";
+        };
+        CoachTurnRequest: {
+            /** @enum {string} */
+            kind: "feedback" | "reply" | "summary";
+            /** @enum {string} */
+            game: "ll" | "nazar" | "sim";
+            /** @enum {string} */
+            locale?: "en" | "hi";
+            question?: components["schemas"]["CoachQuestionRef"];
+            clip?: components["schemas"]["CoachClipOutcome"];
+            sim?: components["schemas"]["CoachSimOutcome"];
+            /** @description reply: the question the coach asked */
+            follow_up?: string;
+            /** @description reply: the learner's words (typed or transcribed on the device) */
+            answer?: string;
+            /** @description summary: one row per question (ll) or hazard (nazar) */
+            results?: {
+                /** @description <question_id>:<variant_id> (ll) or a hazard type (nazar) */
+                ref: string;
+                correct: boolean;
+            }[];
+        };
+        CoachTurn: {
+            /** @enum {string} */
+            kind: "feedback" | "reply" | "summary";
+            /** @enum {string} */
+            source: "ai";
+            /** @description Spoken narration (no digits) */
+            say: string;
+            follow_up?: string | null;
+            /** @enum {string|null} */
+            verdict?: "good" | "partly" | "not_yet" | null;
+            strengths?: string[];
+            mistakes?: string[];
+            next_steps?: string[];
         };
         ScamCheckRequest: {
             text?: string;
@@ -8893,6 +8981,48 @@ export interface operations {
             };
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+        };
+    };
+    coachTurn: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: components["parameters"]["AcceptLanguage"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                /**
+                 * @example {
+                 *       "kind": "feedback",
+                 *       "game": "ll",
+                 *       "locale": "hi",
+                 *       "question": {
+                 *         "question_id": "C-LL1-001",
+                 *         "variant_id": "v1",
+                 *         "chosen_option_id": "b"
+                 *       }
+                 *     }
+                 */
+                "application/json": components["schemas"]["CoachTurnRequest"];
+            };
+        };
+        responses: {
+            /** @description The coach's turn */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CoachTurn"];
+                };
+            };
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Unprocessable"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     sendAIFeedback: {

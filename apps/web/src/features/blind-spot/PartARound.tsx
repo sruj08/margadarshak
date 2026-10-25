@@ -3,6 +3,7 @@
 import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useId, useRef } from "react";
+import { QuestionCoach } from "@/features/ai/QuestionCoach";
 import type { PartA } from "./geometry";
 import { type Placement, usePlacement } from "./placement";
 import { SpotButtons } from "./tap-only/SpotButtons";
@@ -17,6 +18,8 @@ export function PartARound(p: {
   seed: number;
   item: number;
   learn: boolean;
+  /** Show the question-wise coach after each placement (not in a mock). */
+  coach?: boolean;
   place: (probe: { x: number; y: number }) => void;
   onDone: () => void;
   picture: (pl: Placement) => ReactNode;
@@ -76,6 +79,20 @@ export function PartARound(p: {
           </p>
           <p className="sd-note">{t("rule")}</p>
           <p className="sd-note">{t("zonesNote")}</p>
+          {p.coach ? (
+            <QuestionCoach
+              subject={{
+                game: "sim",
+                key: `bs:${p.seed}:${p.item}:${pl.k}`,
+                sim: {
+                  kind: "bs_place",
+                  outcome: pl.result.correct ? "can_see" : "cant_see",
+                  prompt: pl.prompt,
+                },
+              }}
+              fallbackText={t("rule")}
+            />
+          ) : null}
           <button
             type="button"
             className={buttonClassName({ variant: "primary", size: "lg", fullWidth: true })}

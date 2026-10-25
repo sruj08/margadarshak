@@ -3637,6 +3637,49 @@
         ],
         "type": "object"
       },
+      "CoachClipOutcome": {
+        "properties": {
+          "false_alarms": {
+            "maximum": 99,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "hazards": {
+            "items": {
+              "properties": {
+                "band": {
+                  "description": "Scorer band (1 earliest); null = not spotted",
+                  "maximum": 5,
+                  "minimum": 1,
+                  "nullable": true,
+                  "type": "integer"
+                },
+                "early": {
+                  "type": "boolean"
+                },
+                "hazard_type": {
+                  "maxLength": 48,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "hazard_type"
+              ],
+              "type": "object"
+            },
+            "maxItems": 8,
+            "type": "array"
+          },
+          "pattern": {
+            "description": "Rhythmic tapping voided the clip",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "hazards"
+        ],
+        "type": "object"
+      },
       "CoachIntention": {
         "properties": {
           "day": {
@@ -3750,6 +3793,212 @@
           "items",
           "intention_prompt",
           "tone"
+        ],
+        "type": "object"
+      },
+      "CoachQuestionRef": {
+        "properties": {
+          "chosen_option_id": {
+            "maxLength": 16,
+            "type": "string"
+          },
+          "question_id": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "variant_id": {
+            "maxLength": 32,
+            "type": "string"
+          }
+        },
+        "required": [
+          "question_id",
+          "variant_id",
+          "chosen_option_id"
+        ],
+        "type": "object"
+      },
+      "CoachSimOutcome": {
+        "description": "One Stopping Distance round or Blind Spot placement, as closed enums computed by the game",
+        "properties": {
+          "kind": {
+            "enum": [
+              "sd_predict",
+              "sd_brake",
+              "sd_sight",
+              "bs_place"
+            ],
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "under",
+              "close",
+              "over",
+              "stopped",
+              "not_stopped",
+              "too_early",
+              "within_sight",
+              "overran",
+              "can_see",
+              "cant_see"
+            ],
+            "type": "string"
+          },
+          "prompt": {
+            "enum": [
+              "wait_behind_at_light",
+              "truck_about_to_turn_left",
+              "beside_in_slow_traffic",
+              "about_to_overtake",
+              "stopped_ahead_of_truck"
+            ],
+            "type": "string"
+          },
+          "surface": {
+            "enum": [
+              "dry",
+              "wet"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "outcome"
+        ],
+        "type": "object"
+      },
+      "CoachTurn": {
+        "properties": {
+          "follow_up": {
+            "nullable": true,
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "feedback",
+              "reply",
+              "summary"
+            ],
+            "type": "string"
+          },
+          "mistakes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "next_steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "say": {
+            "description": "Spoken narration (no digits)",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "ai"
+            ],
+            "type": "string"
+          },
+          "strengths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "verdict": {
+            "enum": [
+              "good",
+              "partly",
+              "not_yet",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "source",
+          "say"
+        ],
+        "type": "object"
+      },
+      "CoachTurnRequest": {
+        "properties": {
+          "answer": {
+            "description": "reply: the learner's words (typed or transcribed on the device)",
+            "maxLength": 500,
+            "type": "string"
+          },
+          "clip": {
+            "$ref": "#/components/schemas/CoachClipOutcome"
+          },
+          "follow_up": {
+            "description": "reply: the question the coach asked",
+            "maxLength": 300,
+            "type": "string"
+          },
+          "game": {
+            "enum": [
+              "ll",
+              "nazar",
+              "sim"
+            ],
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "feedback",
+              "reply",
+              "summary"
+            ],
+            "type": "string"
+          },
+          "locale": {
+            "enum": [
+              "en",
+              "hi"
+            ],
+            "type": "string"
+          },
+          "question": {
+            "$ref": "#/components/schemas/CoachQuestionRef"
+          },
+          "results": {
+            "description": "summary: one row per question (ll) or hazard (nazar)",
+            "items": {
+              "properties": {
+                "correct": {
+                  "type": "boolean"
+                },
+                "ref": {
+                  "description": "\u003cquestion_id\u003e:\u003cvariant_id\u003e (ll) or a hazard type (nazar)",
+                  "maxLength": 80,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ref",
+                "correct"
+              ],
+              "type": "object"
+            },
+            "maxItems": 60,
+            "type": "array"
+          },
+          "sim": {
+            "$ref": "#/components/schemas/CoachSimOutcome"
+          }
+        },
+        "required": [
+          "kind",
+          "game"
         ],
         "type": "object"
       },
@@ -15066,6 +15315,74 @@
           "documents"
         ],
         "x-api-id": "API-20"
+      }
+    },
+    "/v1/coach/turn": {
+      "post": {
+        "description": "`feedback`: a short spoken explanation of one answered LL question (looked up in the reviewed\nbank) or one Nazar clip outcome (hazard catalogue + the scorer's band), plus one follow-up\nquestion after a mistake. `reply`: the coach's answer to the learner's reply to that follow-up.\n`summary`: strengths, mistakes and next steps from code-counted tallies. Every fact comes from\ncode; the GameCoachAgent only narrates (no digits, D-09). Gate: tenant `ai_coach` flag and the\nholder's `ai_coach` consent (403 otherwise). 503 `AI_UNAVAILABLE` when the model is off or its\ndraft breaks a rule: the client keeps the reviewed text (EC-29).\n",
+        "operationId": "coachTurn",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AcceptLanguage"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "game": "ll",
+                "kind": "feedback",
+                "locale": "hi",
+                "question": {
+                  "chosen_option_id": "b",
+                  "question_id": "C-LL1-001",
+                  "variant_id": "v1"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CoachTurnRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoachTurn"
+                }
+              }
+            },
+            "description": "The coach's turn"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        },
+        "security": [
+          {
+            "userBearer": [
+              "user"
+            ]
+          }
+        ],
+        "summary": "Question-wise game coach (feedback after a question or clip, reply to a follow-up, session summary)",
+        "tags": [
+          "ai"
+        ],
+        "x-api-id": "API-79",
+        "x-proposed": true
       }
     },
     "/v1/console/demand": {

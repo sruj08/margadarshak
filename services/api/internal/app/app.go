@@ -261,6 +261,7 @@ func New(cfg *config.Config, db *store.DB, log *slog.Logger, opt Options) (*App,
 		WebBaseURLShare: cfg.WebBaseURL, N8NResumeToken: cfg.N8NResumeAuthToken,
 		Scam: agents.Scam, Debrief: agents.Debrief, Tutor: agents.Tutor, Decoder: agents.Decoder,
 		Commentary: agents.Commentary, SignSnap: agents.SignSnap, Coach: agents.Coach, Voice: agents.Voice, Speech: agents.Speech,
+		GameCoach:   agents.GameCoach,
 		VoiceCapMin: cfg.VoiceMonthlyCapMin,
 	})
 	return a, nil
