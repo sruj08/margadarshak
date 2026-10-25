@@ -117,9 +117,9 @@ rules(rulepacks): JK 2026.10.1 — mark transport LMV prerequisite as verify
 Refs: D-05, D-25, EC-06
 ```
 
-`commitlint.config.cjs` extends `@commitlint/config-conventional` 21.2.4 with the custom types and the scope enum; `lefthook` runs it on `commit-msg`.
+The `commitlint` key in `package.json` extends `@commitlint/config-conventional` 21.2.4 with the custom types and the scope enum; `lefthook` runs it on `commit-msg`.
 
-### 3.1 Git hooks (`lefthook.yml`, lefthook 2.2.2)
+### 3.1 Git hooks (`.lefthook.yml`, lefthook 2.2.2)
 ```yaml
 pre-commit:
   parallel: true

@@ -1,4 +1,4 @@
-# Git hooks (MD-010). Install once per clone: `pnpm exec lefthook install`.
+# Git hooks (MD-010). Install once per clone: `pnpm exec lefthook install` (config: `.lefthook.yml`).
 # Hooks are fast and local; CI runs the same gates in full.
 pre-commit:
   parallel: true

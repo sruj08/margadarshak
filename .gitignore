@@ -115,3 +115,8 @@ desktop.ini
 *.log
 
 .n8n-data/
+
+# Local tooling (only the shared agent rules are committed)
+.claude/*
+!.claude/CLAUDE.md
+.serena/

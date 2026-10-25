@@ -1,6 +1,6 @@
 # Team
 > Project: Margdarshak · Team: Chanakya (@Nestiq Private Limited) · Owner: Product/design lead · Status: Draft v0.1 · Last updated: 2026-10-23
-> Related: [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) · [BACKLOG](BACKLOG.md) · [FIELD_STUDY](FIELD_STUDY.md) · [GLOSSARY](GLOSSARY.md) · [PITCH](../00-overview/PITCH.md) · [Architecture](../03-engineering/ARCHITECTURE.md) · [CONTRIBUTING](../../CONTRIBUTING.md) · [CLAUDE.md](../../CLAUDE.md)
+> Related: [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) · [BACKLOG](BACKLOG.md) · [FIELD_STUDY](FIELD_STUDY.md) · [GLOSSARY](GLOSSARY.md) · [PITCH](../00-overview/PITCH.md) · [Architecture](../03-engineering/ARCHITECTURE.md) · [CONTRIBUTING](../../.github/CONTRIBUTING.md) · [CLAUDE.md](../../.claude/CLAUDE.md)
 
 Team Chanakya is three people plus AI coding agents. This file says who owns what, how decisions are made and recorded, how agents are used safely, and who answers which judge. Roles are named by function; the person in each role is written into §1.1 at G0.
 

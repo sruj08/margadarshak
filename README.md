@@ -426,6 +426,8 @@ tracking or targeted ads on a child's data.
 
 ```
 margadarshak/
+├── .github/                  CI workflow, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT
+├── .claude/CLAUDE.md         Rules for AI coding agents
 ├── apps/
 │   └── web/                  Next.js 16 citizen PWA (journey, learn, games, voice, services)
 ├── services/
@@ -544,7 +546,7 @@ Runbook: [`docs/05-ops/DEPLOYMENT.md`](docs/05-ops/DEPLOYMENT.md) · [`RUNBOOK.m
 - **Redaction first:** anything typed into the voice guide is checked on the phone, and Aadhaar- or phone-like numbers are removed before anything is sent.
 - **Encrypted contacts**, per-tenant keys, PII-redacting logs, signed (HMAC) service-to-service calls, CSRF protection and strict security headers.
 - **Server score wins:** games are replayed on the server; a score that does not match is not counted.
-- Report a vulnerability: [`SECURITY.md`](SECURITY.md).
+- Report a vulnerability: [`SECURITY.md`](.github/SECURITY.md).
 
 ---
 
@@ -566,7 +568,7 @@ Everything is indexed in [`docs/README.md`](docs/README.md). Good starting point
 - [NAZAR](docs/09-learning-games/NAZAR.md) and [GAME_DESIGN](docs/09-learning-games/GAME_DESIGN.md)
 - [GOVERNMENT_ADOPTION](docs/10-government/GOVERNMENT_ADOPTION.md)
 
-Contributing: [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`CHANGELOG.md`](CHANGELOG.md).
+Contributing: [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md) · [`CHANGELOG.md`](docs/CHANGELOG.md) · AI agent rules: [`.claude/CLAUDE.md`](.claude/CLAUDE.md).
 
 ---
 
