@@ -427,7 +427,6 @@ tracking or targeted ads on a child's data.
 ```
 margadarshak/
 ├── .github/                  CI workflow, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT
-├── .claude/CLAUDE.md         Rules for AI coding agents
 ├── apps/
 │   └── web/                  Next.js 16 citizen PWA (journey, learn, games, voice, services)
 ├── services/
@@ -568,7 +567,7 @@ Everything is indexed in [`docs/README.md`](docs/README.md). Good starting point
 - [NAZAR](docs/09-learning-games/NAZAR.md) and [GAME_DESIGN](docs/09-learning-games/GAME_DESIGN.md)
 - [GOVERNMENT_ADOPTION](docs/10-government/GOVERNMENT_ADOPTION.md)
 
-Contributing: [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md) · [`CHANGELOG.md`](docs/CHANGELOG.md) · AI agent rules: [`.claude/CLAUDE.md`](.claude/CLAUDE.md).
+Contributing: [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md) · [`CHANGELOG.md`](docs/CHANGELOG.md).
 
 ---
 

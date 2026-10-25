@@ -116,7 +116,6 @@ desktop.ini
 
 .n8n-data/
 
-# Local tooling (only the shared agent rules are committed)
-.claude/*
-!.claude/CLAUDE.md
+# Local AI-tool folders (never committed)
+.claude/
 .serena/
