@@ -104,7 +104,7 @@ func (s *Sarvam) do(ctx context.Context, path, contentType string, body io.Reade
 	if err != nil {
 		return fmt.Errorf("speech: %s: %w", path, errors.Join(ErrUnavailable, err))
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode/100 != 2 {
 		return fmt.Errorf("speech: %s: status %d: %w", path, resp.StatusCode, ErrUnavailable)
 	}

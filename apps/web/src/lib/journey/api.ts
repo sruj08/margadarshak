@@ -459,7 +459,10 @@ export async function triggerSarathiWatchdog(
       });
       if (res.ok) {
         const json = (await res.json()) as Partial<SarathiWatchdogReport>;
-        if (json && (json.status === "down" || json.status === "ok" || json.status === "degraded")) {
+        if (
+          json &&
+          (json.status === "down" || json.status === "ok" || json.status === "degraded")
+        ) {
           report = {
             status: json.status,
             mode,
@@ -486,11 +489,7 @@ export async function triggerSarathiWatchdog(
   if (BASE) {
     try {
       const targetMode =
-        report?.status === "down"
-          ? "simulate_down"
-          : report?.status === "ok"
-            ? "restore"
-            : mode;
+        report?.status === "down" ? "simulate_down" : report?.status === "ok" ? "restore" : mode;
       const res = await fetch(
         `${BASE.replace(/\/$/, "")}/mock/sarathi/watchdog?mode=${encodeURIComponent(targetMode)}`,
         {

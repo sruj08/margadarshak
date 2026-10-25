@@ -13,22 +13,8 @@
 # re-runs the model job with the `run-evals` label.
 name: evals
 
+# Model evals call Gemini (paid), so they run only when started by hand: Actions -> evals -> Run workflow.
 on:
-  pull_request:
-    paths:
-      - "ai/**"
-      - "services/api/internal/adapters/ai/**"
-      - "services/api/internal/privacy/**"
-      - "rulepacks/**"
-      - ".github/workflows/evals.yml"
-    types: [opened, synchronize, reopened, labeled]
-  push:
-    branches: [main]
-    paths:
-      - "ai/**"
-      - "services/api/internal/adapters/ai/**"
-  schedule:
-    - cron: "30 20 * * *"   # 02:00 IST nightly: full suite incl. vision/video agents + drift check
   workflow_dispatch:
     inputs:
       agents:

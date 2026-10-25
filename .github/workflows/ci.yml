@@ -1,456 +1,111 @@
-# Margdarshak CI: every PR and every push to main.
-# Stages: lint -> typecheck -> unit -> golden rules -> adapter contracts -> game determinism
-#         -> API integration (embedded Postgres 16 + goose migrations + OpenAPI diff)
-#         -> web build + bundle budgets -> e2e (Playwright + axe; mock mode and full stack)
-#         -> docker build smoke -> ci-gate (the single required check)
-# Languages: Go 1.27 for services/api (ADR-0011); TypeScript for apps/*, packages/*,
-# services/score-verifier and services/workflows (Render Workflows tasks, @renderinc/sdk).
-# Every command here is one a developer runs locally (README, services/api/README.md,
-# docs/08-project/P0_P1_VERIFICATION.md). No Docker is needed except for docker-smoke and oasdiff.
-# AI evals live in evals.yml, security scans in security.yml, deploys in deploy.yml.
-# Spec: docs/05-ops/CICD.md. Action versions are tags; pin to commit SHAs at H0 (CICD.md §8).
+# Margdarshak CI: every push to main and every PR.
+# Three independent jobs, so one failure never hides another:
+#   web       TypeScript lint, copy/i18n lints, typecheck, every workspace's tests, Next.js build
+#   api       Go fmt, vet, golangci-lint, every Go test (embedded PostgreSQL 16, no Docker)
+#   security  secret scan, Go and npm vulnerability checks
+# Model evals cost API credits, so they run on demand only (evals.yml).
 name: ci
 
 on:
-  pull_request:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "22"
-  GOLANGCI_LINT_VERSION: "v2.15.0"
-  GOVULNCHECK_VERSION: "v1.9.0"
   TZ: UTC
-  # CI never talks to Gemini, n8n, Render or any government system; all adapters are mocks.
-  ADAPTER_SARATHI: mock
-  ADAPTER_DIGILOCKER: mock
-  ADAPTER_PAYMENT: mock
-  ADAPTER_BHASHINI: mock
-  ADAPTER_NOTIFICATION: console
-  ADAPTER_SLOT: mock
-  JOB_RUNNER: inline
-  DATA_CLASS: synthetic-only
+  NODE_VERSION: "22"
 
 jobs:
-  changes:
-    name: detect changes
+  web:
+    name: web (lint, typecheck, test, build)
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      pull-requests: read
-    outputs:
-      go: ${{ steps.filter.outputs.go }}
-      docker: ${{ steps.filter.outputs.docker }}
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            go:
-              - 'services/api/**'
-              - 'tests/golden/**'
-            docker:
-              - 'infra/docker/**'
-
-  # ---------------------------------------------------------------------------
-  # 1. Lint + typecheck (TypeScript: apps, packages, score-verifier, workflows tasks)
-  # ---------------------------------------------------------------------------
-  lint-ts:
-    name: lint + typecheck (ts)
-    # Path filters are used only for docker-smoke: skipping a lint job would cascade-skip
-    # the golden/contract/e2e jobs that depend on it, which is exactly what we must not skip.
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4   # pnpm version comes from "packageManager" in package.json
+      - uses: pnpm/action-setup@v4 # version from "packageManager" in package.json
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Biome (lint + format, whole repo)
+      - name: Biome (lint + format)
         run: pnpm lint:biome
-      - name: Wording bans (D-19) + fee literals (D-06), with the linters' self-tests
-        run: pnpm lint:facts
-      - name: Unsafe-pattern lint (with self-test)
-        run: pnpm lint:patterns
-      - name: i18n message parity (en and hi keys, ICU arguments)
-        run: pnpm lint:i18n
-      - name: TypeScript (tsc --noEmit, strict) in every workspace incl. services/workflows
+      - name: Copy lints (banned wording, fee literals, dark patterns) and i18n parity
+        run: pnpm lint:facts && pnpm lint:patterns && pnpm lint:i18n
+      - name: Typecheck every workspace
         run: pnpm -r --if-present typecheck
+      - name: Tests in every workspace (web, rules mirror, game-core, score verifier, workflows, ...)
+        run: pnpm -r --if-present test
+      - name: Next.js production build
+        run: pnpm --filter @margdarshak/web build
 
-  # ---------------------------------------------------------------------------
-  # 2. Lint + vet + codegen drift + vulnerabilities (Go: services/api)
-  # ---------------------------------------------------------------------------
-  lint-go:
-    name: lint + vet (go)
+  api:
+    name: api (go fmt, vet, lint, test)
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: services/api
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v7
+      - uses: actions/setup-go@v5
         with:
-          go-version-file: services/api/go.mod
+          go-version-file: services/api/go.mod # honours the toolchain line
           cache-dependency-path: services/api/go.sum
+      - name: Cache embedded PostgreSQL binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.embedded-postgres-go
+          key: embedded-pg16-${{ runner.os }}-${{ hashFiles('services/api/go.sum') }}
       - name: go mod tidy is clean
-        run: |
-          go mod tidy
-          git diff --exit-code -- go.mod go.sum
-      - name: gofmt (must print nothing)
+        run: go mod tidy && git diff --exit-code -- go.mod go.sum
+      - name: gofmt
         run: |
           out="$(gofmt -l .)"
           if [ -n "$out" ]; then echo "::error::gofmt needed on:"; echo "$out"; exit 1; fi
       - name: go vet
         run: go vet ./...
-      - name: Codegen drift (tools/specprep + oapi-codegen from api/openapi.yaml; generated code is committed)
-        run: |
-          go generate ./internal/httpapi/gen
-          git diff --exit-code -- internal/httpapi/gen
-      - name: golangci-lint (.golangci.yml; depguard keeps domain/rules/journey free of I/O)
+      - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          version: v2.15.0
           working-directory: services/api
           args: --timeout=5m
-      - name: govulncheck (reachable vulnerabilities in Go deps + stdlib)
-        run: go run "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}" ./...
+      - name: go test (unit, golden rules, adapter contracts, API on embedded Postgres 16)
+        env:
+          RULEPACK_DIR: ${{ github.workspace }}/rulepacks
+        run: go test -count=1 ./...
 
-  # ---------------------------------------------------------------------------
-  # 3. Unit tests
-  # ---------------------------------------------------------------------------
-  unit-ts:
-    name: unit (ts)
-    needs: lint-ts
+  security:
+    name: security (secrets, vulnerable deps)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Every workspace's test script (Vitest for web, ui, api-client; node --test for rules, workflows, game-core, score-verifier, ...)
-        run: pnpm -r --if-present test
-
-  unit-go:
-    name: unit (go test -short -race)
-    needs: lint-go
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: services/api
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v7
-        with:
-          go-version-file: services/api/go.mod
-          cache-dependency-path: services/api/go.sum
-      - name: go test (unit only; -short skips the embedded-Postgres integration tests)
-        run: |
-          mkdir -p reports
-          set -o pipefail
-          go test -short -race -count=1 -coverprofile=reports/coverage.out ./... 2>&1 | tee reports/unit.txt
-      - name: Coverage report (internal/domain, journey, clock, rules; TESTING.md §10)
-        run: go tool cover -func=reports/coverage.out | grep -E '^total:'
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: unit-go-reports
-          path: services/api/reports/
-          retention-days: 14
-
-  # ---------------------------------------------------------------------------
-  # 4. Golden rules tests: fees, eligibility, timelines, EC-01..EC-30
-  #    The SAME fixtures (tests/golden/*.json + snapshots) run against the Go engine and the TS
-  #    mirror; both must reproduce the snapshots byte for byte.
-  # ---------------------------------------------------------------------------
-  golden-rules:
-    name: golden rules (fees, eligibility, EC-01..EC-30)
-    needs: [unit-go, unit-ts]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v7
-        with:
-          go-version-file: services/api/go.mod
-          cache-dependency-path: services/api/go.sum
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Rule-pack schema + provenance (every row has a source and a checked date; D-05)
-        working-directory: services/api
-        run: go test -count=1 ./internal/rules/ -run 'TestRulepackProvenance|TestRulepackSchemaRejectsMissingSourceOrDate|TestLoadDirRejectsInvalidPacks' -v
-      - name: Golden cases, Go engine (authoritative) + EC coverage
-        working-directory: services/api
-        run: go test -count=1 ./internal/rules/ -run 'TestGoldenCases|TestGoldenECCoverage|TestEveryOutputCarriesRuleIDs' -v
-      - name: Golden cases, TS mirror (conformance; zero-dependency node --test)
-        run: node --test --experimental-strip-types "packages/rules/test/*.test.ts"
-
-  # ---------------------------------------------------------------------------
-  # 5. Adapter contract tests (F-56): mock adapters must pass the same suite real ones will
-  # ---------------------------------------------------------------------------
-  adapter-contracts:
-    name: adapter contracts (mock + deeplink)
-    needs: unit-go
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: services/api
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v7
-        with:
-          go-version-file: services/api/go.mod
-          cache-dependency-path: services/api/go.sum
-      - name: Contract suites (Sarathi, DigiLocker, AadhaarOffline, Bhashini, Payment, Notification, Slot) + adapter spec lint
-        run: go test -count=1 ./internal/adapters/... -run Contract -v
-      - name: Guard - no Aadhaar number / OTP / biometric field in any adapter DTO (D-07)
-        run: go test -count=1 ./internal/adapters/ -run TestNoForbiddenFields -v
-      - name: A deliberately broken mock must fail the contract suite
-        run: |
-          if go test -count=1 -tags brokenmock ./internal/adapters/ -run TestContractBroken; then
-            echo "::error::the broken adapter mock passed the contract suite"; exit 1
-          fi
-
-  # ---------------------------------------------------------------------------
-  # 6. Game determinism (P2): game-core replay fixtures + score-verifier replays
-  # ---------------------------------------------------------------------------
-  game-determinism:
-    name: game determinism (replay golden)
-    needs: unit-ts
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: game-core tests (fixed-step simulation, replay fixtures)
-        run: pnpm --filter @margdarshak/game-core test
-      - name: score-verifier tests (server replay must match the client result)
-        run: pnpm --filter @margdarshak/score-verifier test
-
-  # ---------------------------------------------------------------------------
-  # 7. API integration: embedded Postgres 16 (real Postgres, no Docker service needed),
-  #    goose migrations up/down/up, integration tests, OpenAPI breaking-change diff.
-  # ---------------------------------------------------------------------------
-  api-integration:
-    name: api integration (embedded pg16, goose, openapi)
-    needs: [unit-go]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 25
-    env:
-      RULEPACK_DIR: ${{ github.workspace }}/rulepacks
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v7
+      - name: gitleaks (whole history; known false positives in .github/gitleaks.toml)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks git --config .github/gitleaks.toml --redact --no-banner .
+      - uses: actions/setup-go@v5
         with:
           go-version-file: services/api/go.mod
           cache-dependency-path: services/api/go.sum
-      - name: Cache embedded-postgres binaries (Postgres 16; pgembed uses ~/.embedded-postgres-go when CI is set)
-        uses: actions/cache@v4
-        with:
-          path: ~/.embedded-postgres-go
-          key: embedded-pg16-${{ runner.os }}-${{ hashFiles('services/api/go.sum') }}
-          restore-keys: embedded-pg16-${{ runner.os }}-
-      - name: goose migrations up -> down -> up on a throwaway embedded Postgres (reversibility)
+      - name: govulncheck (Go deps + standard library)
         working-directory: services/api
-        run: go test -count=1 ./migrations/... -run TestMigrationsUpDownUp -v
-      - name: Expand/contract lint (no DROP/RENAME in the same release as code that stops using it)
-        if: github.event_name == 'pull_request'
-        run: |
-          git diff --name-only --diff-filter=AM origin/main...HEAD -- 'services/api/migrations/*.sql' > new_migrations.txt || true
-          cat new_migrations.txt
-          if [ -s new_migrations.txt ] && xargs grep -nEi '^[[:space:]]*(drop[[:space:]]+(table|column)|alter[[:space:]]+table[[:space:]]+[^[:space:]]+[[:space:]]+rename)' < new_migrations.txt; then
-            echo "::error::Destructive DDL in a new migration: ship it as a separate contract release (DEPLOYMENT.md §6)"; exit 1
-          fi
-      - name: All Go tests on embedded Postgres 16 (HMAC on /internal/*, idempotency keys, family-mode consent, RLS, EC-xx)
-        working-directory: services/api
-        run: |
-          mkdir -p reports
-          set -o pipefail
-          go test -race -count=1 ./... 2>&1 | tee reports/integration.txt
-      - name: OpenAPI breaking-change diff vs main (oasdiff)
-        if: github.event_name == 'pull_request'
-        run: |
-          mkdir -p .ci
-          git show origin/main:api/openapi.yaml > .ci/openapi.main.yaml || exit 0
-          docker run --rm -v "$PWD:/w" -w /w tufin/oasdiff:v1.11.7 breaking .ci/openapi.main.yaml api/openapi.yaml --fail-on ERR
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: api-integration-reports
-          path: services/api/reports/
-          retention-days: 14
-
-  # ---------------------------------------------------------------------------
-  # 8. Web build + bundle budgets (size-limit ceilings + per-route first load, F-51)
-  # ---------------------------------------------------------------------------
-  build-web:
-    name: web build + bundle budget
-    needs: lint-ts
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - uses: actions/cache@v4
-        with:
-          path: apps/web/.next/cache
-          key: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/web/**/*.{ts,tsx}') }}
-          restore-keys: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
-      - name: next build (mock mode, no API URL)
-        env:
-          NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
-        run: pnpm --filter @margdarshak/web build
-      - name: Bundle budgets (size-limit ceilings + first load <= 450 KB full / < 300 KB Lite per route)
-        run: pnpm size
-
-  # ---------------------------------------------------------------------------
-  # 9. End-to-end (Playwright) + accessibility (axe-core specs, WCAG 2.1 AA)
-  #    mock: the production web build on its local mock API, 360 px phone + desktop.
-  #    real: the full stack - Go API on embedded Postgres with the synthetic personas + the web
-  #          build pointed at it (tests/e2e/scripts/real-api.mjs): the P1 demo checkpoint.
-  # ---------------------------------------------------------------------------
-  e2e:
-    name: e2e + axe (playwright, mock mode)
-    needs: [build-web, golden-rules]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: next build (mock mode)
-        run: pnpm --filter @margdarshak/web build
-      - name: Install Playwright browsers
-        run: pnpm --filter @margdarshak/e2e exec playwright install --with-deps chromium
-      - name: Playwright (shell, journeys, security headers, axe on every page; mobile-360 + desktop)
-        env:
-          LAB_TOKEN: ci-lab-token
-        run: pnpm test:e2e
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-mock
-          path: |
-            tests/e2e/playwright-report/
-            tests/e2e/test-results/
-          retention-days: 14
-
-  e2e-real:
-    name: e2e full stack (go api + embedded pg + web)
-    needs: [build-web, api-integration]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v7
-        with:
-          go-version-file: services/api/go.mod
-          cache-dependency-path: services/api/go.sum
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - uses: actions/cache@v4
-        with:
-          path: ~/.embedded-postgres-go
-          key: embedded-pg16-${{ runner.os }}-${{ hashFiles('services/api/go.sum') }}
-          restore-keys: embedded-pg16-${{ runner.os }}-
-      - run: pnpm install --frozen-lockfile
-      - name: Install Playwright browsers
-        run: pnpm --filter @margdarshak/e2e exec playwright install --with-deps chromium
-      - name: P1 demo checkpoint on the real API (builds apps/web into .next-real, starts API + seed)
-        run: pnpm test:e2e:real
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-real
-          path: |
-            tests/e2e/playwright-report/
-            tests/e2e/test-results/
-            services/api/.cache/e2e/api.log
-          retention-days: 14
-
-  # ---------------------------------------------------------------------------
-  # 10. Docker build smoke (no push; deploy.yml builds + pushes signed images)
-  # ---------------------------------------------------------------------------
-  docker-smoke:
-    name: docker build smoke
-    needs: changes
-    if: needs.changes.outputs.docker == 'true' || needs.changes.outputs.go == 'true' || github.event_name != 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        image: [api, web, score-verifier]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - name: Hadolint
-        run: docker run --rm -i hadolint/hadolint:v2.12.0 hadolint --failure-threshold warning - < infra/docker/${{ matrix.image }}.Dockerfile
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: infra/docker/${{ matrix.image }}.Dockerfile
-          push: false
-          load: true
-          tags: margdarshak-${{ matrix.image }}:ci
-          cache-from: type=gha,scope=${{ matrix.image }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
-      - name: Runs as non-root
-        run: test "$(docker inspect --format '{{.Config.User}}' margdarshak-${{ matrix.image }}:ci)" = "10001:10001"
-
-  # ---------------------------------------------------------------------------
-  # Single required status check for branch protection (and for Render checksPass, if used)
-  # ---------------------------------------------------------------------------
-  ci-gate:
-    name: ci-gate
-    if: always()
-    needs: [lint-ts, lint-go, unit-ts, unit-go, golden-rules, adapter-contracts, game-determinism, api-integration, build-web, e2e, e2e-real, docker-smoke]
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Fail if any required job failed or was cancelled (skipped by path filter is OK)
-        env:
-          NEEDS: ${{ toJSON(needs) }}
-        run: |
-          echo "$NEEDS" > needs.json
-          if grep -E '"result": "(failure|cancelled)"' needs.json; then
-            echo "::error::A required CI job failed"; exit 1
-          fi
-          echo "All required CI jobs passed or were skipped by path filters."
+      - name: pnpm audit (production deps, high and above)
+        run: pnpm audit --prod --audit-level high

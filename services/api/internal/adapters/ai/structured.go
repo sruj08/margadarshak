@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
 	"regexp"
 	"strings"
@@ -18,6 +17,7 @@ import (
 	"google.golang.org/genai"
 
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/guard"
+	"github.com/sruj08/margadarshak/services/api/internal/platform/logging"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -83,7 +83,7 @@ func NewStructuredWithModel(llm model.LLM, cfg Config, name, instruction string,
 		cfg.Timeout = 20 * time.Second
 	}
 	if cfg.Log == nil {
-		cfg.Log = slog.New(slog.NewTextHandler(io.Discard, nil))
+		cfg.Log = logging.Discard()
 	}
 	temp := float32(0.2)
 	block := genai.HarmBlockThresholdBlockMediumAndAbove

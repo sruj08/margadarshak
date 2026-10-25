@@ -111,9 +111,9 @@ catalogs:
     vitest:
       specifier: 5.0.5
       version: 5.0.5
-    zod:
-      specifier: 4.6.7
-      version: 4.6.7
+
+overrides:
+  zod: 4.6.7
 
 importers:
 
@@ -284,7 +284,7 @@ importers:
   packages/clip-pipeline:
     dependencies:
       zod:
-        specifier: 'catalog:'
+        specifier: 4.6.7
         version: 4.6.7
     devDependencies:
       '@types/node':
@@ -297,7 +297,7 @@ importers:
   packages/content:
     dependencies:
       zod:
-        specifier: 'catalog:'
+        specifier: 4.6.7
         version: 4.6.7
     devDependencies:
       '@types/node':
@@ -310,7 +310,7 @@ importers:
   packages/game-core:
     dependencies:
       zod:
-        specifier: 'catalog:'
+        specifier: 4.6.7
         version: 4.6.7
     devDependencies:
       '@types/node':
@@ -405,7 +405,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/gamification
       zod:
-        specifier: 'catalog:'
+        specifier: 4.6.7
         version: 4.6.7
     devDependencies:
       '@margdarshak/content':
@@ -2671,13 +2671,6 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  lightningcss-linux-x64-gnu@1.33.0:
-    resolution: {integrity: sha512-ar+Ju7LmcN0Jo4FpL4hpFybwNG9/3A/Br5KW2n2jyODg3MEZXaDYADdemoNS+BDNfMgKvylJLj4S5tyRActuAg==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
   lightningcss-linux-x64-musl@1.32.0:
     resolution: {integrity: sha512-bYcLp+Vb0awsiXg/80uCRezCYHNg1/l3mt0gzHnWV9XP1W5sKa5/TCdGWaR/zBM2PeF/HbsQv/j2URNOiVuxWg==}
     engines: {node: '>= 12.0.0'}
@@ -3390,9 +3383,6 @@ packages:
   yargs@18.2.0:
     resolution: {integrity: sha512-9OpKOLeaoNFecEp7P6iYbzze/5CqWoH7N3SMs/6y1XF4nMvFMspEGZzJ6uFi9MmQwXhyzqYoSEKO3tvA3Z/o2w==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=23}
-
-  zod@4.6.5:
-    resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
 
   zod@4.6.7:
     resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
@@ -4307,7 +4297,7 @@ snapshots:
       pretty-bytes: 6.1.1
       source-map: 0.8.0
       type-fest: 5.10.0
-      zod: 4.6.5
+      zod: 4.6.7
     optionalDependencies:
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -4325,7 +4315,7 @@ snapshots:
       react: 19.3.1
       semver: 7.8.5
       serwist: 9.5.13(browserslist@4.29.3)(typescript@6.0.3)
-      zod: 4.6.5
+      zod: 4.6.7
     optionalDependencies:
       esbuild: 0.28.2
       typescript: 6.0.3
@@ -5193,9 +5183,6 @@ snapshots:
   lightningcss-linux-x64-gnu@1.32.0:
     optional: true
 
-  lightningcss-linux-x64-gnu@1.33.0:
-    optional: true
-
   lightningcss-linux-x64-musl@1.32.0:
     optional: true
 
@@ -5241,7 +5228,6 @@ snapshots:
       lightningcss-linux-arm-gnueabihf: 1.33.0
       lightningcss-linux-arm64-gnu: 1.33.0
       lightningcss-linux-arm64-musl: 1.33.0
-      lightningcss-linux-x64-gnu: 1.33.0
       lightningcss-linux-x64-musl: 1.33.0
       lightningcss-win32-arm64-msvc: 1.33.0
       lightningcss-win32-x64-msvc: 1.33.0
@@ -5868,7 +5854,5 @@ snapshots:
       string-width: 8.3.0
       y18n: 5.0.8
       yargs-parser: 22.0.0
-
-  zod@4.6.5: {}
 
   zod@4.6.7: {}

@@ -49,7 +49,7 @@ const node = (wf: Workflow, name: string): N8nNode => {
   return n;
 };
 
-const TRIGGERS = new Set(["n8n-nodes-base.scheduleTrigger", "n8n-nodes-base.webhook", "n8n-nodes-base.errorTrigger", "n8n-nodes-base.formTrigger"]);
+const TRIGGERS = new Set(["n8n-nodes-base.scheduleTrigger", "n8n-nodes-base.webhook", "n8n-nodes-base.errorTrigger", "n8n-nodes-base.formTrigger", "n8n-nodes-base.manualTrigger"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 function maxOutputs(n: N8nNode): number {

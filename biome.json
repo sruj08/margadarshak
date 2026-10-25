@@ -23,6 +23,7 @@
       "!**/public/mediapipe",
       "!packages/api-client/src/generated",
       "!packages/rules/src/generated",
+      "!content/generated",
       "!services/api",
       "!services/workflows",
       "!n8n/workflows",

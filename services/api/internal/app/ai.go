@@ -16,6 +16,7 @@ import (
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/voiceguide"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/speech"
 	"github.com/sruj08/margadarshak/services/api/internal/platform/config"
+	"github.com/sruj08/margadarshak/services/api/internal/platform/logging"
 	"google.golang.org/genai"
 )
 
@@ -45,7 +46,7 @@ func model(pinned, fallback string) string {
 
 // AIAgentsForTest builds every agent with AI off (no key): the EC-29 path.
 func AIAgentsForTest(ctx context.Context, contentDir string) AIAgents {
-	return newAIAgents(ctx, &config.Config{}, slog.New(slog.DiscardHandler), contentDir, nil)
+	return newAIAgents(ctx, &config.Config{}, logging.Discard(), contentDir, nil)
 }
 
 // newAIAgents builds every agent. readDebrief backs the voice guide's read_debrief tool.

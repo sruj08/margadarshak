@@ -29,7 +29,7 @@ import (
 
 var quietLog = slog.New(slog.NewTextHandler(io.Discard, nil))
 
-type aiFakes struct{ debrief, tutor, decoder, scam, coach, signsnap, voice, gamecoach *aitest.Fake }
+type aiFakes struct{ debrief, tutor, decoder, coach, signsnap, voice, gamecoach *aitest.Fake }
 
 // fakeTranscriber stands in for Gemini audio transcription (commentary).
 type fakeTranscriber struct {

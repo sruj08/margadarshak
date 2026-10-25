@@ -171,7 +171,7 @@ func (s *Server) DecodeScreenshot(w http.ResponseWriter, r *http.Request) {
 		validation(w, r, "/image", "required")
 		return
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	img, err := io.ReadAll(io.LimitReader(file, decoder.MaxImageBytes+1))
 	if err != nil || len(img) == 0 || len(img) > decoder.MaxImageBytes {
 		validation(w, r, "/image", "too_large")

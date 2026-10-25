@@ -12,7 +12,6 @@ import (
 	"flag"
 	"fmt"
 	"iter"
-	"log/slog"
 	"os"
 	"strings"
 
@@ -21,6 +20,7 @@ import (
 
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/debrief"
+	"github.com/sruj08/margadarshak/services/api/internal/platform/logging"
 )
 
 // attacked answers like a model that took the bait of an injected commentary.
@@ -68,7 +68,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	log := logging.NewDev(os.Stdout, "info")
 	agent, err := ai.NewStructuredWithModel(&attacked{}, ai.Config{Log: log}, "debrief_agent", debrief.Instruction, debrief.DraftSchema())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

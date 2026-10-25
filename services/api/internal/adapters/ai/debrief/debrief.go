@@ -237,9 +237,7 @@ func (g *Generator) buildFacts(req Request) (Facts, []pick) {
 			}
 		}
 		facts.AllowedRuleIDs[p.f.ID] = allowed
-		for _, id := range g.drillsFor(p) {
-			facts.DrillCandidates = append(facts.DrillCandidates, id)
-		}
+		facts.DrillCandidates = append(facts.DrillCandidates, g.drillsFor(p)...)
 		if p.def.TemplateOnl {
 			facts.TemplateOnly = "game_template_only"
 		}

@@ -364,6 +364,7 @@ export function IndianDrivingLicenceCard({
     rafRef.current = requestAnimationFrame(tick);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only; applyVars only reads refs
   useEffect(() => {
     applyVars(posRef.current);
     return () => {
@@ -372,6 +373,7 @@ export function IndianDrivingLicenceCard({
   }, []);
 
   // Give the card a subtle physical spring impulse when loading starts and when it finishes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs on isLoading changes only; wake reads refs
   useEffect(() => {
     if (isLoading && !prevLoadingRef.current) {
       targetRef.current = {

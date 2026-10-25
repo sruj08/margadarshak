@@ -70,7 +70,7 @@ func (s *Server) ScoreCommentary(w http.ResponseWriter, r *http.Request, session
 		validation(w, r, "/audio", "required")
 		return
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	audio, err := io.ReadAll(io.LimitReader(file, commentary.MaxAudioBytes+1))
 	if err != nil || len(audio) == 0 || len(audio) > commentary.MaxAudioBytes {
 		validation(w, r, "/audio", "too_large")
@@ -141,7 +141,7 @@ func (s *Server) SnapSign(w http.ResponseWriter, r *http.Request, params gen.Sna
 		validation(w, r, "/image", "required")
 		return
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	img, err := io.ReadAll(io.LimitReader(file, signsnap.MaxImageBytes+1))
 	if err != nil || len(img) == 0 || len(img) > signsnap.MaxImageBytes {
 		validation(w, r, "/image", "too_large")

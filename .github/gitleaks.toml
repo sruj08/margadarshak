@@ -1,0 +1,27 @@
+# gitleaks config for CI. Default rules, plus an allowlist for reviewed false positives:
+# browser storage key names (md.*.v1), env var names, rule-pack text keys (fix.*), golden test
+# snapshots, test fakes, a CI-only dummy key and a truncated example JWT in the API docs.
+# Real secrets live in .env (git-ignored) and on the servers, never in the repo.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Reviewed false positives"
+regexTarget = "match"
+regexes = [
+  '''md\.[A-Za-z0-9_.-]+\.v[0-9]+''',  # localStorage / sessionStorage key names
+  '''R2_BUCKET_[A-Z_]+''',             # env var names, not values
+  '''fix\.[a-z0-9_]+''',               # rule-pack fix text keys
+  '''cfg\.[A-Za-z0-9]+Secret''',       # Go field references
+  '''eyJ[A-Za-z0-9_-]+\.\.\.''',       # truncated example token in the OpenAPI docs
+  '''Y2kt[A-Za-z0-9+/]+=*''',          # base64 of a ci-* dummy key used only in CI
+]
+paths = [
+  '''tests/golden/snapshots/.*\.json''',
+  '''.*_test\.go''',
+  '''.*\.test\.tsx?''',
+  '''services/score-verifier/test/helpers\.ts''',
+  '''scripts/try_scam\.ps1''',         # public-key header (MCowBQYDK2VwAyEA), not a secret
+  '''\.github/workflows/ci\.yml''',    # CI-only dummy keys
+  '''docs/05-ops/CICD\.md''',          # documents the same CI dummy keys
+]

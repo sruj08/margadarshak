@@ -73,3 +73,7 @@ catalog:
   fast-check: 4.10.2
   "@google/genai": 2.28.0
   msw: 3.0.3
+
+# Security: force patched zod for transitive deps (@serwist pins 4.6.5; GHSA-mrhx-c7xc-m3w5).
+overrides:
+  zod: 4.6.7

@@ -155,7 +155,7 @@ func (s *Server) OpenVoiceSocket(w http.ResponseWriter, r *http.Request, params 
 	if err != nil {
 		return // the upgrader already answered
 	}
-	defer ws.Close()
+	defer func() { _ = ws.Close() }()
 	ws.SetReadLimit(voiceMaxFrame)
 	var mu sync.Mutex
 	send := func(m voiceguide.Message) {

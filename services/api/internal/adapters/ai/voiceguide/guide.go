@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"iter"
 	"log/slog"
 	"os"
@@ -30,6 +29,7 @@ import (
 
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai"
 	"github.com/sruj08/margadarshak/services/api/internal/adapters/ai/guard"
+	"github.com/sruj08/margadarshak/services/api/internal/platform/logging"
 )
 
 // Action is a VoiceServerMessage action.
@@ -162,7 +162,7 @@ func New(ctx context.Context, cfg Config) (*Guide, error) {
 // NewWithModels builds the guide over any models (tests inject a fake text model).
 func NewWithModels(cfg Config, textLLM, liveLLM model.LLM) (*Guide, error) {
 	if cfg.Log == nil {
-		cfg.Log = slog.New(slog.NewTextHandler(io.Discard, nil))
+		cfg.Log = logging.Discard()
 	}
 	g := &Guide{cfg: cfg, log: cfg.Log, sessions: session.InMemoryService(), breaker: ai.NewBreaker()}
 	tools, err := g.tools()
@@ -341,7 +341,7 @@ func (c *Conn) navigateTo(id string) map[string]any {
 	case !s.Wired:
 		c.push(Message{Type: "transcript_out", Text: Text("NOT_IN_BUILD", c.Locale)})
 		return map[string]any{"ok": false, "error": "NOT_IN_BUILD", "nearest": "SCR_HOME"}
-	case s.Confirm && !(c.pendingNav == id && c.affirmed > c.navAskTurn):
+	case s.Confirm && (c.pendingNav != id || c.affirmed <= c.navAskTurn):
 		c.pendingNav, c.navAskTurn = id, c.turn
 		c.push(Message{Type: "confirm_request", Action: &Action{Kind: "navigate", ScreenID: id, Route: s.Route, ActionID: "nav:" + id}})
 		return map[string]any{"ok": true, "needs_confirm": true}

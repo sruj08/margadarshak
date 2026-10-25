@@ -81,6 +81,7 @@ clips/work/
 !tests/fixtures/media/**/*.mp4
 # Field-study exports and any participant data
 field-study/
+!services/workflows/test/fixtures/field-study/
 exports/
 *.participants.csv
 # Database dumps
