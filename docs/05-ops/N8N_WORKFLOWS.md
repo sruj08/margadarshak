@@ -41,7 +41,7 @@ These were n8n workflows in v0.1. Each one sends to citizens, so its volume grow
 | W10 | fail follow-up and retest reminder (F-13) | `test_failed` event schedules TimelineEvents for "plan ready" (+18 h) and the retest date from the rules engine (EC-08) |
 | W11 | escalation letter after the user approves (F-14) | backend letter flow: draft → in-app approval → PDF → email to the user via the notifier → API-72 dispatch |
 
-**As built (P1 code, 24 Oct):** the Go API still delivers citizen messages through the n8n W02 webhook (`n8n/workflows/W02-milestone-notifier.json`, `services/api/internal/adapters/notify/n8n.go`). The rows above are the decided target; moving the code to the notifier is open in `whats_left.md`.
+**As built (P1 code, 24 Oct):** the Go API still delivers citizen messages through the n8n W02 webhook (`n8n/workflows/W02-milestone-notifier.json`, `services/api/internal/adapters/notify/n8n.go`). The rows above are the decided target; moving the code to the notifier is open in [`WHATS_LEFT.md`](../08-project/WHATS_LEFT.md).
 
 Notifier adapters (BACKEND §3): `WhatsAppCloudNotifier` (Meta WhatsApp Cloud API, per-tenant number), `EmailNotifier` (SMTP to the transactional provider chosen at G0), `WebPushNotifier` (VAPID), `ConsoleNotifier` (dev). `MgovSmsNotifier` after TRAI DLT. All pass the NotificationPort contract suite (quiet hours, daily cap, STOP within one message, EC-30).
 

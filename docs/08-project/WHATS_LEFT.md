@@ -33,7 +33,7 @@ Evidence lives in [docs/08-project/P0_P1_VERIFICATION.md](docs/08-project/P0_P1_
 ## 3. What's left
 
 ### People (cannot be done in code)
-1. **Generate the Nazar clip bank** (~20 clips) — see [video_generation_guide.md](video_generation_guide.md). Cost ≈ $160–360, 2–3.5 h. Then **two human raters per clip** + a curator synthetic review before publishing.
+1. **Generate the Nazar clip bank** (~20 clips) — see [VIDEO_GENERATION_GUIDE.md](../09-learning-games/VIDEO_GENERATION_GUIDE.md). Cost ≈ $160–360, 2–3.5 h. Then **two human raters per clip** + a curator synthetic review before publishing.
 2. **HYPOTHESES.md (MD-241)** — review [HYPOTHESES.draft.md](HYPOTHESES.draft.md), fill the placeholders (clip IDs per block, G0 time, versions), rename, and commit **before any study data**.
 3. **Device checks** — TalkBack pass (MD-225), on-device Nazar frame timing (MD-222), Phaser numbers on the slowest team phone (open `/en/dev/phaser-spike?cars=24&auto=1`, paste JSON into ADR-0012).
 4. **Content reviews** — native Hindi review (all `hi` strings marked pending), medical sign-off of Golden Hour content, two-person review of practice rules (until then the AI allowlists cite no rule).
@@ -63,9 +63,9 @@ The docs now record the decision that citizen messages go through a backend noti
 - **CI wording scope:** the teammate's CI step called a missing `scripts/ci/check-wording.mjs` to scan `services/api`; `pnpm lint:facts` covers the TS and n8n copy. Extend it to notifier templates once they exist.
 
 ### Open decisions (for the clip bank)
-- 24 → 30 fps conversion of generated clips (judder vs scoring maths) — video_generation_guide.md §5.
-- Blur layer on AI clips in precheck (faces/plates second safety net) — video_generation_guide.md §3.
-- Adopt the proposed realism prompt PRM-CLIPGEN 1.1.0 — video_generation_guide.md §7.
+- 24 → 30 fps conversion of generated clips (judder vs scoring maths) — VIDEO_GENERATION_GUIDE.md §5.
+- Blur layer on AI clips in precheck (faces/plates second safety net) — VIDEO_GENERATION_GUIDE.md §3.
+- Adopt the proposed realism prompt PRM-CLIPGEN 1.1.0 — VIDEO_GENERATION_GUIDE.md §7.
 
 ### Unverified
 - Whether SynthID survives our transcode (disclosure is carried in `clip.json`, manifests and the UI label regardless).

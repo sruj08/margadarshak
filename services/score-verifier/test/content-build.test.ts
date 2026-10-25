@@ -23,6 +23,8 @@ import { call, type Running, requestFor, startVerifier } from "./helpers.ts";
 const built: BuiltContent = buildContent();
 const bankItems = splitQuestionBank(loadContent().questionBanks).serverKey.keys;
 const llVectors = goldenVectors().filter((v) => v.ctx.gameId === "ll_sim");
+// States whose rule pack has a PRM-LL-FORMAT row with a known exam shape.
+const LL_FORMAT_STATES = ["CG", "GJ", "JK", "KL", "MH", "PY", "RJ", "TS"];
 
 describe("build-content: LL answer keys", () => {
   it("writes one valid LlAnswerKey per bank item at the directory store's path", () => {
@@ -73,7 +75,14 @@ describe("build-content: formats and fixtures", () => {
       [10, 10, 60, 100, "announced"],
     );
     const formats = [...built.files.keys()].filter((p) => p.startsWith("formats/")).sort();
-    assert.deepEqual(formats, ["formats/HPT-KL.json", "formats/LLT-JK.json"]);
+    assert.deepEqual(formats, [
+      "formats/HPT-KL.json",
+      ...LL_FORMAT_STATES.map((s) => `formats/LLT-${s}.json`),
+    ]);
+    // Kerala's pack sets timerSeconds: per question, as the web LL simulator reads it.
+    const klLl = LlExamFormat.parse(built.files.get("formats/LLT-KL.json"));
+    assert.equal(klLl.per_q_timer_s, 30);
+    assert.equal(klLl.total_timer_s, null);
     const derived = built.index.formats.find((f) => f.ruleId === "HPT-KL")?.derived ?? [];
     assert.ok(
       derived.some((d) => d.startsWith("max_hazards_per_clip")),
@@ -110,7 +119,10 @@ describe("content/generated/game-items.json", () => {
     assert.ok(
       ll.items.some((i) => i.pool === "mock") && ll.items.some((i) => i.pool === "practice"),
     );
-    assert.deepEqual(ll.formats, ["LLT-JK"]);
+    assert.deepEqual(
+      ll.formats,
+      LL_FORMAT_STATES.map((s) => `LLT-${s}`),
+    );
     const text = readFileSync(
       new URL("../../../content/generated/game-items.json", import.meta.url),
       "utf8",

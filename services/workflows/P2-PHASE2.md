@@ -54,4 +54,4 @@ One `ctx.run` subtask per entry of `CLIP_INGEST_STEPS` / `CLIP_FINALIZE_STEPS`, 
 
 - `clip_ingest` / `clip_finalize` are implemented in `src/tasks/clip-ingest.ts`, `clip-finalize.ts` (shared `clip-common.ts`, media helpers in `clip-media.ts`, R2 SigV4 in `clip-r2.ts`), with `@margdarshak/clip-pipeline` as a workspace dependency.
 - **`clip_generate`** (`src/tasks/clip-generate.ts`, ADR-0013) turns a scene from `content/nazar/scenes.json` into an AI-generated clip with Gemini Omni Flash (`@google/genai`), then prechecks (normalise, strip, flash check), registers it through the Go step `clip.register_generated`, and continues the ingest flow (no blur step for AI clips; synthetic review instead). Env: `GEMINI_API_KEY`, `GEMINI_MODEL_VIDEO_GEN`, `NAZAR_SCENES_PATH`.
-- Prompt, realism rules and run book: [`video_generation_guide.md`](../../video_generation_guide.md) (proposed PRM-CLIPGEN 1.1.0); live prompt `ai/prompts/clip_generator.md`.
+- Prompt, realism rules and run book: [`VIDEO_GENERATION_GUIDE.md`](../../docs/09-learning-games/VIDEO_GENERATION_GUIDE.md) (proposed PRM-CLIPGEN 1.1.0); live prompt `ai/prompts/clip_generator.md`.

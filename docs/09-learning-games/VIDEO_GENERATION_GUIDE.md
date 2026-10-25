@@ -214,7 +214,7 @@ Gemini output is 24 fps; the mezzanine forces **30 fps CFR**. 24 → 30 duplicat
 ## 6. Honesty and licence
 
 - Keep SynthID, `origin`, `generation` and the "AI-generated scene" chip. Never remove or crop them away; never describe the clips as filmed.
-- Study results are reported "on AI-generated road scenes" (HYPOTHESES.draft.md).
+- Study results are reported "on AI-generated road scenes" ([HYPOTHESES.draft.md](../08-project/HYPOTHESES.draft.md)).
 - Unverified: whether SynthID survives our transcode (container metadata is stripped; disclosure travels in `clip.json`, manifests and the UI anyway), and whether CC-BY can be applied to Gemini outputs under the API terms (ADR-0013 open item).
 
 ---

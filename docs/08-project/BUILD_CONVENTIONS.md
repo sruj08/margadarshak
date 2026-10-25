@@ -39,7 +39,7 @@
 | `apps/web/` | Citizen PWA | FE (P0), FE-journey (P1) |
 | `packages/api-client/` | Typed client generated from `api/openapi.yaml` | FE |
 | Root tooling (`package.json`, `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `scripts/lint_*`) | Monorepo tooling | FE |
-| `.github/`, `infra/`, `docs/`, `CLAUDE.md`, `README.md`, `IDEA.md` | Docs, CI and infra | DOCS agents |
+| `.github/`, `infra/`, `docs/`, `CLAUDE.md`, `README.md` | Docs, CI and infra | DOCS agents |
 | `services/workflows/` | Render Workflows tasks (TS) | WORKFLOWS (P1) |
 | `n8n/workflows/` | n8n exports | WORKFLOWS (P1) |
 

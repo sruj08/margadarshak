@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-labelledby="t d">
+  <title id="t">Margdarshak</title>
+  <desc id="d">Margdarshak (मार्गदर्शक): learner se licence tak, bina agent ke. One guided road from learner's licence to driving licence.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14162e"/>
+      <stop offset="1" stop-color="#232657"/>
+    </linearGradient>
+    <linearGradient id="tiranga" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff9933"/>
+      <stop offset="0.5" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#138808"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3d6b"/>
+      <stop offset="1" stop-color="#1b1d3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" rx="24" fill="url(#bg)"/>
+  <!-- road receding to the horizon -->
+  <path d="M760 300 L905 150 L935 150 L1200 300 Z" fill="url(#road)" opacity="0.9"/>
+  <path d="M918 162 L916 180 M913 196 L909 222 M904 240 L897 280" stroke="#f5c542" stroke-width="5" stroke-linecap="round"/>
+  <!-- wayfinding pin -->
+  <g transform="translate(920 96)">
+    <path d="M0 -44 C24 -44 40 -26 40 -4 C40 22 0 54 0 54 C0 54 -40 22 -40 -4 C-40 -26 -24 -44 0 -44 Z" fill="#ff9933"/>
+    <circle cx="0" cy="-6" r="15" fill="#14162e"/>
+    <circle cx="0" cy="-6" r="7" fill="#ffffff"/>
+  </g>
+  <rect x="64" y="70" width="120" height="5" rx="2.5" fill="url(#tiranga)"/>
+  <text x="64" y="140" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="700" fill="#ffffff">Margdarshak</text>
+  <text x="64" y="188" font-family="'Noto Sans Devanagari', 'Nirmala UI', sans-serif" font-size="34" fill="#c7cbff">मार्गदर्शक · the one who shows the way</text>
+  <text x="64" y="236" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="24" fill="#e6e7f5" font-style="italic">Learner se licence tak, bina agent ke.</text>
+</svg>

@@ -3,7 +3,7 @@
 ## Read first
 1. `docs/00-overview/PROJECT_BRIEF.md`: the single source of truth for every ID and decision (F-, E-, API-, M-, EC-, R-, D-), including §15 "Resolved conflicts".
 2. `docs/08-project/BUILD_CONVENTIONS.md`: binding build rules (Go backend per ADR-0011, AI for everyone per D-13 revised, ownership, quality gates).
-3. `MAP.md`: where everything is.
+3. `docs/README.md`: where everything is.
 4. The ticket you were given, in `docs/08-project/BACKLOG.md` (MD-xxx).
 
 ## Repo layout
@@ -64,7 +64,7 @@
 - **Workflows:** every task is idempotent (`caseId:type:dueOn`).
 
 ## Key docs
-- **Overview:** PROJECT_BRIEF · IDEA.md · RESEARCH.md
+- **Overview:** README · PROJECT_BRIEF · VISION · PITCH
 - **Engineering:** BUILD_CONVENTIONS · ADR-0011 (Go backend) · ARCHITECTURE · DATA_MODEL · API_SPEC (+ `api/openapi.yaml`) · BACKEND · FRONTEND · TESTING
 - **Games and AI:** GAME_SDK · DEBRIEF_SPEC · AGENTS · PROMPTS · AI_EVALS
 - **Security:** SECURITY_ARCHITECTURE · EDGE_CASES

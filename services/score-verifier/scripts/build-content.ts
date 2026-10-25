@@ -151,10 +151,10 @@ export function formatRows(packs: RulepackFiles): {
         checkedOn: str(row["checkedOn"]),
       };
       if (row.overrides === "PRM-LL-FORMAT") {
-        if (value["timerSeconds"] !== null && value["timerSeconds"] !== undefined) {
-          // The pack does not say whether the timer is per question or total: decide, then map it.
-          throw new Error(`${row.id}: timerSeconds is set; map it to per_q or total explicitly`);
-        }
+        // Same convention as the web LL simulator (apps/web/src/features/ll-sim/format.ts):
+        // timerSeconds is per question, totalTimerSeconds is for the whole test.
+        const timer = (k: string) =>
+          value[k] === null || value[k] === undefined ? null : int(value[k], `${row.id}.${k}`);
         const questions = int(value["questions"], `${row.id}.questions`);
         const derived: string[] = [];
         let pass: number;
@@ -172,8 +172,8 @@ export function formatRows(packs: RulepackFiles): {
             known: value["known"] === true,
             questions,
             pass,
-            per_q_timer_s: null,
-            total_timer_s: null,
+            per_q_timer_s: timer("timerSeconds"),
+            total_timer_s: timer("totalTimerSeconds"),
             ...provenance(row),
           }),
         );

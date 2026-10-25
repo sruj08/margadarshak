@@ -158,7 +158,7 @@ Goal: one repo, one command to run everything locally, pinned versions, and rule
 - **Acceptance:**
   - [ ] `pnpm i && pnpm turbo build` succeeds on Windows, macOS and Linux runners.
   - [ ] `packages/*` publish TypeScript types; import paths `@margdarshak/game-core`, `@margdarshak/rules`, `@margdarshak/ui` resolve.
-  - [ ] Folder purposes listed in MAP.md.
+  - [ ] Folder purposes listed in docs/README.md.
 
 ### MD-007 · Python service layout with uv
 - **Meta:** phase=P0 · epic=EP-01 · owner=BE · estimate=S · depends=MD-006 · refs=D-17
