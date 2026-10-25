@@ -18,9 +18,11 @@ export default async function LanguagePage({ params }: { params: Promise<{ local
   const t = await getTranslations("lang");
   const other = routing.locales.find((l) => l !== locale) ?? "en";
   const tOther = await getTranslations({ locale: other, namespace: "lang" });
+  const tb = await getTranslations("brand");
   return (
     <div className="md-page md-page--narrow" data-screen="SCR-001">
       <LanguageScreen
+        brandName={tb("name")}
         current={locale}
         titles={[
           { lang: locale, text: t("title") },

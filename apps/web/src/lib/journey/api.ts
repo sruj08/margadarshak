@@ -330,6 +330,12 @@ export async function postEvent(
   );
 }
 
+/** Demo tenant on the device API only: shifts a case's dates into the past (see mock.demoSkipDays). */
+export async function demoSkipDays(id: string, days: number): Promise<Case | null> {
+  if (API_MODE !== "mock" || !DEMO_TENANT) return null;
+  return stamp(await mock.demoSkipDays(id, days));
+}
+
 export async function getTimeline(id: string): Promise<Sourced<TimelinePage>> {
   return call(
     () =>

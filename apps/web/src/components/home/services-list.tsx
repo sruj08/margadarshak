@@ -45,16 +45,9 @@ export function ServicesList() {
         </p>
       </header>
       <SearchField value={q} onChange={setQ} aria-label={t("search")} className="mj-search">
-        <SearchField.Group
-          className="md-date__group"
-          style={{ display: "flex", alignItems: "center", gap: 8 }}
-        >
-          <SearchField.SearchIcon />
-          <SearchField.Input
-            placeholder={t("searchHint")}
-            className="mj-input"
-            style={{ boxShadow: "none", padding: 0 }}
-          />
+        <SearchField.Group className="mj-search__group">
+          <SearchField.SearchIcon className="mj-search__icon" />
+          <SearchField.Input placeholder={t("searchHint")} className="mj-search__input" />
           <SearchField.ClearButton aria-label={t("clear")} />
         </SearchField.Group>
       </SearchField>

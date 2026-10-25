@@ -1,0 +1,63 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "MZ",
+  "name": "Mizoram overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://transport.mizoram.gov.in",
+  "rules": [
+    {
+      "id": "MZ-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.mz.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": true,
+          "where": ["home_online", "rto"]
+        }
+      },
+      "text": {
+        "en": "In Mizoram the LL test can be taken online at home with Aadhaar face authentication, or at the RTO.",
+        "hi": "Mizoram में लर्नर लाइसेंस टेस्ट आधार फेस ऑथेंटिकेशन के साथ घर से ऑनलाइन, या RTO पर दिया जा सकता है।"
+      },
+      "source": {
+        "title": "Mizoram: learner's licence test mode",
+        "url": "https://transport.mizoram.gov.in/post/14online-faceless-learners-licence-hman-theih-turin-tlangzarh-a-ni-ta"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "MZ-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.mz.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Without Aadhaar, take the LL test at the office."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Mizoram transport department",
+        "url": "https://transport.mizoram.gov.in"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "UK",
+  "name": "Uttarakhand overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://transport.uk.gov.in",
+  "rules": [
+    {
+      "id": "UK-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.uk.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": false,
+          "where": ["rto"]
+        }
+      },
+      "text": {
+        "en": "In Uttarakhand the LL test is taken at the RTO or transport office.",
+        "hi": "Uttarakhand में लर्नर लाइसेंस टेस्ट RTO या परिवहन कार्यालय पर होता है।"
+      },
+      "source": {
+        "title": "Uttarakhand: learner's licence test mode",
+        "url": "https://transport.uk.gov.in/license/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "UK-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.uk.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": false,
+          "tracks": [
+            "4 automated tracks (Dehradun, Rishikesh, Haridwar, Kotdwar); manual elsewhere"
+          ]
+        }
+      },
+      "text": {
+        "en": "Uttarakhand uses both: 4 automated tracks (Dehradun, Rishikesh, Haridwar, Kotdwar); manual elsewhere."
+      },
+      "source": {
+        "title": "Uttarakhand: driving test type",
+        "url": "https://transport.uk.gov.in/project/establishment-of-automated-driving-test-tracks-in-each-district-of-uttarakhand/"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

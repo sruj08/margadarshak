@@ -162,6 +162,118 @@
       "confidence": "low",
       "verified": false,
       "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "FEE-TN-SMART-CARD-NONE",
+      "state": "TN",
+      "overrides": "FEE-SMART-CARD",
+      "labelKey": "fee.tn.smart_card_none",
+      "amount": 0,
+      "per": "application",
+      "stage": "DL",
+      "smartCard": true,
+      "includedInTotal": true,
+      "source": {
+        "title": "Tamil Nadu press release 15 Sept 2026: digital licence only; smart card and postal charges dropped",
+        "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr150926_e_671.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "FEE-RJ-SMART-CARD-NONE",
+      "state": "RJ",
+      "overrides": "FEE-SMART-CARD",
+      "labelKey": "fee.rj.smart_card_none",
+      "amount": 0,
+      "per": "application",
+      "stage": "DL",
+      "smartCard": true,
+      "includedInTotal": true,
+      "source": {
+        "title": "Rajasthan Transport: e-DL only from 1 Apr 2024 (no smart card)",
+        "url": "https://transport.rajasthan.gov.in/content/transportportal/en/transport/howtoget/e_dl_e_rc.html"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "FEE-TS-SERVICE-REPORTED",
+      "state": "TS",
+      "labelKey": "fee.ts.service_reported",
+      "amount": 60000,
+      "per": "application",
+      "stage": "DL",
+      "includedInTotal": false,
+      "source": {
+        "title": "Telangana G.O.Ms.51 (22 Jul 2025): service charge 200 on LL and 400 on a non-transport DL",
+        "url": "https://transport.telangana.gov.in/pdf_uploads/2025TRB-Ms51-service-charges.pdf"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "FEE-AP-USER-REPORTED",
+      "state": "AP",
+      "labelKey": "fee.ap.user_reported",
+      "amount": 18000,
+      "per": "application",
+      "stage": "DL",
+      "includedInTotal": false,
+      "source": {
+        "title": "AP Transport user charges: 30 on LL and 150 on a non-transport DL",
+        "url": "https://www.aptransport.org/html/usercharges.html"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "FEE-KL-SERVICE-REPORTED",
+      "state": "KL",
+      "labelKey": "fee.kl.service_reported",
+      "amount": 26000,
+      "per": "application",
+      "stage": "DL",
+      "includedInTotal": false,
+      "source": {
+        "title": "Kerala MVD fees: service charge 60 on LL and 200 on the digital licence",
+        "url": "https://mvd.kerala.gov.in/en/fees-0"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "FEE-MH-DL-EXTRA-REPORTED",
+      "state": "MH",
+      "labelKey": "fee.mh.dl_extra_reported",
+      "amount": 31600,
+      "per": "application",
+      "stage": "DL",
+      "includedInTotal": false,
+      "source": {
+        "title": "Maharashtra Transport licence fees: permanent licence 716 (316 above the central fees)",
+        "url": "http://transport.maharashtra.gov.in/1176/License-Fees"
+      },
+      "grade": "P-state",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
     }
   ]
 }

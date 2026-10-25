@@ -1,0 +1,463 @@
+{
+  "simulated": "Simulated for the demo · no real money or data moves",
+  "back": "Back",
+  "noCase": "Start with your licence plan, then come back here.",
+  "makePlan": "Make my plan",
+  "stepOf": "Step {i} of {n}",
+  "demoOnly": "Demo controls",
+  "skipDays": "Skip {n, plural, one {# day} other {# days}} (demo clock)",
+  "error": "That didn't go through. Your progress is saved; try again.",
+  "digilocker": {
+    "brand": "DigiLocker",
+    "tagline": "Document wallet to empower citizens",
+    "ribbon": "Simulated DigiLocker · synthetic demo account",
+    "signinTitle": "Sign in to DigiLocker",
+    "signinSub": "Margdarshak wants to fill your learner's licence application from your DigiLocker documents.",
+    "account": "Demo account",
+    "accountName": "Kabir Sharma",
+    "accountLine": "Mobile ending 43 · synthetic person, not a real account",
+    "never": "Real DigiLocker asks for your mobile or Aadhaar number and an OTP on digilocker.gov.in. We never ask for them; this demo signs in a synthetic account.",
+    "continue": "Continue with the demo account",
+    "consentTitle": "Allow Margdarshak to access your documents?",
+    "consentPurpose": "Purpose: fill your learner's licence application",
+    "consentValidity": "Access ends in 30 days. You can revoke it in DigiLocker at any time.",
+    "docAadhaar": "Aadhaar card (name, date of birth, address, photo)",
+    "docAadhaarMask": "XXXX XXXX 4471",
+    "docMarks": "Class X marksheet (date of birth proof)",
+    "docOptional": "Optional",
+    "allow": "Allow",
+    "deny": "Deny",
+    "fetching": "Fetching your documents…",
+    "doneTitle": "Your details are filled in",
+    "doneSub": "These came from DigiLocker. You only need to check them; nothing was typed.",
+    "fName": "Name",
+    "fRelative": "Son/daughter/wife of",
+    "fDob": "Date of birth",
+    "fAddress": "Address",
+    "fPhoto": "Photo",
+    "fPhotoValue": "Taken from Aadhaar, no upload needed",
+    "kept": "Kept only on this phone, encrypted. The server sees none of it.",
+    "next": "Continue my application",
+    "denied": "No problem. You can type your details instead.",
+    "cardTitle": "Fill from DigiLocker",
+    "cardLine": "Name, date of birth, address and photo in one tap. No typing.",
+    "cardDone": "Filled from DigiLocker",
+    "connectTitle": "Connecting your Aadhaar",
+    "nodeApp": "Margdarshak",
+    "nodeAadhaar": "Aadhaar",
+    "s1": "Secure link to DigiLocker",
+    "s2": "Your consent recorded",
+    "s3": "Aadhaar eKYC checked (simulated)",
+    "s4": "Details and photo fetched",
+    "startConnect": "Connect Aadhaar and autofill",
+    "startSelf": "Fill it in myself",
+    "accountNameHi": "कबीर शर्मा",
+    "idGenderValue": "MALE",
+    "idBand": "eKYC VIA DIGILOCKER · DEMO",
+    "idBandHi": "नमूना पहचान",
+    "idSeal": "SIMULATED",
+    "idDob": "DOB",
+    "idGender": "Gender",
+    "idFooter": "Demo identity for this prototype, not an Aadhaar card",
+    "startDl": "Apply for my driving licence",
+    "simChip": "Simulated",
+    "secure": "Secure connection · consent-based sharing",
+    "signedInAs": "Signed in as",
+    "docsLabel": "Documents requested",
+    "accountInitials": "KS",
+    "docAadhaarShort": "Aadhaar card",
+    "docAadhaarFields": "Name, date of birth, address, photo"
+  },
+  "pay": {
+    "gateway": "e-Payment",
+    "merchant": "Transport Department · {state}",
+    "ribbon": "Simulated payment gateway · no money moves",
+    "for": {
+      "ll": "Learner's licence application",
+      "dl": "Driving licence application",
+      "retest": "Driving test retest",
+      "llretest": "Learner's licence retest"
+    },
+    "appNo": "Application no.",
+    "summary": "Payment summary",
+    "total": "Total payable",
+    "method": "Choose how to pay",
+    "upi": "UPI",
+    "upiLine": "Scan with any UPI app, or approve the request",
+    "netbanking": "Net banking",
+    "netbankingLine": "Pay from your bank account",
+    "scan": "Scan to pay {amount}",
+    "vpa": "Pay to: transport.{state}@simulated",
+    "approveUpi": "I've approved it in my UPI app",
+    "chooseBank": "Choose your bank",
+    "toBank": "Continue to bank",
+    "bankPage": "{bank} · Net banking (simulated)",
+    "bankApprove": "Approve payment of {amount}",
+    "bankCancel": "Cancel",
+    "processing": "Confirming with your bank…",
+    "dontBack": "Don't press back or close this page.",
+    "successTitle": "Payment successful",
+    "successSub": "Your fee is recorded against the application. A receipt is below.",
+    "receipt": "Receipt",
+    "txn": "Transaction ID",
+    "bankRef": "Bank reference",
+    "grn": "Government receipt no. (GRN)",
+    "paidOn": "Paid on",
+    "status": "Status",
+    "statusOk": "Success",
+    "print": "Print or save receipt",
+    "pendingTip": "Money debited but this page didn't load? Don't pay again. Check payment status first.",
+    "pendingLink": "What to do if payment is stuck",
+    "next": {
+      "ll": "Take the learner's licence test",
+      "dl": "Book my driving test slot",
+      "retest": "Book my retest slot",
+      "llretest": "Retake the LL test"
+    },
+    "already": "This fee is already paid.",
+    "fees": "Fee lines come from fees.json (CMVR rule 32), in paise.",
+    "payNow": "Pay {amount} now",
+    "orSarathi": "Or continue on Sarathi yourself"
+  },
+  "ll": {
+    "title": "Learner's licence test",
+    "subOnline": "In {state} you can take this test online at home, with Aadhaar face check.",
+    "subRto": "In {state} the test is at the RTO. The screen is the same; practise it here first.",
+    "format": "{q} questions · {p} correct to pass",
+    "steps": {
+      "tutorial": "Road-safety tutorial",
+      "ready": "Before you start",
+      "test": "The test"
+    },
+    "tutorialTitle": "Watch the road-safety tutorial",
+    "tutorialWhy": "Sarathi asks you to finish this tutorial within {days} days of applying, before the test.",
+    "card": {
+      "helmet": {
+        "h": "Helmet and seat belt, every trip",
+        "b": "A buckled ISI helmet for rider and pillion. Seat belts for everyone in a car, front and back."
+      },
+      "speed": {
+        "h": "Speed decides your stopping distance",
+        "b": "Double the speed and you need about four times the braking distance. Slow down near schools, markets and junctions."
+      },
+      "junction": {
+        "h": "Junctions: look, signal, then go",
+        "b": "Give way to traffic already in the junction and to people crossing. Indicate early; check mirrors and the blind spot."
+      },
+      "drink": {
+        "h": "Never drink or use your phone and drive",
+        "b": "Both slow your reactions. Pull over to take a call. Drink-driving is a serious offence under the Motor Vehicles Act."
+      }
+    },
+    "next": "Next",
+    "doneTutorial": "I've watched it",
+    "readyTitle": "Before you start",
+    "ready1": "Sit alone in a quiet, well-lit room. Keep your face in the camera frame.",
+    "ready2": "The test password comes by SMS to your Aadhaar-linked mobile (simulated here).",
+    "ready3": "Each question has a timer. You can't go back once you move on.",
+    "ready4": "Nobody can take this test for you. Agents who offer to are committing fraud.",
+    "face": "Face check",
+    "faceOk": "Face matched (simulated, no camera used)",
+    "start": "Start the test",
+    "practiseFirst": "Not ready? Practise first",
+    "passTitle": "You passed the learner's licence test",
+    "passCta": "Get my learner's licence",
+    "failTitle": "Not this time",
+    "failLine": "You can retake the test. Practise the questions you missed first.",
+    "retake": "Retake the test",
+    "issuedTitle": "Your learner's licence is ready",
+    "issuedSub": "Download it from Sarathi in a real application. Carry it with an L-plate when you practise.",
+    "form": "Learner's licence · Form 3",
+    "number": "LL number",
+    "name": "Name",
+    "dob": "Date of birth",
+    "classes": "Vehicle classes",
+    "validFrom": "Valid from",
+    "validTo": "Valid till",
+    "authority": "Licensing authority",
+    "authorityValue": "Transport Department, {state}",
+    "qr": "QR for driving schools and RTO staff to check",
+    "unlockTitle": "Your driving test unlocks on {date}",
+    "unlockLine": "The rules ask for {days} days of practice with your learner's licence first. We'll plan those days with you.",
+    "toPractise": "Start my practice days",
+    "toTrack": "See how the driving test works",
+    "retakeTitle": "Retake the learner's licence test",
+    "retakeFrom": "You can retake the test from {date}. Practise the questions you missed, pay the LL retest fee, then try again.",
+    "payRetest": "Pay the LL retest fee"
+  },
+  "dl": {
+    "applyTitle": "Apply for your driving licence",
+    "applySub": "Your learner's licence details are already filled in. Check, pay, then pick a test slot.",
+    "notYet": "You can apply from {date}",
+    "notYetLine": "{n, plural, one {# day} other {# days}} of practice left. You can pay and book now for a date on or after then; use the days to practise the track.",
+    "ll": "Learner's licence",
+    "llLine": "{number} · valid till {date}",
+    "docsTitle": "What you'll need",
+    "docLl": "Your learner's licence (we've linked it)",
+    "docId": "Original Aadhaar or other ID and address proof",
+    "doc1a": "Medical certificate, Form 1A",
+    "docVehicle": "A vehicle of the class you're testing on, with valid RC, insurance and PUC",
+    "docHelmet": "Helmet (two-wheeler) and L-plates",
+    "feeTitle": "Fee now",
+    "feeNote": "The driving-test fee was already paid with your learner's licence.",
+    "pay": "Pay {amount}",
+    "paid": "Fee paid",
+    "toSlot": "Pick my test slot",
+    "slotTitle": "Book your driving test",
+    "slotSub": "Pick a test office, a day and a time. Earliest day is when your driving test unlocks.",
+    "office": "Test office",
+    "sample": "Sample office",
+    "track": "Track: {track}",
+    "day": "Day",
+    "time": "Time",
+    "left": "{n, plural, =0 {No slots left} one {# slot left} other {# slots left}}",
+    "expiryWarn": "Your learner's licence expires on {date}. Book before then.",
+    "notify": "Tell me if an earlier slot opens (reminder only, we never book for you)",
+    "confirm": "Book this slot",
+    "booked": "Slot booked",
+    "slipTitle": "Your test appointment",
+    "slipSub": "Show this at the RTO counter. Arrive 30 minutes early.",
+    "slipQr": "Show at counter",
+    "when": "When",
+    "where": "Where",
+    "bring": "What to bring",
+    "eveTitle": "The evening before, you'll get this",
+    "eveMsg": "Tomorrow {time} at {office}: carry your learner's licence, original ID, your vehicle's RC, insurance and PUC, and a helmet. Reply STOP to stop reminders.",
+    "eveChannel": "WhatsApp · test number (simulated)",
+    "atRto": "At the RTO (simulated examiner)",
+    "atRtoLine": "In real life the examiner enters the result on Sarathi and you get an SMS. Here you can record it to continue the story.",
+    "toTestDay": "Skip to test day",
+    "passed": "Passed",
+    "notPassed": "Not passed",
+    "reasonsTitle": "What went wrong? (pick any)",
+    "reason": {
+      "balance": "Lost balance or put a foot down",
+      "line": "Touched or crossed a track line",
+      "signal": "Forgot to indicate",
+      "mirror": "Didn't check mirrors or blind spot",
+      "stall": "Stalled or rolled back on the slope",
+      "parking": "Reverse parking"
+    },
+    "record": "Record result",
+    "trackTitle": "How the driving test works",
+    "trackSub": "What happens on the track, in order, and what examiners watch for.",
+    "trackState": "In {state}: {detail}",
+    "trackUnknown": "Your RTO's track type isn't confirmed. Most use these layouts.",
+    "twoWheeler": "Two-wheeler",
+    "car": "Car",
+    "play": "Play the walk-through",
+    "pause": "Pause",
+    "tw": {
+      "s1": "Start with your helmet on and mirrors set. Indicate before moving off.",
+      "s2": "Ride the figure 8 without putting a foot down or touching the lines.",
+      "s3": "Keep a steady, slow speed. Look where you're going, not at your front wheel.",
+      "s4": "Stop at the stop line, indicate, and park. The examiner tells you the result."
+    },
+    "lmv": {
+      "s1": "Seat belt on, mirrors set, indicate, and move off smoothly.",
+      "s2": "Drive the S or H track forward without touching the edges.",
+      "s3": "Reverse into the parking box. Use mirrors; go slowly.",
+      "s4": "Stop on the slope and move off without rolling back (handbrake, then clutch)."
+    },
+    "failsTitle": "Top reasons people don't pass",
+    "fail1": "Putting a foot down or touching a line on the 8-track",
+    "fail2": "Not indicating or not checking mirrors",
+    "fail3": "Rolling back on the gradient",
+    "fail4": "Rushing: speed costs points, it never earns them",
+    "retestTitle": "Not this time. Here's your way back",
+    "retestSub": "Lots of people need a second go. You can retest from {date}.",
+    "retestGap": "Retest allowed {days} days after a failed test (verify at your RTO).",
+    "drills": "Practise these before your retest",
+    "remedial": "After a failed test the rules may ask for a short course at a driving school before you reappear.",
+    "payRetest": "Pay the retest fee",
+    "issuedTitle": "Your driving licence is approved",
+    "issuedSub": "The RTO approved your licence. It's in your DigiLocker, and the card is on its way by post.",
+    "approving": "RTO is approving your licence…",
+    "approve": "Approval SMS received",
+    "inDigilocker": "In your DigiLocker · Issued documents",
+    "inDigilockerLine": "Driving licence {number}. Valid as a document under the IT Act when shown from DigiLocker or mParivahan.",
+    "post": "Card by post",
+    "postSteps": {
+      "printed": "Card printed",
+      "dispatched": "Dispatched by Speed Post",
+      "delivered": "Delivered"
+    },
+    "received": "I've received my card",
+    "done": "You did it, without an agent",
+    "doneLine": "From plan to licence: every step, fee and date was shown before you needed it.",
+    "badge": "See your Khud Licence badge",
+    "home": "Go home"
+  },
+  "demo": {
+    "title": "Demo story: from first question to licence",
+    "sub": "One person, Kabir, 19, from Jammu, wants to ride a geared motorcycle. Follow the chapters in order; each opens the real screen.",
+    "reset": "Start a fresh demo on this phone",
+    "resetDone": "Fresh start. Open chapter 1.",
+    "chapters": {
+      "c1": {
+        "h": "Choose a language",
+        "b": "Language first, in its own script."
+      },
+      "c2": {
+        "h": "Plan in 3 taps",
+        "b": "Age, vehicle, state: steps, documents, fees and dates before any form."
+      },
+      "c3": {
+        "h": "Apply with DigiLocker",
+        "b": "Details filled in from DigiLocker; one question per screen; photo fixed on the phone."
+      },
+      "c4": {
+        "h": "Check, then pay",
+        "b": "Check every answer before paying, then a simulated payment gateway."
+      },
+      "c5": {
+        "h": "Learn and get ready",
+        "b": "Lessons, hazard clips, games, streaks and a readiness score."
+      },
+      "c6": {
+        "h": "Take the LL test",
+        "b": "Road-safety tutorial, then the test screen in your state's format."
+      },
+      "c7": {
+        "h": "The 30-day bridge",
+        "b": "Learner's licence issued; practise days planned; track explained."
+      },
+      "c8": {
+        "h": "Apply for DL and book a slot",
+        "b": "Prefilled DL application, fee, and a slot no earlier than the rules allow."
+      },
+      "c9": {
+        "h": "Test day and result",
+        "b": "Appointment slip, what to bring, and the result, pass or retest."
+      },
+      "c10": {
+        "h": "Licence issued",
+        "b": "Approved, in DigiLocker, card by post. Without an agent."
+      },
+      "c11": {
+        "h": "Ask the guide",
+        "b": "Voice or text in Hindi or English; it explains, it never submits."
+      },
+      "c12": {
+        "h": "Before and after",
+        "b": "What changed compared with today's portal."
+      }
+    },
+    "open": "Open"
+  },
+  "compare": {
+    "title": "Today's portal vs Margdarshak",
+    "sub": "Measured on parivahan.gov.in and Sarathi in October 2026, against this prototype. Sources linked.",
+    "colToday": "Today",
+    "colUs": "Margdarshak",
+    "rows": {
+      "links": {
+        "h": "First screen",
+        "today": "About 120 links; about 1 in 10 for a first-time applicant",
+        "us": "4 verbs: get a licence, practise, renew, check status"
+      },
+      "answer": {
+        "h": "When you learn the fee and documents",
+        "today": "After finding the right sub-portal and state",
+        "us": "Before any form: 3 taps, with sources"
+      },
+      "save": {
+        "h": "Lost progress",
+        "today": "\"The session does not save any data. The applicant should apply again.\"",
+        "us": "Every answer saved; resume on any device"
+      },
+      "device": {
+        "h": "Device",
+        "today": "Asks for a 1366×768 or larger screen",
+        "us": "Phone first; works on 2G with Lite mode"
+      },
+      "edit": {
+        "h": "Mistakes",
+        "today": "No edits after paying; visit the RTO",
+        "us": "Check your answers before paying; blockers caught early"
+      },
+      "state": {
+        "h": "State rules",
+        "today": "Contradictory FAQ on where the LL test happens",
+        "us": "One answer for your state, with its source and date"
+      },
+      "bridge": {
+        "h": "30 days between LL and DL",
+        "today": "Silent",
+        "us": "Planned practice, track explainer, slot reminders"
+      },
+      "lang": {
+        "h": "Languages",
+        "today": "English and a Hindi toggle",
+        "us": "English and Hindi throughout, voice guide"
+      }
+    },
+    "source": "Source",
+    "note": "Prototype on simulated data. Every rule and fee comes from rule packs with a source and a checked date."
+  },
+  "school": {
+    "title": "Driving schools: do you need one?",
+    "sub": "Not for a private two-wheeler or car licence. You can learn on your learner's licence with a licensed driver beside you. A school matters in these cases:",
+    "notCompulsory": "Not compulsory for a private scooter, motorcycle or car (MCWOG, MCWG, LMV).",
+    "cases": {
+      "transport": {
+        "h": "Transport vehicles",
+        "b": "Taxi, auto, truck or bus classes need a training certificate from a recognised driving school."
+      },
+      "adtc": {
+        "h": "Accredited driver-training centre",
+        "b": "Finishing a course at an accredited centre can replace the RTO driving test. You still need the learner's licence first."
+      },
+      "remedial": {
+        "h": "After a failed driving test",
+        "b": "The rules may ask for a short remedial course at a school before you retest."
+      },
+      "vehicle": {
+        "h": "No vehicle for the test",
+        "b": "A school near the RTO can lend a vehicle of your class with its papers."
+      }
+    },
+    "choose": "I'll train at an accredited centre",
+    "chosen": "Noted: your DL checklist now includes the centre's course certificate.",
+    "undo": "I'll learn on my own instead",
+    "source": "Source",
+    "cardTitle": "Learning with a driving school?",
+    "cardLine": "When a school is needed, and when it can replace the RTO test.",
+    "docAdtc": "Course certificate from the accredited driver-training centre (replaces the RTO driving test; verify at your RTO)"
+  },
+  "statePicker": {
+    "search": "Search your state or UT",
+    "home": "LL test online at home",
+    "rto": "LL test at the RTO"
+  },
+  "wizard": {
+    "needTitle": "What do you need?",
+    "needHint": "Pick one. We'll show only what applies to you.",
+    "needFirst": "My first licence",
+    "needFirstDesc": "Learner's licence first, then the driving licence",
+    "needHaveLl": "I already have a learner's licence",
+    "needHaveLlDesc": "Plan my driving licence and the driving test",
+    "needRenew": "Renew, replace or add a vehicle",
+    "needStatus": "Check my application",
+    "errNeed": "Choose what you need.",
+    "aadhaarTitle": "Connect your Aadhaar",
+    "aadhaarHint": "Your date of birth and address come from Aadhaar, so you don't have to type them.",
+    "aadhaarWhy": "Sarathi checks your age and address against Aadhaar. Connecting it through DigiLocker fills them in and puts you on the contactless path. Margdarshak never sees or stores your Aadhaar number.",
+    "connect": "Connect Aadhaar through DigiLocker",
+    "connectDesc": "Fills your date of birth and address. Nothing to type.",
+    "connected": "Aadhaar connected",
+    "connectedDesc": "Date of birth and address filled in from DigiLocker.",
+    "connectCta": "Connect Aadhaar",
+    "typeAge": "Type my age instead",
+    "typeAgeDesc": "My Aadhaar address is in {state}",
+    "connectPurpose": "Purpose: check your age and address for your licence plan",
+    "fetchedTitle": "Your details are in",
+    "fetchedLine": "Age and address from Aadhaar. Your address is in {state}, so the contactless path applies.",
+    "llTitle": "When was your learner's licence issued?",
+    "llHint": "It's printed on your learner's licence. It decides when your driving test unlocks.",
+    "llLegend": "Issue date",
+    "errLl": "Enter the issue date of your learner's licence. It can't be in the future.",
+    "errLlExpired": "That learner's licence has expired (it lasts 6 months). Choose \"My first licence\" to apply again.",
+    "planCtaDl": "Apply for my driving licence"
+  }
+}

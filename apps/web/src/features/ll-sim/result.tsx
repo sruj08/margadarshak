@@ -4,6 +4,7 @@ import { buttonClassName } from "@margdarshak/ui/components/button-class";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { LlAttemptPanel } from "@/features/flow/ll-test";
 import { getSessionRecord, type SessionRecord } from "@/features/games/results-store";
 import { loadPracticeKey } from "@/features/learn/bank-client";
 import type { PracticeKey } from "@/features/learn/content/bank-types";
@@ -91,39 +92,43 @@ export function LlResult({ sid }: { sid: string }) {
     );
   };
 
+  const sarathiTest = q.get("real") === "1" && rec.mode === "mock";
+
   return (
     <div className="md-stack" data-testid="ll-result" data-passed={String(r.score.passed)}>
-      <p className="ml-score" data-testid="ll-result-score">
-        {r.score.raw} / {r.score.max}
-      </p>
-      {rec.mode === "mock" ? (
-        r.score.passed ? (
-          <p className="md-h3">
-            {pass !== null ? t("passMark", { p: pass }) : null} ✓ {t("passed")}
-          </p>
-        ) : (
-          <p className="md-h3">{t("not", { r: r.score.raw, n: r.score.max, p: pass ?? "" })}</p>
-        )
-      ) : null}
-      {provisional ? <p className="ml-chip">{t("provisional")}</p> : null}
+      <div className="ml-result-head">
+        <p className="ml-score" data-testid="ll-result-score">
+          {r.score.raw} / {r.score.max}
+        </p>
+        {rec.mode === "mock" ? (
+          r.score.passed ? (
+            <p className="md-h3">
+              {pass !== null ? t("passMark", { p: pass }) : null} ✓ {t("passed")}
+            </p>
+          ) : (
+            <p className="md-h3">{t("not", { r: r.score.raw, n: r.score.max, p: pass ?? "" })}</p>
+          )
+        ) : null}
+        {provisional ? <p className="ml-chip">{t("provisional")}</p> : null}
+      </div>
+
+      {sarathiTest ? <LlAttemptPanel passed={r.score.passed === true} sid={sid} /> : null}
 
       {rec.mode === "mock" ? (
-        <fieldset className="ml-card" style={{ border: 0 }}>
+        <fieldset className="ml-card">
           <legend className="md-h3">{t("guess")}</legend>
-          <div className="ml-row">
-            {Array.from({ length: Math.min(5, r.score.max + 1) }, (_, i) => r.score.max - 4 + i)
-              .filter((n) => n >= 0)
-              .map((n) => (
-                <label key={n} className="ml-opt" style={{ minHeight: 48 }}>
-                  <input
-                    type="radio"
-                    name="guess"
-                    checked={guess === n}
-                    onChange={() => saveGuess(n)}
-                  />
-                  <span>{n}</span>
-                </label>
-              ))}
+          <div className="ml-guess">
+            {Array.from({ length: r.score.max + 1 }, (_, n) => (
+              <label key={n} className="ml-opt">
+                <input
+                  type="radio"
+                  name="guess"
+                  checked={guess === n}
+                  onChange={() => saveGuess(n)}
+                />
+                <span className="mj-num">{n}</span>
+              </label>
+            ))}
           </div>
           {guess !== null ? (
             <p role="status">{t("guessNote", { g: guess, r: r.score.raw })}</p>
@@ -139,7 +144,7 @@ export function LlResult({ sid }: { sid: string }) {
           {groups.map((g) => (
             <details key={g.f} className="ml-card">
               <summary className="font-semibold">
-                ▲ {tf(g.f as "OTHER")} ({g.items.length})
+                {tf(g.f as "OTHER")} ({g.items.length})
               </summary>
               <ul className="ml-list">
                 {g.items.map((w) => (

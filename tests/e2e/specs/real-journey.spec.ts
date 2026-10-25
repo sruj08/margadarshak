@@ -2,7 +2,15 @@ import { existsSync, readFileSync } from "node:fs";
 import { type Cookie, expect, type Page, test } from "@playwright/test";
 import { REAL } from "../real-env.mjs";
 import { onboard } from "./helpers";
-import { answer, cardFacts, loadPersona, makePlan } from "./journey-helpers";
+import {
+  answer,
+  cardFacts,
+  loadPersona,
+  makePlan,
+  openPlanToAge,
+  replayPlan,
+  tapChoice,
+} from "./journey-helpers";
 import {
   activeCase,
   apiCall,
@@ -186,7 +194,9 @@ test("P1 demo checkpoint: Kabir plan -> application -> hand-off -> LL day 0 -> L
   await expect(page.getByTestId("stage-home")).toHaveAttribute("data-stage", "DL_BOOKABLE");
   await expect(page.getByTestId("stage-h1")).toHaveText("You can book your driving test now.");
   await page.getByTestId("stage-primary").click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Book your driving test");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Apply for your driving licence",
+  );
   const caseDay31 = day31?.caseId as string;
 
   // He books a slot for tomorrow on Sarathi and turns on WhatsApp updates (API-04 records the
@@ -316,13 +326,11 @@ test("Rahul (17) via a parent: family mode with parental consent, no age gate an
   page,
 }) => {
   // Anyone can plan for a 16-17-year-old: the server plan says family mode, nothing is refused.
-  await page.goto("/en/plan");
+  await openPlanToAge(page, "Yes");
   const res = await expectApi(page, "POST", "/v1/plans", async () => {
-    await page.getByRole("radio", { name: "16 or 17", exact: true }).check({ force: true });
+    await tapChoice(page, "radio", "16 or 17");
     await page.getByRole("button", { name: "Next", exact: true }).click();
-    await page.getByRole("checkbox", { name: /Up to 50 cc/ }).check({ force: true });
-    await page.getByRole("button", { name: /^Next/ }).click();
-    await page.getByRole("radio", { name: "Yes", exact: true }).check({ force: true });
+    await tapChoice(page, "checkbox", /Up to 50 cc/);
     await page.getByRole("button", { name: "Show my plan" }).click();
   });
   expect(res.status).toBe(201);
@@ -443,13 +451,10 @@ for (const g of GOLDEN) {
     await serverPlan(page, g);
     const online = await cardFacts(page);
     await page.getByRole("link", { name: "Change my answers" }).click();
-    await expect(page.locator("[data-screen='SCR-010']")).toBeVisible();
+    await expect(page.locator("[data-screen='SCR-009']")).toBeVisible();
     await page.waitForLoadState("networkidle");
     await context.setOffline(true);
-    await page.getByRole("button", { name: "Next", exact: true }).click();
-    await page.getByRole("button", { name: /^Next/ }).click();
-    await page.getByRole("radio", { name: new RegExp(`^${g.aadhaar}`) }).check({ force: true });
-    await page.getByRole("button", { name: "Show my plan" }).click();
+    await replayPlan(page);
     await expect(page.getByTestId("computed-on-phone")).toBeVisible();
     const offline = await cardFacts(page);
     await context.setOffline(false);
@@ -647,12 +652,10 @@ test("Family mode: sign in (API-07/08) -> device case merged -> add a member -> 
 }) => {
   const batches = analyticsBatches(page);
   // An anonymous device plans for a 16-17-year-old and starts the application.
-  await page.goto("/en/plan");
-  await page.getByRole("radio", { name: "16 or 17", exact: true }).check({ force: true });
+  await openPlanToAge(page, "Yes");
+  await tapChoice(page, "radio", "16 or 17");
   await page.getByRole("button", { name: "Next", exact: true }).click();
-  await page.getByRole("checkbox", { name: /Up to 50 cc/ }).check({ force: true });
-  await page.getByRole("button", { name: /^Next/ }).click();
-  await page.getByRole("radio", { name: "Yes", exact: true }).check({ force: true });
+  await tapChoice(page, "checkbox", /Up to 50 cc/);
   const plan = await expectApi(page, "POST", "/v1/plans", () =>
     page.getByRole("button", { name: "Show my plan" }).click(),
   );

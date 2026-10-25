@@ -39,7 +39,7 @@ export function usePlan(id: string | null | undefined): PlanRecord | null {
 }
 
 /** The wizard's in-progress answers (survive a reload and the back button). */
-export type PlanDraft = Partial<PlanAnswers> & { step?: number };
+export type PlanDraft = Partial<PlanAnswers> & { step?: number | string };
 
 export function readPlanDraft(): PlanDraft {
   return readJson<PlanDraft>(KEYS.planDraft, {});

@@ -19,7 +19,12 @@
       "overrides": "PRM-LL-TEST-MODE",
       "textKey": "rule.kl.ll.test_mode",
       "condition": true,
-      "output": { "value": { "onlineAvailable": false, "where": ["rto"] } },
+      "output": {
+        "value": {
+          "onlineAvailable": false,
+          "where": ["rto"]
+        }
+      },
       "text": {
         "en": "Kerala stopped the online LL test in 2022 after agents took tests for applicants. The LL test is at the RTO."
       },
@@ -94,11 +99,28 @@
       "textKey": "notice.kl.hpt_in_your_test",
       "condition": {
         "all": [
-          { "in": [{ "param": { "id": "PRM-HPT", "path": "status" } }, ["announced", "in_force"]] },
+          {
+            "in": [
+              {
+                "param": {
+                  "id": "PRM-HPT",
+                  "path": "status"
+                }
+              },
+              ["announced", "in_force"]
+            ]
+          },
           {
             "gte": [
-              { "fact": "dlTestUnlock" },
-              { "param": { "id": "PRM-HPT", "path": "effectiveFrom" } }
+              {
+                "fact": "dlTestUnlock"
+              },
+              {
+                "param": {
+                  "id": "PRM-HPT",
+                  "path": "effectiveFrom"
+                }
+              }
             ]
           }
         ]
@@ -124,17 +146,41 @@
       "textKey": "notice.kl.hpt_may_apply",
       "condition": {
         "all": [
-          { "in": [{ "param": { "id": "PRM-HPT", "path": "status" } }, ["announced", "in_force"]] },
+          {
+            "in": [
+              {
+                "param": {
+                  "id": "PRM-HPT",
+                  "path": "status"
+                }
+              },
+              ["announced", "in_force"]
+            ]
+          },
           {
             "lt": [
-              { "fact": "dlTestUnlock" },
-              { "param": { "id": "PRM-HPT", "path": "effectiveFrom" } }
+              {
+                "fact": "dlTestUnlock"
+              },
+              {
+                "param": {
+                  "id": "PRM-HPT",
+                  "path": "effectiveFrom"
+                }
+              }
             ]
           },
           {
             "gte": [
-              { "fact": "llExpiresOn" },
-              { "param": { "id": "PRM-HPT", "path": "effectiveFrom" } }
+              {
+                "fact": "llExpiresOn"
+              },
+              {
+                "param": {
+                  "id": "PRM-HPT",
+                  "path": "effectiveFrom"
+                }
+              }
             ]
           }
         ]
@@ -159,7 +205,15 @@
       "kind": "notice",
       "textKey": "notice.kl.hpt_stayed",
       "condition": {
-        "in": [{ "param": { "id": "PRM-HPT", "path": "status" } }, ["stayed", "postponed"]]
+        "in": [
+          {
+            "param": {
+              "id": "PRM-HPT",
+              "path": "status"
+            }
+          },
+          ["stayed", "postponed"]
+        ]
       },
       "output": {},
       "text": {
@@ -196,6 +250,34 @@
       "confidence": "low",
       "verified": false,
       "approvers": ["maker:rules-agent@2026-10-23"]
+    },
+    {
+      "id": "KL-PRM-LL-FORMAT",
+      "kind": "param",
+      "overrides": "PRM-LL-FORMAT",
+      "textKey": "rule.kl.ll.format",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "questions": 30,
+          "passCorrect": 18,
+          "passPct": 60,
+          "timerSeconds": 30
+        }
+      },
+      "text": {
+        "en": "Kerala LL test: {questions} questions, {passCorrect} correct to pass, 30 seconds each (from 1 October 2025)."
+      },
+      "source": {
+        "title": "The Hindu: Kerala changes the LL exam pattern on 1 Oct 2025 (30 questions, 18 correct)",
+        "url": "https://www.thehindu.com/news/national/kerala/kerala-to-change-pattern-of-learners-licence-exam-on-october-1/article70045184.ece"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
     }
   ]
 }

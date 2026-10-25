@@ -21,10 +21,16 @@ describe("LL format from the rule packs (F-22, GAME_DESIGN §11.3)", () => {
     expect(f.online_test_available).toBe(true);
   });
 
-  it("EC-10 Kerala: the LL test is at the RTO, and the format is the unconfirmed default", () => {
+  it("EC-10 Kerala: the LL test is at the RTO, in Kerala's own format (30 / 18 from Oct 2025)", () => {
     const f = llFormatFor("KL", "2026-10-24");
     expect(f.online_test_available).toBe(false);
     expect(f.where).toEqual(["rto"]);
+    expect(f.known).toBe(true);
+    expect(examSize(f)).toEqual({ questions: 30, pass: 18 });
+  });
+
+  it("a state without a published format uses the labelled practice default (Bihar)", () => {
+    const f = llFormatFor("BR", "2026-10-24");
     expect(f.known).toBe(false);
     expect(examSize(f)).toEqual({ questions: 15, pass: 9 });
   });

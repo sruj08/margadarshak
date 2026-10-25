@@ -133,6 +133,25 @@
       "approvers": ["maker:rules-agent@2026-10-23"]
     },
     {
+      "id": "PRM-LL-RETEST-GAP-DAYS",
+      "kind": "param",
+      "textKey": "rule.ll.retest_gap_days",
+      "condition": true,
+      "output": { "value": 1 },
+      "text": {
+        "en": "After a failed learner's licence test you can usually retake it {value} day later, after paying the LL retest fee. Verify at your RTO."
+      },
+      "source": {
+        "title": "Delhi Transport LL page (LL retest fee); state practice varies (Gujarat 24 h, Bihar 1 week, Chandigarh 15 days)",
+        "url": "https://transport.delhi.gov.in/hi/node/3079"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "low",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
       "id": "PRM-REMEDIAL-AFTER-FAIL",
       "kind": "param",
       "textKey": "rule.dl.remedial_after_fail",

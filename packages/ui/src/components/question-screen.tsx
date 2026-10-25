@@ -17,7 +17,7 @@ export interface QuestionScreenProps {
   back?: ReactNode;
   /** Progress element, e.g. <ProgressBar label="Question 2 of 6" .../>. */
   progress?: ReactNode;
-  /** Error summary element rendered above the question when present. */
+  /** Error message rendered just above the primary action, where the person just tapped. */
   errorSummary?: ReactNode;
   whyWeAsk?: { label: string; body: ReactNode };
   children: ReactNode;
@@ -50,7 +50,6 @@ export function QuestionScreen({
     <section className={cx("md-question", className)} data-screen={screenId}>
       {back ? <div className="md-question__back">{back}</div> : null}
       {progress ? <div className="md-question__progress">{progress}</div> : null}
-      {errorSummary}
       <form
         className="md-question__form"
         noValidate
@@ -76,6 +75,7 @@ export function QuestionScreen({
           </Disclosure>
         ) : null}
         <div className="md-question__fields">{children}</div>
+        {errorSummary}
         <div className="md-question__actions">
           {primaryAction}
           {secondaryAction}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IndianDrivingLicenceCard } from "@/components/home/indian-driving-licence-card";
@@ -146,24 +146,13 @@ export function CustomLicenceStudio({
       <div className="md-card-studio__grid">
         <div className="md-card-studio__controls">
           <div className="md-card-studio__head">
-            <div className="md-card-studio__badges">
-              <span className="md-card-studio__eyebrow">
-                <Sparkles size={13} aria-hidden="true" />
-                {t("eyebrow")}
-              </span>
-              <span
-                className={`md-card-studio__status${complete ? "" : " md-card-studio__status--busy"}`}
-                data-testid="card-studio-status"
-              >
-                <span className="md-card-studio__status-dot" aria-hidden="true" />
-                {complete ? t("statusReady") : t("statusLoading", { pct })}
-              </span>
-            </div>
-
+            <span className="md-card-studio__eyebrow" data-testid="card-studio-status">
+              {complete ? t("statusReady") : t("eyebrow")}
+            </span>
             <h2 id="lt-card-studio-title" className="mj-h2 md-card-studio__title">
               {t("title")}
             </h2>
-            <p className="mj-caption md-card-studio__sub">{t("subtitle")}</p>
+            <p className="md-card-studio__sub">{t("subtitle")}</p>
           </div>
 
           <div
@@ -179,11 +168,15 @@ export function CustomLicenceStudio({
           >
             <div className="md-card-loader__top">
               <span className="md-card-loader__stage">
-                <span className="md-card-loader__pulse" aria-hidden="true" />
-                {stageText}
+                {cachedCase && !complete ? (
+                  <span className="md-card-loader__count">
+                    {t("metaDoneVal", { done: doneCount, total })}
+                  </span>
+                ) : null}
+                <span>{stageText}</span>
               </span>
-              <span className="md-card-loader__pct mj-num" data-testid="card-loading-pct">
-                {String(pct).padStart(2, "0")}%
+              <span className="md-card-loader__pct" data-testid="card-loading-pct">
+                {pct}%
               </span>
             </div>
 
@@ -211,20 +204,11 @@ export function CustomLicenceStudio({
             </ul>
           </div>
 
-          <dl className="md-card-studio__meta" data-testid="custom-card-meta">
-            <div>
-              <dt>{t("metaDone")}</dt>
-              <dd className="mj-num">{t("metaDoneVal", { done: doneCount, total })}</dd>
-            </div>
-            <div>
-              <dt>{t("metaNow")}</dt>
-              <dd>{currentName}</dd>
-            </div>
-            <div>
-              <dt>{t("metaWho")}</dt>
-              <dd>{current ? tt(`who.${current.who}` as "who.you") : "—"}</dd>
-            </div>
-          </dl>
+          {current && !complete ? (
+            <p className="md-card-studio__who" data-testid="custom-card-meta">
+              {t("metaWho")}: <strong>{tt(`who.${current.who}` as "who.you")}</strong>
+            </p>
+          ) : null}
         </div>
 
         <div className="md-card-studio__stage-wrap">

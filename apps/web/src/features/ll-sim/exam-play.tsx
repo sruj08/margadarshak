@@ -32,6 +32,7 @@ export function ExamPlay({ formats }: { formats: Record<string, LlFormat> }) {
   const q = useSearchParams();
   const mode = q.get("mode") === "practice" ? "practice" : "mock";
   const state = q.get("state") ?? "JK";
+  const sarathiTest = q.get("real") === "1" ? "&real=1" : "";
   const format = formats[state] ?? formats["JK"];
   const [device, setDevice] = useState<DeviceItems | null>(null);
   const [publicDoc, setPublicDoc] = useState<ReturnType<typeof examPublicDoc> | null>(null);
@@ -76,8 +77,8 @@ export function ExamPlay({ formats }: { formats: Record<string, LlFormat> }) {
       load={() => import("./module")}
       deviceItems={device}
       publicDoc={publicDoc}
-      exitHref={`/learn/practise/ll-sim?state=${state}`}
-      debriefHref={(o) => `/learn/practise/ll-sim/result/${o.sid}?state=${state}`}
+      exitHref={sarathiTest ? "/test/ll" : `/learn/practise/ll-sim?state=${state}`}
+      debriefHref={(o) => `/learn/practise/ll-sim/result/${o.sid}?state=${state}${sarathiTest}`}
       onComplete={onComplete}
     />
   );

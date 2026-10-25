@@ -11,7 +11,7 @@ test.beforeEach(async ({ context, baseURL }, testInfo) => {
   await onboard(context, baseURL ?? "", "en");
 });
 
-test("Home: four verbs, mic opens an honest 'coming' sheet, trust line, all services", async ({
+test("Home: four verbs, mic opens the voice guide sheet, trust line, all services", async ({
   page,
 }) => {
   await page.goto("/en");
@@ -19,7 +19,7 @@ test("Home: four verbs, mic opens an honest 'coming' sheet, trust line, all serv
   await expect(page.getByTestId("trust-line")).toBeVisible();
   await page.getByTestId("voice-open").click();
   const sheet = page.getByRole("dialog");
-  await expect(sheet).toContainText("Coming in the next build");
+  await expect(sheet).toContainText("Voice guide");
   await expect(sheet).toContainText("It can't book, pay or submit on Sarathi.");
   // EC-20: an Aadhaar-like number (Verhoeff-valid) and an OTP are removed before anything is used.
   await sheet
@@ -64,8 +64,10 @@ test("Personas drive the stage-aware home from the journey state (MD-122)", asyn
   await expect(page.getByTestId("stage-home")).toHaveAttribute("data-stage", "DL_BOOKABLE");
   await expect(page.getByTestId("stage-h1")).toHaveText("You can book your driving test now.");
   await page.getByTestId("stage-primary").click();
-  await expect(page).toHaveURL(/\/services\/book-test/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Book your driving test");
+  await expect(page).toHaveURL(/\/dl\/apply/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Apply for your driving licence",
+  );
 
   await loadPersona(page, "Mohan-ji, 52");
   await expect(page.getByTestId("stage-home")).toHaveAttribute("data-stage", "RENEWAL_DUE");
@@ -103,7 +105,10 @@ test("My Licence: parcel tracker, case clock with ICS, DL mirror only for DL hol
   const file = await download;
   expect(file.suggestedFilename()).toMatch(/\.ics$/);
 
-  // Recording a step moves the road on (API-15 on the mock).
+  // Recording a step moves the road on (API-15 on the mock). A slot needs the day-30 unlock
+  // (JOURNEY_TOO_EARLY otherwise, as on the Go API), so this uses the LL day 31 persona.
+  await loadPersona(page, "Kabir, LL day 31");
+  await page.goto("/en/licence");
   await page.getByTestId("update-step").click();
   await page.getByRole("radio", { name: "I booked a driving-test slot" }).check({ force: true });
   await page.getByTestId("record-event").click();

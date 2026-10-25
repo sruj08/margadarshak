@@ -1,0 +1,43 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "LD",
+  "name": "Lakshadweep overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://lakshadweep.gov.in",
+  "rules": [
+    {
+      "id": "LD-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.ld.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": false,
+          "where": ["rto"]
+        }
+      },
+      "text": {
+        "en": "In Lakshadweep the LL test is taken at the RTO or transport office.",
+        "hi": "Lakshadweep में लर्नर लाइसेंस टेस्ट RTO या परिवहन कार्यालय पर होता है।"
+      },
+      "source": {
+        "title": "Lakshadweep: learner's licence test mode",
+        "url": "https://www.hindustantimes.com/cities/pune-news/maha-seeks-temporary-suspension-of-faceless-learners-licence-service-101758395336105.html"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

@@ -7,29 +7,77 @@ export function mobileOnly(testInfo: TestInfo) {
 
 export type Age = { band: string } | { dob: [string, string, string] } | { year: string };
 
-/** Walks the 3-screen plan wizard (SCR-010..012). Returns the number of question screens seen. */
+export type AadhaarChoice = "Yes" | "No, it's elsewhere" | "I don't have Aadhaar";
+
+/** Taps a radio or checkbox card the way a person does (its label), then checks it took. */
+export async function tapChoice(page: Page, role: "radio" | "checkbox", name: RegExp | string) {
+  const el = page.getByRole(role, typeof name === "string" ? { name, exact: true } : { name });
+  await el.locator("xpath=ancestor::label[1]").click();
+  await expect(el).toBeChecked();
+}
+
+/**
+ * Opens the wizard and answers the first screens (what you need → state → Aadhaar). "Yes" means
+ * "my Aadhaar address is in this state; I'll type my age", so the age screen comes next.
+ */
+export async function openPlanToAge(
+  page: Page,
+  aadhaar: AadhaarChoice,
+  opts: { locale?: string; navigate?: boolean } = {},
+) {
+  if (opts.navigate !== false) await page.goto(`/${opts.locale ?? "en"}/plan`);
+  await expect(page.locator("[data-screen='SCR-009']")).toBeVisible();
+  await tapChoice(page, "radio", /^My first licence/);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(page.locator("[data-screen='SCR-012']")).toBeVisible();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(page.locator("[data-screen='SCR-012A']")).toBeVisible();
+  const label = aadhaar === "Yes" ? /^Type my age instead/ : new RegExp(`^${aadhaar}`);
+  await tapChoice(page, "radio", label);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(page.locator("[data-screen='SCR-010']")).toBeVisible();
+}
+
+/** Re-walks a restored wizard with every answer kept, to the plan card. */
+export async function replayPlan(page: Page) {
+  for (let i = 0; i < 6; i++) {
+    if (await page.getByTestId("plan-card").isVisible()) return;
+    const btn = page.getByRole("button", { name: /^(Next|Show my plan)/ });
+    if (!(await btn.isVisible())) {
+      await page.waitForTimeout(250);
+      continue;
+    }
+    await btn.click();
+  }
+  await expect(page.getByTestId("plan-card")).toBeVisible();
+}
+
+/**
+ * Walks the plan wizard: what you need → state → Aadhaar → age (when not connected) → vehicles.
+ * Returns the screens seen.
+ */
 export async function makePlan(
   page: Page,
   opts: {
     age: Age;
     vehicles: RegExp[];
-    aadhaar: "Yes" | "No, it's elsewhere" | "I don't have Aadhaar";
+    aadhaar: AadhaarChoice;
     locale?: string;
   },
 ) {
   const locale = opts.locale ?? "en";
-  await page.goto(`/${locale}/plan`);
-  const screens: string[] = [];
-  await expect(page.locator("[data-screen='SCR-010']")).toBeVisible();
-  screens.push("SCR-010");
+  await openPlanToAge(page, opts.aadhaar, { locale });
+  const screens: string[] = ["SCR-009", "SCR-012", "SCR-012A", "SCR-010"];
   if ("band" in opts.age) {
-    await page.getByRole("radio", { name: opts.age.band, exact: true }).check({ force: true });
+    await tapChoice(page, "radio", opts.age.band);
   } else if ("dob" in opts.age) {
     await page.getByLabel("Day", { exact: true }).fill(opts.age.dob[0]);
     await page.getByLabel("Month", { exact: true }).fill(opts.age.dob[1]);
     await page.getByLabel("Year", { exact: true }).fill(opts.age.dob[2]);
   } else {
-    await page.getByRole("checkbox", { name: /shows only the year/ }).check();
+    const yearOnly = page.getByRole("checkbox", { name: /shows only the year/ });
+    await yearOnly.locator("xpath=ancestor::label[1]").click();
+    await expect(yearOnly).toBeChecked();
     await page.getByLabel("Year", { exact: true }).fill(opts.age.year);
   }
   await page.getByRole("button", { name: "Next", exact: true }).click();
@@ -39,12 +87,11 @@ export async function makePlan(
     const box = page.getByRole("checkbox", { name: v });
     if (!(await box.isVisible()))
       await page.getByRole("button", { name: /More vehicle types/ }).click();
-    await box.check({ force: true });
+    // The input is a 13 px target under the card; near the tab bar a forced click can land on the
+    // bar, so tap the card the way a person does.
+    if (!(await box.isChecked())) await box.locator("xpath=ancestor::label[1]").click();
+    await expect(box).toBeChecked();
   }
-  await page.getByRole("button", { name: /^Next/ }).click();
-  await expect(page.locator("[data-screen='SCR-012']")).toBeVisible();
-  screens.push("SCR-012");
-  await page.getByRole("radio", { name: new RegExp(`^${opts.aadhaar}`) }).check({ force: true });
   await page.getByRole("button", { name: "Show my plan" }).click();
   await expect(page.getByTestId("plan-card")).toBeVisible();
   return screens;
@@ -54,6 +101,20 @@ export async function makePlan(
 export async function cardFacts(page: Page) {
   const card = page.getByTestId("plan-card");
   await expect(card.getByTestId("plan-class").first()).toBeVisible();
+  // The step count animates up (CountUp); read it once it has settled.
+  const steps = card.getByTestId("fact-steps");
+  let last = "";
+  await expect
+    .poll(
+      async () => {
+        const now = await steps.innerText();
+        const settled = now === last;
+        last = now;
+        return settled;
+      },
+      { intervals: [250, 250, 250, 250] },
+    )
+    .toBe(true);
   return {
     classes: await card
       .getByTestId("plan-class")

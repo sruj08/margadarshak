@@ -1,0 +1,89 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "AS",
+  "name": "Assam overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://comtransport.assam.gov.in",
+  "rules": [
+    {
+      "id": "AS-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.as.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": true,
+          "where": ["home_online", "rto"]
+        }
+      },
+      "text": {
+        "en": "In Assam the LL test can be taken online at home with Aadhaar face authentication, or at the RTO.",
+        "hi": "Assam में लर्नर लाइसेंस टेस्ट आधार फेस ऑथेंटिकेशन के साथ घर से ऑनलाइन, या RTO पर दिया जा सकता है।"
+      },
+      "source": {
+        "title": "Assam: learner's licence test mode",
+        "url": "https://government.economictimes.indiatimes.com/news/governance/assam-transport-dept-to-enable-aadhar-based-contactless-services-through-csc-network-now/89718094"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "AS-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.as.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": false,
+          "tracks": ["inspector test at the DTO; automated tracks being built at training centres"]
+        }
+      },
+      "text": {
+        "en": "Assam driving tests are judged by an inspector: inspector test at the DTO; automated tracks being built at training centres."
+      },
+      "source": {
+        "title": "Assam: driving test type",
+        "url": "https://www.indiatodayne.in/assam/story/driving-license-process-in-assam-to-go-fully-automated-with-new-testing-tracks-1181633-2025-03-09"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "AS-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.as.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "You can also apply through Sewa Setu or a Common Service Centre."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Assam transport department",
+        "url": "https://comtransport.assam.gov.in"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

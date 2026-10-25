@@ -19,7 +19,12 @@
       "overrides": "PRM-LL-TEST-MODE",
       "textKey": "rule.tn.ll.test_mode",
       "condition": true,
-      "output": { "value": { "onlineAvailable": true, "where": ["home_online", "rto"] } },
+      "output": {
+        "value": {
+          "onlineAvailable": true,
+          "where": ["home_online", "rto"]
+        }
+      },
       "text": {
         "en": "Tamil Nadu's contactless flow: Aadhaar e-KYC, tutorial, OTP, then the LL test online."
       },
@@ -40,11 +45,24 @@
       "textKey": "rule.tn.route.age_40_rto_approval",
       "condition": {
         "gte": [
-          { "ageOn": { "on": { "fact": "llDate" }, "bound": "max" } },
-          { "param": { "id": "PRM-FORM1A-AGE" } }
+          {
+            "ageOn": {
+              "on": {
+                "fact": "llDate"
+              },
+              "bound": "max"
+            }
+          },
+          {
+            "param": {
+              "id": "PRM-FORM1A-AGE"
+            }
+          }
         ]
       },
-      "output": { "llTestAtRto": true },
+      "output": {
+        "llTestAtRto": true
+      },
       "text": {
         "en": "In Tamil Nadu, applicants over 40 upload Form 1A and the RTO approves it before the LL test password is sent."
       },
@@ -67,20 +85,22 @@
       "output": {
         "value": {
           "known": true,
-          "automated": true,
-          "tracks": ["automated driving test track (10 in TN)"]
+          "automated": false,
+          "tracks": ["10 automated tracks (7 opened Feb 2026); inspector test at other RTOs"]
         }
       },
-      "text": { "en": "Tamil Nadu runs automated driving-test tracks." },
+      "text": {
+        "en": "Tamil Nadu uses both: 10 automated test tracks, and inspector tests at other RTOs."
+      },
       "source": {
-        "title": "Storyboard18: Maruti Suzuki adds automated driving test tracks in Tamil Nadu",
-        "url": "https://www.storyboard18.com/how-it-works/maruti-suzuki-expands-its-road-safety-efforts-adds-7-automated-driving-test-tracks-adtts-in-tamil-nadu-under-its-csr-initiative-91033.htm"
+        "title": "tn.nic.in: inauguration of the automated driving test tracks (Feb 2026)",
+        "url": "https://tn.nic.in/event/inauguration-of-the-adtts-by-honble-chief-minister/"
       },
       "grade": "S",
-      "checkedOn": "2026-10-22",
-      "confidence": "medium",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
       "verified": false,
-      "approvers": ["maker:rules-agent@2026-10-23"]
+      "approvers": ["maker:rules-agent@2026-10-25"]
     }
   ]
 }

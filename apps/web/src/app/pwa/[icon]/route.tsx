@@ -1,14 +1,19 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 /**
- * App icons rendered at build time (static PNGs): a rounded road-slate square with a dawn arc rising
- * over a two-lane road (DESIGN_SYSTEM §2). No emblem, tricolour or government lettering (D-01).
+ * App icons rendered at build time (static PNGs): the Seeing Wheel symbol (public/brand, dark
+ * colourway) on a road-slate square. No emblem, tricolour or government lettering (D-01).
+ *
+ * `art` is the symbol file's share of the icon edge. Its ink spans 79% x 83% of the file, so 0.72
+ * keeps every corner inside the maskable 80% safe circle; iOS only rounds corners, so it gets more.
  */
 const ICONS = {
-  "icon-192.png": { size: 192, maskable: false },
-  "icon-512.png": { size: 512, maskable: false },
-  "maskable-512.png": { size: 512, maskable: true },
-  "apple-touch-icon.png": { size: 180, maskable: true },
+  "icon-192.png": { size: 192, maskable: false, art: 0.92 },
+  "icon-512.png": { size: 512, maskable: false, art: 0.92 },
+  "maskable-512.png": { size: 512, maskable: true, art: 0.72 },
+  "apple-touch-icon.png": { size: 180, maskable: true, art: 0.86 },
 } as const;
 
 type IconName = keyof typeof ICONS;
@@ -24,14 +29,21 @@ function isIconName(name: string): name is IconName {
   return name in ICONS;
 }
 
+let symbol: Promise<string> | undefined;
+
+function symbolDataUri(): Promise<string> {
+  symbol ??= readFile(join(process.cwd(), "public/brand/margdarshak-mark-dark.svg")).then(
+    (svg) => `data:image/svg+xml;base64,${svg.toString("base64")}`,
+  );
+  return symbol;
+}
+
 export async function GET(_req: Request, { params }: { params: Promise<{ icon: string }> }) {
   const { icon } = await params;
   if (!isIconName(icon)) return new Response("Not found", { status: 404 });
-  const { size, maskable } = ICONS[icon];
-  // Maskable icons keep the artwork inside the central 80% safe zone and fill the whole square.
-  const inset = maskable ? Math.round(size * 0.14) : 0;
-  const radius = maskable ? 0 : Math.round(size * 0.22);
-  const art = size - inset * 2;
+  const { size, maskable, art } = ICONS[icon];
+  const src = await symbolDataUri();
+  const artSize = Math.round(size * art);
   return new ImageResponse(
     <div
       style={{
@@ -40,34 +52,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ icon: s
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#2a2c33",
-        borderRadius: radius,
+        backgroundImage: "linear-gradient(160deg, #2a2c33 0%, #16171c 100%)",
+        borderRadius: maskable ? 0 : Math.round(size * 0.22),
       }}
     >
-      <svg width={art} height={art} viewBox="0 0 100 100" aria-hidden="true">
-        <title>Margdarshak</title>
-        <defs>
-          <linearGradient id="dawn" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#f9730c" />
-            <stop offset="0.5" stopColor="#feb12b" />
-            <stop offset="1" stopColor="#a5bbfc" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M18 56 A32 32 0 0 1 82 56"
-          fill="none"
-          stroke="url(#dawn)"
-          strokeWidth="9"
-          strokeLinecap="round"
-        />
-        <circle cx="50" cy="44" r="9" fill="#feb12b" />
-        <path d="M44 60 H56 L76 92 H24 Z" fill="#1e2026" />
-        <path
-          d="M49 63 h2 l0.6 7 h-3.2z M48.2 75 h3.6 l0.9 9 h-5.4z"
-          fill="#ffffff"
-          opacity="0.85"
-        />
-      </svg>
+      <img src={src} width={artSize} height={artSize} alt="" />
     </div>,
     { width: size, height: size },
   );

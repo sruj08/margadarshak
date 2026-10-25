@@ -61,13 +61,20 @@ test.describe("LL test simulator (F-22, MD-214)", () => {
     await expect(page.getByTestId("ll-result")).toContainText(/Pass mark:? 6/);
   });
 
-  test("EC-10 Kerala shows the RTO path and the unconfirmed practice format", async ({ page }) => {
+  test("EC-10 Kerala shows the RTO path and Kerala's own format", async ({ page }) => {
     await page.goto("/en/learn/practise/ll-sim?state=KL");
     await expect(page.getByTestId("ll-rto")).toContainText(
       "In Kerala the LL test is taken at the RTO.",
     );
+    await expect(page.getByTestId("ll-format-line")).toHaveText("30 questions, 18 to pass.");
+  });
+
+  test("a state without a published format shows the labelled practice format", async ({
+    page,
+  }) => {
+    await page.goto("/en/learn/practise/ll-sim?state=BR");
     await expect(page.getByTestId("ll-format-line")).toHaveText(
-      "Format not confirmed for Kerala. Using 15 questions, 9 to pass, as a practice format.",
+      "Format not confirmed for Bihar. Using 15 questions, 9 to pass, as a practice format.",
     );
   });
 });

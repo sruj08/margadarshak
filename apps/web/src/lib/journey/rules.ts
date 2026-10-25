@@ -14,12 +14,81 @@ import {
 import base from "@rulepacks/base/cmvr.json";
 import classes from "@rulepacks/classes.json";
 import fees from "@rulepacks/fees.json";
+import AN from "@rulepacks/states/AN.json";
+import AP from "@rulepacks/states/AP.json";
+import AR from "@rulepacks/states/AR.json";
+import AS from "@rulepacks/states/AS.json";
+import BR from "@rulepacks/states/BR.json";
+import CG from "@rulepacks/states/CG.json";
+import CH from "@rulepacks/states/CH.json";
+import DH from "@rulepacks/states/DH.json";
 import DL from "@rulepacks/states/DL.json";
+import GA from "@rulepacks/states/GA.json";
+import GJ from "@rulepacks/states/GJ.json";
+import HP from "@rulepacks/states/HP.json";
+import HR from "@rulepacks/states/HR.json";
+import JH from "@rulepacks/states/JH.json";
 import JK from "@rulepacks/states/JK.json";
+import KA from "@rulepacks/states/KA.json";
 import KL from "@rulepacks/states/KL.json";
+import LA from "@rulepacks/states/LA.json";
+import LD from "@rulepacks/states/LD.json";
 import MH from "@rulepacks/states/MH.json";
+import ML from "@rulepacks/states/ML.json";
+import MN from "@rulepacks/states/MN.json";
+import MP from "@rulepacks/states/MP.json";
+import MZ from "@rulepacks/states/MZ.json";
+import NL from "@rulepacks/states/NL.json";
+import OD from "@rulepacks/states/OD.json";
 import PB from "@rulepacks/states/PB.json";
+import PY from "@rulepacks/states/PY.json";
+import RJ from "@rulepacks/states/RJ.json";
+import SK from "@rulepacks/states/SK.json";
 import TN from "@rulepacks/states/TN.json";
+import TR from "@rulepacks/states/TR.json";
+import TS from "@rulepacks/states/TS.json";
+import UK from "@rulepacks/states/UK.json";
+import UP from "@rulepacks/states/UP.json";
+import WB from "@rulepacks/states/WB.json";
+
+const STATE_FILES = {
+  AN,
+  AP,
+  AR,
+  AS,
+  BR,
+  CG,
+  CH,
+  DH,
+  DL,
+  GA,
+  GJ,
+  HP,
+  HR,
+  JH,
+  JK,
+  KA,
+  KL,
+  LA,
+  LD,
+  MH,
+  ML,
+  MN,
+  MP,
+  MZ,
+  NL,
+  OD,
+  PB,
+  PY,
+  RJ,
+  SK,
+  TN,
+  TR,
+  TS,
+  UK,
+  UP,
+  WB,
+};
 
 /**
  * The rule packs, bundled with the app so the plan card works offline (MD-108, F-51). The TS mirror
@@ -28,14 +97,7 @@ import TN from "@rulepacks/states/TN.json";
  */
 export const SOURCES: PackSources = {
   base: base as unknown as PackFile,
-  states: {
-    DL: DL as unknown as PackFile,
-    JK: JK as unknown as PackFile,
-    KL: KL as unknown as PackFile,
-    MH: MH as unknown as PackFile,
-    PB: PB as unknown as PackFile,
-    TN: TN as unknown as PackFile,
-  },
+  states: STATE_FILES as unknown as Record<string, PackFile>,
   fees: fees as unknown as PackSources["fees"],
   classes: classes as unknown as PackSources["classes"],
 };
@@ -54,13 +116,58 @@ export function planOnDevice(input: PlanInput): Plan {
 
 export { todayIST };
 
-/** States with a rule pack, in display order (J&K is the demo tenant). */
-export const STATE_CODES = ["JK", "DL", "KL", "PB", "MH", "TN"] as const;
+/** Every state and UT has a pack; J&K (the demo tenant) first, then alphabetical by name. */
+export const STATE_CODES = [
+  "JK",
+  "AN",
+  "AP",
+  "AR",
+  "AS",
+  "BR",
+  "CH",
+  "CG",
+  "DH",
+  "DL",
+  "GA",
+  "GJ",
+  "HR",
+  "HP",
+  "JH",
+  "KA",
+  "KL",
+  "LA",
+  "LD",
+  "MP",
+  "MH",
+  "MN",
+  "ML",
+  "MZ",
+  "NL",
+  "OD",
+  "PY",
+  "PB",
+  "RJ",
+  "SK",
+  "TN",
+  "TS",
+  "TR",
+  "UP",
+  "UK",
+  "WB",
+] as const;
 export type StateCode = (typeof STATE_CODES)[number];
 export const DEFAULT_STATE: StateCode = "JK";
 
 export function isStateCode(v: unknown): v is StateCode {
   return typeof v === "string" && (STATE_CODES as readonly string[]).includes(v);
+}
+
+/** Whether the state's pack offers the LL test online at home (PRM-LL-TEST-MODE, base default). */
+export function llTestAtHome(code: string): boolean {
+  const own = SOURCES.states[code]?.rules.find((r) => r.overrides === "PRM-LL-TEST-MODE");
+  const base = SOURCES.base.rules.find((r) => r.id === "PRM-LL-TEST-MODE");
+  const v = (own ?? base)?.output["value"] as { onlineAvailable?: boolean } | undefined;
+  return v?.onlineAvailable === true;
 }
 
 export function statePartial(code: StateCode): boolean {

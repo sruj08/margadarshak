@@ -61,8 +61,8 @@ export const GROUPS: Record<GroupId, ServiceItem[]> = {
     },
     {
       id: "book-test",
-      href: "/services/book-test",
-      live: false,
+      href: "/dl/apply",
+      live: true,
       synonyms: "slot book driving test स्लॉट बुक",
     },
     { id: "check", href: "/licence", live: true, synonyms: "status track where am i स्टेटस कहाँ" },

@@ -247,19 +247,79 @@
     "year": "Year",
     "state": {
       "JK": "Jammu & Kashmir",
+      "AN": "Andaman & Nicobar Islands",
+      "AP": "Andhra Pradesh",
+      "AR": "Arunachal Pradesh",
+      "AS": "Assam",
+      "BR": "Bihar",
+      "CH": "Chandigarh",
+      "CG": "Chhattisgarh",
+      "DH": "Dadra & Nagar Haveli and Daman & Diu",
       "DL": "Delhi",
+      "GA": "Goa",
+      "GJ": "Gujarat",
+      "HR": "Haryana",
+      "HP": "Himachal Pradesh",
+      "JH": "Jharkhand",
+      "KA": "Karnataka",
       "KL": "Kerala",
-      "PB": "Punjab",
+      "LA": "Ladakh",
+      "LD": "Lakshadweep",
+      "MP": "Madhya Pradesh",
       "MH": "Maharashtra",
-      "TN": "Tamil Nadu"
+      "MN": "Manipur",
+      "ML": "Meghalaya",
+      "MZ": "Mizoram",
+      "NL": "Nagaland",
+      "OD": "Odisha",
+      "PY": "Puducherry",
+      "PB": "Punjab",
+      "RJ": "Rajasthan",
+      "SK": "Sikkim",
+      "TN": "Tamil Nadu",
+      "TS": "Telangana",
+      "TR": "Tripura",
+      "UP": "Uttar Pradesh",
+      "UK": "Uttarakhand",
+      "WB": "West Bengal"
     },
     "stateSarathi": {
       "JK": "Jammu and Kashmir",
+      "AN": "Andaman and Nicobar Islands",
+      "AP": "Andhra Pradesh",
+      "AR": "Arunachal Pradesh",
+      "AS": "Assam",
+      "BR": "Bihar",
+      "CH": "Chandigarh",
+      "CG": "Chhattisgarh",
+      "DH": "Dadra and Nagar Haveli and Daman and Diu",
       "DL": "Delhi",
+      "GA": "Goa",
+      "GJ": "Gujarat",
+      "HR": "Haryana",
+      "HP": "Himachal Pradesh",
+      "JH": "Jharkhand",
+      "KA": "Karnataka",
       "KL": "Kerala",
-      "PB": "Punjab",
+      "LA": "Ladakh",
+      "LD": "Lakshadweep",
+      "MP": "Madhya Pradesh",
       "MH": "Maharashtra",
-      "TN": "Tamil Nadu"
+      "MN": "Manipur",
+      "ML": "Meghalaya",
+      "MZ": "Mizoram",
+      "NL": "Nagaland",
+      "OD": "Odisha",
+      "PY": "Puducherry",
+      "PB": "Punjab",
+      "RJ": "Rajasthan",
+      "SK": "Sikkim",
+      "TN": "Tamil Nadu",
+      "TS": "Telangana",
+      "TR": "Tripura",
+      "UP": "Uttar Pradesh",
+      "UK": "Uttarakhand",
+      "WB": "West Bengal"
     },
     "band": {
       "under_16": "Under 16",
@@ -345,7 +405,7 @@
     "showPlan": "Show my plan",
     "fullRules": "Full rules",
     "partialRules": "Partial rules",
-    "otherStates": "We have rules for these states now. Other states and UTs are being added; we won't guess their rules.",
+    "otherStates": "Every state and UT is covered: central rules (CMVR) plus what we could confirm for your state, each with its source. Partial means some local details are still to be verified at your RTO.",
     "aadhaarTitle": "Is your Aadhaar address in this state, where you live now?",
     "aadhaarYes": "Yes",
     "aadhaarNo": "No, it's elsewhere",
@@ -1080,7 +1140,10 @@
       "grievance": "Opening how to raise a complaint.",
       "accessibility": "Opening accessibility settings.",
       "handoff": "I can't pay, submit or book on Sarathi. I'm opening the page that shows you how to do it yourself.",
-      "about_voice": "I can take you to a screen if you say it in Hindi or English. Try: make my plan, fees, practise test, road signs, renew, my application, photo, documents or help."
+      "about_voice": "I can take you to a screen if you say it in Hindi or English. Try: make my plan, fees, practise test, road signs, renew, my application, photo, documents or help.",
+      "ll_test": "Opening your learner's licence test: the tutorial first, then the test in your state's format.",
+      "book_test": "Opening the driving-test booking: pay the DL fee, then pick an office, day and time.",
+      "track": "Here is how the driving test works, step by step, with the track layout."
     },
     "go_apply": "Open my application",
     "go_documents": "Open documents",
@@ -1110,7 +1173,10 @@
     "go_family": "Help a family member",
     "go_check": "Open My Licence",
     "go_help": "Open Help",
-    "privacy": "What you type is checked on this phone and not stored."
+    "privacy": "What you type is checked on this phone and not stored.",
+    "go_ll_test": "Take the LL test",
+    "go_book_test": "Book my driving test",
+    "go_track": "See the driving test"
   },
   "clock": {
     "unit": {
@@ -1199,7 +1265,9 @@
       "first_vehicle": "First-vehicle checklist",
       "challan": "Challan check",
       "form1a": "Do I need Form 1A?",
-      "why": "Why this happened"
+      "why": "Why this happened",
+      "track": "How the driving test works",
+      "ll_test": "Take the LL test"
     },
     "event": {
       "APPLIED": "Applied on Sarathi",
@@ -1378,11 +1446,11 @@
       "card_received": "I received the card"
     },
     "cardStudio": {
-      "eyebrow": "YOUR LICENCE CARD",
+      "eyebrow": "Licence preview",
       "statusLoading": "Loading card · {pct}%",
       "statusReady": "Card ready",
-      "title": "Your card is loading",
-      "subtitle": "The card fills in as you clear each step, so you can see how close you are to your licence.",
+      "title": "Your licence card",
+      "subtitle": "It fills in as you finish each step, so you always know how close you are.",
       "loaderAria": "Progress towards your licence",
       "valueText": "{done} of {total} steps done",
       "stageNow": "Now: {step}",
@@ -1392,7 +1460,7 @@
       "metaDone": "Steps done",
       "metaDoneVal": "{done} of {total}",
       "metaNow": "Current step",
-      "metaWho": "Who acts",
+      "metaWho": "Who acts next",
       "deviceNote": "This is a preview that tracks your steps. Tilt the card to see the finish."
     }
   },
@@ -1867,6 +1935,24 @@
       "jk": {
         "slot_booking_reported": "J&K, reported at driving-test slot booking",
         "postage_reported": "J&K, postage reported"
+      },
+      "tn": {
+        "smart_card_none": "Smart card (Tamil Nadu issues a digital licence only)"
+      },
+      "rj": {
+        "smart_card_none": "Smart card (Rajasthan issues an e-licence only)"
+      },
+      "ts": {
+        "service_reported": "Telangana service charges, LL and DL (reported)"
+      },
+      "ap": {
+        "user_reported": "Andhra Pradesh user charges, LL and DL (reported)"
+      },
+      "kl": {
+        "service_reported": "Kerala service charges, LL and DL (reported)"
+      },
+      "mh": {
+        "dl_extra_reported": "Maharashtra charges above the central DL fees (reported)"
       }
     },
     "doc": {

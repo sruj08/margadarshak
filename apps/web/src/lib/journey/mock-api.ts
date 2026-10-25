@@ -188,7 +188,7 @@ const TRANSITION: Partial<Record<CaseEventCreate["type"], JourneyState>> = {
   slot_booked: "TEST_BOOKED",
   test_failed: "TEST_FAILED",
   test_passed: "AWAITING_APPROVAL",
-  approved: "DL_HOLDER",
+  approved: "DL_ISSUED",
   card_received: "DL_HOLDER",
   reapply: "PLAN",
   renewed: "DL_HOLDER",
@@ -199,6 +199,14 @@ export async function postEvent(id: string, ev: CaseEventCreate): Promise<CaseEv
   const d = db();
   const c = d.cases[id];
   if (!c) throw new MockProblem(404, "Case not found");
+  const unlockOn = c.key_dates?.["dl_test_unlock"];
+  const slotOn = ev.payload?.slot_date ?? ev.occurred_on;
+  if (ev.type === "slot_booked" && unlockOn && slotOn < unlockOn)
+    throw new MockProblem(
+      409,
+      "Driving test not allowed before the unlock date",
+      "JOURNEY_TOO_EARLY",
+    );
   const list = d.events[id] ?? [];
   const recorded = {
     seq: list.length + 1,
@@ -245,11 +253,12 @@ export async function postEvent(id: string, ev: CaseEventCreate): Promise<CaseEv
       break;
     case "approved":
     case "card_received":
-      kd["approved_on"] = ev.occurred_on;
-      dl = {
+      kd["approved_on"] ??= ev.occurred_on;
+      dl ??= {
         issued_on: ev.occurred_on,
         valid_to_non_transport: addMonths(ev.occurred_on, 12 * 20),
         classes,
+        ...(ev.payload?.number_last4 ? { number_last4: ev.payload.number_last4 } : {}),
         source: "user_entered",
       };
       break;
@@ -279,6 +288,32 @@ export async function postEvent(id: string, ev: CaseEventCreate): Promise<CaseEv
     },
     warnings: [],
   };
+}
+
+/**
+ * Demo tenant only: moves every date on a case `days` into the past, so a recording can show
+ * "LL day 0" then "LL day 31" without waiting a month. The clock rules (deriveCase) then apply.
+ */
+export async function demoSkipDays(id: string, days: number): Promise<Case> {
+  const d = db();
+  const c = d.cases[id];
+  if (!c) throw new MockProblem(404, "Case not found");
+  const back = (v: string) => addDays(v, -days);
+  const kd: Record<string, string> = {};
+  for (const [k, v] of Object.entries(c.key_dates ?? {})) if (v) kd[k] = back(v);
+  const next: Case = {
+    ...c,
+    key_dates: kd,
+    ll: c.ll
+      ? { ...c.ll, issued_on: back(c.ll.issued_on), expires_on: back(c.ll.expires_on) }
+      : null,
+    dl: c.dl?.issued_on ? { ...c.dl, issued_on: back(c.dl.issued_on) } : (c.dl ?? null),
+    version: c.version + 1,
+    updated_at: now(),
+  };
+  d.cases[id] = next;
+  save(d);
+  return withServerTime(next);
 }
 
 function due(date: string): string {

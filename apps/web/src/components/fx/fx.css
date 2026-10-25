@@ -1,0 +1,647 @@
+/*
+ * Motion moments (DESIGN_SYSTEM A8.4): answer ride, Aadhaar connect, identity card, toll drive,
+ * receipt roll. Tokens only; every loop stops under prefers-reduced-motion / the in-app toggle.
+ */
+@layer components {
+  /* ---------- Scene palette (shared by every road moment) ---------- */
+  .fx-ride,
+  .fx-toll,
+  .fx-roadprog {
+    --fx-paint: var(--md-primary-fill);
+    --fx-paint-hi: color-mix(in oklab, var(--md-primary-fill) 70%, #fff);
+    --fx-paint-lo: color-mix(in oklab, var(--md-primary-fill) 72%, #000);
+    --fx-sky-top: color-mix(in oklab, var(--md-surface) 70%, var(--md-primary-soft));
+    --fx-sky-bottom: var(--md-surface-2);
+    --fx-verge: color-mix(in oklab, var(--md-surface-3) 70%, #9fb59a);
+    --fx-road: #353b47;
+    --fx-kerb: #cfd5de;
+    --fx-lane: #eef1f5;
+  }
+  :is([data-theme="dark"], .dark) :is(.fx-ride, .fx-toll, .fx-roadprog) {
+    --fx-paint-hi: color-mix(in oklab, var(--md-primary-fill) 78%, #fff);
+    --fx-verge: color-mix(in oklab, var(--md-surface-3) 80%, #3f5a3c);
+    --fx-road: #262b34;
+    --fx-kerb: #6b7383;
+    --fx-lane: #c9d0db;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]):not(.light) :is(.fx-ride, .fx-toll, .fx-roadprog) {
+      --fx-paint-hi: color-mix(in oklab, var(--md-primary-fill) 78%, #fff);
+      --fx-verge: color-mix(in oklab, var(--md-surface-3) 80%, #3f5a3c);
+      --fx-road: #262b34;
+      --fx-kerb: #6b7383;
+      --fx-lane: #c9d0db;
+    }
+  }
+  .fx-scene__sky {
+    fill: var(--fx-sky-bottom);
+  }
+  .fx-scene__verge {
+    fill: var(--fx-verge);
+  }
+  .fx-scene__road {
+    fill: var(--fx-road);
+  }
+  .fx-scene__kerb {
+    fill: var(--fx-kerb);
+  }
+  .fx-scene__lane {
+    stroke: var(--fx-lane);
+    stroke-width: 1.6;
+    stroke-dasharray: 12 10;
+    stroke-linecap: round;
+    opacity: 0.85;
+  }
+
+  /* ---------- Answer ride ---------- */
+  /* Fixed-ratio scene (320 x 72) that never crops; on wide cards it stays a centred illustration. */
+  .fx-ride {
+    display: block;
+    width: 100%;
+    max-width: 440px;
+    aspect-ratio: 320 / 72;
+    height: auto;
+    justify-self: center;
+    border-radius: var(--md-r-lg);
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--fx-sky-top), var(--fx-sky-bottom));
+    box-shadow: inset 0 0 0 1px var(--md-hairline);
+  }
+  .fx-hazard {
+    fill: #f5a524;
+    opacity: 0;
+  }
+  .fx-ride[data-stopped="true"][data-tone="warn"] .fx-hazard {
+    animation: fx-blink 0.9s steps(1, jump-none) 3;
+  }
+  @keyframes fx-blink {
+    0%,
+    45% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+  .fx-signal__go {
+    fill: #22c55e;
+    filter: drop-shadow(0 0 3px rgb(34 197 94 / 0.9));
+  }
+
+  /* ---------- Road progress ---------- */
+  /* The car's centre rides on the end of the fill; the side margins leave room for half a car. */
+  .fx-roadprog {
+    position: relative;
+    height: 4px;
+    margin: 26px 18px 6px;
+    border-radius: var(--md-r-full);
+    background: var(--md-border);
+  }
+  .fx-roadprog__fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--fx-paint-hi), var(--fx-paint));
+    transform-origin: left center;
+  }
+  .fx-roadprog__run {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .fx-roadprog__car {
+    position: absolute;
+    bottom: calc(100% - 1px);
+    left: 0;
+    width: 36px;
+    height: auto;
+    aspect-ratio: 64 / 34;
+    transform: translateX(-50%);
+    overflow: visible;
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.18));
+  }
+
+  /* ---------- Aadhaar connect ---------- */
+  .fx-connect {
+    display: grid;
+    gap: 18px;
+  }
+  /* Padding keeps the active ring (4 px out, breathing to 9 px) inside the row. */
+  .fx-connect__nodes {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr auto;
+    align-items: start;
+    gap: 6px;
+    padding: 10px 6px 0;
+  }
+  .fx-node {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    min-width: 64px;
+    font-size: var(--md-text-caption);
+    font-weight: 600;
+    color: var(--md-ink-2);
+    text-align: center;
+  }
+  .fx-node__ring {
+    position: relative;
+    display: grid;
+    border-radius: 18px;
+  }
+  .fx-node__ring::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 21px;
+    box-shadow: 0 0 0 2px var(--md-primary);
+    opacity: 0;
+    transform: scale(0.92);
+    transition:
+      opacity var(--md-dur-fast, 200ms) var(--md-ease-standard, ease),
+      transform var(--md-dur-fast, 200ms) var(--md-ease-standard, ease);
+    pointer-events: none;
+  }
+  .fx-node[data-active="true"] .fx-node__ring::after {
+    opacity: 1;
+    transform: scale(1);
+    animation: fx-breathe 1.5s ease-in-out infinite;
+  }
+  .fx-node[data-verified="true"] .fx-node__ring::after {
+    box-shadow: 0 0 0 2px var(--md-success);
+    opacity: 1;
+    transform: scale(1);
+  }
+  @keyframes fx-breathe {
+    50% {
+      box-shadow: 0 0 0 5px color-mix(in oklab, var(--md-primary) 22%, transparent);
+    }
+  }
+  .fx-node[data-active="true"] .fx-node__label {
+    color: var(--md-ink);
+  }
+  .fx-node__badge {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    color: #fff;
+    box-shadow: var(--md-e1);
+  }
+  .fx-node__badge svg {
+    width: 24px;
+    height: 24px;
+  }
+  .fx-node__badge--app {
+    background: #fff;
+    box-shadow:
+      inset 0 0 0 1px var(--md-hairline),
+      var(--md-e1);
+  }
+  .fx-node__badge--app img {
+    width: 36px;
+    height: 36px;
+  }
+  .fx-node__badge--mark {
+    overflow: hidden;
+    box-shadow:
+      inset 0 0 0 1px rgb(0 0 0 / 0.06),
+      var(--md-e1);
+  }
+  .fx-node__badge--mark svg {
+    width: 52px;
+    height: 52px;
+  }
+  .fx-mark {
+    display: block;
+    flex: none;
+  }
+  /* Links sit on the badges' centre line (52 px badge → 26 px). */
+  .fx-link {
+    position: relative;
+    display: block;
+    height: 8px;
+    margin-top: 22px;
+  }
+  .fx-link__track,
+  .fx-link__fill {
+    position: absolute;
+    inset-inline: 2px;
+    top: 3px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .fx-link__track {
+    background: repeating-linear-gradient(
+      90deg,
+      var(--md-border-strong) 0 4px,
+      transparent 4px 9px
+    );
+  }
+  .fx-link__fill {
+    background: var(--md-primary);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition:
+      transform 420ms cubic-bezier(0.25, 1, 0.5, 1),
+      background-color 300ms ease;
+  }
+  .fx-link:is([data-state="linked"], [data-state="back"], [data-state="verified"]) .fx-link__fill {
+    transform: scaleX(1);
+  }
+  .fx-link[data-state="verified"] .fx-link__fill {
+    background: var(--md-success);
+  }
+  .fx-link__run {
+    position: absolute;
+    inset-inline: 2px;
+    top: 0;
+    height: 8px;
+    animation: fx-run 1.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  .fx-link__run--late {
+    animation-delay: 0.6s;
+  }
+  .fx-link__run[data-dir="back"] {
+    animation-direction: reverse;
+  }
+  .fx-link__dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    border-radius: 50%;
+    background: var(--md-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--md-primary) 22%, transparent);
+    animation: fx-run-fade 1.2s linear infinite;
+    animation-delay: inherit;
+  }
+  .fx-link__run[data-dir="back"] .fx-link__dot {
+    background: var(--md-success);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--md-success) 24%, transparent);
+  }
+  @keyframes fx-run {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes fx-run-fade {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    15%,
+    85% {
+      opacity: 1;
+    }
+  }
+  .fx-steps {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .fx-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 32px;
+    color: var(--md-ink-2);
+  }
+  .fx-step[data-state="done"] {
+    color: var(--md-ink);
+  }
+  .fx-step__icon {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    flex: none;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--md-border-strong);
+  }
+  .fx-step[data-state="busy"] .fx-step__icon {
+    box-shadow: inset 0 0 0 2px var(--md-primary-soft);
+    border: 2px solid transparent;
+    border-top-color: var(--md-primary);
+    animation: fx-spin 0.8s linear infinite;
+  }
+  @keyframes fx-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .fx-step[data-state="done"] .fx-step__icon {
+    background: var(--md-success);
+    box-shadow: none;
+    color: #fff;
+    transition: background-color 200ms ease;
+  }
+  .fx-step__check {
+    display: grid;
+    place-items: center;
+  }
+
+  /* ---------- Identity card (3D) ---------- */
+  .fx-tilt {
+    perspective: 1100px;
+    width: 100%;
+    max-width: 420px;
+    justify-self: center;
+  }
+  .fx-tilt.fl-cert-tilt {
+    max-width: 520px;
+  }
+  /* ---------- Aadhaar-style identity card (simulated) ---------- */
+  /* Landscape like the real card (85.6 x 54 mm); every size scales with the card's width. */
+  .fx-tilt:has(.fx-aadhaar) {
+    container-type: inline-size;
+    max-width: 460px;
+  }
+  .fx-aadhaar {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto auto;
+    gap: 1.6cqw;
+    aspect-ratio: 85.6 / 54;
+    padding: 3.4cqw 4cqw 2.6cqw;
+    border-radius: 4cqw;
+    overflow: hidden;
+    color: #111827;
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgb(255 153 51 / 0.08), transparent 55%),
+      radial-gradient(120% 90% at 0% 100%, rgb(19 136 8 / 0.07), transparent 55%),
+      #ffffff;
+    box-shadow:
+      0 24px 44px -20px rgb(15 23 42 / 0.45),
+      0 2px 6px rgb(15 23 42 / 0.08),
+      inset 0 0 0 1px rgb(15 23 42 / 0.06);
+    transform-style: preserve-3d;
+    font-family: var(--md-font-sans);
+    font-size: 3.1cqw;
+    line-height: 1.25;
+  }
+  .fx-aadhaar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      380px circle at var(--fx-x, 30%) var(--fx-y, 20%),
+      rgb(255 255 255 / 0.55),
+      transparent 42%
+    );
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+  .fx-aadhaar__top {
+    display: grid;
+    grid-template-columns: 10cqw 1fr;
+    gap: 3cqw;
+    align-items: center;
+  }
+  .fx-aadhaar__seal {
+    display: grid;
+    place-items: center;
+    width: 10cqw;
+    height: 10cqw;
+    border-radius: 50%;
+    color: #1e3a8a;
+    box-shadow: inset 0 0 0 0.45cqw #1e3a8a;
+  }
+  .fx-aadhaar__seal svg {
+    width: 5cqw;
+    height: 5cqw;
+  }
+  .fx-aadhaar__bands {
+    display: grid;
+    gap: 1cqw;
+  }
+  .fx-aadhaar__band {
+    display: block;
+    padding: 0.6cqw 3cqw;
+    font-size: 2.7cqw;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-align: center;
+    white-space: nowrap;
+    clip-path: polygon(2% 12%, 30% 0, 70% 8%, 99% 0, 97% 55%, 100% 100%, 65% 92%, 30% 100%, 0 88%, 3% 45%);
+  }
+  .fx-aadhaar__band--saffron {
+    width: 78%;
+    background: linear-gradient(90deg, #f59e0b, #fb923c 60%, #fdba74);
+    color: #7c2d12;
+  }
+  .fx-aadhaar__band--green {
+    background: linear-gradient(90deg, #15803d, #22c55e 60%, #86efac);
+    color: #052e16;
+  }
+  .fx-aadhaar__body {
+    display: grid;
+    grid-template-columns: 19cqw 1fr 18cqw;
+    gap: 3cqw;
+    align-items: center;
+    min-height: 0;
+  }
+  .fx-aadhaar__photo svg {
+    display: block;
+    width: 19cqw;
+    height: 23cqw;
+    border: 0.5cqw solid #111827;
+  }
+  .fx-aadhaar__fields {
+    display: grid;
+    gap: 0.6cqw;
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .fx-aadhaar__fields > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fx-aadhaar__hi {
+    font-size: 3.4cqw;
+  }
+  .fx-aadhaar__name {
+    font-size: 4.2cqw;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+  .fx-aadhaar__qr {
+    width: 18cqw;
+    height: 18cqw;
+  }
+  .fx-aadhaar__num {
+    justify-self: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 5.6cqw;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+  .fx-aadhaar__rule {
+    display: block;
+    height: 0.45cqw;
+    min-height: 1px;
+    background: #dc2626;
+  }
+  .fx-aadhaar__footer {
+    justify-self: center;
+    font-size: 2.5cqw;
+    font-weight: 600;
+    color: #374151;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .fx-aadhaar__stamp {
+    color: #b91c1c;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  /* ---------- Toll drive (payment) ---------- */
+  .fx-toll {
+    display: block;
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    aspect-ratio: 3 / 1;
+    justify-self: center;
+    border-radius: 16px;
+    background: linear-gradient(180deg, var(--fx-sky-top), var(--fx-sky-bottom));
+    box-shadow: inset 0 0 0 1px var(--md-hairline);
+  }
+  .fx-toll__roof {
+    fill: var(--fx-paint-lo);
+  }
+  .fx-toll__wall {
+    fill: var(--md-surface);
+    stroke: var(--md-border-strong);
+    stroke-width: 1;
+  }
+  .fx-toll__glass {
+    fill: color-mix(in oklab, var(--md-primary-soft) 80%, #fff);
+    stroke: var(--md-border-strong);
+    stroke-width: 0.8;
+  }
+  .fx-toll__sill {
+    fill: var(--md-border-strong);
+  }
+  .fx-toll__light {
+    fill: #ef4444;
+    filter: drop-shadow(0 0 3px rgb(239 68 68 / 0.85));
+    transition:
+      fill 180ms ease,
+      filter 180ms ease;
+  }
+  .fx-toll[data-done="true"] .fx-toll__light {
+    fill: #22c55e;
+    filter: drop-shadow(0 0 4px rgb(34 197 94 / 0.95));
+  }
+
+  /* ---------- Receipt roll ---------- */
+  .fx-printer {
+    position: relative;
+    display: grid;
+    justify-items: center;
+  }
+  .fx-printer__slot {
+    position: relative;
+    z-index: 2;
+    width: calc(100% + 16px);
+    height: 14px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2b2f3a, #4b5162);
+    box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.5);
+  }
+  .fx-printer__paper {
+    width: 100%;
+    margin-top: -7px;
+    overflow: hidden;
+  }
+  .fx-receipt {
+    position: relative;
+    padding: 20px 18px 28px;
+    background: var(--md-surface);
+    color: var(--md-ink);
+    box-shadow:
+      inset 0 0 0 1px var(--md-border),
+      var(--md-e1);
+    --zig: 10px;
+    -webkit-mask:
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--zig) 100%;
+    mask:
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--zig) 100%;
+  }
+  .fx-receipt .fl-kv > div {
+    align-items: baseline;
+    padding: 8px 0;
+    border-top-style: dashed;
+  }
+  .fx-receipt .fl-kv dt {
+    flex: none;
+    font-size: var(--md-text-caption);
+  }
+  .fx-receipt .fl-kv dd {
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fx-receipt .fl-total {
+    font-size: var(--md-text-h2);
+  }
+  .fx-receipt__head {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding-bottom: 14px;
+    margin-bottom: 8px;
+    border-bottom: 1.5px dashed var(--md-border-strong);
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fx-step[data-state="busy"] .fx-step__icon,
+    .fx-node[data-active="true"] .fx-node__ring::after,
+    .fx-link__run,
+    .fx-link__dot {
+      animation: none !important;
+    }
+    .fx-link__run {
+      display: none;
+    }
+    .fx-link__fill {
+      transition: none;
+    }
+    .fx-ride[data-stopped="true"][data-tone="warn"] .fx-hazard {
+      animation: none;
+      opacity: 1;
+    }
+  }
+  :root[data-motion="reduced"] {
+    & .fx-step[data-state="busy"] .fx-step__icon,
+    & .fx-node[data-active="true"] .fx-node__ring::after,
+    & .fx-link__dot {
+      animation: none !important;
+    }
+    & .fx-link__run {
+      display: none;
+    }
+    & .fx-link__fill {
+      transition: none;
+    }
+    & .fx-ride[data-stopped="true"][data-tone="warn"] .fx-hazard {
+      animation: none;
+      opacity: 1;
+    }
+  }
+}

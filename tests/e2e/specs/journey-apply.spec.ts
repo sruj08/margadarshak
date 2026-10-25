@@ -1,6 +1,6 @@
 import { expect, type Page, test } from "@playwright/test";
 import { onboard } from "./helpers";
-import { answer, makePlan, mobileOnly } from "./journey-helpers";
+import { answer, makePlan, mobileOnly, openPlanToAge, tapChoice } from "./journey-helpers";
 
 /**
  * P1 · S2 Guided LL application (MD-110..115, EC-09, EC-11) on the mock API at 360 px.
@@ -139,12 +139,10 @@ test("Tanvi: both blockers caught before the hand-off (EC-02, EC-03, P1 DoD)", a
 test("Rahul (17) in a parent's account: family mode with parental consent (D-13 revised, P1 DoD)", async ({
   page,
 }) => {
-  await page.goto("/en/plan");
-  await page.getByRole("radio", { name: "16 or 17", exact: true }).check({ force: true });
+  await openPlanToAge(page, "Yes");
+  await tapChoice(page, "radio", "16 or 17");
   await page.getByRole("button", { name: "Next", exact: true }).click();
-  await page.getByRole("checkbox", { name: /Up to 50 cc/ }).check({ force: true });
-  await page.getByRole("button", { name: /^Next/ }).click();
-  await page.getByRole("radio", { name: "Yes", exact: true }).check({ force: true });
+  await tapChoice(page, "checkbox", /Up to 50 cc/);
   await page.getByRole("button", { name: "Show my plan" }).click();
   await startFromPlan(page);
   await answer(page, "Someone in my family");

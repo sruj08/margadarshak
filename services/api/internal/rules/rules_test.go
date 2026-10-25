@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -362,7 +363,15 @@ func TestFeeQuoteInvariants(t *testing.T) {
 				t.Errorf("%s: totals inconsistent", st)
 			}
 			want := []int64{70000, 115000, 160000}[n]
-			if q.SubtotalGovtFeePaise != want || q.TotalPaise != want+20000 {
+			// Tamil Nadu (15 Sept 2026) and Rajasthan (1 Apr 2024) issue digital licences only.
+			card := int64(20000)
+			if st == "TN" || st == "RJ" {
+				card = 0
+			}
+			if q.SmartCardPaise != card {
+				t.Errorf("%s smart card %d, want %d", st, q.SmartCardPaise, card)
+			}
+			if q.SubtotalGovtFeePaise != want || q.TotalPaise != want+card {
 				t.Errorf("%s %d classes: %d/%d", st, n+1, q.SubtotalGovtFeePaise, q.TotalPaise)
 			}
 			if wantLL := []int64{50000, 95000, 140000}[n]; q.LLStagePaise != wantLL {
@@ -592,7 +601,7 @@ func TestInputErrorsAndCompiledStateMismatch(t *testing.T) {
 	if _, err := lib.Plan(Input{AsOf: "2026-10-23", State: "JK", DOB: "2000-01-01", Vehicles: []string{"car"}, LMVDLHeldSince: &bad}); err == nil {
 		t.Error("bad lmv date accepted")
 	}
-	if got := lib.SupportedStates(); strings.Join(got, ",") != "DL,JK,KL,MH,PB,TN" {
-		t.Errorf("states %v", got)
+	if got := lib.SupportedStates(); len(got) != 36 || !slices.IsSorted(got) || !slices.Contains(got, "JK") {
+		t.Errorf("want all 36 states and UTs, sorted; got %v", got)
 	}
 }

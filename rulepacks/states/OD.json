@@ -1,0 +1,89 @@
+{
+  "$schema": "../schema/rulepack.schema.json",
+  "fileKind": "rulepack",
+  "packId": "OD",
+  "name": "Odisha overlay (partial)",
+  "version": "2026.10.0",
+  "extends": "IN-base@2026.10.0",
+  "effectiveFrom": "2026-10-23",
+  "status": "draft",
+  "partial": true,
+  "maker": "rules-agent",
+  "checker": null,
+  "approvedAt": null,
+  "notes": "Partial: central CMVR rules plus researched state overrides (checked 2026-10-25). Verify at your RTO. Transport department: https://odishatransport.gov.in",
+  "rules": [
+    {
+      "id": "OD-PRM-LL-TEST-MODE",
+      "kind": "param",
+      "overrides": "PRM-LL-TEST-MODE",
+      "textKey": "rule.od.ll.test_mode",
+      "condition": true,
+      "output": {
+        "value": {
+          "onlineAvailable": true,
+          "where": ["home_online", "rto"]
+        }
+      },
+      "text": {
+        "en": "In Odisha the LL test can be taken online at home with Aadhaar face authentication, or at the RTO.",
+        "hi": "Odisha में लर्नर लाइसेंस टेस्ट आधार फेस ऑथेंटिकेशन के साथ घर से ऑनलाइन, या RTO पर दिया जा सकता है।"
+      },
+      "source": {
+        "title": "Odisha: learner's licence test mode",
+        "url": "https://informatics.nic.in/news/1606"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "OD-PRM-DL-TEST",
+      "kind": "param",
+      "overrides": "PRM-DL-TEST",
+      "textKey": "rule.od.dl.test_type",
+      "condition": true,
+      "output": {
+        "value": {
+          "known": true,
+          "automated": true,
+          "tracks": ["automated tracks at 18 RTOs, 19 more under construction"]
+        }
+      },
+      "text": {
+        "en": "Odisha driving tests run on automated tracks: automated tracks at 18 RTOs, 19 more under construction."
+      },
+      "source": {
+        "title": "Odisha: driving test type",
+        "url": "https://odishatransport.gov.in/content/Modernization/1"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "high",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    },
+    {
+      "id": "OD-NTC-STATE-NOTE",
+      "kind": "notice",
+      "textKey": "notice.od.state_note",
+      "condition": true,
+      "output": {},
+      "text": {
+        "en": "Odisha built the AI-proctored home LL test that other states now use."
+      },
+      "refs": ["F-12"],
+      "source": {
+        "title": "Odisha transport department",
+        "url": "https://odishatransport.gov.in"
+      },
+      "grade": "S",
+      "checkedOn": "2026-10-25",
+      "confidence": "medium",
+      "verified": false,
+      "approvers": ["maker:rules-agent@2026-10-25"]
+    }
+  ]
+}

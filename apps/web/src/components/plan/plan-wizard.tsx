@@ -7,9 +7,10 @@ import { PictureCardGroup, type PictureOption } from "@margdarshak/ui/components
 import { ProgressBar } from "@margdarshak/ui/components/progress";
 import { QuestionScreen } from "@margdarshak/ui/components/question-screen";
 import { StatusGlyph } from "@margdarshak/ui/components/status-glyph";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, IdCard } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ConnectFlow, IdentityCard } from "@/components/fx/moments";
 import { CheckRow, ChoiceCards } from "@/components/journey/choices";
 import {
   DateParts,
@@ -20,9 +21,15 @@ import {
 } from "@/components/journey/date-parts";
 import { useRuleText } from "@/components/journey/rule-text";
 import { CLASS_PICTURE, VehiclePictogram } from "@/components/journey/vehicle-pictogram";
-import { useRouter } from "@/i18n/navigation";
+import {
+  DigiLockerConsentCard,
+  DigiLockerDone,
+  DigiLockerWindow,
+} from "@/features/flow/digilocker-window";
+import { Link, useRouter } from "@/i18n/navigation";
+import { writePrefill } from "@/lib/journey/aadhaar-prefill";
 import { computePlan, setApiLocale } from "@/lib/journey/api";
-import { istToday } from "@/lib/journey/dates";
+import { addMonths, istToday } from "@/lib/journey/dates";
 import {
   type AadhaarAnswer,
   AGE_BANDS,
@@ -31,43 +38,62 @@ import {
   ageFromDob,
   bandOf,
   type PlanAnswers,
+  type PlanIntent,
 } from "@/lib/journey/plan-model";
 import { getPlan, readPlanDraft, savePlan, writePlanDraft } from "@/lib/journey/plan-store";
-import {
-  allClasses,
-  DEFAULT_STATE,
-  STATE_CODES,
-  type StateCode,
-  statePartial,
-} from "@/lib/journey/rules";
+import { allClasses, DEFAULT_STATE, type StateCode, statePartial } from "@/lib/journey/rules";
 import { recordScreen } from "@/lib/journey/trial-log";
+import { StatePicker } from "./state-picker";
 
 /**
- * Licence Plan in 3 taps (SCR-010..013, MD-101, F-02). Age (band, full date of birth, or year only
- * for EC-01) → vehicle pictures (every class in classes.json) → state and the Aadhaar-address
- * sub-question (EC-02) → the plan. No login, no phone number; works offline (MD-108).
+ * Licence plan, in the order Sarathi and mParivahan use and only asking what the government does
+ * not already know (F-02, MD-101): what you need → state → connect Aadhaar (date of birth and
+ * address come from it) → what you will drive → (an LL already held: its date, EC-22) → the plan.
+ * Age is asked only when Aadhaar is not connected (no Aadhaar, address elsewhere, or "type it").
+ * No login; works offline (MD-108).
  */
 
-type Step = 1 | 2 | 3 | 4;
+type Step = "need" | "state" | "aadhaar" | "connect" | "age" | "vehicle" | "ll" | "build";
+type AadhaarMode = "connect" | AadhaarAnswer;
+
+const STEP_SCREEN: Record<Step, string> = {
+  need: "SCR-009",
+  state: "SCR-012",
+  aadhaar: "SCR-012A",
+  connect: "SCR-012B",
+  age: "SCR-010",
+  vehicle: "SCR-011",
+  ll: "SCR-011B",
+  build: "SCR-013",
+};
 
 /** The six everyday tiles first; the rest of classes.json behind "More vehicle types". */
 const MAIN_PICTURES = ["scooter", "bike_gear", "car", "auto_rickshaw", "truck", "adapted_vehicle"];
 
-export function PlanWizard({ initialStep }: { initialStep?: number }) {
+/** The synthetic DigiLocker demo account (never a real person; D-07). */
+const DEMO_DOB = "2007-06-15";
+
+export function PlanWizard(_props: { initialStep?: number }) {
   const t = useTranslations("wizard");
+  const tw = useTranslations("flow.wizard");
+  const td = useTranslations("flow.digilocker");
   const tc = useTranslations("common");
   const rt = useRuleText();
   const locale = useLocale();
   const router = useRouter();
   const today = istToday();
 
-  const [step, setStep] = useState<Step>(1);
+  const [step, setStep] = useState<Step>("need");
+  const [intent, setIntent] = useState<PlanIntent | null>(null);
   const [band, setBand] = useState<AgeBand | null>(null);
   const [dob, setDob] = useState<DateValue>(EMPTY_DATE);
   const [yearOnly, setYearOnly] = useState(false);
   const [vehicles, setVehicles] = useState<string[]>([]);
   const [state, setState] = useState<StateCode>(DEFAULT_STATE);
-  const [aadhaar, setAadhaar] = useState<AadhaarAnswer | null>(null);
+  const [mode, setMode] = useState<AadhaarMode | null>(null);
+  const [linked, setLinked] = useState(false);
+  const [connectPhase, setConnectPhase] = useState<"consent" | "fetching" | "done">("consent");
+  const [llDate, setLlDate] = useState<DateValue>(EMPTY_DATE);
   const [error, setError] = useState<string | null>(null);
   const [announce, setAnnounce] = useState("");
   const [building, setBuilding] = useState<string[]>([]);
@@ -79,11 +105,11 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     if (loaded.current) return;
     loaded.current = true;
     setApiLocale(locale);
-    // The card renders from this phone, so prefetch its route: the plan then works offline (MD-108).
     router.prefetch("/plan/card");
     const params = new URLSearchParams(window.location.search);
     const from = getPlan(params.get("from"));
-    const d = from ? { ...from.answers, step: 1 } : readPlanDraft();
+    const d = from ? { ...from.answers, step: "need" } : readPlanDraft();
+    if (d.intent) setIntent(d.intent);
     if (d.age?.kind === "band") setBand(d.age.band);
     if (d.age?.kind === "dob") setDob(fromIso(d.age.dob));
     if (d.age?.kind === "year") {
@@ -92,10 +118,16 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     }
     if (d.vehicles) setVehicles(d.vehicles);
     if (d.state) setState(d.state);
-    if (d.aadhaar !== undefined) setAadhaar(d.aadhaar);
-    const s = Number(params.get("step") ?? initialStep ?? d.step ?? 1);
-    if (s === 2 || s === 3) setStep(s);
-  }, [initialStep, locale, router]);
+    if (d.aadhaarLinked) {
+      setLinked(true);
+      setMode("connect");
+      setConnectPhase("done");
+    } else if (d.aadhaar !== undefined && d.aadhaar !== null) setMode(d.aadhaar);
+    if (d.llIssuedOn) setLlDate(fromIso(d.llIssuedOn));
+    const s = params.get("step") ?? d.step;
+    if (typeof s === "string" && s in STEP_SCREEN && s !== "build" && s !== "connect")
+      setStep(s as Step);
+  }, [locale, router]);
 
   const age: AgeAnswer | null = useMemo(() => {
     if (yearOnly && /^\d{4}$/.test(dob.y)) return { kind: "year", year: Number(dob.y) };
@@ -105,23 +137,28 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     return null;
   }, [band, dob, yearOnly]);
 
+  const aadhaar: AadhaarAnswer | null = mode === "connect" ? (linked ? "yes" : null) : mode;
   const ageBand = age ? bandOf(age, today) : null;
   const minor = ageBand === "16_17" || ageBand === "under_16";
   const ageYears = age?.kind === "dob" ? ageFromDob(age.dob, today) : null;
+  const llIso = toIso(llDate);
 
   useEffect(() => {
     if (!loaded.current) return;
     writePlanDraft({
+      ...(intent ? { intent } : {}),
       ...(age ? { age } : {}),
       vehicles,
       state,
       aadhaar,
+      aadhaarLinked: linked,
+      llIssuedOn: llIso,
       step,
     });
-  }, [age, vehicles, state, aadhaar, step]);
+  }, [intent, age, vehicles, state, aadhaar, linked, llIso, step]);
 
   useEffect(() => {
-    recordScreen(`plan.step${step}`);
+    recordScreen(`plan.${step}`);
     document.getElementById("plan-q")?.focus();
   }, [step]);
 
@@ -134,7 +171,7 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     setError(null);
     setStep(s);
     const url = new URL(window.location.href);
-    url.searchParams.set("step", String(s));
+    url.searchParams.set("step", s);
     window.history.replaceState(null, "", url);
   };
 
@@ -143,60 +180,21 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     requestAnimationFrame(() => summaryRef.current?.focus());
   };
 
-  const nextFromAge = () => {
-    if (!age) {
-      const anyDob = dob.d || dob.m || dob.y;
-      return fail(anyDob ? t("errDate") : t("errAge"));
-    }
-    if (age.kind === "dob") {
-      const years = ageFromDob(age.dob, today);
-      if (age.dob > today || years > 100) return fail(t("errDate"));
-    }
-    if (age.kind === "year") {
-      const y = Number(today.slice(0, 4));
-      if (age.year > y || age.year < y - 100) return fail(t("errYear"));
-    }
-    go(2);
-  };
-
-  const nextFromVehicles = () => {
-    if (vehicles.length === 0) return fail(t("errVehicle"));
-    go(3);
-  };
-
-  const build = async () => {
-    if (!age) return go(1);
-    if (aadhaar === null) return fail(t("errAadhaar"));
-    const answers: PlanAnswers = { age, vehicles, state, aadhaar };
-    go(4);
-    const started = performance.now();
-    const lines = [
-      t("buildAge"),
-      t("buildClasses"),
-      t("buildFees", { state: tc(`state.${state}`) }),
-      t("buildDates"),
-    ];
-    setBuilding(lines.slice(0, 1));
-    try {
-      const rec = await computePlan(answers);
-      const ms = performance.now() - started;
-      if (ms > 300) {
-        for (let i = 2; i <= lines.length; i++) {
-          setBuilding(lines.slice(0, i));
-          await new Promise((r) => setTimeout(r, 120));
-        }
-      }
-      savePlan(rec);
-      writePlanDraft(null);
-      router.replace(`/plan/card?id=${encodeURIComponent(rec.id)}`);
-    } catch {
-      setStep(3);
-      fail(t("errBuild"));
-    }
-  };
-
-  const progress = (n: number) => (
-    <ProgressBar label={t("progress", { n, total: 3 })} value={n} max={3} />
+  const flowSteps: Step[] = [
+    "need",
+    "state",
+    "aadhaar",
+    ...(linked ? [] : (["age"] as Step[])),
+    "vehicle",
+    ...(intent === "have_ll" ? (["ll"] as Step[]) : []),
+  ];
+  const position = (s: Step) => Math.max(1, flowSteps.indexOf(s === "connect" ? "aadhaar" : s) + 1);
+  const progress = (s: Step) => (
+    <ProgressBar
+      label={t("progress", { n: position(s), total: flowSteps.length })}
+      value={position(s)}
+      max={flowSteps.length}
+    />
   );
 
   const back = (to: Step | null) =>
@@ -230,7 +228,87 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     </Button>
   );
 
-  if (step === 4) {
+  const afterVehicle = () => (intent === "have_ll" ? go("ll") : void build());
+
+  const nextFromAge = () => {
+    if (!age) {
+      const anyDob = dob.d || dob.m || dob.y;
+      return fail(anyDob ? t("errDate") : t("errAge"));
+    }
+    if (age.kind === "dob") {
+      const years = ageFromDob(age.dob, today);
+      if (age.dob > today || years > 100) return fail(t("errDate"));
+    }
+    if (age.kind === "year") {
+      const y = Number(today.slice(0, 4));
+      if (age.year > y || age.year < y - 100) return fail(t("errYear"));
+    }
+    go("vehicle");
+  };
+
+  const build = async () => {
+    if (!intent) return go("need");
+    if (aadhaar === null) return go("aadhaar");
+    if (!age) return go(linked ? "aadhaar" : "age");
+    if (vehicles.length === 0) return go("vehicle");
+    const answers: PlanAnswers = {
+      intent,
+      age,
+      vehicles,
+      state,
+      aadhaar,
+      aadhaarLinked: linked,
+      ...(intent === "have_ll" && llIso ? { llIssuedOn: llIso } : {}),
+    };
+    go("build");
+    const started = performance.now();
+    const lines = [
+      t("buildAge"),
+      t("buildClasses"),
+      t("buildFees", { state: tc(`state.${state}`) }),
+      t("buildDates"),
+    ];
+    setBuilding(lines.slice(0, 1));
+    try {
+      const rec = await computePlan(answers);
+      const ms = performance.now() - started;
+      if (ms > 300) {
+        for (let i = 2; i <= lines.length; i++) {
+          setBuilding(lines.slice(0, i));
+          await new Promise((r) => setTimeout(r, 120));
+        }
+      }
+      savePlan(rec);
+      writePlanDraft(null);
+      router.replace(`/plan/card?id=${encodeURIComponent(rec.id)}`);
+    } catch {
+      setStep("vehicle");
+      fail(t("errBuild"));
+    }
+  };
+
+  const stateName = tc(`state.${state}`);
+  const profile = {
+    full_name: td("accountName"),
+    relative_name: "Rajesh Sharma",
+    home: `House 12, Sector 4, ${stateName}`,
+    dob: DEMO_DOB.split("-").reverse().join("-"),
+  };
+
+  const allow = () => {
+    setConnectPhase("fetching");
+  };
+  const fetched = () => {
+    setDob(fromIso(DEMO_DOB));
+    setBand(null);
+    setYearOnly(false);
+    setLinked(true);
+    writePrefill(profile);
+    setConnectPhase("done");
+  };
+
+  /* ---------------------------------- build ---------------------------------- */
+  if (step === "build") {
     return (
       <section className="mj-screen" data-screen="SCR-013" aria-busy="true">
         <h1 className="mj-title" id="plan-q" tabIndex={-1}>
@@ -249,12 +327,227 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     );
   }
 
-  if (step === 1) {
+  /* ---------------------------------- 1 need ---------------------------------- */
+  if (step === "need") {
     return (
       <QuestionScreen
-        screenId="SCR-010"
+        screenId={STEP_SCREEN.need}
         back={back(null)}
-        progress={progress(1)}
+        progress={progress("need")}
+        errorSummary={errorSummary}
+        question={
+          <span id="plan-q" tabIndex={-1}>
+            {tw("needTitle")}
+          </span>
+        }
+        hint={tw("needHint")}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!intent) return fail(tw("errNeed"));
+          go("state");
+        }}
+        primaryAction={primary(tc("next"))}
+      >
+        <ChoiceCards
+          labelledBy="plan-q"
+          value={intent}
+          onChange={(v) => setIntent(v as PlanIntent)}
+          choices={[
+            { id: "first", label: tw("needFirst"), description: tw("needFirstDesc") },
+            { id: "have_ll", label: tw("needHaveLl"), description: tw("needHaveLlDesc") },
+          ]}
+        />
+        <div className="md-need-links">
+          <Link href="/services#holder" className="md-link">
+            {tw("needRenew")} <ArrowUpRight aria-hidden="true" size={14} />
+          </Link>
+          <Link href="/licence" className="md-link">
+            {tw("needStatus")} <ArrowUpRight aria-hidden="true" size={14} />
+          </Link>
+        </div>
+      </QuestionScreen>
+    );
+  }
+
+  /* ---------------------------------- 2 state ---------------------------------- */
+  if (step === "state") {
+    return (
+      <QuestionScreen
+        screenId={STEP_SCREEN.state}
+        back={back("need")}
+        progress={progress("state")}
+        errorSummary={errorSummary}
+        question={
+          <span id="plan-q" tabIndex={-1}>
+            {t("stateTitle")}
+          </span>
+        }
+        whyWeAsk={{ label: tc("whyWeAsk"), body: t("stateWhy") }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          go("aadhaar");
+        }}
+        primaryAction={primary(tc("next"))}
+      >
+        <div className="md-statepick-wrap">
+          <StatePicker value={state} onChange={setState} labelledBy="plan-q" />
+          <span className="mj-chips">
+            {statePartial(state) ? (
+              <Chip tone="caution" glyph={false}>
+                {t("partialRules")}
+              </Chip>
+            ) : (
+              <Chip tone="success" glyph={false}>
+                {t("fullRules")}
+              </Chip>
+            )}
+          </span>
+        </div>
+        <p className="mj-caption">{t("otherStates")}</p>
+      </QuestionScreen>
+    );
+  }
+
+  /* ---------------------------------- 3 aadhaar ---------------------------------- */
+  if (step === "aadhaar") {
+    return (
+      <QuestionScreen
+        screenId={STEP_SCREEN.aadhaar}
+        back={back("state")}
+        progress={progress("aadhaar")}
+        errorSummary={errorSummary}
+        question={
+          <span id="plan-q" tabIndex={-1}>
+            {tw("aadhaarTitle")}
+          </span>
+        }
+        hint={tw("aadhaarHint")}
+        whyWeAsk={{ label: tc("whyWeAsk"), body: tw("aadhaarWhy") }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!mode) return fail(t("errAadhaar"));
+          if (mode === "connect") return linked ? go("vehicle") : go("connect");
+          setLinked(false);
+          writePrefill(null);
+          go("age");
+        }}
+        primaryAction={primary(mode === "connect" && !linked ? tw("connectCta") : tc("next"))}
+      >
+        <ChoiceCards
+          labelledBy="plan-q"
+          value={mode}
+          onChange={(v) => setMode(v as AadhaarMode)}
+          choices={[
+            {
+              id: "connect",
+              label: linked ? tw("connected") : tw("connect"),
+              description: linked ? tw("connectedDesc") : tw("connectDesc"),
+            },
+            {
+              id: "yes",
+              label: tw("typeAge"),
+              description: tw("typeAgeDesc", { state: stateName }),
+            },
+            { id: "no", label: t("aadhaarNo"), description: t("aadhaarNoDesc") },
+            { id: "none", label: t("aadhaarNone"), description: t("aadhaarNoneDesc") },
+          ]}
+        />
+      </QuestionScreen>
+    );
+  }
+
+  /* ---------------------------------- 3b connect ---------------------------------- */
+  if (step === "connect") {
+    return (
+      <section className="mj-screen" data-screen={STEP_SCREEN.connect}>
+        {back("aadhaar")}
+        {progress("connect")}
+        <DigiLockerWindow
+          path={connectPhase === "consent" ? "/oauth2/authorize" : "/oauth2/callback"}
+        >
+          {connectPhase === "consent" ? (
+            <DigiLockerConsentCard
+              title={td("consentTitle")}
+              titleId="plan-q"
+              purpose={tw("connectPurpose")}
+              docs={[
+                {
+                  icon: <IdCard />,
+                  label: td("docAadhaarShort"),
+                  detail: `${td("docAadhaarFields")} · ${td("docAadhaarMask")}`,
+                  required: true,
+                },
+              ]}
+              validity={td("consentValidity")}
+              onAllow={allow}
+              onDeny={() => go("aadhaar")}
+              allowTestId="plan-allow"
+            />
+          ) : null}
+          {connectPhase === "fetching" ? (
+            <>
+              <h1 className="dlw__title" id="plan-q" tabIndex={-1}>
+                {td("connectTitle")}
+              </h1>
+              <ConnectFlow
+                labels={{ app: td("nodeApp"), locker: td("brand"), aadhaar: td("nodeAadhaar") }}
+                steps={[td("s1"), td("s2"), td("s3"), td("s4")]}
+                onDone={fetched}
+              />
+            </>
+          ) : null}
+          {connectPhase === "done" ? (
+            <>
+              <DigiLockerDone
+                title={tw("fetchedTitle")}
+                sub={tw("fetchedLine", { state: stateName })}
+                titleId="plan-q"
+              />
+              <IdentityCard
+                f={{
+                  name: profile.full_name,
+                  nameHi: td("accountNameHi"),
+                  dob: profile.dob,
+                  gender: td("idGenderValue"),
+                  last4: td("docAadhaarMask").slice(-4),
+                }}
+                labels={{
+                  band: td("idBand"),
+                  bandHi: td("idBandHi"),
+                  seal: td("idSeal"),
+                  dob: td("idDob"),
+                  gender: td("idGender"),
+                  footer: td("idFooter"),
+                }}
+              />
+              <p className="dlw__note">{td("kept")}</p>
+            </>
+          ) : null}
+        </DigiLockerWindow>
+        {connectPhase === "done" ? (
+          <div className="mj-sticky mj-actions">
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              onPress={() => go("vehicle")}
+              data-testid="plan-connected-next"
+            >
+              {tc("next")}
+            </Button>
+          </div>
+        ) : null}
+      </section>
+    );
+  }
+
+  /* ---------------------------------- 4 age (no Aadhaar link) ---------------------------------- */
+  if (step === "age") {
+    return (
+      <QuestionScreen
+        screenId={STEP_SCREEN.age}
+        back={back("aadhaar")}
+        progress={progress("age")}
         errorSummary={errorSummary}
         question={
           <span id="plan-q" tabIndex={-1}>
@@ -317,168 +610,151 @@ export function PlanWizard({ initialStep }: { initialStep?: number }) {
     );
   }
 
-  if (step === 2) {
-    const classes = allClasses();
-    const byPicture = new Map<string, (typeof classes)[number]>();
-    for (const c of classes) {
-      const pic = CLASS_PICTURE[c.code];
-      if (pic) byPicture.set(pic, c);
-    }
-    const option = (pic: string): PictureOption | null => {
-      const c = byPicture.get(pic);
-      if (!c) return null;
-      const name = rt(c.nameKey, c.name.en);
-      const min = c.minAge;
-      let disabledReason: string | undefined;
-      let caption = `${name} · ${c.code}`;
-      if (minor && c.code !== "MC50CC") disabledReason = t("fromAge", { age: min });
-      else if (ageYears !== null && ageYears < min)
-        caption = `${caption} · ${t("fromAge", { age: min })}`;
-      else if (ageBand === "18_19" && min >= 20)
-        caption = `${caption} · ${t("fromAge", { age: min })}`;
-      return {
-        id: pic,
-        label: t(`pic.${pic}` as "pic.car"),
-        caption,
-        picture: <VehiclePictogram picture={pic} />,
-        ...(disabledReason ? { disabledReason } : {}),
-      };
-    };
-    const main = (minor ? ["scooter_50cc", ...MAIN_PICTURES] : MAIN_PICTURES)
-      .map(option)
-      .filter((o): o is PictureOption => o !== null);
-    const more = Object.values(CLASS_PICTURE)
-      .filter((p) => !main.some((m) => m.id === p))
-      .map(option)
-      .filter((o): o is PictureOption => o !== null);
-    const selectedMore = vehicles.filter((v) => more.some((m) => m.id === v)).length;
+  /* ---------------------------------- 6 LL already held ---------------------------------- */
+  if (step === "ll") {
     return (
       <QuestionScreen
-        screenId="SCR-011"
-        back={back(1)}
-        progress={progress(2)}
+        screenId={STEP_SCREEN.ll}
+        back={back("vehicle")}
+        progress={progress("ll")}
         errorSummary={errorSummary}
         question={
           <span id="plan-q" tabIndex={-1}>
-            {t("vehicleTitle")}
+            {tw("llTitle")}
           </span>
         }
-        hint={minor ? t("vehicleMinor") : t("vehicleHint")}
-        whyWeAsk={{ label: tc("whyWeAsk"), body: t("vehicleWhy") }}
+        hint={tw("llHint")}
         onSubmit={(e) => {
           e.preventDefault();
-          nextFromVehicles();
+          if (!llIso || llIso > today) return fail(tw("errLl"));
+          if (addMonths(llIso, 6) < today) return fail(tw("errLlExpired"));
+          void build();
         }}
-        primaryAction={primary(
-          vehicles.length > 0 ? t("nextCount", { n: vehicles.length }) : tc("next"),
-        )}
+        primaryAction={primary(t("showPlan"))}
       >
-        <div className="mj-pics">
-          <PictureCardGroup
-            selectionMode="multiple"
-            label={<span className="md-sr-only">{t("vehicleTitle")}</span>}
-            options={main}
-            value={vehicles.filter((v) => main.some((m) => m.id === v))}
-            onChange={(v) =>
-              setVehicles([...v, ...vehicles.filter((x) => more.some((m) => m.id === x))])
-            }
-          />
-        </div>
-        <Disclosure className="md-why" defaultExpanded={selectedMore > 0}>
-          <Disclosure.Heading className="md-why__heading">
-            <Disclosure.Trigger className="md-why__trigger">
-              <StatusGlyph kind="info" size={20} />
-              <span>{t("moreVehicles", { n: more.length })}</span>
-              <Disclosure.Indicator className="md-why__indicator" />
-            </Disclosure.Trigger>
-          </Disclosure.Heading>
-          <Disclosure.Content>
-            <Disclosure.Body className="md-why__body">
-              <div className="mj-pics">
-                <PictureCardGroup
-                  selectionMode="multiple"
-                  label={
-                    <span className="md-sr-only">{t("moreVehicles", { n: more.length })}</span>
-                  }
-                  options={more}
-                  value={vehicles.filter((v) => more.some((m) => m.id === v))}
-                  onChange={(v) =>
-                    setVehicles([...vehicles.filter((x) => main.some((m) => m.id === x)), ...v])
-                  }
-                />
-              </div>
-            </Disclosure.Body>
-          </Disclosure.Content>
-        </Disclosure>
-        <Disclosure className="md-why">
-          <Disclosure.Heading className="md-why__heading">
-            <Disclosure.Trigger className="md-why__trigger">
-              <StatusGlyph kind="info" size={20} />
-              <span>{t("scooterVsBike")}</span>
-              <Disclosure.Indicator className="md-why__indicator" />
-            </Disclosure.Trigger>
-          </Disclosure.Heading>
-          <Disclosure.Content>
-            <Disclosure.Body className="md-why__body">{t("scooterVsBikeBody")}</Disclosure.Body>
-          </Disclosure.Content>
-        </Disclosure>
-        <p className="md-sr-only" aria-live="polite">
-          {t("selectedCount", { n: vehicles.length })}
-        </p>
+        <DateParts
+          legend={tw("llLegend")}
+          hint={t("dobHint")}
+          value={llDate}
+          labels={{ day: t("day"), month: t("month"), year: t("year") }}
+          onChange={setLlDate}
+        />
       </QuestionScreen>
     );
   }
 
+  /* ---------------------------------- 5 vehicle ---------------------------------- */
+  const classes = allClasses();
+  const byPicture = new Map<string, (typeof classes)[number]>();
+  for (const c of classes) {
+    const pic = CLASS_PICTURE[c.code];
+    if (pic) byPicture.set(pic, c);
+  }
+  const option = (pic: string): PictureOption | null => {
+    const c = byPicture.get(pic);
+    if (!c) return null;
+    const name = rt(c.nameKey, c.name.en);
+    const min = c.minAge;
+    let disabledReason: string | undefined;
+    let caption = `${name} · ${c.code}`;
+    if (minor && c.code !== "MC50CC") disabledReason = t("fromAge", { age: min });
+    else if (ageYears !== null && ageYears < min)
+      caption = `${caption} · ${t("fromAge", { age: min })}`;
+    else if (ageBand === "18_19" && min >= 20)
+      caption = `${caption} · ${t("fromAge", { age: min })}`;
+    return {
+      id: pic,
+      label: t(`pic.${pic}` as "pic.car"),
+      caption,
+      picture: <VehiclePictogram picture={pic} />,
+      ...(disabledReason ? { disabledReason } : {}),
+    };
+  };
+  const main = (minor ? ["scooter_50cc", ...MAIN_PICTURES] : MAIN_PICTURES)
+    .map(option)
+    .filter((o): o is PictureOption => o !== null);
+  const more = Object.values(CLASS_PICTURE)
+    .filter((p) => !main.some((m) => m.id === p))
+    .map(option)
+    .filter((o): o is PictureOption => o !== null);
+  const selectedMore = vehicles.filter((v) => more.some((m) => m.id === v)).length;
+  const lastStep = intent !== "have_ll";
   return (
     <QuestionScreen
-      screenId="SCR-012"
-      back={back(2)}
-      progress={progress(3)}
+      screenId={STEP_SCREEN.vehicle}
+      back={back(linked ? "aadhaar" : "age")}
+      progress={progress("vehicle")}
       errorSummary={errorSummary}
       question={
         <span id="plan-q" tabIndex={-1}>
-          {t("stateTitle")}
+          {t("vehicleTitle")}
         </span>
       }
-      whyWeAsk={{ label: tc("whyWeAsk"), body: t("stateWhy") }}
+      hint={minor ? t("vehicleMinor") : t("vehicleHint")}
+      whyWeAsk={{ label: tc("whyWeAsk"), body: t("vehicleWhy") }}
       onSubmit={(e) => {
         e.preventDefault();
-        void build();
+        if (vehicles.length === 0) return fail(t("errVehicle"));
+        afterVehicle();
       }}
-      primaryAction={primary(t("showPlan"))}
+      primaryAction={primary(
+        lastStep
+          ? t("showPlan")
+          : vehicles.length > 0
+            ? t("nextCount", { n: vehicles.length })
+            : tc("next"),
+      )}
     >
-      <ChoiceCards
-        labelledBy="plan-q"
-        value={state}
-        onChange={(v) => setState(v as StateCode)}
-        choices={STATE_CODES.map((code) => ({
-          id: code,
-          label: tc(`state.${code}`),
-          aside: statePartial(code) ? (
-            <Chip tone="caution" glyph={false}>
-              {t("partialRules")}
-            </Chip>
-          ) : (
-            <Chip tone="success" glyph={false}>
-              {t("fullRules")}
-            </Chip>
-          ),
-        }))}
-      />
-      <p className="mj-caption">{t("otherStates")}</p>
-      <h2 className="mj-h2" id="plan-aadhaar">
-        {t("aadhaarTitle")}
-      </h2>
-      <ChoiceCards
-        labelledBy="plan-aadhaar"
-        value={aadhaar}
-        onChange={(v) => setAadhaar(v as AadhaarAnswer)}
-        choices={[
-          { id: "yes", label: t("aadhaarYes") },
-          { id: "no", label: t("aadhaarNo"), description: t("aadhaarNoDesc") },
-          { id: "none", label: t("aadhaarNone"), description: t("aadhaarNoneDesc") },
-        ]}
-      />
+      <div className="mj-pics">
+        <PictureCardGroup
+          selectionMode="multiple"
+          label={<span className="md-sr-only">{t("vehicleTitle")}</span>}
+          options={main}
+          value={vehicles.filter((v) => main.some((m) => m.id === v))}
+          onChange={(v) =>
+            setVehicles([...v, ...vehicles.filter((x) => more.some((m) => m.id === x))])
+          }
+        />
+      </div>
+      <Disclosure className="md-why" defaultExpanded={selectedMore > 0}>
+        <Disclosure.Heading className="md-why__heading">
+          <Disclosure.Trigger className="md-why__trigger">
+            <StatusGlyph kind="info" size={20} />
+            <span>{t("moreVehicles", { n: more.length })}</span>
+            <Disclosure.Indicator className="md-why__indicator" />
+          </Disclosure.Trigger>
+        </Disclosure.Heading>
+        <Disclosure.Content>
+          <Disclosure.Body className="md-why__body">
+            <div className="mj-pics">
+              <PictureCardGroup
+                selectionMode="multiple"
+                label={<span className="md-sr-only">{t("moreVehicles", { n: more.length })}</span>}
+                options={more}
+                value={vehicles.filter((v) => more.some((m) => m.id === v))}
+                onChange={(v) =>
+                  setVehicles([...vehicles.filter((x) => main.some((m) => m.id === x)), ...v])
+                }
+              />
+            </div>
+          </Disclosure.Body>
+        </Disclosure.Content>
+      </Disclosure>
+      <Disclosure className="md-why">
+        <Disclosure.Heading className="md-why__heading">
+          <Disclosure.Trigger className="md-why__trigger">
+            <StatusGlyph kind="info" size={20} />
+            <span>{t("scooterVsBike")}</span>
+            <Disclosure.Indicator className="md-why__indicator" />
+          </Disclosure.Trigger>
+        </Disclosure.Heading>
+        <Disclosure.Content>
+          <Disclosure.Body className="md-why__body">{t("scooterVsBikeBody")}</Disclosure.Body>
+        </Disclosure.Content>
+      </Disclosure>
+      <p className="md-sr-only" aria-live="polite">
+        {t("selectedCount", { n: vehicles.length })}
+      </p>
     </QuestionScreen>
   );
 }
